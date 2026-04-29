@@ -23,6 +23,7 @@ The active marketplace currently contains:
 - `rldyour-serena-mcp`: Serena-first semantic code workflow, fact-only `.serena` memory sync, plans, research archive, and lifecycle hooks.
 - `rldyour-security`: non-blocking OWASP-oriented secure implementation guidance and `ry-sec-review` security review skill.
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
+- `rldyour-design`: Figma-to-code, centralized token-based design system, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
 
 ## Planned Plugin Architecture
 
@@ -31,6 +32,7 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-mcps`: created. Base MCP servers approved by the owner.
 - `rldyour-serena-mcp`: created. Serena-specific workflow layer that depends on the Serena MCP server from `rldyour-mcps`.
 - `rldyour-browser`: created. Browser validation, pixel-perfect checks, functional checks, business-logic verification, and runtime debugging through Playwright MCP and Chrome DevTools MCP.
+- `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser evidence.
 - `rldyour-lsps`: language-server configuration for navigation, diagnostics, and analysis when separate LSP setup is needed.
 - `rldyour-rules`: hard rules for project work, coding standards, verification, and system `AGENTS.md`.
 - `rldyour-flow`: command-like skills such as `ry-start`, `ry-init`, `ry-newp`, `ry-review`, and `ry-deploy`.

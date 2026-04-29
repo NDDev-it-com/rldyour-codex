@@ -1,0 +1,25 @@
+interface:
+  display_name: "Figma To Code"
+  short_description: "Pixel-perfect Figma implementation"
+  default_prompt: "Use $figma-to-code to implement the selected Figma design pixel-perfect."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Primary source of truth for selected frames, variables, components, layout data, assets, screenshots, and Code Connect hints."
+    - type: "mcp"
+      value: "shadcn"
+      description: "Primary UI registry workflow for primitives and blocks that match the Figma design."
+    - type: "mcp"
+      value: "serena"
+      description: "Preferred for local codebase inspection, FSD placement, and precise code changes."
+    - type: "mcp"
+      value: "playwright"
+      description: "Browser validation and screenshot evidence after implementation."
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Runtime, console, network, layout, and performance diagnosis when validation needs deeper browser evidence."
+
+policy:
+  allow_implicit_invocation: true

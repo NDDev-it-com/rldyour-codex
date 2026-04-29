@@ -1,0 +1,55 @@
+{
+  "name": "rldyour-design",
+  "version": "0.1.0",
+  "description": "Skills-only design implementation workflow for Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser validation.",
+  "author": {
+    "name": "rldyourmnd",
+    "email": "rldyourmnd@users.noreply.github.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "design",
+    "figma",
+    "figma-mcp",
+    "shadcn",
+    "reactbits",
+    "fsd",
+    "feature-sliced-design",
+    "design-system",
+    "tokens",
+    "pixel-perfect",
+    "rldyour"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "rldyour Design",
+    "shortDescription": "Figma-to-code, tokens, FSD, shadcn/ui, ReactBits",
+    "longDescription": "This skills-only plugin defines the rldyour design implementation workflow for Codex. Figma MCP is the source of truth for designer-provided layouts, variables, components, assets, layout data, and Code Connect hints when available. All frontend design work should centralize tokens in a strict design system, use Feature-Sliced Design placement by default, use shadcn/ui MCP as the primary source for UI primitives and blocks, and use ReactBits.dev selectively for purposeful animated or interactive React components. Design work must be validated through browser evidence with Playwright MCP and Chrome DevTools MCP, with artifacts stored under browser/ and ignored by git.",
+    "developerName": "rldyourmnd",
+    "category": "Design",
+    "capabilities": [
+      "Skills",
+      "Figma MCP workflow",
+      "Centralized design tokens",
+      "Feature-Sliced Design",
+      "shadcn/ui MCP workflow",
+      "ReactBits workflow",
+      "Pixel-perfect browser validation",
+      "Russian user-facing workflow"
+    ],
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "defaultPrompt": [
+      "Use Figma MCP to implement this design pixel-perfect.",
+      "Build the centralized design system tokens for this frontend.",
+      "Run $ry-design for this design implementation."
+    ],
+    "brandColor": "#DB2777",
+    "screenshots": []
+  }
+}
