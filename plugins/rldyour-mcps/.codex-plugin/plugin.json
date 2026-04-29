@@ -1,7 +1,7 @@
 {
   "name": "rldyour-mcps",
-  "version": "0.1.0",
-  "description": "Личный набор MCP-серверов rldyour для Codex.",
+  "version": "0.1.1",
+  "description": "Рабочий набор MCP-серверов rldyour для Codex с русскоязычным описанием и контролируемым подключением.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -13,29 +13,40 @@
   "keywords": [
     "codex",
     "mcp",
+    "rldyour",
+    "russian",
     "serena",
+    "sequential-thinking",
+    "playwright",
+    "chrome-devtools",
     "context7",
+    "deepwiki",
+    "grep",
+    "semgrep",
+    "shadcn",
+    "dart-flutter",
     "figma"
   ],
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "MCP-серверы rldyour",
-    "shortDescription": "Личный набор MCP-серверов для Codex",
-    "longDescription": "Плагин подключает выбранные владельцем MCP-серверы: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter и Figma. Отдельные правила и специализированные workflows для каждого MCP будут вынесены в отдельные плагины позже.",
+    "shortDescription": "Все MCP, которые владелец использует в Codex",
+    "longDescription": "Плагин подключает рабочий набор MCP-серверов владельца для Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter и Figma. Плагин не задает глобальные правила поведения агента и не хранит секреты. Он отвечает только за подключение MCP; специализированные skills, политики памяти, security-правила и workflow-команды будут выноситься в отдельные плагины. Все пользовательские описания и рабочие prompts в этом плагине ведутся на русском языке.",
     "developerName": "rldyourmnd",
-    "category": "MCP",
+    "category": "Developer Tools",
     "capabilities": [
       "MCP",
       "Инструменты разработки",
-      "Контроль доступа"
+      "Русскоязычный рабочий контекст",
+      "Контролируемое подключение"
     ],
     "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Покажи доступные MCP-серверы rldyour.",
-      "Проверь, какие MCP нужны для этой задачи.",
-      "Не используй write-инструменты MCP без подтверждения."
+      "Покажи мои MCP-серверы.",
+      "Выбери MCP для этой задачи.",
+      "Проверь MCP без записи данных."
     ],
     "brandColor": "#0F766E",
     "screenshots": []
