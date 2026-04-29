@@ -10,7 +10,7 @@ It does not start or configure the Serena MCP server directly. The MCP transport
 - Keep `.serena/memories` fact-only and synchronized with verified code state.
 - Store durable non-trivial plans in `.serena/plans`.
 - Store long source-backed research summaries in `.serena/research`.
-- Ignore runtime markers and Serena cache files.
+- Keep generated local Serena project files, runtime markers, and cache files out of commits. Future `rldyour-flow` initialization will decide when project config should become portable.
 
 ## Skills
 

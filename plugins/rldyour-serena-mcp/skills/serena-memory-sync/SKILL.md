@@ -17,7 +17,7 @@ User-facing conversation stays in Russian. All stored `.serena/` knowledge files
 - `.serena/plans/`: non-trivial implementation plans that are worth preserving across sessions.
 - `.serena/research/`: complex or long research results with source links and implementation impact.
 
-Runtime-only files must not be committed: `.serena/cache/`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`.
+Local/runtime files must not be committed by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.yml`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`.
 
 ## Memory Structure
 
