@@ -1,0 +1,7 @@
+interface:
+  display_name: "Интернет-исследование"
+  short_description: "Авторитетные источники и выводы"
+  default_prompt: "Используй $web-research, чтобы изучить вопрос в интернете и дать выводы со ссылками."
+
+policy:
+  allow_implicit_invocation: true

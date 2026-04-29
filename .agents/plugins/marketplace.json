@@ -15,6 +15,18 @@
         "authentication": "ON_USE"
       },
       "category": "Developer Tools"
+    },
+    {
+      "name": "rldyour-explore",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rldyour-explore"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Research"
     }
   ]
 }
