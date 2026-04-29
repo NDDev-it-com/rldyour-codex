@@ -1,0 +1,16 @@
+interface:
+  display_name: "OWASP Implementation"
+  short_description: "Non-blocking OWASP Top 10 guidance"
+  default_prompt: "Use $owasp-top-10-implementation to add non-blocking security comments while implementing this change."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Preferred for precise code inspection and source-to-sink tracing when available."
+    - type: "mcp"
+      value: "semgrep"
+      description: "Optional SAST support when a task needs automated security checks."
+
+policy:
+  allow_implicit_invocation: true

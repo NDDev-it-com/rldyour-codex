@@ -21,6 +21,7 @@ The active marketplace currently contains:
 - `rldyour-mcps`: the owner's approved MCP server set for Codex.
 - `rldyour-explore`: research skills for technical MCP research and authoritative web research.
 - `rldyour-serena-mcp`: Serena-first semantic code workflow, fact-only `.serena` memory sync, plans, research archive, and lifecycle hooks.
+- `rldyour-security`: non-blocking OWASP-oriented secure implementation guidance and `ry-sec-review` security review skill.
 
 ## Planned Plugin Architecture
 
@@ -33,7 +34,7 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-flow`: command-like skills such as `ry-start`, `ry-init`, `ry-newp`, `ry-review`, and `ry-deploy`.
 - `rldyour-memories`: future memory policies if project memory behavior grows beyond the Serena-specific plugin.
 - `rldyour-hooks`: general Codex hooks and trigger policies that are not specific to Serena.
-- `rldyour-sec`: security rules, secure coding, checks, and OWASP Top 10 coverage.
+- `rldyour-security`: created. Skills-only security guidance, OWASP Top 10 coverage, and defensive review workflow.
 - `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.
 
 ## MCP Skill Strategy

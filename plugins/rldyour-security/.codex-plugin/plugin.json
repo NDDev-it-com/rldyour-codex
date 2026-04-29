@@ -1,0 +1,48 @@
+{
+  "name": "rldyour-security",
+  "version": "0.1.0",
+  "description": "Skills-only security guidance for Codex: OWASP Top 10 implementation comments and defensive ry-sec-review.",
+  "author": {
+    "name": "rldyourmnd",
+    "email": "rldyourmnd@users.noreply.github.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "security",
+    "owasp",
+    "top-10",
+    "asvs",
+    "secure-code-review",
+    "ry-sec-review",
+    "rldyour"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "rldyour Security",
+    "shortDescription": "OWASP guidance and defensive security review",
+    "longDescription": "This skills-only plugin adds non-blocking security guidance for Codex. owasp-top-10-implementation keeps implementation work aligned with OWASP Top 10 2025, ASVS 5.0.0, and secure coding checklist principles without stopping normal development. ry-sec-review performs a defensive, hypothesis-driven security review inspired by Mythos-style application security review: recon, hypothesis generation, source-to-sink tracing, exploitability assessment, confidence ranking, remediation, and verification. The plugin does not configure MCP servers, does not add hooks, and does not block execution except where normal Codex safety rules apply to explicit destructive or malicious requests.",
+    "developerName": "rldyourmnd",
+    "category": "Security",
+    "capabilities": [
+      "Skills",
+      "OWASP Top 10 guidance",
+      "Secure implementation comments",
+      "Defensive security review",
+      "Russian user-facing workflow"
+    ],
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "defaultPrompt": [
+      "Apply OWASP Top 10 guidance while implementing this feature.",
+      "Run $ry-sec-review for this implementation.",
+      "Review this diff for security risks."
+    ],
+    "brandColor": "#B91C1C",
+    "screenshots": []
+  }
+}
