@@ -1,7 +1,7 @@
 interface:
   display_name: "Technical Research"
-  short_description: "Docs, architecture, and GitHub patterns"
-  default_prompt: "Use $tech-research to study the technical scope before implementation."
+  short_description: "Auto docs, architecture, GitHub patterns"
+  default_prompt: "Use $tech-research to research technical docs, repository architecture, and production usage patterns before implementation."
 
 dependencies:
   tools:

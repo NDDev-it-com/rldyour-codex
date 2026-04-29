@@ -1,7 +1,7 @@
 interface:
   display_name: "Web Research"
-  short_description: "Authoritative sources and conclusions"
-  default_prompt: "Use $web-research to research the question online and answer with source links."
+  short_description: "Auto web research with sources"
+  default_prompt: "Use $web-research to research current information online and answer with authoritative source links."
 
 policy:
   allow_implicit_invocation: true

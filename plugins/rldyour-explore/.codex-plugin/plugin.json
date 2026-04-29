@@ -1,7 +1,7 @@
 {
   "name": "rldyour-explore",
   "version": "0.1.1",
-  "description": "Research skills for Codex: technical MCP research and authoritative web research with Russian user-facing output.",
+  "description": "Auto-invoked research skills for Codex: technical MCP research and authoritative web research with Russian user-facing output.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -15,6 +15,11 @@
     "research",
     "technical-research",
     "web-research",
+    "internet-research",
+    "authoritative-sources",
+    "documentation",
+    "best-practices",
+    "automatic-invocation",
     "context7",
     "deepwiki",
     "grep",
@@ -24,11 +29,12 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour Research",
-    "shortDescription": "MCP and web research for higher-quality implementation",
-    "longDescription": "This plugin adds two research skills for Codex. tech-research is used before complex technical implementation: it closes feature scope through Context7 for official documentation, DeepWiki for open-source repository architecture, and Grep by Vercel for real GitHub usage patterns. web-research is used for internet research: it first defines questions and constraints, then finds authoritative sources, reads them, and synthesizes conclusions with links. The plugin does not store secrets and does not configure MCP transports directly; it depends on MCP servers provided by rldyour-mcps. User-facing answers remain Russian unless the owner asks otherwise, while repository documentation is written in English.",
+    "shortDescription": "Auto technical and web research routing",
+    "longDescription": "This plugin adds automatic research routing for Codex. Its skills should be selected automatically when the owner asks to research, investigate, study the internet, look up current information, verify a fact with sources, inspect documentation, find best practices, compare options, or close unknowns before implementation. tech-research is used before complex technical implementation: it closes feature scope through Context7 for official documentation, DeepWiki for open-source repository architecture, and Grep by Vercel for real GitHub usage patterns. web-research is used for broader internet research: it first defines questions and constraints, then finds authoritative sources, reads them, and synthesizes conclusions with links. The plugin does not store secrets and does not configure MCP transports directly; it depends on MCP servers provided by rldyour-mcps. User-facing answers remain Russian unless the owner asks otherwise, while repository documentation is written in English.",
     "developerName": "rldyourmnd",
     "category": "Research",
     "capabilities": [
+      "Automatic research skill routing",
       "Skills",
       "Technical research",
       "Web research",
@@ -38,9 +44,9 @@
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Research the technical scope of this feature.",
-      "Research this on the internet.",
-      "Find production usage patterns."
+      "Use $tech-research to research the technical scope before implementation.",
+      "Use $web-research to research this online with authoritative source links.",
+      "Use $tech-research to find official docs, repository architecture, and production GitHub patterns."
     ],
     "brandColor": "#2563EB",
     "screenshots": []

@@ -1,6 +1,6 @@
 ---
 name: browser-validation
-description: Browser validation workflow for UI implementation, pixel-perfect checks, functional behavior, responsive states, and business-logic verification. Use after frontend changes, browser-visible feature work, visual fixes, form/flow changes, route changes, client-side logic changes, and any task where the implementation must be proven in a real browser. Playwright MCP is primary; Chrome DevTools MCP is used when console/network/runtime evidence is needed.
+description: Browser validation workflow for UI implementation, pixel-perfect checks, functional behavior, responsive states, and business-logic verification. Use automatically after frontend changes, browser-visible feature work, visual fixes, form/flow changes, route changes, client-side logic changes, and whenever the user asks to check in browser, verify visually, take screenshots, validate UI, or prove implementation in a real browser. Playwright MCP is primary; Chrome DevTools MCP is used when console/network/runtime evidence is needed.
 ---
 
 # Browser Validation
@@ -10,6 +10,18 @@ description: Browser validation workflow for UI implementation, pixel-perfect ch
 Validate browser-facing work with real browser evidence, not assumptions. The goal is to prove the implementation is visually correct, functionally correct, and consistent with business logic.
 
 User-facing reports stay in Russian unless requested otherwise. Store browser artifacts under `browser/` and do not commit them.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$browser-validation` call when the task asks to:
+
+- Check, validate, verify, or prove a browser-visible implementation.
+- Verify UI visually, pixel-perfect, responsive, mobile/desktop, or against a design/reference.
+- Test navigation, forms, modals, tabs, dialogs, auth-like flows, route changes, loading/error/empty states, or business behavior.
+- Capture screenshots or browser evidence under `browser/`.
+- Confirm that a frontend fix works after code changes.
+
+If the validation exposes console, network, runtime, layout, hydration, or performance problems, add `browser-debug`.
 
 ## When To Use
 

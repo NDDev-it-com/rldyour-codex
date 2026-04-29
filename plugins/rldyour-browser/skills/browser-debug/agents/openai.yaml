@@ -1,7 +1,7 @@
 interface:
   display_name: "Browser Debug"
-  short_description: "Console, network, runtime, and performance"
-  default_prompt: "Use $browser-debug to diagnose browser console, network, runtime, layout, and performance issues."
+  short_description: "Auto browser runtime diagnosis"
+  default_prompt: "Use $browser-debug to diagnose browser console, network, runtime, layout, hydration, and performance issues."
 
 dependencies:
   tools:

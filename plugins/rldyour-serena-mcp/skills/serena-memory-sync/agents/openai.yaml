@@ -1,7 +1,7 @@
 interface:
   display_name: "Serena Memory Sync"
-  short_description: "Fact-only project memory maintenance"
-  default_prompt: "Use $serena-memory-sync to update .serena memories, plans, and research after verified project changes."
+  short_description: "Auto fact-only memory sync"
+  default_prompt: "Use $serena-memory-sync to update .serena memories, plans, and research after meaningful verified project changes."
 
 dependencies:
   tools:

@@ -1,7 +1,7 @@
 interface:
   display_name: "Browser Validation"
-  short_description: "Pixel-perfect and functional checks"
-  default_prompt: "Use $browser-validation to verify UI, functionality, and business logic in the browser."
+  short_description: "Auto visual and functional browser proof"
+  default_prompt: "Use $browser-validation to verify visible UI, functionality, responsive behavior, and business logic in a real browser."
 
 dependencies:
   tools:

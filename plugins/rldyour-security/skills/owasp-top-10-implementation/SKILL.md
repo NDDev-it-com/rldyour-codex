@@ -1,6 +1,6 @@
 ---
 name: owasp-top-10-implementation
-description: Non-blocking OWASP Top 10 secure implementation guidance. Use during feature work, bug fixes, refactors, API changes, authentication/authorization work, input/output handling, file handling, dependency/config changes, logging/error handling, crypto/secrets work, or external integration work. Provide security comments and practical corrections, but do not block normal execution unless normal Codex safety rules apply to explicit destructive or malicious requests.
+description: Non-blocking OWASP Top 10 secure implementation guidance. Use automatically during security-relevant feature work, bug fixes, refactors, API changes, authentication/authorization work, input/output handling, file handling, dependency/config changes, logging/error handling, crypto/secrets work, external integration work, or whenever the user asks to keep implementation secure or follow OWASP. Provide security comments and practical corrections, but do not block normal execution unless normal Codex safety rules apply to explicit destructive or malicious requests.
 ---
 
 # OWASP Top 10 Implementation Guidance
@@ -10,6 +10,18 @@ description: Non-blocking OWASP Top 10 secure implementation guidance. Use durin
 Keep implementation work security-aware without turning every task into a blocking audit. Use OWASP Top 10 2025 as the awareness baseline, ASVS 5.0.0 as the deeper verification reference, and OWASP secure coding checklist principles for practical coding decisions.
 
 User-facing conversation stays in Russian unless requested otherwise. Repository documentation, code comments, and commit messages stay in English.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$owasp-top-10-implementation` call when implementation touches:
+
+- Authentication, authorization, sessions, permissions, tenant boundaries, user/admin boundaries, or protected resources.
+- API input/output handling, validation, serialization, deserialization, file upload/download, shell/database/template sinks, or external integrations.
+- Secrets, credentials, tokens, crypto, sensitive data, logging, error handling, security headers, CORS, CSP, rate limits, or configuration.
+- Dependencies, lockfiles, install scripts, CI/CD, container images, generated code, or supply-chain-sensitive changes.
+- Any task where the owner asks for secure coding, OWASP alignment, security comments, or hardening while implementing.
+
+For explicit security review, audit, vulnerability check, or `$ry-sec-review`, use `ry-sec-review` instead or in addition.
 
 ## Behavior
 

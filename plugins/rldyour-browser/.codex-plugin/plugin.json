@@ -1,7 +1,7 @@
 {
   "name": "rldyour-browser",
   "version": "0.1.0",
-  "description": "Skills-only browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.",
+  "description": "Auto-invoked browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -17,18 +17,24 @@
     "chrome-devtools",
     "mcp",
     "ui-validation",
+    "visual-validation",
+    "browser-validation",
+    "responsive-checks",
+    "screenshots",
     "pixel-perfect",
     "debugging",
+    "automatic-invocation",
     "rldyour"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour Browser",
-    "shortDescription": "Playwright validation and Chrome DevTools debugging",
-    "longDescription": "This skills-only plugin defines browser workflows for Codex. Playwright MCP is the primary tool for user-flow reproduction, functional validation, business-logic verification, screenshots, accessibility snapshots, storage/network/testing assertions, and pixel-perfect UI checks. Chrome DevTools MCP is the primary tool for console, network, DOM/runtime, layout, Lighthouse, performance trace, and deeper browser debugging. Browser artifacts such as screenshots, videos, traces, PDFs, and temporary evidence must be written under browser/ and treated as ignored local artifacts unless the owner explicitly asks to preserve them.",
+    "shortDescription": "Auto browser validation and debugging",
+    "longDescription": "This skills-only plugin defines automatic browser workflows for Codex. Its skills should be selected automatically when the owner asks to check in the browser, verify visually, validate a UI, inspect screenshots, test a user flow, prove business logic, compare pixel-perfect output, debug console/network/runtime/layout failures, or analyze performance. Playwright MCP is the primary tool for user-flow reproduction, functional validation, business-logic verification, screenshots, accessibility snapshots, storage/network/testing assertions, and pixel-perfect UI checks. Chrome DevTools MCP is the primary tool for console, network, DOM/runtime, layout, Lighthouse, performance trace, and deeper browser debugging. Browser artifacts such as screenshots, videos, traces, PDFs, and temporary evidence must be written under browser/ and treated as ignored local artifacts unless the owner explicitly asks to preserve them.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [
+      "Automatic browser skill routing",
       "Skills",
       "Playwright MCP workflow",
       "Chrome DevTools MCP workflow",
@@ -40,9 +46,9 @@
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Validate this implementation in the browser.",
-      "Debug this UI issue with browser tools.",
-      "Check the page pixel-perfect and functionally."
+      "Use $browser-validation to validate this implementation in the browser.",
+      "Use $browser-debug to diagnose this UI/runtime issue with browser evidence.",
+      "Use $browser-tool-routing to choose Playwright, Chrome DevTools, or both."
     ],
     "brandColor": "#0EA5E9",
     "screenshots": []

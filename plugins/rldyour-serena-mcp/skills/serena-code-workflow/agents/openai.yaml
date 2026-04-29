@@ -1,7 +1,7 @@
 interface:
   display_name: "Serena Code Workflow"
-  short_description: "Serena-first semantic code workflow"
-  default_prompt: "Use $serena-code-workflow to inspect and edit code through Serena MCP first."
+  short_description: "Auto Serena-first code workflow"
+  default_prompt: "Use $serena-code-workflow to inspect, trace, edit, or refactor repository code through Serena MCP first."
 
 dependencies:
   tools:

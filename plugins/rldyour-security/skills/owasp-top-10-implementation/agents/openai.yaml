@@ -1,7 +1,7 @@
 interface:
   display_name: "OWASP Implementation"
-  short_description: "Non-blocking OWASP Top 10 guidance"
-  default_prompt: "Use $owasp-top-10-implementation to add non-blocking security comments while implementing this change."
+  short_description: "Auto OWASP secure implementation"
+  default_prompt: "Use $owasp-top-10-implementation to add non-blocking OWASP security guidance while implementing security-relevant changes."
 
 dependencies:
   tools:

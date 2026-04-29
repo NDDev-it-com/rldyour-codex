@@ -6,6 +6,12 @@ It does not configure MCP servers, does not add hooks, and does not block normal
 
 User-facing conversation stays in Russian unless the owner asks otherwise. Repository documentation is written in English.
 
+## Auto Invocation
+
+The plugin is optimized for automatic security skill selection. Codex should route security work to these skills when a task mentions security, secure coding, OWASP, ASVS, vulnerability review, audit, auth/authz, permissions, secrets, injection, crypto, dependency risk, security headers, logging, error handling, or `$ry-sec-review`.
+
+`policy.allow_implicit_invocation` is enabled for every skill. The primary trigger surface is each `SKILL.md` frontmatter `description`; plugin manifest descriptions and `agents/openai.yaml` metadata mirror the same intent for marketplace and UI discovery.
+
 ## Scope
 
 - Keep implementation work aligned with OWASP Top 10 2025.
@@ -18,6 +24,11 @@ User-facing conversation stays in Russian unless the owner asks otherwise. Repos
 
 - `owasp-top-10-implementation`: non-blocking secure implementation guidance mapped to OWASP Top 10 2025.
 - `ry-sec-review`: defensive security review workflow with hypothesis generation, data-flow tracing, confidence ranking, concrete remediation, and verification.
+
+## Trigger Map
+
+- Security-relevant implementation work, secure coding comments, OWASP alignment, auth/authz, inputs/outputs, files, secrets, crypto, dependencies, logging, errors, or external integrations: use `owasp-top-10-implementation`.
+- Explicit security review, vulnerability audit, `$ry-sec-review`, PR/diff audit, sensitive code path review, source-to-sink tracing, exploitability assessment, or remediation report: use `ry-sec-review`.
 
 ## Safety Boundary
 

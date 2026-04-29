@@ -6,6 +6,12 @@ It does not configure MCP servers directly. The Playwright MCP and Chrome DevToo
 
 User-facing conversation stays in Russian unless the owner asks otherwise. Repository documentation is written in English.
 
+## Auto Invocation
+
+The plugin is optimized for automatic browser skill selection. Codex should route browser work to these skills when a task asks to check in the browser, verify visually, validate a UI, prove a user flow, inspect screenshots, compare pixel-perfect output, debug console/network/runtime/layout issues, or analyze browser performance.
+
+`policy.allow_implicit_invocation` is enabled for every skill. The primary trigger surface is each `SKILL.md` frontmatter `description`; plugin manifest descriptions and `agents/openai.yaml` metadata mirror the same intent for marketplace and UI discovery.
+
 ## Scope
 
 - Use Playwright MCP as the primary tool for user-flow reproduction, functional checks, business-logic verification, screenshots, accessibility snapshots, storage/network/testing assertions, and pixel-perfect UI validation.
@@ -19,6 +25,12 @@ User-facing conversation stays in Russian unless the owner asks otherwise. Repos
 - `browser-tool-routing`: chooses Playwright, Chrome DevTools, or both based on the task.
 - `browser-validation`: verifies UI, pixel-perfect behavior, functionality, and business logic in the browser.
 - `browser-debug`: diagnoses runtime, console, network, layout, and performance problems through Chrome DevTools, with Playwright reproduction when useful.
+
+## Trigger Map
+
+- Check in browser, verify visually, validate UI, take screenshots, prove responsive states, test flows, or confirm business behavior: use `browser-validation`.
+- Console errors, network failures, runtime exceptions, hydration, layout diagnosis, Lighthouse, performance, or memory problems: use `browser-debug`.
+- Unclear browser request, mixed validation/debugging, or tool-choice decision: use `browser-tool-routing` first.
 
 ## Artifact Rule
 
