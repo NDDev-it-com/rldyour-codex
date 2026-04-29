@@ -1,0 +1,16 @@
+interface:
+  display_name: "Browser Debug"
+  short_description: "Console, network, runtime, and performance"
+  default_prompt: "Use $browser-debug to diagnose browser console, network, runtime, layout, and performance issues."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Primary browser debugging MCP for console, network, DOM/runtime, layout, Lighthouse, performance, and memory evidence."
+    - type: "mcp"
+      value: "playwright"
+      description: "Reproduction and revalidation MCP for deterministic user flows and screenshots."
+
+policy:
+  allow_implicit_invocation: true

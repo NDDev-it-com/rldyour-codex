@@ -1,0 +1,16 @@
+interface:
+  display_name: "Browser Validation"
+  short_description: "Pixel-perfect and functional checks"
+  default_prompt: "Use $browser-validation to verify UI, functionality, and business logic in the browser."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "playwright"
+      description: "Primary browser MCP for functional validation, screenshots, accessibility snapshots, testing assertions, storage, and network checks."
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Secondary MCP for console, network, runtime, layout, and performance evidence when validation needs diagnosis."
+
+policy:
+  allow_implicit_invocation: true

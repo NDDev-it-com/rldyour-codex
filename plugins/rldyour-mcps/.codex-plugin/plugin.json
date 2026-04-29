@@ -1,7 +1,7 @@
 {
   "name": "rldyour-mcps",
-  "version": "0.1.3",
-  "description": "Controlled rldyour MCP server set for Codex with explicit runtime, startup, and safety rules.",
+  "version": "0.1.4",
+  "description": "Controlled rldyour MCP server set for Codex with explicit runtime, startup, browser capability, and safety rules.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -31,7 +31,7 @@
   "interface": {
     "displayName": "rldyour MCP Servers",
     "shortDescription": "Approved MCP servers used by the owner in Codex",
-    "longDescription": "This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter, and Figma. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
+    "longDescription": "This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter, and Figma. Playwright MCP runs headless with network, storage, testing, and devtools capabilities enabled for full browser validation workflows. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [

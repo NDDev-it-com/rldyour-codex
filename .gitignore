@@ -7,6 +7,11 @@
 __pycache__/
 node_modules/
 
+# Browser MCP screenshots, videos, traces, PDFs, and temporary evidence are local artifacts.
+browser/**
+!browser/
+!browser/.gitkeep
+
 # Serena project knowledge is trackable; runtime/cache state is not.
 .serena/cache/
 .serena/.gitignore
