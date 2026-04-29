@@ -1,6 +1,6 @@
 {
   "name": "rldyour-mcps",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Рабочий набор MCP-серверов rldyour для Codex с русскоязычным описанием и контролируемым подключением.",
   "author": {
     "name": "rldyourmnd",
