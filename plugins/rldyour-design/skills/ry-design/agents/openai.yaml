@@ -1,0 +1,28 @@
+interface:
+  display_name: "ry-design"
+  short_description: "End-to-end design implementation"
+  default_prompt: "Use $ry-design to implement a design end-to-end with Figma, design system, FSD, and browser validation."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Source of truth for designer-provided layouts, variables, components, assets, and Code Connect hints."
+    - type: "mcp"
+      value: "shadcn"
+      description: "Primary registry workflow for UI primitives and blocks."
+    - type: "mcp"
+      value: "serena"
+      description: "Preferred codebase inspection and precise editing workflow."
+    - type: "mcp"
+      value: "playwright"
+      description: "Primary browser validation workflow."
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Browser runtime and performance debugging workflow."
+    - type: "mcp"
+      value: "context7"
+      description: "Official documentation lookup when framework, shadcn, Tailwind, or FSD details are unclear."
+
+policy:
+  allow_implicit_invocation: true

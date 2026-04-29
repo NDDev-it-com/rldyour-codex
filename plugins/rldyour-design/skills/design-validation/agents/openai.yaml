@@ -1,0 +1,19 @@
+interface:
+  display_name: "Design Validation"
+  short_description: "Browser proof for design work"
+  default_prompt: "Use $design-validation to verify design implementation with browser evidence."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Design source for visual comparison and expected frame/component behavior."
+    - type: "mcp"
+      value: "playwright"
+      description: "Primary validation MCP for browser flows, screenshots, snapshots, responsive checks, and assertions."
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Secondary diagnosis MCP for console, network, runtime, layout, Lighthouse, and performance evidence."
+
+policy:
+  allow_implicit_invocation: true
