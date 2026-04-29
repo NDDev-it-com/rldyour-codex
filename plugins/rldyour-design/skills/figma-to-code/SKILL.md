@@ -1,6 +1,6 @@
 ---
 name: figma-to-code
-description: Pixel-perfect Figma-to-code implementation workflow. Use when the user provides a Figma file/frame/selection, asks to transfer a designer layout to a website, asks for pixel-perfect design implementation, or needs Figma MCP context converted into frontend code. Figma MCP is the source of truth; implementation must be adapted into centralized design tokens, strict FSD, shadcn/ui primitives, optional ReactBits motion, and browser validation.
+description: Pixel-perfect Figma-to-code implementation workflow. Use automatically for any Russian or English request that includes a Figma link, file, frame, node, selection, screenshot from Figma, designer layout, design handoff, pixel-perfect page/component implementation, or transfer of a Figma design into frontend code. Figma MCP is the source of truth; implementation must be adapted into centralized design tokens, strict FSD, shadcn/ui primitives, optional ReactBits motion, and browser validation.
 ---
 
 # Figma To Code
@@ -10,6 +10,17 @@ description: Pixel-perfect Figma-to-code implementation workflow. Use when the u
 Transfer designer-provided Figma layouts into production frontend code as accurately as possible while preserving architecture, design-system consistency, and runtime behavior.
 
 User-facing conversation stays in Russian unless requested otherwise. Repository documentation, code comments, commit messages, and design-token files stay in English.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$figma-to-code` call when the task is about:
+
+- Implementing, copying, transferring, or recreating a Figma frame, component, layout, selection, or designer mockup.
+- Matching a visual reference pixel-perfect or as close as possible in a browser.
+- Extracting Figma variables, styles, components, assets, dimensions, or Code Connect hints into code.
+- Turning design handoff material into React/frontend implementation.
+
+Do not use it for design-system-only refactors that have no Figma source; use `design-system-implementation` instead.
 
 ## Source Of Truth
 

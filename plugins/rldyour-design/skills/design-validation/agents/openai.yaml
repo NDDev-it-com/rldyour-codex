@@ -1,7 +1,7 @@
 interface:
   display_name: "Design Validation"
-  short_description: "Browser proof for design work"
-  default_prompt: "Use $design-validation to verify design implementation with browser evidence."
+  short_description: "Auto browser design validation"
+  default_prompt: "Use $design-validation to verify visible frontend changes with browser evidence, screenshots under browser/, and runtime checks."
 
 dependencies:
   tools:

@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: Mandatory browser validation for design implementation. Use after Figma-to-code work, design-system changes, shadcn/ui or ReactBits integration, responsive layout changes, and any visual/frontend implementation. Delegates browser evidence to rldyour-browser workflows and requires screenshots under browser/.
+description: Mandatory browser validation for design implementation. Use automatically after any meaningful frontend UI, styling, responsive layout, Figma-to-code, design-system, shadcn/ui, ReactBits, animation, or interaction implementation, and before final delivery when a browser can be run. Delegates browser evidence to rldyour-browser workflows and requires screenshots under browser/.
 ---
 
 # Design Validation
@@ -10,6 +10,16 @@ description: Mandatory browser validation for design implementation. Use after F
 Prove that design work is visually accurate, functionally correct, responsive, accessible enough for the scope, and aligned with business behavior.
 
 This skill depends on `rldyour-browser`, especially `browser-validation`.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$design-validation` call when the task has changed or created:
+
+- Frontend UI, layout, styling, responsive behavior, visual states, animations, or interactions.
+- Figma-to-code implementation, shadcn/ui components, ReactBits components, or design-system tokens.
+- User-visible page, widget, feature, form, modal, menu, navigation, or stateful component behavior.
+
+If browser tools cannot run, state the blocker and perform the strongest available static checks instead. Do not mark meaningful design work as complete without either browser evidence or an explicit validation blocker.
 
 ## Required Checks
 

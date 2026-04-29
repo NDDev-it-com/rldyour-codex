@@ -1,6 +1,6 @@
 ---
 name: ry-design
-description: End-to-end design implementation command for Codex. Use when the user invokes $ry-design or asks to implement a design, transfer a Figma layout, create frontend UI, build a design system, or produce pixel-perfect frontend work. Orchestrates Figma MCP, centralized tokens, strict FSD placement, shadcn/ui MCP, ReactBits.dev, browser validation, and Serena memory sync when useful.
+description: End-to-end design implementation command for Codex. Use automatically when the user invokes $ry-design or asks for a complete design/UI implementation flow such as implementing a Figma layout, building a page or component, creating frontend UI, restyling an interface, building a centralized design system, producing pixel-perfect frontend work, or validating design quality. Orchestrates Figma MCP, centralized tokens, strict FSD placement, shadcn/ui MCP, ReactBits.dev, browser validation, and Serena memory sync when useful.
 ---
 
 # ry-design
@@ -10,6 +10,17 @@ description: End-to-end design implementation command for Codex. Use when the us
 Run the full rldyour design implementation workflow from source design to browser-validated code.
 
 User-facing communication stays in Russian unless requested otherwise. Code, docs, tokens, comments, and commits stay in English.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$ry-design` call when the user asks for an end-to-end design result rather than a narrow subtask:
+
+- Implement a Figma design, designer mockup, page, component, landing, dashboard, widget, feature UI, or redesign.
+- Create UI that requires tokens, architecture placement, shadcn/ui or ReactBits components, and browser validation.
+- Make frontend design work "pixel-perfect", "production-ready", "according to design", or visually and functionally complete.
+- Coordinate multiple design skills in one task.
+
+For very narrow tasks, prefer the matching subskill directly. Use `design-validation` after any meaningful visible implementation even when `$ry-design` is not selected.
 
 ## Workflow
 

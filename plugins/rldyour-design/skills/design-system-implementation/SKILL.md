@@ -1,6 +1,6 @@
 ---
 name: design-system-implementation
-description: Centralized frontend design system workflow with design tokens, shadcn/ui MCP, and ReactBits.dev. Use when creating or updating UI primitives, theme tokens, component variants, shadcn components, ReactBits animated components, Figma variable mappings, or frontend visual consistency rules.
+description: Centralized frontend design system workflow with design tokens, shadcn/ui MCP, and ReactBits.dev. Use automatically when creating or updating UI primitives, theme tokens, CSS variables, Tailwind or shadcn theme config, component variants, typography, colors, spacing, radii, shadows, motion tokens, Figma variable mappings, ReactBits animated components, or frontend visual consistency rules.
 ---
 
 # Design System Implementation
@@ -10,6 +10,18 @@ description: Centralized frontend design system workflow with design tokens, sha
 Build and maintain a centralized design system so design implementation is consistent, scalable, and easy for future Codex sessions to modify with high confidence.
 
 The design system is the source of truth for reusable visual decisions. Components should consume tokens instead of scattering raw values across pages and features.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$design-system-implementation` call when the task includes:
+
+- Creating or modifying a design system, theme, tokens, CSS variables, Tailwind config, shadcn theme, or UI kit.
+- Adding, adapting, or cleaning shadcn/ui primitives, registry blocks, component variants, or shared UI components.
+- Adding ReactBits or custom animated components that need token normalization and reduced-motion handling.
+- Replacing raw visual values with centralized tokens.
+- Mapping Figma variables, styles, modes, or semantic names into code.
+
+For a full Figma implementation, use it together with `figma-to-code`, `fsd-frontend-architecture`, and `design-validation`.
 
 ## Token System
 

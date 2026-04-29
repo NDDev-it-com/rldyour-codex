@@ -1,7 +1,7 @@
 {
   "name": "rldyour-design",
   "version": "0.1.0",
-  "description": "Skills-only design implementation workflow for Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser validation.",
+  "description": "Auto-invoked design workflow skills for Figma-to-code, centralized design systems, strict FSD, shadcn/ui, ReactBits, and browser-validated UI implementation.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -21,23 +21,32 @@
     "feature-sliced-design",
     "design-system",
     "tokens",
+    "ui-implementation",
+    "frontend",
+    "responsive-design",
+    "browser-validation",
+    "design-validation",
+    "automatic-invocation",
     "pixel-perfect",
     "rldyour"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour Design",
-    "shortDescription": "Figma-to-code, tokens, FSD, shadcn/ui, ReactBits",
-    "longDescription": "This skills-only plugin defines the rldyour design implementation workflow for Codex. Figma MCP is the source of truth for designer-provided layouts, variables, components, assets, layout data, and Code Connect hints when available. All frontend design work should centralize tokens in a strict design system, use Feature-Sliced Design placement by default, use shadcn/ui MCP as the primary source for UI primitives and blocks, and use ReactBits.dev selectively for purposeful animated or interactive React components. Design work must be validated through browser evidence with Playwright MCP and Chrome DevTools MCP, with artifacts stored under browser/ and ignored by git.",
+    "shortDescription": "Auto design workflow: Figma, tokens, FSD, browser proof",
+    "longDescription": "This skills-only plugin defines the rldyour design implementation workflow for Codex and is optimized for automatic skill routing. Its skills should be selected automatically when a task mentions Figma layouts, designer frames, pixel-perfect frontend implementation, UI creation or restyling, centralized design tokens, shadcn/ui, ReactBits, strict Feature-Sliced Design placement, responsive visual work, or browser-based design validation. Figma MCP is the source of truth for designer-provided layouts, variables, components, assets, layout data, and Code Connect hints when available. All frontend design work should centralize tokens in a strict design system, use Feature-Sliced Design placement by default, use shadcn/ui MCP as the primary source for UI primitives and blocks, and use ReactBits.dev selectively for purposeful animated or interactive React components. Design work must be validated through browser evidence with Playwright MCP and Chrome DevTools MCP, with artifacts stored under browser/ and ignored by git.",
     "developerName": "rldyourmnd",
     "category": "Design",
     "capabilities": [
+      "Automatic design skill routing",
       "Skills",
       "Figma MCP workflow",
       "Centralized design tokens",
       "Feature-Sliced Design",
       "shadcn/ui MCP workflow",
       "ReactBits workflow",
+      "Responsive UI implementation",
+      "Design validation triggers",
       "Pixel-perfect browser validation",
       "Russian user-facing workflow"
     ],
@@ -45,9 +54,9 @@
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Use Figma MCP to implement this design pixel-perfect.",
-      "Build the centralized design system tokens for this frontend.",
-      "Run $ry-design for this design implementation."
+      "Use $ry-design for end-to-end Figma/UI implementation with tokens, FSD, shadcn/ui, ReactBits, and browser validation.",
+      "Use $figma-to-code to implement the selected Figma frame pixel-perfect.",
+      "Use $design-system-implementation to centralize frontend design tokens and UI primitives."
     ],
     "brandColor": "#DB2777",
     "screenshots": []

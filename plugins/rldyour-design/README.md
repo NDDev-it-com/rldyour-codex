@@ -6,6 +6,12 @@ It does not configure MCP servers directly. Figma, shadcn, Playwright, and Chrom
 
 User-facing conversation stays in Russian unless the owner asks otherwise. Repository documentation is written in English.
 
+## Auto Invocation
+
+The plugin is optimized for automatic skill selection. Codex should route design work to these skills when a task mentions Figma, designer layouts, pixel-perfect frontend implementation, UI creation or restyling, centralized design tokens, shadcn/ui, ReactBits, strict FSD placement, responsive visual changes, or browser-based design validation.
+
+`policy.allow_implicit_invocation` is enabled for every skill. The primary trigger surface is each `SKILL.md` frontmatter `description`; plugin manifest descriptions and `agents/openai.yaml` metadata mirror the same intent for marketplace and UI discovery.
+
 ## Scope
 
 - Use Figma MCP as the source of truth for designer-provided layouts, variables, components, layout data, assets, screenshots, and Code Connect hints when available.
@@ -22,6 +28,14 @@ User-facing conversation stays in Russian unless the owner asks otherwise. Repos
 - `fsd-frontend-architecture`: strict FSD placement for frontend design implementation.
 - `design-validation`: browser proof for design implementation quality.
 - `ry-design`: command-like end-to-end design workflow.
+
+## Trigger Map
+
+- Figma file, frame, node, selection, design handoff, designer layout, or pixel-perfect transfer: use `figma-to-code`.
+- Tokens, CSS variables, Tailwind/shadcn theme, UI kit, component variants, or visual consistency: use `design-system-implementation`.
+- FSD placement, public APIs, imports, frontend layers, generated code adaptation, or architecture cleanup: use `fsd-frontend-architecture`.
+- Browser proof, screenshots, visual regression, responsive checks, runtime checks, or final frontend validation: use `design-validation`.
+- Complete design/page/component implementation that requires multiple design steps: use `ry-design`.
 
 ## Design Standard
 

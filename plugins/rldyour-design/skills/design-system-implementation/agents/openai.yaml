@@ -1,7 +1,7 @@
 interface:
   display_name: "Design System Implementation"
-  short_description: "Tokens, shadcn/ui, ReactBits"
-  default_prompt: "Use $design-system-implementation to build a centralized token-based design system."
+  short_description: "Auto token design system flow"
+  default_prompt: "Use $design-system-implementation to create or update centralized frontend tokens, shadcn/ui primitives, and visual consistency rules."
 
 dependencies:
   tools:
