@@ -1,57 +1,57 @@
 ---
 name: web-research
-description: Русскоязычное интернет-исследование через web search/browser для актуальной информации, нетехнических вопросов и технических задач, когда нужны внешние источники за пределами MCP. Используй, когда пользователь говорит "посмотри в интернете", "изучи интернет", "изучи в интернете", "проверь актуальное", "найди источники", если запрос не требует в первую очередь Context7/DeepWiki/Grep или если MCP-исследования недостаточно. Сначала определить scope и вопросы, затем найти авторитетные источники, прочитать их и дать выводы на русском со ссылками.
+description: Internet research through web search/browser for current information, non-technical questions, and technical tasks that need external sources beyond MCP research. Use when the user asks to look on the internet, research the web, verify current information, find sources, compare current data, confirm a fact with links, or collect source-backed context before making a decision. First define scope and questions, then find authoritative sources, read them, and answer in Russian unless the user asks otherwise.
 ---
 
 # Web Research
 
-## Назначение
+## Purpose
 
-Дать Codex надежный workflow для интернет-исследований: не искать хаотично, а сначала понять, что именно нужно доказать или выяснить, затем выбрать качественные источники, прочитать их и синтезировать выводы.
+Give Codex a reliable workflow for internet research: avoid chaotic searching, first define what must be proved or discovered, then choose high-quality sources, read them, and synthesize conclusions.
 
-Работай на русском. Названия компаний, продуктов, API, законов, стандартов и документов сохраняй точно.
+User-facing conversation stays in Russian unless requested otherwise. Company names, products, APIs, laws, standards, and document titles stay exact.
 
-## Когда использовать
+## When To Use
 
-Используй skill автоматически, когда пользователь просит изучить интернет, посмотреть в интернете, проверить актуальную информацию, найти источники, сравнить текущие данные, подтвердить факт ссылками или собрать research перед решением.
+Use this skill automatically when the user asks to research the internet, verify current information, find sources, compare current data, confirm a fact with links, or gather research before a decision.
 
-Если запрос технический и относится к библиотеке, API, фреймворку, архитектуре open-source repo или GitHub-паттернам, сначала используй `tech-research`. Подключай `web-research`, если нужны новости, changelog, issue/discussion, pricing, legal/security docs, свежие релизы или источники за пределами MCP.
+If the request is technical and concerns a library, API, framework, open-source repository architecture, or GitHub usage patterns, use `tech-research` first. Add `web-research` when the task needs news, changelogs, issues/discussions, pricing, legal/security docs, recent releases, or sources beyond MCP research.
 
-## Рабочий процесс
+## Workflow
 
-1. Определить scope: что пользователь хочет решить, какой результат нужен, какие вопросы реально блокируют ответ или реализацию.
-2. Сформировать поисковые гипотезы: какие источники должны существовать, какие домены вероятно авторитетны, какие даты и версии важны.
-3. Искать в несколько проходов: широкий запрос, уточняющий запрос, доменный запрос по официальным сайтам, репозиториям, docs, standards, papers, changelog или issue tracker.
-4. Открывать и читать источники, а не отвечать по сниппетам. Для нестабильных тем сверять даты публикации, даты событий и текущую дату.
-5. Отбрасывать слабые источники: SEO-агрегаторы, AI-переписывания, неподтвержденные посты, устаревшие статьи, если есть более первичный источник.
-6. Сравнить источники между собой. Если они конфликтуют, явно указать конфликт и выбрать более надежный источник.
-7. Синтезировать вывод: что найдено, что это меняет в решении, какие ограничения остаются, что нужно делать дальше.
+1. Define scope: what the user wants to solve, what result is needed, and which questions actually block the answer or implementation.
+2. Form search hypotheses: which sources should exist, which domains are likely authoritative, and which dates or versions matter.
+3. Search in multiple passes: broad query, refined query, and domain-specific query across official sites, repositories, docs, standards, papers, changelogs, or issue trackers.
+4. Open and read sources instead of answering from snippets. For unstable topics, compare publication dates, event dates, and the current date.
+5. Reject weak sources: SEO aggregators, AI rewrites, unverified posts, and outdated articles when a more primary source exists.
+6. Compare sources. If sources conflict, identify the conflict and choose the more reliable source.
+7. Synthesize the answer: what was found, how it changes the decision, which constraints remain, and what should happen next.
 
-## Приоритет источников
+## Source Priority
 
-Для технических и продуктовых вопросов: официальная документация, исходники, release notes, changelog, RFC/spec, issue/PR/discussion в основном repo, vendor docs.
+For technical and product questions: official documentation, source code, release notes, changelogs, RFCs/specifications, issue/PR/discussion threads in the primary repository, and vendor docs.
 
-Для безопасности, права, финансов и медицины: только первичные или максимально авторитетные источники; обязательно указывать, что это не заменяет профессиональную консультацию, если stakes высокие.
+For security, legal, financial, and medical topics: use only primary or highly authoritative sources. State that the answer is not a replacement for professional advice when stakes are high.
 
-Для рекомендаций: учитывать актуальность, независимые обзоры, ограничения пользователя, стоимость владения и риски.
+For recommendations: account for freshness, independent reviews, user constraints, total cost of ownership, and risks.
 
-## Правила качества
+## Quality Rules
 
-Не полагайся на память, если пользователь явно просит интернет или вопрос может измениться. Используй web search/browser и цитируй ссылки на источники.
+Do not rely on memory when the user explicitly asks for internet research or the topic may have changed. Use web search/browser and cite source links.
 
-Не копируй длинные фрагменты из источников. Пересказывай кратко, цитируй только короткие необходимые отрывки.
+Do not copy long source fragments. Summarize concisely and quote only short necessary excerpts.
 
-Отделяй найденные факты от собственных выводов. Если делаешь inference, помечай это как вывод на основе источников.
+Separate found facts from your own conclusions. If you infer something from sources, label it as an inference.
 
-Если после исследования нужно писать код, переходи к реализации и проверкам. Research должен улучшать решение, а не заменять работу.
+If research leads to a code task, proceed to implementation and verification. Research should improve the solution, not replace the work.
 
-## Формат результата
+## Output
 
-Для отдельного research-ответа используй:
+For a standalone research answer, respond in Russian with:
 
-- `Вопросы`: что именно проверялось.
-- `Источники`: какие источники оказались основными и почему им можно доверять.
-- `Выводы`: ответы на вопросы без лишней воды.
-- `Что делать дальше`: практические шаги, если они нужны.
+- `Questions`: what was checked.
+- `Sources`: which sources were primary and why they are trustworthy.
+- `Conclusions`: direct answers without filler.
+- `Next steps`: practical actions if needed.
 
-Для code task держи итог короче: ключевые выводы, изменение в коде, проверка, оставшиеся риски.
+For a code task, keep the final shorter: key findings, code change, verification, and remaining risks.

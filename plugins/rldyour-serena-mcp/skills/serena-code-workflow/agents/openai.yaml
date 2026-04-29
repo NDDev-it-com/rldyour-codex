@@ -1,0 +1,13 @@
+interface:
+  display_name: "Serena Code Workflow"
+  short_description: "Serena-first semantic code workflow"
+  default_prompt: "Use $serena-code-workflow to inspect and edit code through Serena MCP first."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Serena MCP semantic code tools for project activation, memories, symbol overview, symbol search, references, and structured code edits."
+
+policy:
+  allow_implicit_invocation: true

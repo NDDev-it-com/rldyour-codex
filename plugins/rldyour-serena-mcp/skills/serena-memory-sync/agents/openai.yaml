@@ -1,0 +1,13 @@
+interface:
+  display_name: "Serena Memory Sync"
+  short_description: "Fact-only project memory maintenance"
+  default_prompt: "Use $serena-memory-sync to update .serena memories, plans, and research after verified project changes."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Serena MCP memory and semantic code tools used to audit changed code and update project knowledge from verified facts."
+
+policy:
+  allow_implicit_invocation: true

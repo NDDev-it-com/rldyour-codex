@@ -1,51 +1,52 @@
 ---
 name: tech-research
-description: Русскоязычное техническое исследование перед реализацией фичи, исправлением сложной проблемы, миграцией, настройкой библиотеки/API/фреймворка или разбором архитектуры open-source репозитория. Используй, когда пользователь просит "посмотри в интернете", "изучи в интернете", "проверь документацию", "найди production-паттерны" для технической задачи. Работай через Context7 для официальной документации, DeepWiki для архитектуры репозиториев и Grep by Vercel для реальных GitHub-паттернов.
+description: Technical research before feature implementation, complex bug fixing, migrations, library/API/framework setup, or open-source repository architecture analysis. Use when the user asks to research the internet, inspect documentation, study MCP sources, find GitHub production patterns, understand API behavior, or validate best practices for a technical task. Use Context7 for official documentation, DeepWiki for repository architecture, and Grep by Vercel for real GitHub usage patterns. User-facing answers stay in Russian unless the user asks otherwise.
 ---
 
 # Tech Research
 
-## Назначение
+## Purpose
 
-Помочь Codex понять технический scope до реализации: требования, версии, API, архитектурные ограничения, реальные паттерны использования, edge cases, риски и проверки. Цель - не накопить ссылки, а принять более точное инженерное решение и затем написать чистый код без костылей.
+Help Codex understand the technical scope before implementation: requirements, versions, APIs, architectural constraints, real usage patterns, edge cases, risks, and verification. The goal is not to collect links; the goal is to make a more accurate engineering decision and then write clean code without workarounds.
 
-Работай на русском. Английские имена API, пакетов, команд и ошибок сохраняй без перевода.
+User-facing conversation stays in Russian unless requested otherwise. API names, package names, commands, and error strings stay exact.
 
-## Когда использовать
+## When To Use
 
-Используй skill автоматически, если запрос технический и пользователь просит изучить интернет, документацию, MCP, GitHub-паттерны, архитектуру open-source репозитория, миграцию, настройку, SDK, API или best practices.
+Use this skill automatically when the task is technical and the user asks to research the internet, read documentation, inspect MCP sources, find GitHub patterns, understand open-source repository architecture, handle migrations, configure SDKs/APIs, or verify best practices.
 
-Если запрос не технический, используй `web-research`. Если технический запрос требует актуальных внешних источников за пределами Context7/DeepWiki/Grep, дополни исследование обычным web search.
+If the request is not technical, use `web-research`. If a technical request needs fresh external sources beyond Context7, DeepWiki, and Grep, supplement the MCP research with normal web search.
 
-## Рабочий процесс
+## Workflow
 
-1. Сформулировать scope: что реализуем, какой стек и версии важны, какие файлы/модули могут быть затронуты, какие неизвестные блокируют качественную реализацию.
-2. Разложить вопросы: документация/API, архитектура похожих repo, реальные production-паттерны, edge cases, безопасность, тестирование, миграции и совместимость.
-3. Context7: использовать для официальной документации библиотек, фреймворков, SDK, API, конфигурации и миграций. Если известен точный library ID или версия, задавать их явно.
-4. DeepWiki: использовать для публичных open-source репозиториев, когда нужно понять структуру repo, реализацию фичи, архитектурные решения, data flow или tradeoffs.
-5. Grep by Vercel: использовать для поиска реальных GitHub-паттернов: как API вызывают в продакшене, какие параметры обычно передают, как обрабатывают ошибки, какие edge cases встречаются.
-6. Синтезировать вывод: какие решения принимаем, какие подходы отвергаем, какие ограничения остаются, как это влияет на код.
-7. Если пользователь просил реализацию, после исследования перейти к коду и проверкам, не останавливаясь на теории.
+1. Define scope: what is being implemented, which stack and versions matter, which files/modules may be affected, and which unknowns block a high-quality implementation.
+2. Split questions into documentation/API, comparable repository architecture, real production patterns, edge cases, security, tests, migrations, and compatibility.
+3. Context7: use for official library, framework, SDK, API, configuration, and migration documentation. Provide an exact library ID or version when known.
+4. DeepWiki: use for public open-source repositories when the task requires repository structure, feature implementation details, architectural decisions, data flow, or tradeoffs.
+5. Grep by Vercel: use for real GitHub patterns: how APIs are called in production, which parameters are commonly passed, how errors are handled, and which edge cases appear.
+6. Synthesize the decision: which approach is selected, which alternatives are rejected, which constraints remain, and how this affects local code.
+7. If the user requested implementation, move from research to code and verification instead of stopping at theory.
 
-## Правила качества
+## Quality Rules
 
-Предпочитай первичные источники: официальную документацию, исходники, release notes, спецификации, README поддерживаемых repo. Блоги и ответы сообществ используй как вторичные подтверждения, а не как основу решения.
+Prefer primary sources: official documentation, source code, release notes, specifications, and maintained repository READMEs. Use blogs and community answers only as secondary confirmation.
 
-Сравнивай найденное с текущим кодом проекта. Не копируй паттерн из GitHub вслепую: проверяй, подходит ли он под архитектуру, версии, безопасность и стиль репозитория.
+Compare findings with the current project code. Do not copy GitHub patterns blindly; verify that they fit the repository architecture, versions, security model, and style.
 
-Отделяй факты из источников от инженерных выводов. Если вывод является inference, явно формулируй его как решение на основе найденных данных.
+Separate source facts from engineering conclusions. If a conclusion is an inference, label it as a decision based on the found evidence.
 
-Не раскрывай секреты, токены, cookie, приватные URL или содержимое закрытых данных. В репозиторий не добавляй ключи и локальные credentials.
+Do not expose secrets, tokens, cookies, private URLs, or closed data. Do not add keys or local credentials to the repository.
 
-Если нужный MCP недоступен в текущей сессии, скажи об ограничении, используй доступный fallback и продолжай работу.
+If the needed MCP is unavailable in the current session, state the limitation, use the best available fallback, and continue.
 
-## Формат результата
+## Output
 
-Для исследовательского ответа используй короткую структуру на русском:
+For a standalone research answer, respond in Russian with a short structure:
 
-- `Что выяснено`: только факты, которые влияют на решение.
-- `Решение для реализации`: выбранный подход и почему он подходит.
-- `Риски`: edge cases, совместимость, безопасность, открытые вопросы.
-- `Проверка`: какие тесты, команды или ручные проверки нужны.
+- `Questions`: what was checked.
+- `Findings`: facts that affect the decision.
+- `Implementation decision`: selected approach and why it fits.
+- `Risks`: edge cases, compatibility, security, and open questions.
+- `Verification`: tests, commands, or manual checks needed.
 
-Если сразу реализуешь код, не растягивай отчет. Достаточно кратко указать ключевые выводы исследования, что изменено и как проверено.
+If you immediately implement code, keep the report short: key research conclusions, what changed, how it was verified, and remaining risks.

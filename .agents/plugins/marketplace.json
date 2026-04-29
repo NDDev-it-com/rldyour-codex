@@ -27,6 +27,18 @@
         "authentication": "ON_USE"
       },
       "category": "Research"
+    },
+    {
+      "name": "rldyour-serena-mcp",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rldyour-serena-mcp"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Developer Tools"
     }
   ]
 }

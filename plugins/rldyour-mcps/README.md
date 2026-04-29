@@ -1,77 +1,77 @@
 # rldyour-mcps
 
-`rldyour-mcps` — рабочий набор MCP-серверов, которые владелец использует в Codex.
+`rldyour-mcps` is the controlled MCP server set the owner uses in Codex.
 
-Плагин написан для русскоязычной работы: все пользовательские описания, подсказки и документация внутри плагина ведутся на русском. Технические идентификаторы остаются ASCII и kebab-case, чтобы не ломать совместимость Codex, MCP-клиентов и tooling.
+User-facing conversation stays in Russian unless the owner asks otherwise. Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. Technical identifiers stay ASCII and kebab-case to keep Codex, MCP clients, and tooling compatible.
 
-## Граница ответственности
+## Responsibility Boundary
 
-Плагин отвечает только за подключение MCP-серверов.
+This plugin is responsible only for connecting MCP servers.
 
-Он не задает глобальные правила поведения агента, не хранит память, не включает workflow-команды, не подменяет security-политику и не добавляет skills. Эти части будут вынесены в отдельные плагины: `rldyour-rules`, `rldyour-flow`, `rldyour-memories`, `rldyour-sec` и отдельные MCP-specific плагины.
+It does not define global agent behavior, store project memory, provide workflow commands, replace security policy, or add skills. Those responsibilities are handled by dedicated plugins such as `rldyour-rules`, `rldyour-flow`, `rldyour-serena-mcp`, `rldyour-sec`, and future MCP-specific workflow plugins.
 
-## Правило запуска
+## Runtime Rule
 
-Все локальные MCP-серверы запускаются только через разрешенные владельцем рантаймы:
+All local MCP servers must run only through owner-approved runtimes:
 
 - `uv` / `uvx`;
 - `bun` / `bunx`;
 - `dart`.
 
-В этом плагине не используются `npx`, `npm`, `node` как прямые команды MCP. Удаленные MCP с `url` остаются URL-подключениями и не запускают локальный процесс.
+This plugin does not use `npx`, `npm`, or direct `node` commands for MCP servers. Remote MCP servers with `url` remain URL connections and do not start local processes.
 
-## Правило стабильного старта
+## Stable Startup Rule
 
-Codex запускает MCP пачкой при старте сессии. `startup_timeout_sec` покрывает не только запуск процесса, но и MCP-handshake: `initialize` и первичный список tools. Поэтому у всех MCP в этом плагине задан явный timeout вместо дефолтного короткого значения Codex.
+Codex starts MCP servers as a batch during session startup. `startup_timeout_sec` covers not only process launch, but also the MCP handshake: `initialize` and the first tool list. Every MCP in this plugin therefore has an explicit timeout instead of relying on Codex's shorter default.
 
-Для локальных MCP используется `startup_timeout_sec = 90`. Для remote MCP используется `startup_timeout_sec = 60`. Это снижает случайные падения в конце startup, когда несколько `uvx` / `bunx` серверов одновременно резолвят зависимости или ждут сеть.
+Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startup_timeout_sec = 60`. This reduces random failures near the end of startup when multiple `uvx` / `bunx` servers resolve dependencies or wait on network calls at the same time.
 
-## Правило языка
+## Language Rule
 
-- Общение с владельцем ведется на русском.
-- Описания plugin/marketplace metadata ведутся на русском.
-- Названия MCP, package names, команды, env vars и URL не переводятся.
-- Если MCP возвращает данные на английском, агент кратко объясняет результат владельцу на русском.
+- User-facing conversation with the owner is Russian unless requested otherwise.
+- Repository documentation and plugin metadata are English.
+- MCP names, package names, commands, environment variables, and URLs are not translated.
+- If an MCP returns English data, the agent briefly explains the result to the owner in Russian.
 
-## Правило безопасности
+## Security Rule
 
-- Секреты не записываются в `.mcp.json`, `plugin.json`, README или marketplace.
-- Write-инструменты MCP используются только когда задача явно требует изменения состояния.
-- Для destructive-действий нужно отдельное подтверждение владельца.
-- Remote MCP используются только по явно указанным URL.
-- Локальные MCP запускаются только через `uv`, `uvx`, `bun`, `bunx` или `dart`.
+- Secrets are never written to `.mcp.json`, `plugin.json`, README files, or marketplace metadata.
+- MCP write tools are used only when the task explicitly requires state changes.
+- Destructive actions require separate owner confirmation.
+- Remote MCP servers are used only through explicitly configured URLs.
+- Local MCP servers run only through `uv`, `uvx`, `bun`, `bunx`, or `dart`.
 
-## Подключенные MCP
+## Connected MCP Servers
 
-| MCP | Назначение | Запуск |
+| MCP | Purpose | Runtime |
 | --- | --- | --- |
-| `serena` | Семантическая навигация, анализ и точечное редактирование кода | `uvx`, headless |
-| `sequential-thinking` | Структурирование сложных рассуждений и планов | `bunx` |
-| `playwright` | Браузерная автоматизация и проверки UI | `bunx`, headless |
-| `chrome-devtools` | Диагностика страниц через Chrome DevTools | `bunx`, headless, isolated |
-| `context7` | Актуальная документация библиотек | `bunx`, `CONTEXT7_API_KEY` |
-| `deepwiki` | Документация и объяснение репозиториев | remote URL |
-| `grep` | Поиск по публичным GitHub-репозиториям | remote URL |
-| `semgrep` | Статический анализ и security-проверки кода | `uvx --from semgrep semgrep mcp` |
-| `shadcn` | Работа с registry shadcn/ui | `bunx` |
-| `dart-flutter` | Dart/Flutter MCP для проектов на Dart и Flutter | `dart` |
-| `figma` | Контекст дизайна из Figma | remote URL, OAuth |
+| `serena` | Semantic navigation, analysis, and precise code editing | `uvx`, headless |
+| `sequential-thinking` | Structured reasoning and planning | `bunx` |
+| `playwright` | Browser automation and UI checks | `bunx`, headless |
+| `chrome-devtools` | Page diagnostics through Chrome DevTools | `bunx`, headless, isolated |
+| `context7` | Current library documentation | `bunx`, `CONTEXT7_API_KEY` |
+| `deepwiki` | Repository documentation and explanations | remote URL |
+| `grep` | Search across public GitHub repositories | remote URL |
+| `semgrep` | Static analysis and security checks | `uvx --from semgrep semgrep mcp` |
+| `shadcn` | shadcn/ui registry work | `bunx` |
+| `dart-flutter` | Dart/Flutter MCP for Dart and Flutter projects | `dart` |
+| `figma` | Figma design context | remote URL, OAuth |
 
-## Секреты
+## Secrets
 
-Не записывай ключи в `.mcp.json`.
+Do not write keys into `.mcp.json`.
 
-Для Context7 нужен environment variable:
+Context7 requires this environment variable:
 
 ```bash
 export CONTEXT7_API_KEY="ctx7sk_..."
 ```
 
-Текущий ключ владельца намеренно не сохранен в репозиторий.
+The owner's current key is intentionally not stored in this repository.
 
-## Проверка в Codex
+## Codex Verification
 
-После установки или обновления плагина проверь:
+After installing or updating the plugin, check:
 
 ```bash
 codex mcp list
@@ -79,17 +79,17 @@ codex mcp get serena
 codex mcp get figma
 ```
 
-Ожидаемое состояние:
+Expected state:
 
-- `serena` запускается через `uvx` и не открывает dashboard автоматически.
-- `figma` использует OAuth.
-- `context7` берет ключ только из `CONTEXT7_API_KEY`.
-- `semgrep` запускается через актуальный официальный `semgrep mcp`, а не через архивированный `semgrep-mcp`.
-- Локальные MCP не используют `npx`, `npm` или `node` как прямую команду.
+- `serena` starts through `uvx` and does not open the dashboard automatically.
+- `figma` uses OAuth.
+- `context7` reads its key only from `CONTEXT7_API_KEY`.
+- `semgrep` starts through the current official `semgrep mcp`, not the archived `semgrep-mcp`.
+- Local MCP servers do not use `npx`, `npm`, or direct `node` commands.
 
-## Локальные зависимости
+## Local Dependencies
 
-Перед использованием проверь, что доступны команды:
+Before use, verify these commands are available:
 
 ```bash
 uv --version
@@ -101,25 +101,25 @@ dart --version
 
 ## Figma
 
-Для Figma используется удаленный MCP:
+Figma uses the remote MCP endpoint:
 
 ```text
 https://mcp.figma.com/mcp
 ```
 
-После установки плагина может потребоваться browser/OAuth авторизация. Если Codex не запросит ее автоматически, используй механизм входа MCP для сервера `figma`.
+After plugin installation, browser/OAuth authorization may be required. If Codex does not request it automatically, use the MCP login mechanism for the `figma` server.
 
 ## Serena
 
-Serena настроена без автоматического открытия dashboard:
+Serena is configured without automatically opening the dashboard:
 
 ```text
 uvx --from serena-agent@latest --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --open-web-dashboard False
 ```
 
-Если dashboard понадобится вручную, его можно открыть через инструменты Serena или напрямую через локальный URL, который Serena покажет в логах.
+If the dashboard is needed manually, open it through Serena tools or directly through the local URL Serena prints in logs.
 
-## Источники
+## Sources
 
 - Serena: https://oraios.github.io/serena/02-usage/030_clients.html
 - Serena dashboard: https://oraios.github.io/serena/02-usage/060_dashboard.html

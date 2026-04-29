@@ -1,81 +1,82 @@
 # rldyour-codex
 
-`rldyour-codex` — личный маркетплейс Codex. Это не готовый набор чужих правил, не автоконфигуратор и не набор уже созданных плагинов. Это подготовленная структура и план контролируемого каталога, куда владелец позже будет добавлять свои плагины, MCP, LSP, правила, хуки, команды и рабочие процессы.
+`rldyour-codex` is a personal Codex marketplace. It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog for the owner's own plugins, MCP servers, skills, hooks, rules, and workflows.
 
-Главный принцип: ничего не подключается и не считается правильным без явного решения владельца.
+Main principle: nothing is treated as enabled or correct unless the owner explicitly decides it.
 
-## Модель контроля
+## Control Model
 
-- Активный marketplace содержит только плагины, которые реально созданы и готовы к установке.
-- Пока владелец не сказал создать плагин, `plugins` в `marketplace.json` остается пустым.
-- Запланированные плагины описываются в README, но не добавляются в `marketplace.json`, пока владелец явно не решит их создать.
-- Каждый плагин должен иметь понятную границу ответственности.
-- Каждый инструмент внутри плагина должен иметь описание назначения, доступа, рисков и правил использования.
-- Все пользовательские описания пишутся на русском.
-- Технические идентификаторы остаются стабильными и ASCII.
-- Секреты, токены, cookie-файлы и приватные ключи не хранятся в репозитории.
+- The active marketplace contains only plugins that are actually created and ready to install.
+- Planned plugins stay documented here and are not added to `marketplace.json` until explicitly created.
+- Each plugin must have a clear responsibility boundary.
+- Each tool or workflow must describe its purpose, access model, risks, and usage rules.
+- Repository documentation is written in English.
+- Technical identifiers stay stable and ASCII.
+- Secrets, tokens, cookies, and private keys are never stored in this repository.
 
-## Текущий активный каталог
+## Active Catalog
 
-Сейчас активны два плагина:
+The active marketplace currently contains:
 
-- `rldyour-mcps` — личный набор MCP-серверов, которые владелец разрешил подключить к Codex.
-- `rldyour-explore` — исследовательские skills для технического исследования через MCP и интернет-исследования через авторитетные источники.
+- `rldyour-mcps`: the owner's approved MCP server set for Codex.
+- `rldyour-explore`: research skills for technical MCP research and authoritative web research.
+- `rldyour-serena-mcp`: Serena-first semantic code workflow, fact-only `.serena` memory sync, plans, research archive, and lifecycle hooks.
 
-## Планируемая архитектура плагинов
+## Planned Plugin Architecture
 
-Эти плагины являются только планом. Они не должны попадать в `marketplace.json`, пока владелец явно не скажет создать конкретный плагин.
+These plugins are plans only unless listed in the active catalog above.
 
-- `rldyour-mcps` — создан. Содержит базовые MCP-серверы, которые владелец разрешил подключить к Codex.
-- `rldyour-lsps` — LSP-серверы и конфигурации для языковой навигации, диагностики и анализа кода.
-- `rldyour-rules` — жесткие правила работы над проектами: как писать код, как менять файлы, как проверять результат, как вести системный `AGENTS.md`.
-- `rldyour-flow` — скиллы-команды для рабочих сценариев: `ry-start`, `ry-init`, `ry-newp`, `ry-review`, `ry-deploy`. Детали каждой команды будут описаны отдельно.
-- `rldyour-memories` — строгая работа с памятью через Serena MCP: что запоминать, что не запоминать, как читать и обновлять память.
-- `rldyour-hooks` — хуки Codex для автотриггеров: когда запускать проверки, когда блокировать действие, когда требовать подтверждение.
-- `rldyour-sec` — правила безопасности, secure coding, проверки и покрытие OWASP Top 10.
-- `rldyour-explore` — создан. Исследовательские workflows: `tech-research` через Context7, DeepWiki и Grep by Vercel; `web-research` через интернет-поиск и авторитетные источники.
+- `rldyour-mcps`: created. Base MCP servers approved by the owner.
+- `rldyour-serena-mcp`: created. Serena-specific workflow layer that depends on the Serena MCP server from `rldyour-mcps`.
+- `rldyour-lsps`: language-server configuration for navigation, diagnostics, and analysis when separate LSP setup is needed.
+- `rldyour-rules`: hard rules for project work, coding standards, verification, and system `AGENTS.md`.
+- `rldyour-flow`: command-like skills such as `ry-start`, `ry-init`, `ry-newp`, `ry-review`, and `ry-deploy`.
+- `rldyour-memories`: future memory policies if project memory behavior grows beyond the Serena-specific plugin.
+- `rldyour-hooks`: general Codex hooks and trigger policies that are not specific to Serena.
+- `rldyour-sec`: security rules, secure coding, checks, and OWASP Top 10 coverage.
+- `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.
 
-## Решение по MCP skills
+## MCP Skill Strategy
 
-Первичная идея `rldyour-mcps-skills` заменяется более контролируемым подходом: не делать один общий плагин со всеми skills для всех MCP.
+The original idea of one broad `rldyour-mcps-skills` plugin is replaced with a controlled per-domain approach.
 
-Вместо этого для важных MCP можно создавать отдельные плагины:
+Important MCPs can get dedicated plugins:
 
-- отдельный plugin под конкретный MCP;
-- отдельные правила работы с этим MCP;
-- отдельные skills и команды для этого MCP;
-- отдельные ограничения доступа и проверки безопасности.
+- one plugin per important MCP or workflow domain;
+- separate usage rules for that MCP;
+- separate skills and commands;
+- separate access limits and safety checks.
 
-Так легче контролировать поведение, отключать проблемные части и понимать, какой MCP за что отвечает.
+This makes behavior easier to understand, disable, test, and evolve.
 
-## Что видит Codex
+## What Codex Reads
 
-Codex читает:
+Codex reads:
 
-- `.agents/plugins/marketplace.json` — активный каталог installable-плагинов;
-- `plugins/<plugin>/.codex-plugin/plugin.json` — manifest конкретного плагина;
-- файлы, на которые ссылается manifest: `skills`, `.mcp.json`, `.app.json`, hooks и assets.
+- `.agents/plugins/marketplace.json`: active installable plugin catalog;
+- `plugins/<plugin>/.codex-plugin/plugin.json`: plugin manifest;
+- manifest-linked files such as `skills`, `.mcp.json`, `.app.json`, hooks, and assets.
 
-README нужен для владельца и ревью. Он описывает план, правила контроля и причины решений, но сам по себе не включает инструменты.
+This README is for owner review and repository orientation. It explains the control model and plugin plan but does not enable tools by itself.
 
-## Правило добавления нового плагина
+## Adding A Plugin
 
-Перед созданием нового плагина нужно определить:
+Before creating a new plugin, define:
 
-- точное имя плагина;
-- зачем он нужен;
-- какие файлы он будет содержать;
-- будет ли он подключать MCP, skills, hooks, app-коннекторы или только документацию;
-- какие действия Codex сможет выполнять через этот плагин;
-- какие действия требуют подтверждения;
-- какие данные нельзя передавать наружу.
+- exact plugin name;
+- purpose and boundary;
+- files it will contain;
+- whether it provides MCP servers, skills, hooks, app connectors, scripts, or documentation only;
+- what Codex can do through it;
+- what actions require confirmation;
+- what data must never be sent outside the machine or repository.
 
-Только после этого плагин создается в `plugins/<name>/` и добавляется в `.agents/plugins/marketplace.json`.
+Only then create `plugins/<name>/` and add it to `.agents/plugins/marketplace.json`.
 
-## Установка локально
+## Local Installation
 
 ```bash
 codex plugin marketplace add .
 ```
 
-После изменения `marketplace.json`, manifest плагина или `.mcp.json` нужно открыть новую сессию Codex, чтобы он перечитал конфигурацию.
+After changing `marketplace.json`, a plugin manifest, hooks, skills, or `.mcp.json`, start a new Codex session so the runtime reloads the configuration.

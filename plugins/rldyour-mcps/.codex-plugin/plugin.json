@@ -1,7 +1,7 @@
 {
   "name": "rldyour-mcps",
-  "version": "0.1.2",
-  "description": "Рабочий набор MCP-серверов rldyour для Codex с русскоязычным описанием и контролируемым подключением.",
+  "version": "0.1.3",
+  "description": "Controlled rldyour MCP server set for Codex with explicit runtime, startup, and safety rules.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -29,24 +29,24 @@
   ],
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "MCP-серверы rldyour",
-    "shortDescription": "Все MCP, которые владелец использует в Codex",
-    "longDescription": "Плагин подключает рабочий набор MCP-серверов владельца для Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter и Figma. Плагин не задает глобальные правила поведения агента и не хранит секреты. Он отвечает только за подключение MCP; специализированные skills, политики памяти, security-правила и workflow-команды будут выноситься в отдельные плагины. Все пользовательские описания и рабочие prompts в этом плагине ведутся на русском языке.",
+    "displayName": "rldyour MCP Servers",
+    "shortDescription": "Approved MCP servers used by the owner in Codex",
+    "longDescription": "This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter, and Figma. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [
       "MCP",
-      "Инструменты разработки",
-      "Русскоязычный рабочий контекст",
-      "Контролируемое подключение"
+      "Developer tools",
+      "Russian user-facing workflow",
+      "Controlled MCP connectivity"
     ],
     "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Покажи мои MCP-серверы.",
-      "Выбери MCP для этой задачи.",
-      "Проверь MCP без записи данных."
+      "Show my MCP servers.",
+      "Choose the right MCP for this task.",
+      "Check MCP availability without writing data."
     ],
     "brandColor": "#0F766E",
     "screenshots": []
