@@ -1,0 +1,77 @@
+<!-- Memory Metadata
+Last updated: 2026-04-29
+Last commit: b1bf776 docs(serena): record plugin auto routing
+Scope: README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore
+Area: CORE
+-->
+
+# CORE_02_marketplace_control_model
+
+## Purpose
+
+This repository is a personal Codex marketplace named `rldyour-codex`. It is a controlled catalog for the owner's own plugins, MCP servers, skills, hooks, rules, and workflows. It is not a generic preset and does not treat anything as enabled or correct unless the owner explicitly decides it.
+
+## Source Of Truth
+
+- `README.md`: owner-facing control model, active catalog, planned plugin architecture, plugin creation rules, and local installation command.
+- `.agents/plugins/marketplace.json`: active installable plugin catalog and plugin order.
+- `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, linked capabilities, and plugin interface metadata.
+- `.gitignore`: repository-level ignored runtime artifacts, browser evidence, env files, and Serena runtime state.
+
+## Entry Points
+
+- `codex plugin marketplace add .`: registers this repository as the local marketplace.
+- `.agents/plugins/marketplace.json`: active plugin list consumed by Codex marketplace tooling.
+- `plugins/<plugin>/.codex-plugin/plugin.json`: manifest used by Codex to discover skills, MCP servers, hooks, and metadata.
+
+## Current Behavior
+
+The active marketplace contains six plugins in this order:
+
+- `rldyour-mcps`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-mcps`.
+- `rldyour-explore`: Research, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-explore`.
+- `rldyour-serena-mcp`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-serena-mcp`.
+- `rldyour-security`: Security, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-security`.
+- `rldyour-browser`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-browser`.
+- `rldyour-design`: Design, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-design`.
+
+Created plugins are listed in the active catalog. Planned plugins stay documented in `README.md` and are not added to `marketplace.json` until explicitly created.
+
+## Contracts And Data
+
+Marketplace root metadata:
+
+- `name`: `rldyour-codex`.
+- `interface.displayName`: `rldyour Codex`.
+- Each plugin entry must keep `name`, `source.source`, `source.path`, `policy.installation`, `policy.authentication`, and `category`.
+
+Plugin manifests use `.codex-plugin/plugin.json`. Current plugin capability boundaries:
+
+- Workflow plugins expose `skills: "./skills/"`.
+- `rldyour-mcps` exposes `mcpServers: "./.mcp.json"` and no skills.
+- `rldyour-serena-mcp` exposes `skills: "./skills/"` and `hooks: "./hooks.json"`.
+
+Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
+
+## Invariants
+
+- Do not add planned plugins to `.agents/plugins/marketplace.json` until they are actually created and ready.
+- Do not store secrets, tokens, cookies, private keys, or raw credentials in this repository.
+- Keep technical identifiers stable and ASCII.
+- Keep each plugin's responsibility boundary explicit.
+- Do not commit browser evidence or local Serena runtime/cache state.
+
+## Change Rules
+
+- Use `plugin-creator` guidance when adding or modifying plugin manifests or marketplace entries.
+- Append new marketplace entries unless the owner explicitly asks to reorder.
+- Keep `README.md` active catalog aligned with `.agents/plugins/marketplace.json`.
+- Restart Codex after changing marketplace metadata, plugin manifests, hooks, skills, or `.mcp.json`.
+- Re-sync changed plugin directories into the active Codex plugin cache when applying changes to the system Codex runtime.
+
+## Verification
+
+- `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates marketplace and plugin manifests.
+- `jq -r '.plugins[] | [.name,.category,.policy.installation,.policy.authentication,.source.path] | @tsv' .agents/plugins/marketplace.json`: shows active plugin order and policy.
+- `codex plugin marketplace add .`: registers or confirms this marketplace.
+- `git status -sb --ignored`: verifies only expected ignored Serena runtime files remain untracked.
