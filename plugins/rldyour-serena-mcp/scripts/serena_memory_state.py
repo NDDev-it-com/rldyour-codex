@@ -124,9 +124,8 @@ def status() -> dict[str, Any]:
     marker_head = str(sync_state.get("head_full") or sync_state.get("head") or "")
     marker_matches_head = marker_requires_sync and bool(head_full) and marker_head in {head_full, head_short}
 
-    has_project = Path(".serena/project.yml").is_file()
     if memory_count == 0 and not marker_matches_head:
-        is_current = not has_project
+        is_current = True
     else:
         is_current = (
             memory_matches_head

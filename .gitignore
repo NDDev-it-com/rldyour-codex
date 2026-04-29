@@ -9,6 +9,8 @@ node_modules/
 
 # Serena project knowledge is trackable; runtime/cache state is not.
 .serena/cache/
+.serena/.gitignore
+.serena/project.yml
 .serena/project.local.yml
 .serena/.sync_marker
 .serena/.serena_sync_state.json
