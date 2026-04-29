@@ -1,7 +1,7 @@
 {
   "name": "rldyour-serena-mcp",
-  "version": "0.1.0",
-  "description": "Serena MCP workflow layer for Codex: semantic code inspection, fact-only project memory sync, plans, research archives, and lifecycle hooks.",
+  "version": "0.1.1",
+  "description": "Serena MCP workflow layer for Codex: semantic code inspection, high-signal project memory sync, plans, research archives, and lifecycle hooks.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -27,7 +27,7 @@
   "interface": {
     "displayName": "rldyour Serena MCP",
     "shortDescription": "Serena-first code workflow and memory sync",
-    "longDescription": "This plugin defines the rldyour Serena MCP workflow for Codex. It does not declare a duplicate Serena MCP transport; the server is expected to come from rldyour-mcps. The plugin provides two skills: serena-code-workflow for semantic code inspection and editing through Serena MCP tools, and serena-memory-sync for fact-only updates to .serena/memories plus selected plans and research archives. Hook scripts add Serena-first reminders for code prompts, mark memory sync requirements after git commit-like changes, and use Stop continuation prompts to keep project knowledge current without spawning a separate sync agent.",
+    "longDescription": "This plugin defines the rldyour Serena MCP workflow for Codex. It does not declare a duplicate Serena MCP transport; the server is expected to come from rldyour-mcps. The plugin provides two skills: serena-code-workflow for semantic code inspection and editing through Serena MCP tools, and serena-memory-sync for high-signal fact-only updates to .serena/memories plus selected plans and research archives. Memory files must preserve source-of-truth paths, entry points, current behavior, invariants, change rules, verification commands, and unresolved gaps so future Codex sessions can implement with high confidence. Hook scripts add Serena-first reminders for code prompts, mark memory sync requirements after git commit-like changes, and use Stop continuation prompts to keep project knowledge current without spawning a separate sync agent.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [
