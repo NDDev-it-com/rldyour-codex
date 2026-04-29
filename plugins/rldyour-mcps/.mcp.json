@@ -1,0 +1,85 @@
+{
+  "mcpServers": {
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "serena-agent@latest",
+        "--python",
+        "3.13",
+        "--prerelease",
+        "allow",
+        "serena",
+        "start-mcp-server",
+        "--project-from-cwd",
+        "--context=codex",
+        "--open-web-dashboard",
+        "False"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "bunx",
+      "args": [
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "env": {
+        "DISABLE_THOUGHT_LOGGING": "true"
+      }
+    },
+    "playwright": {
+      "command": "bunx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--headless"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "bunx",
+      "args": [
+        "chrome-devtools-mcp@latest",
+        "--headless",
+        "--isolated",
+        "--no-usage-statistics",
+        "--no-performance-crux"
+      ]
+    },
+    "context7": {
+      "command": "bunx",
+      "args": [
+        "@upstash/context7-mcp"
+      ],
+      "env_vars": [
+        "CONTEXT7_API_KEY"
+      ]
+    },
+    "deepwiki": {
+      "url": "https://mcp.deepwiki.com/mcp"
+    },
+    "grep": {
+      "url": "https://mcp.grep.app"
+    },
+    "semgrep": {
+      "command": "uvx",
+      "args": [
+        "semgrep-mcp"
+      ]
+    },
+    "shadcn": {
+      "command": "bunx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
+    },
+    "dart-flutter": {
+      "command": "dart",
+      "args": [
+        "mcp-server",
+        "--force-roots-fallback"
+      ]
+    },
+    "figma": {
+      "url": "https://mcp.figma.com/mcp"
+    }
+  }
+}

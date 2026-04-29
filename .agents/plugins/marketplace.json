@@ -1,0 +1,20 @@
+{
+  "name": "rldyour-codex",
+  "interface": {
+    "displayName": "rldyour-codex"
+  },
+  "plugins": [
+    {
+      "name": "rldyour-mcps",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rldyour-mcps"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "MCP"
+    }
+  ]
+}
