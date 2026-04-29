@@ -8,7 +8,9 @@ User-facing conversation stays in Russian unless the owner asks otherwise. Repos
 
 This plugin is responsible only for connecting MCP servers.
 
-It does not define global agent behavior, store project memory, provide workflow commands, replace security policy, or add skills. Those responsibilities are handled by dedicated plugins such as `rldyour-rules`, `rldyour-flow`, `rldyour-serena-mcp`, `rldyour-sec`, and future MCP-specific workflow plugins.
+It does not define global agent behavior, store project memory, provide workflow commands, replace security policy, or add skills. This means it has no `SKILL.md` trigger surface and cannot auto-invoke by itself. Automatic behavior belongs to dedicated skills in plugins such as `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, `rldyour-design`, future `rldyour-rules`, future `rldyour-flow`, and future MCP-specific workflow plugins.
+
+This plugin is the runtime dependency layer those automatic skills use when they need MCP tools.
 
 ## Runtime Rule
 

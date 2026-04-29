@@ -1,7 +1,7 @@
 interface:
   display_name: "Browser Tool Routing"
-  short_description: "Playwright vs Chrome DevTools"
-  default_prompt: "Use $browser-tool-routing to choose the right browser MCP workflow."
+  short_description: "Auto Playwright vs DevTools routing"
+  default_prompt: "Use $browser-tool-routing to choose Playwright, Chrome DevTools, or both for browser validation or debugging."
 
 dependencies:
   tools:

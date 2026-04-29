@@ -1,7 +1,7 @@
 {
   "name": "rldyour-security",
   "version": "0.1.0",
-  "description": "Skills-only security guidance for Codex: OWASP Top 10 implementation comments and defensive ry-sec-review.",
+  "description": "Auto-invoked security guidance for Codex: OWASP Top 10 implementation comments and defensive ry-sec-review.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -17,17 +17,22 @@
     "top-10",
     "asvs",
     "secure-code-review",
+    "security-review",
+    "vulnerability-review",
+    "defensive-security",
+    "automatic-invocation",
     "ry-sec-review",
     "rldyour"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour Security",
-    "shortDescription": "OWASP guidance and defensive security review",
-    "longDescription": "This skills-only plugin adds non-blocking security guidance for Codex. owasp-top-10-implementation keeps implementation work aligned with OWASP Top 10 2025, ASVS 5.0.0, and secure coding checklist principles without stopping normal development. ry-sec-review performs a defensive, hypothesis-driven security review inspired by Mythos-style application security review: recon, hypothesis generation, source-to-sink tracing, exploitability assessment, confidence ranking, remediation, and verification. The plugin does not configure MCP servers, does not add hooks, and does not block execution except where normal Codex safety rules apply to explicit destructive or malicious requests.",
+    "shortDescription": "Auto OWASP guidance and security review",
+    "longDescription": "This skills-only plugin adds automatic non-blocking security guidance for Codex. Its skills should be selected automatically when the owner asks about security, secure implementation, OWASP, vulnerabilities, auth/authz, secrets, injection, dependency risk, security review, or $ry-sec-review. owasp-top-10-implementation keeps implementation work aligned with OWASP Top 10 2025, ASVS 5.0.0, and secure coding checklist principles without stopping normal development. ry-sec-review performs a defensive, hypothesis-driven security review inspired by Mythos-style application security review: recon, hypothesis generation, source-to-sink tracing, exploitability assessment, confidence ranking, remediation, and verification. The plugin does not configure MCP servers, does not add hooks, and does not block execution except where normal Codex safety rules apply to explicit destructive or malicious requests.",
     "developerName": "rldyourmnd",
     "category": "Security",
     "capabilities": [
+      "Automatic security skill routing",
       "Skills",
       "OWASP Top 10 guidance",
       "Secure implementation comments",
@@ -38,9 +43,9 @@
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Apply OWASP Top 10 guidance while implementing this feature.",
-      "Run $ry-sec-review for this implementation.",
-      "Review this diff for security risks."
+      "Use $owasp-top-10-implementation to apply non-blocking OWASP guidance while implementing this feature.",
+      "Use $ry-sec-review to review this implementation for security risks.",
+      "Use $ry-sec-review to audit this diff for vulnerabilities and remediation steps."
     ],
     "brandColor": "#B91C1C",
     "screenshots": []

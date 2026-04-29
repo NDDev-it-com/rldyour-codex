@@ -1,6 +1,6 @@
 ---
 name: browser-debug
-description: Browser debugging workflow for console errors, network failures, runtime exceptions, hydration issues, layout problems, Lighthouse/performance regressions, memory issues, and difficult browser-only bugs. Chrome DevTools MCP is primary for diagnosis; Playwright MCP is used to reproduce and re-validate flows.
+description: Browser debugging workflow for console errors, network failures, runtime exceptions, hydration issues, layout problems, Lighthouse/performance regressions, memory issues, and difficult browser-only bugs. Use automatically when the user asks to debug a browser/UI issue, inspect console or network, investigate runtime/layout/performance problems, or when browser validation finds failures. Chrome DevTools MCP is primary for diagnosis; Playwright MCP is used to reproduce and re-validate flows.
 ---
 
 # Browser Debug
@@ -10,6 +10,18 @@ description: Browser debugging workflow for console errors, network failures, ru
 Diagnose browser-only failures with runtime evidence. Use Chrome DevTools MCP for deep inspection and Playwright MCP for deterministic reproduction and validation.
 
 User-facing reports stay in Russian unless requested otherwise. Browser artifacts belong under `browser/`.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$browser-debug` call when the task mentions:
+
+- Browser-only bug, broken UI in browser, hydration issue, runtime exception, console error, or source-map issue.
+- Network failure, unexpected API response, redirect, cache, CORS, CSP, auth/session browser behavior, or failed request.
+- Layout issue, overflow, rendering mismatch, computed style problem, DOM state mismatch, or responsive breakage.
+- Lighthouse, Core Web Vitals, performance trace, slow rendering, memory issue, long task, or layout shift.
+- A failed `browser-validation` flow where evidence is needed to find root cause.
+
+Use `browser-validation` after fixing the issue to prove the user flow works.
 
 ## When To Use
 

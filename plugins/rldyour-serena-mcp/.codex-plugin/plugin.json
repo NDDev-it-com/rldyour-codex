@@ -1,7 +1,7 @@
 {
   "name": "rldyour-serena-mcp",
   "version": "0.1.1",
-  "description": "Serena MCP workflow layer for Codex: semantic code inspection, high-signal project memory sync, plans, research archives, and lifecycle hooks.",
+  "description": "Auto-invoked Serena MCP workflow layer for Codex: semantic code inspection, high-signal project memory sync, plans, research archives, and lifecycle hooks.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -16,21 +16,26 @@
     "mcp",
     "lsp",
     "semantic-code",
+    "code-workflow",
+    "code-inspection",
+    "code-editing",
     "memories",
     "plans",
     "research",
     "hooks",
+    "automatic-invocation",
     "rldyour"
   ],
   "skills": "./skills/",
   "hooks": "./hooks.json",
   "interface": {
     "displayName": "rldyour Serena MCP",
-    "shortDescription": "Serena-first code workflow and memory sync",
-    "longDescription": "This plugin defines the rldyour Serena MCP workflow for Codex. It does not declare a duplicate Serena MCP transport; the server is expected to come from rldyour-mcps. The plugin provides two skills: serena-code-workflow for semantic code inspection and editing through Serena MCP tools, and serena-memory-sync for high-signal fact-only updates to .serena/memories plus selected plans and research archives. Memory files must preserve source-of-truth paths, entry points, current behavior, invariants, change rules, verification commands, and unresolved gaps so future Codex sessions can implement with high confidence. Hook scripts add Serena-first reminders for code prompts, mark memory sync requirements after git commit-like changes, and use Stop continuation prompts to keep project knowledge current without spawning a separate sync agent.",
+    "shortDescription": "Auto Serena code workflow and memory sync",
+    "longDescription": "This plugin defines automatic Serena MCP workflow routing for Codex. Its skills should be selected automatically when the owner asks to inspect, index, explore, understand, edit, refactor, trace, or review repository code, projects, directories, files, symbols, call sites, dependencies, or implementation scope, and when project knowledge should be synchronized after meaningful changes. It does not declare a duplicate Serena MCP transport; the server is expected to come from rldyour-mcps. The plugin provides two skills: serena-code-workflow for semantic code inspection and editing through Serena MCP tools, and serena-memory-sync for high-signal fact-only updates to .serena/memories plus selected plans and research archives. Memory files must preserve source-of-truth paths, entry points, current behavior, invariants, change rules, verification commands, and unresolved gaps so future Codex sessions can implement with high confidence. Hook scripts add Serena-first reminders for code prompts, mark memory sync requirements after git commit-like changes, and use Stop continuation prompts to keep project knowledge current without spawning a separate sync agent.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [
+      "Automatic Serena skill routing",
       "Skills",
       "Hooks",
       "Serena MCP workflow",
@@ -41,9 +46,9 @@
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Use Serena for this code investigation.",
-      "Sync Serena memories after this task.",
-      "Archive this complex research result."
+      "Use $serena-code-workflow to inspect and edit repository code through Serena first.",
+      "Use $serena-memory-sync to update high-signal project memories after meaningful changes.",
+      "Use $serena-memory-sync to archive durable plans or research when they help future sessions."
     ],
     "brandColor": "#0F766E",
     "screenshots": []

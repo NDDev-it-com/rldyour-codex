@@ -1,6 +1,6 @@
 ---
 name: serena-code-workflow
-description: Serena-first semantic code workflow for Codex. Use when inspecting, indexing, exploring, editing, refactoring, or tracing repository code, projects, directories, files, symbols, call sites, dependencies, or implementation scope. Prefer Serena MCP workflow tools and symbol tools before raw file reads, grep, or line-based edits.
+description: Serena-first semantic code workflow for Codex. Use automatically when inspecting, indexing, exploring, understanding, editing, refactoring, reviewing, or tracing repository code, projects, directories, files, symbols, call sites, dependencies, implementation scope, architecture, or code relationships. Prefer Serena MCP workflow tools and symbol tools before raw file reads, grep, or line-based edits.
 ---
 
 # Serena Code Workflow
@@ -10,6 +10,18 @@ description: Serena-first semantic code workflow for Codex. Use when inspecting,
 Use Serena MCP as the primary semantic layer for code work. The goal is low semantic entropy: understand structure before reading bodies, edit symbols instead of brittle line ranges, keep project knowledge synchronized, and prefer scalable patterns over quick text surgery.
 
 User-facing conversation stays in Russian unless the user asks otherwise. Repository documentation, code comments, commit messages, memory files, plan files, and research archive files are written in English.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$serena-code-workflow` call when the task asks to:
+
+- Inspect, index, explore, understand, map, review, edit, refactor, or trace repository code.
+- Analyze projects, directories, files, symbols, classes, functions, references, call sites, dependencies, or implementation scope.
+- Find where a feature is implemented, how code is connected, what can be deleted, or what will be affected by a change.
+- Make non-trivial code changes where semantic structure matters more than raw text matching.
+- Use or prefer Serena MCP, LSP-aware tools, symbol navigation, or project memories.
+
+If Serena is unavailable or the file type is not supported, state the fallback and continue with Codex-native tools.
 
 ## When To Use
 

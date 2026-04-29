@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: Internet research through web search/browser for current information, non-technical questions, and technical tasks that need external sources beyond MCP research. Use when the user asks to look on the internet, research the web, verify current information, find sources, compare current data, confirm a fact with links, or collect source-backed context before making a decision. First define scope and questions, then find authoritative sources, read them, and answer in Russian unless the user asks otherwise.
+description: Internet research through web search/browser for current information, non-technical questions, and technical tasks that need external sources beyond MCP research. Use automatically for Russian or English requests that ask to look on the internet, research the web, verify current information, find sources, compare current data, confirm a fact with links, check latest information, or collect source-backed context before making a decision. First define scope and questions, then find authoritative sources, read them, and answer in Russian unless the user asks otherwise.
 ---
 
 # Web Research
@@ -10,6 +10,18 @@ description: Internet research through web search/browser for current informatio
 Give Codex a reliable workflow for internet research: avoid chaotic searching, first define what must be proved or discovered, then choose high-quality sources, read them, and synthesize conclusions.
 
 User-facing conversation stays in Russian unless requested otherwise. Company names, products, APIs, laws, standards, and document titles stay exact.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$web-research` call when the request asks to:
+
+- Research on the internet, search the web, verify current information, or check the latest state.
+- Find source-backed facts, citations, authoritative links, or comparisons.
+- Research non-technical topics, products, companies, people, market information, legal/security updates, standards, or recommendations.
+- Validate a claim where the answer may have changed recently.
+- Supplement technical MCP research with changelogs, issue threads, vendor announcements, advisories, pricing, or release notes.
+
+If the request is primarily technical and concerns docs, APIs, frameworks, repository architecture, or GitHub usage patterns, use `tech-research` first and add this skill only when broader web sources are needed.
 
 ## When To Use
 

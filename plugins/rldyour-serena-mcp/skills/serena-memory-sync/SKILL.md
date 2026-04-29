@@ -1,6 +1,6 @@
 ---
 name: serena-memory-sync
-description: High-signal fact-only Serena project knowledge maintenance. Use after meaningful code changes, after Stop hook sync prompts, after commits, or when auditing stale .serena/memories, .serena/plans, and .serena/research files. Code, git diff, and tests are the source of truth; update only verified facts that help future Codex sessions implement with confidence.
+description: High-signal fact-only Serena project knowledge maintenance. Use automatically after meaningful code or plugin changes, after Stop hook sync prompts, after commits, after durable architecture/design/security/research decisions, or when auditing stale .serena/memories, .serena/plans, and .serena/research files. Code, git diff, and tests are the source of truth; update only verified facts that help future Codex sessions implement with confidence.
 ---
 
 # Serena Memory Sync
@@ -10,6 +10,18 @@ description: High-signal fact-only Serena project knowledge maintenance. Use aft
 Keep `.serena/` useful for future Codex sessions without creating hallucinated project lore. Memories must explain what the code actually does, where it lives, how it behaves, which invariants matter, and how to safely change and verify the area.
 
 User-facing conversation stays in Russian. All stored `.serena/` knowledge files are written in English.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$serena-memory-sync` call when:
+
+- Meaningful code, plugin, workflow, architecture, design-system, security, integration, or configuration behavior changed.
+- A Stop hook, commit-like action, or stale-memory marker indicates project knowledge should be synchronized.
+- Durable facts were discovered during implementation, research, review, migration, debugging, or browser/security/design work.
+- `.serena/memories`, `.serena/plans`, or `.serena/research` may be stale or need a fact-only audit.
+- A future Codex session would need verified source-of-truth paths, invariants, contracts, entry points, or verification commands to implement confidently.
+
+Do not create memory noise for trivial formatting, purely mechanical edits, or unverified assumptions.
 
 ## Stored Locations
 

@@ -1,6 +1,6 @@
 ---
 name: ry-sec-review
-description: "Defensive security review command for full implementations, diffs, pull requests, or sensitive code paths. Use when the user invokes $ry-sec-review or asks for a security review. Follow a Mythos-inspired application security workflow: recon, hypotheses, source-to-sink tracing, exploitability assessment, confidence ranking, remediation, and verification. Do not generate weaponized exploit code or unsafe destructive instructions."
+description: "Defensive security review command for full implementations, diffs, pull requests, or sensitive code paths. Use automatically when the user invokes $ry-sec-review or asks to check security, review vulnerabilities, audit a diff, inspect auth/authz, verify secrets handling, assess injection risk, run OWASP review, or perform a security review. Follow a Mythos-inspired application security workflow: recon, hypotheses, source-to-sink tracing, exploitability assessment, confidence ranking, remediation, and verification. Do not generate weaponized exploit code or unsafe destructive instructions."
 ---
 
 # ry-sec-review
@@ -10,6 +10,17 @@ description: "Defensive security review command for full implementations, diffs,
 Run a high-quality defensive security review of the current implementation. This is not a general code review and not a blocking policy gate by default. It produces evidence-based findings and comments so the agent can decide what to fix immediately and what to report as follow-up.
 
 User-facing reports are written in Russian unless the user asks otherwise. Code, paths, symbols, vulnerability categories, and references stay exact.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$ry-sec-review` call when the request asks to:
+
+- Review security, vulnerabilities, exploitability, OWASP/ASVS coverage, hardening, or secure implementation quality.
+- Audit a diff, pull request, feature, full implementation, module, route, endpoint, API, auth/authz flow, admin path, file handler, webhook, parser, dependency, or configuration.
+- Check secrets, credentials, tokens, crypto, injection, access control, SSRF-like external requests, unsafe deserialization, supply chain, logging, or exceptional conditions.
+- Produce findings, confidence ranking, remediation, and verification steps.
+
+Do not use this skill for ordinary implementation unless the user asks for security review or the change is high-risk enough to require a focused audit. For lightweight secure-coding comments during implementation, use `owasp-top-10-implementation`.
 
 ## Review Style
 

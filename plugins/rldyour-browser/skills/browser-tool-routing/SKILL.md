@@ -1,6 +1,6 @@
 ---
 name: browser-tool-routing
-description: Decide when Codex should use Playwright MCP, Chrome DevTools MCP, or both. Use for browser tasks, UI validation, pixel-perfect checks, functional flow testing, business-logic verification, screenshots, console/network/runtime debugging, layout issues, Lighthouse/performance analysis, and any task where browser evidence is needed.
+description: Decide when Codex should use Playwright MCP, Chrome DevTools MCP, or both. Use automatically for Russian or English browser tasks, UI validation, visual checks, pixel-perfect checks, functional flow testing, business-logic verification, screenshots, console/network/runtime debugging, layout issues, Lighthouse/performance analysis, and any task where browser evidence is needed.
 ---
 
 # Browser Tool Routing
@@ -10,6 +10,18 @@ description: Decide when Codex should use Playwright MCP, Chrome DevTools MCP, o
 Choose the right browser MCP workflow before acting. Playwright MCP and Chrome DevTools MCP overlap, but they are not interchangeable.
 
 User-facing conversation stays in Russian unless requested otherwise. Repository documentation and committed files stay in English.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$browser-tool-routing` call when the task asks to:
+
+- Check or verify something in a browser, visually, interactively, functionally, or pixel-perfect.
+- Decide whether Playwright, Chrome DevTools, or both should be used.
+- Capture screenshots, inspect rendered UI, validate responsive behavior, or test a browser user flow.
+- Debug console errors, network failures, runtime exceptions, hydration, layout, performance, or Lighthouse issues.
+- Provide browser evidence before final delivery.
+
+For implementation tasks, select the concrete skill after routing: `browser-validation` for proof and `browser-debug` for diagnosis.
 
 ## Default Routing
 
