@@ -103,8 +103,8 @@ Continue this turn and run the \$serena-memory-sync workflow now.
 Required actions:
 1. Use Serena MCP as the primary source for code inspection:
    check_onboarding_performed -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only where needed) -> find_referencing_symbols -> search_for_pattern.
-2. Update .serena/memories with fact-only English content. Code, git diff, and tests are the source of truth.
-3. Preserve non-trivial plans in .serena/plans and long source-backed research in .serena/research only when useful for future sessions.
+2. Update .serena/memories with high-signal fact-only English content. Each memory should preserve source-of-truth paths, entry points, current behavior, contracts/data, invariants, change rules, verification, and known gaps when relevant. Code, git diff, and tests are the source of truth.
+3. Do not store chat history, generic advice, speculative plans, TODO lists, or secrets in memories. Preserve non-trivial plans in .serena/plans and long source-backed research in .serena/research only when useful for future sessions.
 4. If only .serena/memories, .serena/plans, or .serena/research changed, run:
    ${COMMIT_SCRIPT}
 5. Stop again after the sync or report the exact blocker."
