@@ -1,0 +1,43 @@
+{
+  "name": "rldyour-mcps",
+  "version": "0.1.0",
+  "description": "Личный набор MCP-серверов rldyour для Codex.",
+  "author": {
+    "name": "rldyourmnd",
+    "email": "rldyourmnd@users.noreply.github.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "mcp",
+    "serena",
+    "context7",
+    "figma"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "MCP-серверы rldyour",
+    "shortDescription": "Личный набор MCP-серверов для Codex",
+    "longDescription": "Плагин подключает выбранные владельцем MCP-серверы: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter и Figma. Отдельные правила и специализированные workflows для каждого MCP будут вынесены в отдельные плагины позже.",
+    "developerName": "rldyourmnd",
+    "category": "MCP",
+    "capabilities": [
+      "MCP",
+      "Инструменты разработки",
+      "Контроль доступа"
+    ],
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "defaultPrompt": [
+      "Покажи доступные MCP-серверы rldyour.",
+      "Проверь, какие MCP нужны для этой задачи.",
+      "Не используй write-инструменты MCP без подтверждения."
+    ],
+    "brandColor": "#0F766E",
+    "screenshots": []
+  }
+}
