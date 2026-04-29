@@ -47,7 +47,7 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | --- | --- | --- |
 | `serena` | Semantic navigation, analysis, and precise code editing | `uvx`, headless |
 | `sequential-thinking` | Structured reasoning and planning | `bunx` |
-| `playwright` | Browser automation and UI checks | `bunx`, headless |
+| `playwright` | Browser automation, UI checks, network/storage/testing/devtools workflows | `bunx`, headless |
 | `chrome-devtools` | Page diagnostics through Chrome DevTools | `bunx`, headless, isolated |
 | `context7` | Current library documentation | `bunx`, `CONTEXT7_API_KEY` |
 | `deepwiki` | Repository documentation and explanations | remote URL |
@@ -82,6 +82,7 @@ codex mcp get figma
 Expected state:
 
 - `serena` starts through `uvx` and does not open the dashboard automatically.
+- `playwright` starts through `bunx` with `--caps=network,storage,testing,devtools`.
 - `figma` uses OAuth.
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
 - `semgrep` starts through the current official `semgrep mcp`, not the archived `semgrep-mcp`.

@@ -34,7 +34,8 @@
       "command": "bunx",
       "args": [
         "@playwright/mcp@latest",
-        "--headless"
+        "--headless",
+        "--caps=network,storage,testing,devtools"
       ],
       "startup_timeout_sec": 90,
       "tool_timeout_sec": 180
