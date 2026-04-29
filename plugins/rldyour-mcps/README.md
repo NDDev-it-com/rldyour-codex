@@ -20,6 +20,12 @@
 
 В этом плагине не используются `npx`, `npm`, `node` как прямые команды MCP. Удаленные MCP с `url` остаются URL-подключениями и не запускают локальный процесс.
 
+## Правило стабильного старта
+
+Codex запускает MCP пачкой при старте сессии. `startup_timeout_sec` покрывает не только запуск процесса, но и MCP-handshake: `initialize` и первичный список tools. Поэтому у всех MCP в этом плагине задан явный timeout вместо дефолтного короткого значения Codex.
+
+Для локальных MCP используется `startup_timeout_sec = 90`. Для remote MCP используется `startup_timeout_sec = 60`. Это снижает случайные падения в конце startup, когда несколько `uvx` / `bunx` серверов одновременно резолвят зависимости или ждут сеть.
+
 ## Правило языка
 
 - Общение с владельцем ведется на русском.
@@ -46,7 +52,7 @@
 | `context7` | Актуальная документация библиотек | `bunx`, `CONTEXT7_API_KEY` |
 | `deepwiki` | Документация и объяснение репозиториев | remote URL |
 | `grep` | Поиск по публичным GitHub-репозиториям | remote URL |
-| `semgrep` | Статический анализ и security-проверки кода | `uvx` |
+| `semgrep` | Статический анализ и security-проверки кода | `uvx --from semgrep semgrep mcp` |
 | `shadcn` | Работа с registry shadcn/ui | `bunx` |
 | `dart-flutter` | Dart/Flutter MCP для проектов на Dart и Flutter | `dart` |
 | `figma` | Контекст дизайна из Figma | remote URL, OAuth |
@@ -78,6 +84,7 @@ codex mcp get figma
 - `serena` запускается через `uvx` и не открывает dashboard автоматически.
 - `figma` использует OAuth.
 - `context7` берет ключ только из `CONTEXT7_API_KEY`.
+- `semgrep` запускается через актуальный официальный `semgrep mcp`, а не через архивированный `semgrep-mcp`.
 - Локальные MCP не используют `npx`, `npm` или `node` как прямую команду.
 
 ## Локальные зависимости
@@ -117,11 +124,13 @@ uvx --from serena-agent@latest --python 3.13 --prerelease allow serena start-mcp
 - Serena: https://oraios.github.io/serena/02-usage/030_clients.html
 - Serena dashboard: https://oraios.github.io/serena/02-usage/060_dashboard.html
 - Context7: https://www.mintlify.com/upstash/context7/mcp/configuration
+- Codex MCP configuration: https://developers.openai.com/codex/mcp
 - Playwright MCP: https://playwright.dev/mcp/configuration/options
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - DeepWiki MCP: https://mcp.deepwiki.com/
 - Grep by Vercel: https://vercel.com/blog/grep-a-million-github-repositories-via-mcp-1H5Bmvo4XKswf0TpZIOmEI
-- Semgrep MCP: https://github.com/semgrep/mcp
+- Semgrep MCP: https://semgrep.dev/docs/mcp
+- Semgrep MCP legacy repo: https://github.com/semgrep/mcp
 - shadcn MCP: https://ui.shadcn.com/docs/mcp
 - Dart/Flutter MCP: https://docs.flutter.dev/ai/mcp-server
 - Figma MCP: https://help.figma.com/hc/en-us/articles/39888629089175-Codex-and-Figma-Set-up-the-MCP-server

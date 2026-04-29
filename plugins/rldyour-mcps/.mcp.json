@@ -15,7 +15,9 @@
         "--context=codex",
         "--open-web-dashboard",
         "False"
-      ]
+      ],
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 180
     },
     "sequential-thinking": {
       "command": "bunx",
@@ -24,14 +26,18 @@
       ],
       "env": {
         "DISABLE_THOUGHT_LOGGING": "true"
-      }
+      },
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 120
     },
     "playwright": {
       "command": "bunx",
       "args": [
         "@playwright/mcp@latest",
         "--headless"
-      ]
+      ],
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 180
     },
     "chrome-devtools": {
       "command": "bunx",
@@ -41,7 +47,9 @@
         "--isolated",
         "--no-usage-statistics",
         "--no-performance-crux"
-      ]
+      ],
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 180
     },
     "context7": {
       "command": "bunx",
@@ -50,36 +58,53 @@
       ],
       "env_vars": [
         "CONTEXT7_API_KEY"
-      ]
+      ],
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 120
     },
     "deepwiki": {
-      "url": "https://mcp.deepwiki.com/mcp"
+      "url": "https://mcp.deepwiki.com/mcp",
+      "startup_timeout_sec": 60,
+      "tool_timeout_sec": 120
     },
     "grep": {
-      "url": "https://mcp.grep.app"
+      "url": "https://mcp.grep.app",
+      "startup_timeout_sec": 60,
+      "tool_timeout_sec": 120
     },
     "semgrep": {
       "command": "uvx",
       "args": [
-        "semgrep-mcp"
-      ]
+        "--from",
+        "semgrep",
+        "semgrep",
+        "mcp"
+      ],
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 180
     },
     "shadcn": {
       "command": "bunx",
       "args": [
         "shadcn@latest",
         "mcp"
-      ]
+      ],
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 120
     },
     "dart-flutter": {
       "command": "dart",
       "args": [
         "mcp-server",
         "--force-roots-fallback"
-      ]
+      ],
+      "startup_timeout_sec": 90,
+      "tool_timeout_sec": 180
     },
     "figma": {
-      "url": "https://mcp.figma.com/mcp"
+      "url": "https://mcp.figma.com/mcp",
+      "startup_timeout_sec": 60,
+      "tool_timeout_sec": 120
     }
   }
 }

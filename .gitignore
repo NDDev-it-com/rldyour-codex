@@ -5,3 +5,4 @@
 *.log
 *.local
 node_modules/
+.serena/
