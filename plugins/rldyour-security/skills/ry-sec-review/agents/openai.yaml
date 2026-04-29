@@ -1,0 +1,19 @@
+interface:
+  display_name: "ry-sec-review"
+  short_description: "Defensive security review"
+  default_prompt: "Use $ry-sec-review to perform a defensive security review of this implementation."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Preferred for semantic code mapping, symbol tracing, and reference analysis."
+    - type: "mcp"
+      value: "semgrep"
+      description: "Optional automated SAST and supply-chain support; findings still require manual validation."
+    - type: "mcp"
+      value: "context7"
+      description: "Optional official documentation lookup for framework-specific security behavior."
+
+policy:
+  allow_implicit_invocation: true
