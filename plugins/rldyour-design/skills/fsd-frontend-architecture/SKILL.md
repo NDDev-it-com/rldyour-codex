@@ -1,6 +1,6 @@
 ---
 name: fsd-frontend-architecture
-description: Strict Feature-Sliced Design placement rules for frontend design implementation. Use when placing React UI, pages, widgets, features, entities, shared UI primitives, design tokens, assets, model state, API calls, or generated Figma/shadcn/ReactBits code into a frontend project.
+description: Strict Feature-Sliced Design placement rules for frontend design implementation. Use automatically when placing or refactoring React UI, pages, widgets, features, entities, shared UI primitives, design tokens, assets, model state, API calls, public APIs, imports, or generated Figma, shadcn/ui, or ReactBits code in a frontend project.
 ---
 
 # FSD Frontend Architecture
@@ -8,6 +8,18 @@ description: Strict Feature-Sliced Design placement rules for frontend design im
 ## Purpose
 
 Keep frontend design implementation structurally clean and scalable. Default to strict Feature-Sliced Design for React application code.
+
+## Auto Invocation
+
+Use this skill without waiting for an explicit `$fsd-frontend-architecture` call when the task involves:
+
+- Deciding where frontend code belongs in `app`, `pages`, `widgets`, `features`, `entities`, or `shared`.
+- Moving generated Figma, shadcn/ui, ReactBits, or custom UI code into production architecture.
+- Adding public APIs, fixing imports, preventing cross-slice internals, or reducing duplicated UI structure.
+- Separating reusable primitives from business features and page composition.
+- Keeping a design implementation scalable instead of page-local and ad hoc.
+
+Use it together with `design-system-implementation` whenever token or shared UI placement is involved.
 
 ## Layers
 

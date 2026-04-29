@@ -1,7 +1,7 @@
 interface:
   display_name: "Figma To Code"
-  short_description: "Pixel-perfect Figma implementation"
-  default_prompt: "Use $figma-to-code to implement the selected Figma design pixel-perfect."
+  short_description: "Auto Figma to code workflow"
+  default_prompt: "Use $figma-to-code to implement a Figma frame, designer layout, or pixel-perfect frontend UI."
 
 dependencies:
   tools:

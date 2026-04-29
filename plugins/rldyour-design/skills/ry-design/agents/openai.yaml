@@ -1,7 +1,7 @@
 interface:
   display_name: "ry-design"
-  short_description: "End-to-end design implementation"
-  default_prompt: "Use $ry-design to implement a design end-to-end with Figma, design system, FSD, and browser validation."
+  short_description: "Auto end-to-end design flow"
+  default_prompt: "Use $ry-design for end-to-end Figma/UI implementation with tokens, FSD, shadcn/ui, ReactBits, and browser validation."
 
 dependencies:
   tools:
