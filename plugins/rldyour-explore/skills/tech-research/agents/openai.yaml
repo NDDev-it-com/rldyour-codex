@@ -1,21 +1,21 @@
 interface:
-  display_name: "Техническое исследование"
-  short_description: "Docs, архитектура и GitHub-паттерны"
-  default_prompt: "Используй $tech-research, чтобы изучить технический scope фичи перед реализацией."
+  display_name: "Technical Research"
+  short_description: "Docs, architecture, and GitHub patterns"
+  default_prompt: "Use $tech-research to study the technical scope before implementation."
 
 dependencies:
   tools:
     - type: "mcp"
       value: "context7"
-      description: "Официальная документация библиотек, фреймворков, API, миграций и настроек."
+      description: "Official documentation for libraries, frameworks, APIs, migrations, and configuration."
     - type: "mcp"
       value: "deepwiki"
-      description: "Архитектура public open-source репозиториев, устройство фич и проектные решения."
+      description: "Architecture of public open-source repositories, feature internals, and design decisions."
       transport: "streamable_http"
       url: "https://mcp.deepwiki.com/mcp"
     - type: "mcp"
       value: "grep"
-      description: "Реальные GitHub-паттерны использования API, библиотек и обработчиков ошибок."
+      description: "Real GitHub usage patterns for APIs, libraries, and error handling."
       transport: "streamable_http"
       url: "https://mcp.grep.app"
 

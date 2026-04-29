@@ -1,0 +1,50 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/user_prompt_submit.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/prepare_auto_sync.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/mark_sync_required.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/stop_memory_sync.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

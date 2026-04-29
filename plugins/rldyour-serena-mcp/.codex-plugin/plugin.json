@@ -1,0 +1,51 @@
+{
+  "name": "rldyour-serena-mcp",
+  "version": "0.1.0",
+  "description": "Serena MCP workflow layer for Codex: semantic code inspection, fact-only project memory sync, plans, research archives, and lifecycle hooks.",
+  "author": {
+    "name": "rldyourmnd",
+    "email": "rldyourmnd@users.noreply.github.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "serena",
+    "mcp",
+    "lsp",
+    "semantic-code",
+    "memories",
+    "plans",
+    "research",
+    "hooks",
+    "rldyour"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks.json",
+  "interface": {
+    "displayName": "rldyour Serena MCP",
+    "shortDescription": "Serena-first code workflow and memory sync",
+    "longDescription": "This plugin defines the rldyour Serena MCP workflow for Codex. It does not declare a duplicate Serena MCP transport; the server is expected to come from rldyour-mcps. The plugin provides two skills: serena-code-workflow for semantic code inspection and editing through Serena MCP tools, and serena-memory-sync for fact-only updates to .serena/memories plus selected plans and research archives. Hook scripts add Serena-first reminders for code prompts, mark memory sync requirements after git commit-like changes, and use Stop continuation prompts to keep project knowledge current without spawning a separate sync agent.",
+    "developerName": "rldyourmnd",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skills",
+      "Hooks",
+      "Serena MCP workflow",
+      "Project memory sync",
+      "Plans and research archive"
+    ],
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "defaultPrompt": [
+      "Use Serena for this code investigation.",
+      "Sync Serena memories after this task.",
+      "Archive this complex research result."
+    ],
+    "brandColor": "#0F766E",
+    "screenshots": []
+  }
+}

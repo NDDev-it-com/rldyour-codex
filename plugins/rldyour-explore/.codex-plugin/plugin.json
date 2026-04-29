@@ -1,7 +1,7 @@
 {
   "name": "rldyour-explore",
-  "version": "0.1.0",
-  "description": "Русскоязычные исследовательские skills для Codex: техническое исследование через MCP и интернет-исследование через авторитетные источники.",
+  "version": "0.1.1",
+  "description": "Research skills for Codex: technical MCP research and authoritative web research with Russian user-facing output.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -23,24 +23,24 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Исследования rldyour",
-    "shortDescription": "MCP и web research для качественной реализации",
-    "longDescription": "Плагин добавляет два русскоязычных skills для Codex. tech-research используется перед сложной технической реализацией: закрывает scope фичи через Context7 для официальной документации, DeepWiki для архитектуры open-source репозиториев и Grep by Vercel для реальных GitHub-паттернов. web-research используется для интернет-исследований: сначала определяет вопросы и узкие места, затем ищет авторитетные источники, читает их и синтезирует выводы со ссылками. Плагин не хранит секреты и не подключает MCP напрямую: он рассчитывает на MCP-серверы из rldyour-mcps.",
+    "displayName": "rldyour Research",
+    "shortDescription": "MCP and web research for higher-quality implementation",
+    "longDescription": "This plugin adds two research skills for Codex. tech-research is used before complex technical implementation: it closes feature scope through Context7 for official documentation, DeepWiki for open-source repository architecture, and Grep by Vercel for real GitHub usage patterns. web-research is used for internet research: it first defines questions and constraints, then finds authoritative sources, reads them, and synthesizes conclusions with links. The plugin does not store secrets and does not configure MCP transports directly; it depends on MCP servers provided by rldyour-mcps. User-facing answers remain Russian unless the owner asks otherwise, while repository documentation is written in English.",
     "developerName": "rldyourmnd",
     "category": "Research",
     "capabilities": [
       "Skills",
-      "Техническое исследование",
-      "Интернет-исследование",
-      "Русскоязычный workflow"
+      "Technical research",
+      "Web research",
+      "Russian user-facing workflow"
     ],
     "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Изучи технический scope фичи.",
-      "Посмотри это в интернете.",
-      "Найди production-паттерны."
+      "Research the technical scope of this feature.",
+      "Research this on the internet.",
+      "Find production usage patterns."
     ],
     "brandColor": "#2563EB",
     "screenshots": []
