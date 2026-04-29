@@ -1,0 +1,48 @@
+{
+  "name": "rldyour-explore",
+  "version": "0.1.0",
+  "description": "Русскоязычные исследовательские skills для Codex: техническое исследование через MCP и интернет-исследование через авторитетные источники.",
+  "author": {
+    "name": "rldyourmnd",
+    "email": "rldyourmnd@users.noreply.github.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "research",
+    "technical-research",
+    "web-research",
+    "context7",
+    "deepwiki",
+    "grep",
+    "russian",
+    "rldyour"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Исследования rldyour",
+    "shortDescription": "MCP и web research для качественной реализации",
+    "longDescription": "Плагин добавляет два русскоязычных skills для Codex. tech-research используется перед сложной технической реализацией: закрывает scope фичи через Context7 для официальной документации, DeepWiki для архитектуры open-source репозиториев и Grep by Vercel для реальных GitHub-паттернов. web-research используется для интернет-исследований: сначала определяет вопросы и узкие места, затем ищет авторитетные источники, читает их и синтезирует выводы со ссылками. Плагин не хранит секреты и не подключает MCP напрямую: он рассчитывает на MCP-серверы из rldyour-mcps.",
+    "developerName": "rldyourmnd",
+    "category": "Research",
+    "capabilities": [
+      "Skills",
+      "Техническое исследование",
+      "Интернет-исследование",
+      "Русскоязычный workflow"
+    ],
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "defaultPrompt": [
+      "Изучи технический scope фичи.",
+      "Посмотри это в интернете.",
+      "Найди production-паттерны."
+    ],
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}
