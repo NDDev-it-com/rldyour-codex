@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 0f90e9f feat(skills): enforce Russian automatic routing
+Last commit: 6af53aa feat(skills): optimize plugin routing metadata
 Scope: plugins/rldyour-flow, plugins/rldyour-serena-mcp, .agents/plugins/marketplace.json, README.md, .gitignore
 Area: FLOW
 -->
@@ -15,7 +15,7 @@ Area: FLOW
 
 - `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin manifest, capability list, automatic workflow description, and linked skills/hooks.
 - `plugins/rldyour-flow/skills/*/SKILL.md`: command and reviewer workflow trigger descriptions plus execution rules.
-- `plugins/rldyour-flow/skills/*/agents/openai.yaml`: UI metadata and `policy.allow_implicit_invocation: true` for every flow skill.
+- `plugins/rldyour-flow/skills/*/agents/openai.yaml`: UI metadata and invocation policy for command, post-task, and reviewer skills.
 - `plugins/rldyour-flow/hooks.json`: Stop hook registration.
 - `plugins/rldyour-flow/hooks/stop_post_task_sync.sh`: post-task Stop hook implementation and loop guard.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`: deterministic state payload for dirty files, branch, upstream, worktrees, Serena freshness, and fingerprint.
@@ -44,14 +44,14 @@ Current `ry-start` helper routing:
 - Technical internet research prompts such as `исследуй интернет`, `изучи в интернете`, and `посмотри документацию` route to `tech-research` first with Context7, DeepWiki, and Grep by Vercel. `web-research` is added for current/latest/source-backed evidence beyond the three MCPs.
 - Browser-visible prompts route to `browser-tool-routing`, `browser-validation`, and `browser-debug` when debugging evidence is needed.
 - Design/UI/Figma prompts route to `ry-design`, `figma-to-code`, `design-system-implementation`, `fsd-frontend-architecture`, and `design-validation`.
-- Security-sensitive prompts route to `owasp-top-10-implementation`, `ry-sec-review`, or `flow-security-review`.
+- Security-sensitive prompts route to `owasp-top-10-implementation` during implementation, `ry-sec-review` for explicit security-review requests, and `flow-security-review` in the orchestrated review phase when the touched scope is sensitive.
 - Verification and finish route to `verification-quality-gates`, `flow-verification-review`, `serena-memory-sync`, and `flow-post-task-sync`.
 
 `flow-post-task-sync` runs after Serena memory freshness, not before it. The flow Stop hook exits without blocking when Serena state is stale, allowing the Serena Stop hook to request memory sync first. After Serena is current, the flow hook requests docs/git/GitHub cleanup.
 
 `flow_post_task_state.py` reads raw `git status --porcelain` output with `rstrip("\n")` and then uses `line[3:]` for paths. This preserves porcelain leading status columns and prevents paths such as `.agents/...` from losing the leading dot.
 
-The current repository has one worktree, branch `main`, upstream `origin/main`, no ahead/behind delta, and no dirty files before this memory update.
+Repository dirtiness is not stored as a durable memory fact. Use `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool` for current branch, upstream, worktree, dirty-file, ahead/behind, and Serena freshness state.
 
 ## Contracts And Data
 
@@ -61,7 +61,7 @@ The Stop hook ignores `.serena/.flow_sync_marker` and `.serena/.flow_post_task_s
 
 `flow-post-task-sync` may update `AGENTS.md` when durable Codex project instructions changed. It updates `CLAUDE.md` only when that file exists or the project explicitly uses Claude Code compatibility. Both files must contain verified project facts, not conversation history or speculative plans.
 
-Reviewer tracks are `flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, and `flow-security-review`. `ry-start` and `ry-review` are the approved flow contexts for parallel reviewer subagents, and each reviewer prompt must be self-contained and read-only.
+Reviewer tracks are `flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, and `flow-security-review`. These six skills set `policy.allow_implicit_invocation: false`; `ry-start` and `ry-review` are the approved flow contexts for parallel reviewer subagents, and each reviewer prompt must be self-contained and read-only.
 
 Flow runtime markers are `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json`. They are ignored runtime loop guards, not knowledge files.
 
@@ -81,14 +81,14 @@ Flow runtime markers are `.serena/.flow_sync_marker` and `.serena/.flow_post_tas
 - Update `references/reviewer-protocol.md` when adding, removing, or changing reviewer tracks.
 - Update `references/deploy-contract.md` when changing deploy contract fields or safety policy.
 - Keep `README.md`, `plugin.json`, `SKILL.md` descriptions, and `agents/openai.yaml` aligned with automatic routing intent.
-- Keep Russian trigger phrases in all flow and helper skill descriptions used by `ry-start`.
+- Keep compact Russian and English trigger phrases in all flow and helper skill descriptions used by `ry-start`.
 - Re-sync `plugins/rldyour-flow/` into the active Codex plugin cache after changes.
 
 ## Verification
 
 - `jq empty plugins/rldyour-flow/.codex-plugin/plugin.json plugins/rldyour-flow/hooks.json .agents/plugins/marketplace.json`: validates plugin and marketplace JSON.
 - `uv run --with pyyaml python /Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-flow/skills/<skill>`: validates each flow skill.
-- `uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `agents/openai.yaml` parse and implicit invocation.
+- `scripts/validate_marketplace.sh`: validates `agents/openai.yaml` parse, default prompt length, `$skill-name` prompt reference, short description length, MCP dependencies, and reviewer implicit-invocation exceptions.
 - `python3 -m py_compile plugins/rldyour-flow/scripts/flow_post_task_state.py`: validates the Python state script.
 - `shellcheck plugins/rldyour-flow/hooks/stop_post_task_sync.sh plugins/rldyour-flow/scripts/*.sh`: validates shell scripts.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`: verifies state payload and dirty-path handling.
