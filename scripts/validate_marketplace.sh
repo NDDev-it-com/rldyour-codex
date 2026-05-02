@@ -4,7 +4,11 @@ set -euo pipefail
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 cd "$ROOT"
 
-UV_BIN=${UV_BIN:-/opt/homebrew/bin/uv}
+UV_BIN=${UV_BIN:-$(command -v uv 2>/dev/null || true)}
+if [ -z "$UV_BIN" ]; then
+  printf 'uv command not found\n' >&2
+  exit 1
+fi
 QUICK_VALIDATE=${QUICK_VALIDATE:-/Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py}
 CODEX_HOME_DIR=${CODEX_HOME:-/Users/rldyourmnd/.codex}
 CACHE_ROOT=${CACHE_ROOT:-"$CODEX_HOME_DIR/plugins/cache/rldyour-codex"}
@@ -20,7 +24,27 @@ step "Skill frontmatter"
 skill_count=0
 while IFS= read -r skill_md; do
   skill_dir=$(dirname "$skill_md")
-  "$UV_BIN" run --with pyyaml python "$QUICK_VALIDATE" "$skill_dir" >/dev/null
+  if [ -f "$QUICK_VALIDATE" ]; then
+    "$UV_BIN" run --with pyyaml python "$QUICK_VALIDATE" "$skill_dir" >/dev/null
+  else
+    python3 - "$skill_md" <<'PY' >/dev/null
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+match = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+if not match:
+    raise SystemExit(f"{path}: missing YAML frontmatter")
+frontmatter = match.group(1)
+for field in ("name", "description"):
+    if not re.search(rf"^{field}:\s*.+$", frontmatter, re.M):
+        raise SystemExit(f"{path}: missing {field}")
+if not re.search(r"^#\s+", text, re.M):
+    raise SystemExit(f"{path}: missing markdown title")
+PY
+  fi
   printf 'valid %s\n' "$skill_dir"
   skill_count=$((skill_count + 1))
 done < <(find plugins -path '*/skills/*/SKILL.md' -print | sort)
@@ -206,7 +230,11 @@ for path in paths:
 PY
 
 step "LSP health"
-plugins/rldyour-lsps/scripts/check_lsps.sh
+if [ "${RLDYOUR_SKIP_LSP_HEALTH:-0}" = "1" ]; then
+  printf 'skip    LSP health disabled by RLDYOUR_SKIP_LSP_HEALTH\n'
+else
+  plugins/rldyour-lsps/scripts/check_lsps.sh
+fi
 
 step "Serena memory state"
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool >/dev/null
