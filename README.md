@@ -26,7 +26,7 @@ The active marketplace currently contains:
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized token-based design system, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: autonomous SDLC command workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, orchestrated reviewer tracks, and post-task synchronization.
+- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, project instructions, ADR policy, and `ry-rules-review`.
 
 ## Planned Plugin Architecture
@@ -38,7 +38,7 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-browser`: created. Browser validation, pixel-perfect checks, functional checks, business-logic verification, and runtime debugging through Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser evidence.
 - `rldyour-lsps`: created. Language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: created. Command-like SDLC skills, reviewer workflows orchestrated by `ry-start`/`ry-review`, and post-task sync hook for Serena/docs/git/GitHub cleanup.
+- `rldyour-flow`: created. Command-like SDLC skills, deep `ry-init` context packs, `ry-start` context sufficiency gate, reviewer workflows orchestrated by `ry-start`/`ry-review`, advisory SessionStart/PostToolUse hooks, and post-task sync hook for Serena/docs/git/GitHub cleanup.
 - `rldyour-rules`: created. Hard and advisory rules for quality-first engineering, architecture, dependencies, verification, project instructions, and ADRs.
 - `rldyour-security`: created. Skills-only security guidance, OWASP Top 10 coverage, and defensive review workflow.
 - `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.
