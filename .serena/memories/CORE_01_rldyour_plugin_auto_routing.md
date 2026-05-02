@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
-Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, /Users/rldyourmnd/.codex/config.toml
+Last commit: 5d0a389 feat(system): add release and observability workflows
+Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -18,6 +18,8 @@ The rldyour Codex plugin set is designed around automatic skill routing for the 
 - `plugins/rldyour-*/skills/*/agents/openai.yaml`: UI metadata and invocation policy.
 - `plugins/rldyour-*/README.md`: human-readable trigger maps and plugin boundaries.
 - `plugins/rldyour-mcps/.mcp.json`: MCP transport runtime layer used by workflow plugins.
+- `config/skill-routing-policy.json`: deterministic Russian/English prompt-to-skill routing policy cases.
+- `scripts/validate_skill_routing.py`: validates that configured routing prompts map to existing skills and description trigger terms.
 - `/Users/rldyourmnd/.codex/config.toml`: active system Codex plugin enablement and MCP registrations.
 
 ## Entry Points
@@ -64,6 +66,8 @@ The same commit added `references/init-context-pack.md` and `references/context-
 
 `plugins/rldyour-flow/skills/ry-start/SKILL.md` contains an `Automatic Helper Routing` section. It explicitly routes Russian `ry-start` prompts to helper workflows: Serena/code/LSP/rules for code work, `tech-research` plus optional `web-research` for technical internet research, browser skills for browser-visible work, design skills for Figma/UI/design-system work, security skills for sensitive work, and verification/memory/post-task sync before final delivery.
 
+Commit `5d0a389 feat(system): add release and observability workflows` added `config/skill-routing-policy.json` and `scripts/validate_skill_routing.py`. The policy currently contains nine deterministic routing cases that cover Russian technical research, `ry-start`, `ry-init`, browser validation, security review, Figma/design work, LSP health, Serena memory sync, and English quality/architecture review prompts.
+
 Current skill directory counts verified from repository files:
 
 - `rldyour-browser`: 3 skills.
@@ -97,6 +101,7 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 - Use `plugin-creator` guidance when adding or changing plugin manifests or marketplace metadata.
 - Validate `SKILL.md` files after description changes.
 - Keep compact Russian and English trigger phrases in every callable rldyour skill description; `scripts/validate_marketplace.sh` enforces this through the `Skill routing descriptions` step.
+- Keep `config/skill-routing-policy.json` aligned with important Russian owner prompts and expected helper skill names.
 - Validate `agents/openai.yaml` parse, default prompt length, `$skill-name` prompt reference, short description length, MCP dependencies, and implicit invocation policy after UI metadata changes.
 - Re-sync changed plugin directories into the active Codex plugin cache.
 - Restart Codex after changing skill descriptions, manifests, hook definitions, or MCP server definitions.
@@ -106,4 +111,5 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 - `jq empty plugins/rldyour-*/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates JSON metadata.
 - `/opt/homebrew/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates skill frontmatter.
 - `scripts/validate_marketplace.sh`: validates compact bilingual skill routing descriptions, OpenAI skill metadata, MCP dependencies, MCP config sync, MCP runtime smoke, cache sync, hook smoke, scripts, LSP health, and secret patterns.
+- `python3 scripts/validate_skill_routing.py`: validates prompt-to-skill routing policy cases from `config/skill-routing-policy.json`.
 - `diff -qr plugins/<plugin> <codex-plugin-cache>/<plugin>/local`: verifies the system cache matches the repository plugin.

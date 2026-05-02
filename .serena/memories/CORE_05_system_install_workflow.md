@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 75d357e fix(ci): disable uv cache warning
-Scope: system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, plugins/rldyour-explore, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
+Last commit: 5d0a389 feat(system): add release and observability workflows
+Scope: system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, plugins/rldyour-explore, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -23,8 +23,17 @@ The system install workflow turns this repository into a portable source of trut
 - `scripts/smoke_mcp_capabilities.sh`: pinned Python MCP SDK wrapper for capability smoke.
 - `scripts/smoke_hooks.sh`: repository and installed hook smoke plus temporary git lifecycle verification.
 - `scripts/smoke_clean_bootstrap.sh`: clean clone to temporary `CODEX_HOME` bootstrap smoke.
+- `scripts/validate_plugin_versions.py`: SemVer and release document validation.
+- `scripts/validate_skill_routing.py`: deterministic routing policy validation.
+- `scripts/release_manifest.py`: release manifest JSON generator.
+- `scripts/check_mcp_runtime_versions.py`: pinned runtime freshness check.
+- `scripts/collect_diagnostics.sh`: diagnostics bundle collector.
+- `scripts/rollback_system_codex.sh`: system Codex backup list/restore command.
 - `config/mcp-runtime-versions.env`: pinned runtime package versions consumed by smoke checks and CI.
-- `.github/workflows/validate.yml`: GitHub Actions workflow for marketplace validation, temporary install, doctor, and clean bootstrap.
+- `config/skill-routing-policy.json`: deterministic prompt-to-skill routing test fixture.
+- `.github/workflows/validate.yml`: GitHub Actions workflow for marketplace validation, temporary install, doctor, and clean bootstrap on Ubuntu and macOS.
+- `.github/workflows/dependency-check.yml`: scheduled runtime pin freshness check.
+- `.github/dependabot.yml`: GitHub Actions update check configuration.
 - `pyrightconfig.json`: Python script project configuration used by LSP health checks.
 - `README.md`: human install commands.
 - `AGENTS.md`: repository-level instructions for maintaining this marketplace.
@@ -43,6 +52,10 @@ The system install workflow turns this repository into a portable source of trut
 - `scripts/smoke_mcp_capabilities.sh [--codex-home PATH] [--list-only] [--require-env] [--include-auth]`: validate MCP initialize/list-tools and safe tool calls.
 - `scripts/smoke_hooks.sh [--codex-home PATH] [--repo-only] [--installed-only]`: validate Serena and Flow hook execution and real temporary git lifecycle state transitions.
 - `scripts/smoke_clean_bootstrap.sh`: validate committed source in a clean local clone with a temporary system install.
+- `scripts/collect_diagnostics.sh [--output DIR] [--include-doctor]`: collect local failure evidence in an ignored diagnostics directory.
+- `scripts/rollback_system_codex.sh --list`: list installer-created backups.
+- `scripts/rollback_system_codex.sh --restore <backup> --dry-run`: preview restore of `AGENTS.md` and `config.toml`.
+- `scripts/rollback_system_codex.sh --restore <backup>`: create a pre-restore backup and restore backed up `AGENTS.md` and `config.toml`.
 
 ## Current Behavior
 
@@ -62,6 +75,8 @@ Apply mode:
 
 `README.md` also documents `scripts/bootstrap_check.sh --apply`, `scripts/smoke_mcp_runtime.sh`, `scripts/smoke_mcp_capabilities.sh`, `scripts/smoke_hooks.sh`, and `scripts/smoke_clean_bootstrap.sh` as runtime smoke checks for new or resynced machines.
 
+`README.md` now documents release and operations entry points: `python3 scripts/release_manifest.py`, `python3 scripts/check_mcp_runtime_versions.py`, `scripts/rollback_system_codex.sh --list`, and `scripts/collect_diagnostics.sh`.
+
 `scripts/bootstrap_check.sh` defaults to non-mutating dry-run mode. In dry-run mode it runs install preview, JSON validation, shellcheck, and repository-only hook smoke. In apply mode it runs install preview, install apply, `scripts/validate_marketplace.sh`, MCP runtime smoke, hook smoke, `scripts/doctor_system_codex.sh`, Serena state, Flow state, and `git status -sb`.
 
 `scripts/doctor_system_codex.sh` verifies:
@@ -77,13 +92,17 @@ Apply mode:
 
 `scripts/validate_marketplace.sh` has an `MCP pinning policy` step. It rejects `@latest`, requires exact `uvx --from package==version` specs, and requires pinned bunx package specs.
 
-`scripts/validate_marketplace.sh` now validates `pyrightconfig.json`, runs `scripts/smoke_mcp_runtime.sh`, runs `scripts/smoke_mcp_capabilities.sh`, and runs `scripts/smoke_hooks.sh` after plugin cache sync. Capability smoke can be controlled through `RLDYOUR_MCP_CAPABILITY_LIST_ONLY`, `RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV`, `RLDYOUR_MCP_CAPABILITY_INCLUDE_AUTH`, and `RLDYOUR_MCP_CAPABILITY_SKIP_SERVERS`.
+`scripts/validate_marketplace.sh` now validates `pyrightconfig.json`, release metadata, skill routing policy, runs `scripts/smoke_mcp_runtime.sh`, runs `scripts/smoke_mcp_capabilities.sh`, and runs `scripts/smoke_hooks.sh` after plugin cache sync. Capability smoke can be controlled through `RLDYOUR_MCP_CAPABILITY_LIST_ONLY`, `RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV`, `RLDYOUR_MCP_CAPABILITY_INCLUDE_AUTH`, and `RLDYOUR_MCP_CAPABILITY_SKIP_SERVERS`.
 
 `plugins/rldyour-lsps/scripts/check_lsps.sh` reports zero missing commands and zero warnings for this repository because `pyrightconfig.json` defines the Python script scope.
 
 `scripts/smoke_clean_bootstrap.sh` requires a clean working tree, clones the committed repository into a temporary directory, installs into a temporary `CODEX_HOME`, runs doctor with list-only MCP capability mode and a temporary `SERENA_HOME`, verifies `codex mcp list`, and removes the temporary workspace unless `--keep` is used. The temporary `SERENA_HOME` prevents bootstrap probes from modifying the owner's global Serena project registry.
 
-`.github/workflows/validate.yml` uses `CODEX_HOME=/tmp/rldyour-codex-home` and runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI from `config/mcp-runtime-versions.env`, installs the marketplace into temporary state, runs `scripts/validate_marketplace.sh`, runs `scripts/doctor_system_codex.sh`, and runs `scripts/smoke_clean_bootstrap.sh`. The workflow avoids `runner.*` in job-level `env` because GitHub Actions does not allow that context there.
+`.github/workflows/validate.yml` uses `CODEX_HOME=/tmp/rldyour-codex-home` and runs on push to `main`, pull requests to `main`, and manual dispatch. It runs on both `ubuntu-latest` and `macos-latest`, installs pinned Codex CLI from `config/mcp-runtime-versions.env`, installs the marketplace into temporary state, runs `scripts/validate_marketplace.sh`, runs `scripts/doctor_system_codex.sh`, and runs `scripts/smoke_clean_bootstrap.sh`. The workflow avoids `runner.*` in job-level `env` because GitHub Actions does not allow that context there.
+
+The validate workflow writes a success summary to `GITHUB_STEP_SUMMARY`. On failure it runs `scripts/collect_diagnostics.sh --output diagnostics/ci` and uploads `diagnostics/ci` with `actions/upload-artifact@v4.6.2`.
+
+`.github/workflows/dependency-check.yml` runs weekly and manually. It executes `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, writes the report to the job summary, and uploads `dependency-check.json`.
 
 `scripts/validate_marketplace.sh` discovers `uv` from `PATH` instead of assuming the macOS Homebrew path. If the system `skill-creator` `quick_validate.py` is unavailable, it falls back to an internal lightweight `SKILL.md` frontmatter/title validation so CI remains self-contained. `RLDYOUR_SKIP_LSP_HEALTH=1` skips owner-machine LSP command checks in CI while local validation keeps them enabled by default.
 
@@ -137,6 +156,8 @@ Serena MCP is installed with `--enable-web-dashboard False --open-web-dashboard 
 - Run `scripts/smoke_clean_bootstrap.sh` from a clean working tree when proving a committed clean clone can install and pass doctor.
 - After changing `.mcp.json`, run the installer and doctor workflow before final delivery so portable and installed MCP state cannot drift.
 - Run `scripts/validate_marketplace.sh` before committing repository changes.
+- Run `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` before changing pinned runtime packages.
+- Run `scripts/collect_diagnostics.sh --include-doctor` before applying rollback when a failure needs evidence.
 
 ## Verification
 
@@ -149,6 +170,13 @@ Serena MCP is installed with `--enable-web-dashboard False --open-web-dashboard 
 - `scripts/smoke_mcp_capabilities.sh`: verifies MCP initialize, expected tool discovery, and safe call-tool behavior.
 - `scripts/smoke_hooks.sh`: verifies hook scripts execute in repository and installed cache layouts, including temporary git lifecycle paths.
 - `scripts/smoke_clean_bootstrap.sh`: proves clean clone to temporary system install.
+- `python3 scripts/validate_plugin_versions.py`: validates release metadata.
+- `python3 scripts/validate_skill_routing.py`: validates routing policy.
+- `python3 scripts/release_manifest.py`: emits release evidence JSON.
+- `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`: verifies all pinned runtime versions are current.
+- `scripts/collect_diagnostics.sh`: creates ignored local diagnostic bundles.
+- `scripts/rollback_system_codex.sh --list`: lists available installer backups.
 - `.github/workflows/validate.yml`: runs marketplace validation and system smoke in GitHub Actions.
+- `.github/workflows/dependency-check.yml`: runs scheduled runtime pin freshness checks.
 - `codex mcp get openaiDeveloperDocs`: verifies the installed OpenAI Docs MCP endpoint.
 - `cmp -s system/AGENTS.md /Users/rldyourmnd/.codex/AGENTS.md`: verifies installed global AGENTS matches the template.

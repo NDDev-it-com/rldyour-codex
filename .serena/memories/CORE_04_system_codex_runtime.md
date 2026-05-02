@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 75d357e fix(ci): disable uv cache warning
-Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
+Last commit: 5d0a389 feat(system): add release and observability workflows
+Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -30,8 +30,15 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `scripts/smoke_hooks.sh`: repository and installed Serena/Flow hook smoke with synthetic payload checks and real temporary git lifecycle checks.
 - `scripts/smoke_clean_bootstrap.sh`: clean-clone bootstrap smoke for clone, temporary `CODEX_HOME`, install, doctor, and MCP registration.
 - `scripts/bootstrap_check.sh`: end-to-end bootstrap check for dry-run and apply-mode system setup validation.
+- `scripts/validate_plugin_versions.py`: release metadata and plugin SemVer validation.
+- `scripts/validate_skill_routing.py`: prompt-to-skill routing policy validation.
+- `scripts/release_manifest.py`: release evidence snapshot generator.
+- `scripts/check_mcp_runtime_versions.py`: pinned runtime version freshness check.
+- `scripts/collect_diagnostics.sh`: local diagnostics bundle collector.
+- `scripts/rollback_system_codex.sh`: explicit restore command for installer-created Codex backups.
 - `config/mcp-runtime-versions.env`: pinned runtime package versions for Codex CLI, MCP Python SDK, Serena, Semgrep, and bunx-based local MCP servers.
-- `.github/workflows/validate.yml`: GitHub Actions validation for marketplace metadata, system install, doctor, and clean bootstrap on push, pull request, and manual dispatch.
+- `.github/workflows/validate.yml`: GitHub Actions validation for marketplace metadata, system install, doctor, and clean bootstrap on Ubuntu/macOS push, pull request, and manual dispatch.
+- `.github/workflows/dependency-check.yml`: weekly/manual pinned runtime freshness workflow.
 - `pyrightconfig.json`: minimal Python project configuration for this scripts-focused repository.
 
 ## Entry Points
@@ -48,6 +55,8 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `scripts/smoke_mcp_capabilities.sh`: checks MCP `initialize`, `list_tools`, and safe `call_tool` behavior through the MCP Python SDK.
 - `scripts/smoke_hooks.sh`: checks the hook scripts that will be used after restart from both repository sources and installed plugin cache, including real temporary git lifecycle transitions.
 - `scripts/smoke_clean_bootstrap.sh`: proves a committed clean clone can install into a temporary `CODEX_HOME` and pass doctor plus MCP registration.
+- `scripts/collect_diagnostics.sh`: writes local sanitized diagnostics under ignored `diagnostics/`.
+- `scripts/rollback_system_codex.sh --list`: lists installer backup timestamps; `--restore <backup>` restores `AGENTS.md` and `config.toml` from a backup after creating a pre-restore backup.
 - `/Users/rldyourmnd/.codex/config.toml`: direct runtime configuration file for the current machine.
 - `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex`: installed plugin cache root.
 
@@ -113,7 +122,11 @@ After commit `718264b`, `scripts/install_system_codex.sh --apply` synced all rep
 
 `scripts/smoke_clean_bootstrap.sh` passed after commit `27de40d`. It cloned the committed repository into a temporary directory, installed the system runtime into a temporary `CODEX_HOME`, ran `scripts/doctor_system_codex.sh` in list-only capability mode with a temporary `SERENA_HOME`, and verified `codex mcp list`. The temporary `SERENA_HOME` prevents clean-bootstrap Serena probes from registering temporary clone paths in the owner's global Serena config.
 
-`scripts/doctor_system_codex.sh` passed on the current machine with zero warnings and zero failures after `scripts/install_system_codex.sh --apply`. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
+After commit `5d0a389 feat(system): add release and observability workflows`, `scripts/install_system_codex.sh --apply` installed the updated `system/AGENTS.md` into `/Users/rldyourmnd/.codex/AGENTS.md` and synced the plugin cache. `scripts/doctor_system_codex.sh` then passed on the current machine with zero warnings and zero failures. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
+
+`scripts/smoke_clean_bootstrap.sh` passed after commit `5d0a389`. It installed the committed repository into a temporary `CODEX_HOME`, used a temporary `SERENA_HOME`, ran doctor with list-only MCP capability probes, verified `codex mcp list`, and removed the temporary workspace.
+
+`python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` passed after commit `5d0a389`; all pinned versions in `config/mcp-runtime-versions.env` matched upstream latest at check time.
 
 ## Contracts And Data
 
@@ -158,6 +171,10 @@ Serena runtime is explicitly headless in `.mcp.json` and installed config: `--en
 
 `.github/workflows/validate.yml` runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI into CI, applies the marketplace into `CODEX_HOME=/tmp/rldyour-codex-home`, runs marketplace validation, doctor, and clean bootstrap smoke. CI capability smoke uses list-only mode to avoid auth-sensitive or long-running safe tool calls. CI sets `RLDYOUR_SKIP_LSP_HEALTH=1` because full LSP health is an owner-machine check, not a portable GitHub runner check. The uv setup step sets `enable-cache: false` because this repository has no Python dependency lock file for uv cache invalidation. The workflow must not use `runner.*` expressions in job-level `env` because GitHub rejects that context during workflow parsing.
 
+`.github/workflows/validate.yml` now runs as a two-OS matrix on `ubuntu-latest` and `macos-latest`. This is required because the owner runtime is macOS-first while CI should still prove portability. The workflow writes success details to `GITHUB_STEP_SUMMARY` and uploads a diagnostics artifact on failure.
+
+`.github/workflows/dependency-check.yml` checks pinned MCP runtime versions weekly and through `workflow_dispatch`. `.github/dependabot.yml` monitors GitHub Actions references weekly.
+
 Environment variables and auth:
 
 - `context7` references `CONTEXT7_API_KEY` through `env_vars`; no raw key should be stored in repository files or memories.
@@ -175,6 +192,8 @@ Environment variables and auth:
 - Keep `system/AGENTS.md` as the tracked source and `~/.codex/AGENTS.md` as installed output.
 - After changing plugin hooks, run `scripts/install_system_codex.sh --apply` and restart Codex so the installed cache and active hook registry are reloaded.
 - YOLO permission defaults are intentional owner policy. Do not weaken or remove them unless the owner explicitly changes that policy.
+- Use rollback restore only from explicit backups; default rollback command should remain read-only through `--list` or `--dry-run`.
+- Keep diagnostics output under ignored `diagnostics/`.
 
 ## Change Rules
 
@@ -197,7 +216,11 @@ Environment variables and auth:
 - `scripts/smoke_mcp_capabilities.sh`: verifies MCP `initialize`, expected `list_tools`, and safe `call_tool` probes.
 - `scripts/smoke_hooks.sh`: verifies repository and installed Serena/Flow hooks with non-mutating sample payloads and temporary git lifecycle checks.
 - `scripts/smoke_clean_bootstrap.sh`: verifies clean clone, temporary system install, doctor, and MCP registration from committed state.
+- `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`: verifies pinned runtime versions against upstream npm/PyPI latest versions.
+- `scripts/collect_diagnostics.sh`: collects local failure diagnostics without environment dumps.
+- `scripts/rollback_system_codex.sh --restore <backup> --dry-run`: previews restore of installer-created backup files.
 - `.github/workflows/validate.yml`: verifies marketplace install and smoke checks in GitHub Actions.
+- `.github/workflows/dependency-check.yml`: verifies scheduled MCP runtime pin freshness.
 - `diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates repository marketplace and plugin manifests.
 - `rg -n 'ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' .serena/memories plugins .agents`: should show only policy text and placeholders, not real credentials.
