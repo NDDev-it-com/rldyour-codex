@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 03a05d1 feat(codex): add system install workflow
+Last commit: 0f90e9f feat(skills): enforce Russian automatic routing
 Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -89,7 +89,7 @@ Current plugin manifest versions:
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
-`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, OpenAI skill metadata, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, plugin cache sync, secret patterns, and whitespace.
+`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, Russian automatic routing descriptions, OpenAI skill metadata, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, plugin cache sync, secret patterns, and whitespace.
 
 `scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, plugins, MCP, cache, and repository validation.
 
@@ -99,6 +99,7 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 - Do not store secrets, tokens, cookies, private keys, or raw credentials in this repository.
 - Keep technical identifiers stable and ASCII.
 - Keep each plugin's responsibility boundary explicit.
+- Keep Russian trigger phrases in each callable rldyour skill `SKILL.md` description so implicit invocation works with the owner's Russian prompts.
 - Do not commit browser evidence or local Serena runtime/cache state.
 
 ## Change Rules
