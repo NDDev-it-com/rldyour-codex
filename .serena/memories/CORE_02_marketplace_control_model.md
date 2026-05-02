@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 5006272 feat(codex): add lsp and flow workflow plugins
+Last commit: 8c13e13 feat(rules): add quality-first engineering rules plugin
 Scope: README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore
 Area: CORE
 -->
@@ -26,7 +26,7 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 
 ## Current Behavior
 
-The active marketplace contains eight plugins in this order:
+The active marketplace contains nine plugins in this order:
 
 - `rldyour-mcps`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-mcps`.
 - `rldyour-explore`: Research, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-explore`.
@@ -36,6 +36,7 @@ The active marketplace contains eight plugins in this order:
 - `rldyour-design`: Design, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-design`.
 - `rldyour-lsps`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-lsps`.
 - `rldyour-flow`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-flow`.
+- `rldyour-rules`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-rules`.
 
 Created plugins are listed in the active catalog. Planned plugins stay documented in `README.md` and are not added to `marketplace.json` until explicitly created.
 
@@ -54,6 +55,7 @@ Plugin manifests use `.codex-plugin/plugin.json`. Current plugin capability boun
 - `rldyour-serena-mcp` exposes `skills: "./skills/"` and `hooks: "./hooks.json"`.
 - `rldyour-lsps` exposes `skills: "./skills/"` only. It does not define MCP servers, apps, or hooks.
 - `rldyour-flow` exposes `skills: "./skills/"` and `hooks: "./hooks.json"`. It does not define MCP servers or apps.
+- `rldyour-rules` exposes `skills: "./skills/"` only. It does not define MCP servers, apps, or hooks.
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 

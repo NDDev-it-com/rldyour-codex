@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 5006272 feat(codex): add lsp and flow workflow plugins
-Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security, plugins/rldyour-serena-mcp, plugins/rldyour-design, plugins/rldyour-lsps, plugins/rldyour-flow, plugins/rldyour-mcps
+Last commit: 8c13e13 feat(rules): add quality-first engineering rules plugin
+Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security, plugins/rldyour-serena-mcp, plugins/rldyour-design, plugins/rldyour-lsps, plugins/rldyour-flow, plugins/rldyour-rules, plugins/rldyour-mcps
 Area: CORE
 -->
 
@@ -28,10 +28,11 @@ The rldyour Codex plugin set is designed around automatic skill routing. Workflo
 - `rldyour-design`: auto-routes design work. Use `ry-design` for end-to-end design implementation, with subskills for Figma-to-code, design systems, FSD placement, and design validation.
 - `rldyour-lsps`: auto-routes language-server work. Use `lsp-routing` for choosing language-server workflows, `serena-lsp-integration` for Serena language key alignment, `lsp-health-check` for `$ry-lsp-check` verification, and `lsp-setup` for explicit brew-first setup.
 - `rldyour-flow`: auto-routes SDLC command workflows. Use `ry-init` for scoped initialization, `ry-start` for feature/task lifecycle implementation, `ry-newp` for new-project planning, `ry-review` for report-only review, `ry-deploy` for server deployment verification, and `flow-post-task-sync` after meaningful work or Stop hook prompts.
+- `rldyour-rules`: auto-routes quality-first engineering rules. Use `quality-first-engineering` for clean code and no-hacks policy, `architecture-boundaries` for FSD/VSA placement, `implementation-discipline` for synchronized implementation, `dependency-compatibility-policy` for latest-compatible dependencies, `verification-quality-gates` for evidence, `project-instructions-policy` for `AGENTS.md`/`CLAUDE.md`/ADR rules, and `ry-rules-review` for explicit rules audits.
 
 ## Current Behavior
 
-All workflow skills in `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, `rldyour-design`, `rldyour-lsps`, and `rldyour-flow` keep `policy.allow_implicit_invocation: true`.
+All workflow skills in `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules` keep `policy.allow_implicit_invocation: true`.
 
 The owner communicates with Codex in Russian. Plugin docs, memory files, code comments, token files, and commit messages remain English. Skill descriptions are written in English but explicitly account for Russian or English user requests where relevant.
 
@@ -40,6 +41,8 @@ The owner communicates with Codex in Russian. Plugin docs, memory files, code co
 `rldyour-lsps` has no MCP transport definitions. It is a skills-only workflow layer for local LSP executables, project prerequisite checks, and Serena LSP integration guidance.
 
 `rldyour-flow` has no MCP transport definitions. It is a skills-and-hooks workflow layer that coordinates existing workflow plugins, Serena memory freshness, project instruction docs, git history, GitHub sync, and branch/worktree cleanup.
+
+`rldyour-rules` has no MCP transport definitions and no hooks. It is a skills-only policy layer that coordinates quality, architecture, dependency, verification, project-instruction, and ADR rules with existing workflow plugins.
 
 ## Contracts And Data
 
