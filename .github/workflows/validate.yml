@@ -18,9 +18,15 @@ concurrency:
 
 jobs:
   marketplace:
-    name: Marketplace and system smoke
-    runs-on: ubuntu-latest
-    timeout-minutes: 35
+    name: Marketplace and system smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
     env:
       CODEX_HOME: /tmp/rldyour-codex-home
       RLDYOUR_MCP_CAPABILITY_LIST_ONLY: "1"
@@ -47,9 +53,19 @@ jobs:
         uses: dart-lang/setup-dart@v1.7.2
 
       - name: Install system packages
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y jq ripgrep shellcheck
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            sudo apt-get update
+            sudo apt-get install -y jq ripgrep shellcheck
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            command -v jq >/dev/null 2>&1 || brew install jq
+            command -v rg >/dev/null 2>&1 || brew install ripgrep
+            command -v shellcheck >/dev/null 2>&1 || brew install shellcheck
+          else
+            echo "Unsupported runner OS: $RUNNER_OS" >&2
+            exit 1
+          fi
 
       - name: Install pinned Codex CLI
         run: |
@@ -71,3 +87,25 @@ jobs:
 
       - name: Clean bootstrap smoke
         run: scripts/smoke_clean_bootstrap.sh
+
+      - name: Write validation summary
+        if: success()
+        run: |
+          {
+            echo "## rldyour Codex validation"
+            echo "- OS: ${RUNNER_OS}"
+            echo "- Ref: ${GITHUB_REF}"
+            echo "- SHA: ${GITHUB_SHA}"
+            echo "- Checks: marketplace validation, doctor, clean bootstrap"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Collect diagnostics
+        if: failure()
+        run: scripts/collect_diagnostics.sh --output diagnostics/ci
+
+      - name: Upload diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: diagnostics-${{ matrix.os }}
+          path: diagnostics/ci

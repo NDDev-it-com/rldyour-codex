@@ -1,0 +1,53 @@
+name: dependency-check
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-check-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  mcp-runtime-pins:
+    name: MCP runtime pin freshness
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.13"
+
+      - name: Check pinned MCP runtime versions
+        run: |
+          python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json > dependency-check.json
+
+      - name: Write dependency summary
+        if: always()
+        run: |
+          {
+            echo "## MCP runtime pin freshness"
+            echo ""
+            if [ -f dependency-check.json ]; then
+              echo '```json'
+              cat dependency-check.json
+              echo '```'
+            else
+              echo "dependency-check.json was not created"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload dependency report
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: dependency-check
+          path: dependency-check.json

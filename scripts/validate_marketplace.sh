@@ -18,7 +18,11 @@ step() {
 }
 
 step "JSON metadata"
-jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json plugins/rldyour-mcps/.mcp.json plugins/rldyour-serena-mcp/hooks.json plugins/rldyour-flow/hooks.json pyrightconfig.json
+jq empty .agents/plugins/marketplace.json config/skill-routing-policy.json plugins/*/.codex-plugin/plugin.json plugins/rldyour-mcps/.mcp.json plugins/rldyour-serena-mcp/hooks.json plugins/rldyour-flow/hooks.json pyrightconfig.json
+
+step "Release metadata"
+python3 scripts/validate_plugin_versions.py
+python3 scripts/release_manifest.py >/dev/null
 
 step "Skill frontmatter"
 skill_count=0
@@ -98,6 +102,9 @@ if errors:
 
 print(f"validated compact bilingual routing descriptions: {count}")
 PY
+
+step "Skill routing policy"
+python3 scripts/validate_skill_routing.py
 
 step "OpenAI skill metadata"
 "$UV_BIN" run --with pyyaml python - <<'PY'
@@ -222,6 +229,10 @@ paths = [
     Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
     Path("plugins/rldyour-flow/scripts/flow_post_task_state.py"),
     Path("scripts/smoke_mcp_capabilities.py"),
+    Path("scripts/validate_plugin_versions.py"),
+    Path("scripts/validate_skill_routing.py"),
+    Path("scripts/release_manifest.py"),
+    Path("scripts/check_mcp_runtime_versions.py"),
 ]
 
 for path in paths:

@@ -137,6 +137,10 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_clean_bootstrap.sh
+scripts/rollback_system_codex.sh --list
+scripts/collect_diagnostics.sh
 ```
+
+Release and operational evidence live in `VERSION`, `CHANGELOG.md`, `docs/release-process.md`, `docs/rollback-restore.md`, `docs/dependency-updates.md`, and `docs/observability.md`.
 
 Restart Codex after changing global `AGENTS.md`, `~/.codex/config.toml`, installed plugins, hooks, skills, or MCP runtime definitions.
