@@ -92,7 +92,13 @@ Only then create `plugins/<name>/` and add it to `.agents/plugins/marketplace.js
 codex plugin marketplace add .
 ```
 
-After changing `marketplace.json`, a plugin manifest, hooks, skills, or `.mcp.json`, start a new Codex session so the runtime reloads the configuration.
+After changing `marketplace.json`, a plugin manifest, hooks, skills, or `.mcp.json`, apply the system install workflow and start a new Codex session so the runtime reloads the configuration:
+
+```bash
+scripts/install_system_codex.sh --dry-run
+scripts/install_system_codex.sh --apply
+scripts/doctor_system_codex.sh
+```
 
 ## System Codex Installation
 
@@ -117,3 +123,5 @@ scripts/doctor_system_codex.sh
 ```
 
 The installer writes `~/.codex/AGENTS.md`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks, and synchronizes the local plugin cache. Existing `~/.codex/AGENTS.md` and `~/.codex/config.toml` are backed up before write operations. Secrets and OAuth tokens are never written by this repository.
+
+`plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
