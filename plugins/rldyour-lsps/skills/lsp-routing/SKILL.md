@@ -1,6 +1,6 @@
 ---
 name: lsp-routing
-description: Automatic language-server routing for Codex. Use automatically for Russian or English requests that mention LSP/лсп, language servers/серверы языков, диагностики, type checking, типы, code intelligence, symbol navigation, semantic refactors, project setup, or implementation involving Python, Rust, Dart, Flutter, TypeScript, JavaScript, Go, C, C++, Qt, QML, YAML, Docker, HTML, CSS, Shell, JSON, TOML, or Markdown.
+description: "Route language-server usage for implementation, types, diagnostics, symbols, and semantic refactors. Use for LSP/лсп, type checking, Python/Rust/Dart/TS/Go/C++/Qt/YAML/etc."
 ---
 
 # LSP Routing

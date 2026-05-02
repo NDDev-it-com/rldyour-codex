@@ -1,6 +1,6 @@
 ---
 name: design-system-implementation
-description: "Centralized frontend design system workflow with design tokens, shadcn/ui MCP, and ReactBits.dev. Use automatically for Russian or English design-system work: дизайн-система, дизайн токены, токены, UI primitives, theme tokens, CSS variables, Tailwind/shadcn theme config, variants, типографика, цвета, spacing, radii, shadows, motion tokens, Figma variables, ReactBits, visual consistency."
+description: "Implement centralized design systems with tokens, shadcn/ui, and ReactBits. Use for дизайн-система, токены, UI primitives, theme, CSS variables, typography, colors, motion."
 ---
 
 # Design System Implementation

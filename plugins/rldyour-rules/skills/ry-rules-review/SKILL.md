@@ -1,6 +1,6 @@
 ---
 name: ry-rules-review
-description: "Explicit rldyour rules audit command. Use automatically when the user invokes ry-rules-review, asks to review against rules, audit code quality, check architecture rules, check no hacks, check technical debt, проверить по правилам, проверь качество по правилам, аудит правил, ревью правил, hard rules review."
+description: "Audit implementation against rldyour rules. Use for ry-rules-review, review against rules, hard rules review, проверить по правилам, аудит правил, качество по правилам."
 ---
 
 # ry-rules-review
@@ -30,4 +30,3 @@ Review a diff, PR, branch, file scope, or implementation against `rldyour-rules`
 - Disposition: `must-fix`, `should-fix`, `ask-user`, or `defer`.
 
 Read `references/rules-policy.md` and only load other references when they match the reviewed issue.
-

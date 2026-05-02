@@ -1,6 +1,6 @@
 {
   "name": "rldyour-flow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Autonomous Russian-first SDLC workflow for Codex: ry-init, ry-start, ry-newp, ry-review, ry-deploy, reviewer skills, and post-task sync.",
   "author": {
     "name": "rldyourmnd",

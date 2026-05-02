@@ -1,6 +1,6 @@
 ---
 name: ry-start
-description: Full feature/task lifecycle for Codex. Use automatically when the user invokes ry-start or asks in Russian or English to implement, build, fix, change, develop, investigate and then implement, сделать фичу, реализуй, доработай, исправь, начни задачу, сделай качественно, сделай полный цикл. Performs scoped init when needed, deep code and internet research, plan, verified implementation, worktree/PR, atomic commits, quality gates, reviewer subagents, browser/security checks, and post-task sync.
+description: "Full task lifecycle: init, research, plan, implement, verify, review, commit, sync. Use for ry-start, implement/build/fix, реализуй, доработай, исправь, сделай качественно."
 ---
 
 # ry-start
@@ -33,12 +33,12 @@ The owner normally invokes only `rldyour-flow` commands and writes prompts in Ru
 - Internet or best-practice research: for technical prompts such as исследуй интернет, изучи в интернете, посмотри документацию, best practices, migration, API behavior, framework/library setup, or MCP/tool sources, use `tech-research` first with Context7, DeepWiki, and Grep by Vercel. Add `web-research` when the prompt asks for internet/current/latest/source-backed information or when sources beyond the three MCPs are needed.
 - Browser-visible work: use `browser-tool-routing` and `browser-validation` for проверь в браузере, визуально, UI, адаптив, скриншот, pixel-perfect, user flow, or business-logic checks. Use `browser-debug` for console, network, runtime, layout, hydration, Lighthouse, performance, and browser-only failures.
 - Design/frontend UI work: use `ry-design`, `figma-to-code`, `design-system-implementation`, `fsd-frontend-architecture`, and `design-validation` when the task mentions Figma, дизайн, UI, верстка, дизайн-система, shadcn/ui, ReactBits, FSD, tokens, or pixel-perfect design.
-- Security-sensitive work: use `owasp-top-10-implementation` during auth/authz/API/input/file/dependency/config/secrets/payment/admin/external-integration work. Use `ry-sec-review` or `flow-security-review` for explicit проверь безопасность, секьюрити ревью, OWASP, уязвимости, секреты, права доступа, or injection requests.
+- Security-sensitive work: use `owasp-top-10-implementation` during auth/authz/API/input/file/dependency/config/secrets/payment/admin/external-integration work. Use `ry-sec-review` for explicit security-review requests and orchestrate `flow-security-review` in the review phase when the touched scope is sensitive.
 - Verification and finish: use `verification-quality-gates`, `flow-verification-review`, `serena-memory-sync`, and `flow-post-task-sync` before final delivery when the task produced durable code, config, docs, plugin, memory, hook, or workflow changes.
 
 ## Subagent Permission
 
-Invoking `ry-start` is the owner's explicit permission to use parallel reviewer subagents during the review phase. Prompts must be self-contained and read-only for reviewers.
+Invoking `ry-start` is the owner's explicit permission to use parallel reviewer subagents during the review phase. Reviewer track skills are orchestrated by this command, not broad implicit-entry skills. Prompts must be self-contained and read-only for reviewers.
 
 ## Non-Negotiables
 

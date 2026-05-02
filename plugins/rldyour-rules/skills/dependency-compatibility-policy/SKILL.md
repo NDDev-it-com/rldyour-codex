@@ -1,6 +1,6 @@
 ---
 name: dependency-compatibility-policy
-description: "Dependency and technology compatibility rules for Codex. Use automatically for package updates, new dependencies, framework/library/API choices, migrations, version upgrades, release notes, lockfiles, latest compatible versions, SemVer, dependency security, зависимости, версии, обнови пакет, миграция, совместимость, latest, актуальные технологии."
+description: "Choose and update dependencies with current, compatible, source-backed versions. Use for зависимости, версии, package updates, migration, совместимость, latest, актуальные технологии."
 ---
 
 # Dependency Compatibility Policy
@@ -21,4 +21,3 @@ Use current, compatible, secure, and maintainable technology choices without bli
 - Do not add dependencies to avoid writing small project-specific code unless the dependency materially reduces risk or complexity.
 
 Read `references/dependency-policy.md` for detailed dependency selection and upgrade rules.
-

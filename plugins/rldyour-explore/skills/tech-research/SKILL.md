@@ -1,6 +1,6 @@
 ---
 name: tech-research
-description: "Technical research before feature implementation, complex bug fixing, migrations, library/API/framework setup, or open-source repository architecture analysis. Use automatically for Russian or English technical requests: исследуй интернет, изучи в интернете, посмотри документацию, изучи MCP/tool sources, найди GitHub patterns, best practices, API behavior, migration/setup options before coding. Use Context7 for official docs, DeepWiki for repo architecture, and Grep by Vercel for real GitHub usage patterns. User-facing answers stay Russian unless requested otherwise."
+description: "Research technical scope with Context7, DeepWiki, and Grep before coding. Use for исследуй интернет, документация, best practices, migration, API/framework setup, GitHub patterns."
 ---
 
 # Tech Research

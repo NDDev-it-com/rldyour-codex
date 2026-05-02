@@ -16,5 +16,4 @@ dependencies:
       description: "Runtime evidence when needed."
 
 policy:
-  allow_implicit_invocation: true
-
+  allow_implicit_invocation: false

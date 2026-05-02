@@ -1,6 +1,6 @@
 ---
 name: browser-validation
-description: "Browser validation workflow for UI implementation, pixel-perfect checks, functional behavior, responsive states, and business-logic verification. Use automatically after frontend/browser-visible changes and for Russian or English prompts: проверь в браузере, проверь визуально, сделай скриншот, проверь адаптив, проверь UI, проверь бизнес-логику, pixel-perfect, form/flow/route/client-side validation. Playwright MCP is primary; Chrome DevTools MCP adds console/network/runtime evidence."
+description: "Validate browser-visible UI, flows, responsive states, and business logic. Use after frontend changes or prompts: проверь в браузере, визуально, адаптив, UI, бизнес-логику, pixel-perfect."
 ---
 
 # Browser Validation

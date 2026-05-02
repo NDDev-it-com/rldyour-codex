@@ -1,6 +1,6 @@
 ---
 name: ry-init
-description: "Initialize project context with Serena-first semantic discovery and git/GitHub/worktree synchronization. Use automatically for Russian or English requests such as ry-init, initialize project, init scope, load context, understand project, study codebase, map architecture, investigate backend/frontend/mobile/module/scope, инициализируй проект, загрузи контекст, изучи проект, изучи бекенд, изучи модуль, разберись как устроено. Accepts scope: whole project, module, sphere, or feature area."
+description: "Initialize scoped project context with Serena-first discovery and sync. Use for ry-init, init scope, understand project, инициализируй, загрузи контекст, изучи проект/модуль."
 ---
 
 # ry-init

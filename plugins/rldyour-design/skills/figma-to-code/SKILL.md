@@ -1,6 +1,6 @@
 ---
 name: figma-to-code
-description: "Pixel-perfect Figma-to-code implementation workflow. Use automatically for Russian or English requests with a Figma link/file/frame/node/selection/screenshot/designer layout/design handoff or prompts: перенеси из фигмы, сверстай по фигме, реализуй макет, pixel-perfect. Figma MCP is the source of truth; adapt into centralized design tokens, strict FSD, shadcn/ui primitives, optional ReactBits motion, and browser validation."
+description: "Implement Figma designs pixel-perfect with Figma MCP, tokens, FSD, shadcn/ui, ReactBits, and browser validation. Use for Figma links, перенеси из фигмы, сверстай макет."
 ---
 
 # Figma To Code

@@ -1,6 +1,6 @@
 ---
 name: ry-deploy
-description: Deployment workflow for local repo, GitHub, and server synchronization. Use automatically for ry-deploy, deploy, deploy server, production deploy, staging deploy, задеплой, деплой на сервер, залей на сервер, выпусти в прод. Reads server contract from AGENTS.md, CLAUDE.md, or .serena/deploy, verifies repo/PR/checks, deploys, inspects logs, researches failures, fixes forward, and syncs memories/docs/git.
+description: "Deploy with local/GitHub/server sync, checks, logs, fixes, and memory/docs/git finalization. Use for ry-deploy, deploy server, задеплой, деплой на сервер, прод."
 ---
 
 # ry-deploy
@@ -26,4 +26,3 @@ Synchronize local repository, GitHub, and server, then deploy safely with eviden
 ## No Fake Success
 
 If auth, missing credentials, server access, or unavailable health checks prevent validation, state the limitation and what evidence was still collected.
-

@@ -1,6 +1,6 @@
 ---
 name: flow-verification-review
-description: Verification and manual testing reviewer workflow for ry-start and ry-review. Use for test coverage, quality gates, manual checks, browser/server evidence, missing tests, edge cases, проверь тесты, проверь ручные тесты, проверь quality gates, хватает ли проверок. Read-only by default and suitable for subagent prompts.
+description: "Orchestrated verification review for ry-start/ry-review. Use explicitly for tests, quality gates, browser/server evidence; триггеры: проверь тесты, проверки."
 ---
 
 # Flow Verification Review
@@ -14,4 +14,3 @@ Review whether the implementation has enough automated and manual verification:
 - Server/deploy evidence exists for deployment changes.
 
 Do not run destructive tests or modify files. Report missing evidence and exact checks to add.
-

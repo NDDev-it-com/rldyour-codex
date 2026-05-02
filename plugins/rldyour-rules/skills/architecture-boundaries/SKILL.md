@@ -1,6 +1,6 @@
 ---
 name: architecture-boundaries
-description: "Architecture boundary rules for Codex. Use automatically for frontend, backend, mobile UI, desktop UI, API, module placement, layering, FSD, Feature-Sliced Design, Vertical Slice Architecture, VSA, clean architecture, public API, imports, slices, modules, архитектура, слои, FSD, VSA, фронтенд, бекенд, модуль, границы."
+description: "Enforce architecture boundaries for FSD, VSA, clean architecture, modules, public APIs, and imports. Use for архитектура, слои, FSD, VSA, фронтенд, бекенд."
 ---
 
 # Architecture Boundaries
@@ -32,4 +32,3 @@ Keep systems easy to understand, change, and scale by using stable architecture 
 - Cross-cutting concerns such as auth, logging, observability, transactions, and error mapping must be explicit and consistently placed.
 
 Read `references/architecture-policy.md` when deciding placement or documenting an ADR.
-

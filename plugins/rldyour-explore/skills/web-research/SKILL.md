@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: "Internet research through web search/browser for current information, non-technical questions, and technical tasks needing sources beyond MCP research. Use automatically for Russian or English prompts: посмотри в интернете, изучи интернет, найди актуальную информацию, проверь последние данные, найди источники, сравни, подтверди факт ссылками, latest/current. First define scope/questions, find authoritative sources, read them, and answer in Russian unless requested otherwise."
+description: "Research current web sources and cite them. Use for посмотри в интернете, изучи интернет, latest/current, найди источники, сравни, подтверди факт ссылками."
 ---
 
 # Web Research

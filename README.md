@@ -12,7 +12,7 @@ Main principle: nothing is treated as enabled or correct unless the owner explic
 - Each tool or workflow must describe its purpose, access model, risks, and usage rules.
 - Repository documentation is written in English.
 - Technical identifiers stay stable and ASCII.
-- Every callable rldyour skill must include Russian trigger phrases in the `SKILL.md` frontmatter `description`; the owner prompts Codex in Russian, and Codex uses descriptions as the primary implicit invocation surface.
+- Every callable rldyour skill must include compact Russian and English trigger phrases in the `SKILL.md` frontmatter `description`; Codex uses descriptions as the primary routing surface, and details belong in the skill body or references.
 - Secrets, tokens, cookies, and private keys are never stored in this repository.
 
 ## Active Catalog
@@ -26,7 +26,7 @@ The active marketplace currently contains:
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized token-based design system, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: autonomous SDLC command workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, reviewer tracks, and post-task synchronization.
+- `rldyour-flow`: autonomous SDLC command workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, orchestrated reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, project instructions, ADR policy, and `ry-rules-review`.
 
 ## Planned Plugin Architecture
@@ -38,7 +38,7 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-browser`: created. Browser validation, pixel-perfect checks, functional checks, business-logic verification, and runtime debugging through Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser evidence.
 - `rldyour-lsps`: created. Language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: created. Command-like SDLC skills, reviewer workflows, and post-task sync hook for Serena/docs/git/GitHub cleanup.
+- `rldyour-flow`: created. Command-like SDLC skills, reviewer workflows orchestrated by `ry-start`/`ry-review`, and post-task sync hook for Serena/docs/git/GitHub cleanup.
 - `rldyour-rules`: created. Hard and advisory rules for quality-first engineering, architecture, dependencies, verification, project instructions, and ADRs.
 - `rldyour-security`: created. Skills-only security guidance, OWASP Top 10 coverage, and defensive review workflow.
 - `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.

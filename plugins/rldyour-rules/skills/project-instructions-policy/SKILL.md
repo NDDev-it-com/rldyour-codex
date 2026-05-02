@@ -1,6 +1,6 @@
 ---
 name: project-instructions-policy
-description: "Project instruction documentation rules for Codex. Use automatically when updating or creating AGENTS.md, CLAUDE.md, REVIEW.md, ADRs, project docs, conventions, quality gates, architecture decisions, deploy contracts, durable rules, инструкция проекта, правила проекта, agents.md, claude.md, review.md, ADR, документация."
+description: "Maintain project instructions and durable docs: AGENTS.md, CLAUDE.md, REVIEW.md, ADRs, conventions, gates, deploy contracts. Use for правила проекта, документация."
 ---
 
 # Project Instructions Policy
@@ -21,4 +21,3 @@ Keep durable project instructions useful for future Codex sessions without turni
 - Do not store secrets, personal tokens, local-only credentials, private cookies, or chat transcripts in docs.
 
 Read `references/project-instructions-and-adrs.md` before creating or updating durable instruction files.
-

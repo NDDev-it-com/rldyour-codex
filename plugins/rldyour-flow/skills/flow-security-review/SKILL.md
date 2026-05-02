@@ -1,6 +1,6 @@
 ---
 name: flow-security-review
-description: "Security reviewer workflow for ry-start and ry-review. Use automatically for security-sensitive changes such as auth, authorization, API boundaries, file upload, secrets, dependency/config changes, payments, admin flows, SSRF/XSS/injection risk, or when the user asks for security review. Russian triggers: проверь безопасность, секьюрити ревью, авторизация, права доступа, секреты, OWASP."
+description: "Orchestrated security review for ry-start/ry-review. Use explicitly for auth, secrets, OWASP, injection, SSRF/XSS; триггеры: безопасность, секьюрити ревью."
 ---
 
 # Flow Security Review

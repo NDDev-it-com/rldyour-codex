@@ -1,6 +1,6 @@
 ---
 name: serena-lsp-integration
-description: "Serena MCP language-server integration workflow for Codex. Use automatically for Russian or English work involving Serena project languages, LSP-backed symbol tools, .serena/project.yml, ls_specific_settings, Serena project index, supported Serena language keys, or prompts: настрой Serena LSP, индексация через Serena, семантический анализ. Covers Python, Rust, Dart, Flutter, TypeScript, JavaScript, Go, C, C++, Qt, YAML, Bash, JSON, TOML, and Markdown files."
+description: "Configure Serena MCP with project languages, LSP-backed symbols, .serena/project.yml, and ls_specific_settings. Use for настрой Serena LSP, индексация, семантический анализ."
 ---
 
 # Serena LSP Integration

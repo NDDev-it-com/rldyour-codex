@@ -1,6 +1,6 @@
 ---
 name: browser-debug
-description: "Browser debugging workflow for console errors, network failures, runtime exceptions, hydration issues, layout problems, Lighthouse/performance regressions, memory issues, and difficult browser-only bugs. Use automatically for Russian or English browser/UI debugging: ошибка в браузере, проверь консоль, проверь network/сеть, runtime, layout, гидрация, Lighthouse, производительность, память, не работает UI. Chrome DevTools MCP is primary for diagnosis; Playwright MCP reproduces and re-validates flows."
+description: "Debug browser-only failures with Chrome DevTools/Playwright. Use for console/network/runtime/layout/hydration/Lighthouse bugs; triggers: ошибка в браузере, консоль, сеть, не работает UI."
 ---
 
 # Browser Debug

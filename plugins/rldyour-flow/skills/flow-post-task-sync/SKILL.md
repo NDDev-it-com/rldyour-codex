@@ -1,6 +1,6 @@
 ---
 name: flow-post-task-sync
-description: "Post-task synchronization workflow for Codex. Use automatically after meaningful ry-start, ry-review fix, ry-deploy, ry-newp, or Stop hook prompts when Serena memories, AGENTS.md, CLAUDE.md, git commits, GitHub sync, merged branches, or worktrees must be finalized. Russian triggers: синхронизируй после задачи, заверши задачу, актуализируй AGENTS.md, актуализируй CLAUDE.md, закоммить все корректно, почисти ветки и worktree."
+description: "Finalize task state: Serena memories, AGENTS.md/CLAUDE.md, git/GitHub, branches, worktrees. Use after ry-start/review/deploy/newp; триггеры: заверши задачу, синхронизируй."
 ---
 
 # Flow Post-Task Sync

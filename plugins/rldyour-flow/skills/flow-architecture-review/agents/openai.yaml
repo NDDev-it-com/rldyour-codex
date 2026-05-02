@@ -10,5 +10,4 @@ dependencies:
       description: "Symbol and reference tracing for architecture review."
 
 policy:
-  allow_implicit_invocation: true
-
+  allow_implicit_invocation: false

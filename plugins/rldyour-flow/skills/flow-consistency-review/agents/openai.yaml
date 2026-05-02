@@ -10,5 +10,4 @@ dependencies:
       description: "Project pattern inspection and symbol overview."
 
 policy:
-  allow_implicit_invocation: true
-
+  allow_implicit_invocation: false
