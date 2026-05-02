@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: ca06abf docs: sync flow catalog description
-Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md
+Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -29,7 +29,7 @@ This memory records the verified system Codex runtime state for the local `rldyo
 
 - `codex plugin marketplace add .`: registers this repository as the local `rldyour-codex` marketplace.
 - `codex mcp list`: shows active MCP registrations from system Codex.
-- `scripts/validate_marketplace.sh`: validates repository metadata, skills, hooks/scripts, local tool availability, MCP registration, cache sync, secret patterns, and whitespace.
+- `scripts/validate_marketplace.sh`: validates repository metadata, skills, hooks/scripts, local tool availability, MCP registration, MCP config sync, plugin cache sync, secret patterns, and whitespace.
 - `scripts/install_system_codex.sh --dry-run`: previews global Codex installation actions.
 - `scripts/install_system_codex.sh --apply`: installs global Codex state into `CODEX_HOME`.
 - `scripts/doctor_system_codex.sh`: validates installed global Codex state.
@@ -61,7 +61,7 @@ Enabled plugin set in system config:
 
 System Codex has `[features] codex_hooks = true`, so hook-capable plugins can run their Codex lifecycle hooks after restart.
 
-`/Users/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`. Commit `e506ccb feat(flow): add context sufficiency hooks` updated the global instructions to describe `rldyour-flow` scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
+`/Users/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`. The global instructions describe `rldyour-flow` scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
 
 The registered marketplace is local:
 
@@ -80,15 +80,17 @@ The active plugin cache contains local copies for all nine rldyour plugins:
 - `rldyour-security`.
 - `rldyour-serena-mcp`.
 
-The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, and cache sync for every rldyour plugin. The LSP health check reports no missing commands and one expected project warning: this marketplace repository has Python scripts but no `pyproject.toml` or `pyrightconfig.json`.
+The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, and cache sync for every rldyour plugin. The LSP health check reports no missing commands and one expected project warning: this marketplace repository has Python scripts but no `pyproject.toml` or `pyrightconfig.json`.
 
-After commit `e506ccb`, `scripts/install_system_codex.sh --apply` synced the updated `rldyour-flow` plugin into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-flow/local`. `diff -qr plugins/rldyour-flow /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-flow/local` returns clean.
+After commit `81c5e10`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
 
 `scripts/doctor_system_codex.sh` passed on the current machine with zero warnings and zero failures after `scripts/install_system_codex.sh --apply`. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
 
 ## Contracts And Data
 
 System MCP registrations are installed in `/Users/rldyourmnd/.codex/config.toml`, not only in repository `.mcp.json`.
+
+`plugins/rldyour-mcps/.mcp.json` is the portable MCP source of truth. The installed config resolves portable command names to local executable paths. `scripts/validate_marketplace.sh` compares repository and installed MCP definitions, allowing only that command-path resolution difference.
 
 Active local command paths:
 
@@ -121,7 +123,7 @@ Environment variables and auth:
 ## Change Rules
 
 - Modify repository plugin files first, validate them, then re-install or re-sync into system Codex.
-- When changing MCP server definitions, update `plugins/rldyour-mcps/.mcp.json`, re-apply system Codex runtime config, then verify with `codex mcp list`.
+- When changing MCP server definitions, update `plugins/rldyour-mcps/.mcp.json`, re-apply system Codex runtime config, then verify with `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `codex mcp list`.
 - When changing hooks, update the repository hook files and `hooks.json`, verify cache sync, then restart Codex.
 - When changing system-only config, record only sanitized facts in memories.
 - Use `scripts/install_system_codex.sh --dry-run` before `--apply` on a new machine.
@@ -129,7 +131,7 @@ Environment variables and auth:
 ## Verification
 
 - `codex mcp list`: verifies enabled MCP server names, commands, URLs, status, and auth mode.
-- `scripts/validate_marketplace.sh`: verifies the full repository and installed-cache consistency contract.
+- `scripts/validate_marketplace.sh`: verifies the full repository, installed MCP config, and installed-cache consistency contract.
 - `scripts/doctor_system_codex.sh`: verifies the installed system Codex state.
 - `diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates repository marketplace and plugin manifests.

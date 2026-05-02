@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: ca06abf docs: sync flow catalog description
-Scope: system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, README.md, AGENTS.md, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
+Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Scope: system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -16,7 +16,7 @@ The system install workflow turns this repository into a portable source of trut
 - `system/AGENTS.md`: canonical global Codex instruction template.
 - `scripts/install_system_codex.sh`: installer with dry-run default and apply mode.
 - `scripts/doctor_system_codex.sh`: installed system verification script.
-- `scripts/validate_marketplace.sh`: repository and cache validation suite.
+- `scripts/validate_marketplace.sh`: repository, installed MCP config, and cache validation suite.
 - `README.md`: human install commands.
 - `AGENTS.md`: repository-level instructions for maintaining this marketplace.
 - `/Users/rldyourmnd/.codex/AGENTS.md`: installed global Codex instructions on the current machine.
@@ -27,7 +27,7 @@ The system install workflow turns this repository into a portable source of trut
 - `scripts/install_system_codex.sh --dry-run`: preview install actions without writing.
 - `scripts/install_system_codex.sh --apply`: write global Codex state to `CODEX_HOME`.
 - `scripts/doctor_system_codex.sh`: verify installed system state.
-- `scripts/validate_marketplace.sh`: validate repository marketplace state and plugin cache.
+- `scripts/validate_marketplace.sh`: validate repository marketplace state, installed MCP config, and plugin cache.
 
 ## Current Behavior
 
@@ -42,6 +42,8 @@ Apply mode:
 - Resolves local executable paths for `uvx`, `bunx`, and `dart` from the current machine.
 - Syncs each `plugins/rldyour-*` directory into `CODEX_HOME/plugins/cache/rldyour-codex/<plugin>/local`.
 
+`README.md` now instructs maintainers to run `scripts/install_system_codex.sh --dry-run`, `scripts/install_system_codex.sh --apply`, and `scripts/doctor_system_codex.sh` after changing marketplace metadata, plugin manifests, hooks, skills, or `.mcp.json`.
+
 `scripts/doctor_system_codex.sh` verifies:
 
 - Installed `CODEX_HOME/AGENTS.md` matches `system/AGENTS.md`.
@@ -51,6 +53,8 @@ Apply mode:
 - `codex mcp list` contains all eleven MCP servers.
 - Plugin cache directories match repository plugin directories.
 
+`scripts/validate_marketplace.sh` has an `MCP config sync` step. It reads `plugins/rldyour-mcps/.mcp.json` and `CODEX_HOME/config.toml`, then checks server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. It accepts absolute installed command paths when their basename matches the portable repository command.
+
 ## Contracts And Data
 
 `system/AGENTS.md` is a compact global router/policy file. It must not duplicate full plugin skill bodies because Codex skills provide progressive workflow loading. It currently routes `rldyour-flow` to `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, advisory session/commit hooks, and post-task synchronization.
@@ -58,6 +62,8 @@ Apply mode:
 The installer manages only rldyour-owned config sections and the curated GitHub/Gmail plugin enablement. It does not write secrets, OAuth tokens, cookies, or raw API keys.
 
 `CONTEXT7_API_KEY` is referenced by name only. Figma, GitHub, Gmail, and other auth remain runtime auth outside this repository.
+
+`plugins/rldyour-mcps/.mcp.json` is the portable MCP source of truth. Installed `CODEX_HOME/config.toml` is the machine-specific projection of that source.
 
 `--trust-home` is optional and disabled by default. The default installer trusts only the repository path, not the entire home directory.
 
@@ -75,6 +81,7 @@ The installer manages only rldyour-owned config sections and the curated GitHub/
 - Run `scripts/install_system_codex.sh --dry-run` before apply-mode testing.
 - Run `scripts/install_system_codex.sh --apply` only when installing to the current machine is intended.
 - Run `scripts/doctor_system_codex.sh` after apply-mode testing.
+- After changing `.mcp.json`, run the installer and doctor workflow before final delivery so portable and installed MCP state cannot drift.
 - Run `scripts/validate_marketplace.sh` before committing repository changes.
 
 ## Verification
@@ -82,5 +89,5 @@ The installer manages only rldyour-owned config sections and the curated GitHub/
 - `scripts/install_system_codex.sh --dry-run`: previews install actions and managed counts.
 - `scripts/install_system_codex.sh --apply`: installs current system state with backups.
 - `scripts/doctor_system_codex.sh`: verifies installed system state.
-- `scripts/validate_marketplace.sh`: validates repository, skills, hooks, scripts, MCP registration, cache sync, secret patterns, and whitespace.
+- `scripts/validate_marketplace.sh`: validates repository, skills, hooks, scripts, MCP registration, MCP config sync, cache sync, secret patterns, and whitespace.
 - `cmp -s system/AGENTS.md /Users/rldyourmnd/.codex/AGENTS.md`: verifies installed global AGENTS matches the template.
