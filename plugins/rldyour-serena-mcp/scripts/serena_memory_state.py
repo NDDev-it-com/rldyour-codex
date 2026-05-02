@@ -105,7 +105,7 @@ def status() -> dict[str, Any]:
 
     head_full = _stdout("rev-parse", "HEAD")
     head_short = head_full[:7] if head_full else ""
-    memory_count, memory_matches_head, candidates = _memory_candidates(head_short)
+    memory_count, memory_directly_mentions_head, candidates = _memory_candidates(head_short)
     newest = _newest_synced_commit(candidates)
     newest_short = newest[0] if newest else ""
     newest_full = newest[1] if newest else ""
@@ -124,16 +124,28 @@ def status() -> dict[str, Any]:
     marker_head = str(sync_state.get("head_full") or sync_state.get("head") or "")
     marker_matches_head = marker_requires_sync and bool(head_full) and marker_head in {head_full, head_short}
 
+    memory_matches_head = (
+        memory_directly_mentions_head
+        or (bool(newest_short) and newest_short == head_short)
+        or (bool(newest_short) and only_knowledge_changes_since_sync)
+    )
+
+    if memory_directly_mentions_head:
+        memory_match_reason = "direct-head-reference"
+    elif bool(newest_short) and newest_short == head_short:
+        memory_match_reason = "newest-synced-head"
+    elif bool(newest_short) and only_knowledge_changes_since_sync:
+        memory_match_reason = "knowledge-only-commits-since-sync"
+    else:
+        memory_match_reason = "stale-or-missing"
+
     if memory_count == 0 and not marker_matches_head:
         is_current = True
     else:
-        is_current = (
-            memory_matches_head
-            or (bool(newest_short) and newest_short == head_short)
-            or (bool(newest_short) and only_knowledge_changes_since_sync)
-        )
+        is_current = memory_matches_head
         if marker_matches_head:
             is_current = False
+            memory_match_reason = "sync-marker-requires-refresh"
 
     return {
         "is_git_repo": True,
@@ -143,6 +155,8 @@ def status() -> dict[str, Any]:
         "newest_synced_sha": newest_short,
         "newest_synced_full": newest_full,
         "memory_matches_head": memory_matches_head,
+        "memory_directly_mentions_head": memory_directly_mentions_head,
+        "memory_match_reason": memory_match_reason,
         "changed_files_since_sync": changed_files,
         "non_knowledge_changed_files_since_sync": non_knowledge_changed_files,
         "only_knowledge_changes_since_sync": only_knowledge_changes_since_sync,
