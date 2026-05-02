@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Last commit: 0f90e9f feat(skills): enforce Russian automatic routing
 Scope: plugins/rldyour-*, .agents/plugins/marketplace.json, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -37,7 +37,9 @@ The active rldyour marketplace contributes nine plugins: `rldyour-mcps`, `rldyou
 
 All workflow skills in `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules` keep `policy.allow_implicit_invocation: true`.
 
-The owner communicates with Codex in Russian. Plugin docs, memory files, code comments, token files, and commit messages remain English. Skill descriptions are written in English but explicitly account for Russian or English user requests where relevant.
+The owner communicates with Codex in Russian. Plugin docs, memory files, code comments, token files, and commit messages remain English. Every callable rldyour skill must include Russian trigger phrases in `SKILL.md` frontmatter `description`, because Codex uses the description as the primary implicit invocation surface.
+
+Commit `0f90e9f feat(skills): enforce Russian automatic routing` updated all 37 callable rldyour skill descriptions so they contain Russian trigger phrases. `scripts/validate_marketplace.sh` now fails when a callable rldyour skill description does not contain Cyrillic trigger text.
 
 `rldyour-mcps` has no skills and cannot auto-invoke by itself. It is the runtime dependency layer for MCP tools used by automatic workflow plugins.
 
@@ -46,6 +48,8 @@ The owner communicates with Codex in Russian. Plugin docs, memory files, code co
 `rldyour-flow` has no MCP transport definitions. It is a skills-and-hooks workflow layer that coordinates existing workflow plugins, Serena memory freshness, project instruction docs, git history, GitHub sync, and branch/worktree cleanup.
 
 `rldyour-rules` has no MCP transport definitions and no hooks. It is a skills-only policy layer that coordinates quality, architecture, dependency, verification, project-instruction, and ADR rules with existing workflow plugins.
+
+`plugins/rldyour-flow/skills/ry-start/SKILL.md` contains an `Automatic Helper Routing` section. It explicitly routes Russian `ry-start` prompts to helper workflows: Serena/code/LSP/rules for code work, `tech-research` plus optional `web-research` for technical internet research, browser skills for browser-visible work, design skills for Figma/UI/design-system work, security skills for sensitive work, and verification/memory/post-task sync before final delivery.
 
 Current skill directory counts verified from repository files:
 
@@ -79,6 +83,7 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 - Use `skill-creator` guidance when adding or updating skills.
 - Use `plugin-creator` guidance when adding or changing plugin manifests or marketplace metadata.
 - Validate `SKILL.md` files after description changes.
+- Keep Russian trigger phrases in every callable rldyour skill description; `scripts/validate_marketplace.sh` enforces this through the `Russian automatic routing` step.
 - Validate `agents/openai.yaml` parse and `allow_implicit_invocation` after UI metadata changes.
 - Re-sync changed plugin directories into the active Codex plugin cache.
 - Restart Codex after changing skill descriptions, manifests, hook definitions, or MCP server definitions.

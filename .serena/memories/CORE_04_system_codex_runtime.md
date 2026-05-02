@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 03a05d1 feat(codex): add system install workflow
+Last commit: 0f90e9f feat(skills): enforce Russian automatic routing
 Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md
 Area: CORE
 -->
@@ -61,7 +61,7 @@ Enabled plugin set in system config:
 
 System Codex has `[features] codex_hooks = true`, so hook-capable plugins can run their Codex lifecycle hooks after restart.
 
-`/Users/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`.
+`/Users/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`. Commit `0f90e9f feat(skills): enforce Russian automatic routing` added a global instruction that the owner normally writes prompts in Russian and invokes only `rldyour-flow` commands; matching helper skills should be used automatically instead of waiting for explicit helper skill names.
 
 The registered marketplace is local:
 
@@ -80,7 +80,7 @@ The active plugin cache contains local copies for all nine rldyour plugins:
 - `rldyour-security`.
 - `rldyour-serena-mcp`.
 
-The full validation script currently validates 37 skills and 37 `agents/openai.yaml` metadata files. It also checks that every cached rldyour plugin matches its repository source. The LSP health check reports no missing commands and one expected project warning: this marketplace repository has Python scripts but no `pyproject.toml` or `pyrightconfig.json`.
+The full validation script currently validates 37 skills, the Russian automatic routing description contract for all 37 callable skills, and 37 `agents/openai.yaml` metadata files. It also checks that every cached rldyour plugin matches its repository source. The LSP health check reports no missing commands and one expected project warning: this marketplace repository has Python scripts but no `pyproject.toml` or `pyrightconfig.json`.
 
 `scripts/doctor_system_codex.sh` passed on the current machine. It reported one warning: `CONTEXT7_API_KEY` was not exported in the shell used for the check. This is not a repository failure because the config references `CONTEXT7_API_KEY` by name and does not store the raw key.
 
@@ -104,7 +104,7 @@ Environment variables and auth:
 
 - `context7` references `CONTEXT7_API_KEY` through `env_vars`; no raw key should be stored in repository files or memories.
 - `sequential-thinking` sets `DISABLE_THOUGHT_LOGGING`.
-- `figma` uses OAuth in system Codex.
+- `figma` is registered as the remote MCP URL `https://mcp.figma.com/mcp`. Do not store Figma OAuth tokens or bearer tokens in this repository or in memories.
 
 ## Invariants
 

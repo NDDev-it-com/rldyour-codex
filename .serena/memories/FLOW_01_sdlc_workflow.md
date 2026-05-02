@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Last commit: 0f90e9f feat(skills): enforce Russian automatic routing
 Scope: plugins/rldyour-flow, plugins/rldyour-serena-mcp, .agents/plugins/marketplace.json, README.md, .gitignore
 Area: FLOW
 -->
@@ -36,6 +36,17 @@ The plugin is skills-and-hooks only. It does not define MCP servers or app conne
 
 User-facing workflow output stays Russian. Repository docs, plugin docs, memories, plans, research archives, code comments, and commits stay English.
 
+`plugins/rldyour-flow/skills/ry-start/SKILL.md` now has an `Automatic Helper Routing` section. The owner normally invokes only `rldyour-flow` commands and writes Russian prompts, so `ry-start` must automatically route helper skills instead of waiting for explicit helper skill names.
+
+Current `ry-start` helper routing:
+
+- Repository/code prompts route to `serena-code-workflow`, `lsp-routing`, `quality-first-engineering`, and `implementation-discipline`.
+- Technical internet research prompts such as `исследуй интернет`, `изучи в интернете`, and `посмотри документацию` route to `tech-research` first with Context7, DeepWiki, and Grep by Vercel. `web-research` is added for current/latest/source-backed evidence beyond the three MCPs.
+- Browser-visible prompts route to `browser-tool-routing`, `browser-validation`, and `browser-debug` when debugging evidence is needed.
+- Design/UI/Figma prompts route to `ry-design`, `figma-to-code`, `design-system-implementation`, `fsd-frontend-architecture`, and `design-validation`.
+- Security-sensitive prompts route to `owasp-top-10-implementation`, `ry-sec-review`, or `flow-security-review`.
+- Verification and finish route to `verification-quality-gates`, `flow-verification-review`, `serena-memory-sync`, and `flow-post-task-sync`.
+
 `flow-post-task-sync` runs after Serena memory freshness, not before it. The flow Stop hook exits without blocking when Serena state is stale, allowing the Serena Stop hook to request memory sync first. After Serena is current, the flow hook requests docs/git/GitHub cleanup.
 
 `flow_post_task_state.py` reads raw `git status --porcelain` output with `rstrip("\n")` and then uses `line[3:]` for paths. This preserves porcelain leading status columns and prevents paths such as `.agents/...` from losing the leading dot.
@@ -70,6 +81,7 @@ Flow runtime markers are `.serena/.flow_sync_marker` and `.serena/.flow_post_tas
 - Update `references/reviewer-protocol.md` when adding, removing, or changing reviewer tracks.
 - Update `references/deploy-contract.md` when changing deploy contract fields or safety policy.
 - Keep `README.md`, `plugin.json`, `SKILL.md` descriptions, and `agents/openai.yaml` aligned with automatic routing intent.
+- Keep Russian trigger phrases in all flow and helper skill descriptions used by `ry-start`.
 - Re-sync `plugins/rldyour-flow/` into the active Codex plugin cache after changes.
 
 ## Verification
