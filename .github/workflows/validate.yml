@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
-      CODEX_HOME: ${{ runner.temp }}/codex-home
+      CODEX_HOME: /tmp/rldyour-codex-home
       RLDYOUR_MCP_CAPABILITY_LIST_ONLY: "1"
       RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV: "1"
     steps:
