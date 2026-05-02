@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 7f53801 chore(codex): add marketplace validation instructions
-Scope: README.md, AGENTS.md, scripts/validate_marketplace.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
+Last commit: 03a05d1 feat(codex): add system install workflow
+Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -15,7 +15,10 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 
 - `README.md`: owner-facing control model, active catalog, planned plugin architecture, plugin creation rules, and local installation command.
 - `AGENTS.md`: concise Codex project instructions loaded for repository work.
+- `system/AGENTS.md`: canonical tracked template for the owner's global `~/.codex/AGENTS.md`.
 - `scripts/validate_marketplace.sh`: reusable full marketplace validation command.
+- `scripts/install_system_codex.sh`: dry-run-first installer for global Codex state.
+- `scripts/doctor_system_codex.sh`: installed system Codex verification command.
 - `.agents/plugins/marketplace.json`: active installable plugin catalog and plugin order.
 - `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, linked capabilities, and plugin interface metadata.
 - `.gitignore`: repository-level ignored runtime artifacts, browser evidence, env files, and Serena runtime state.
@@ -44,6 +47,8 @@ The active marketplace contains nine plugins in this order:
 Created plugins are listed in the active catalog. Planned plugins stay documented in `README.md` and are not added to `marketplace.json` until explicitly created.
 
 Root `AGENTS.md` exists and records durable project instructions for Codex: language policy, source-of-truth paths, plugin boundaries, development rules, validation commands, cache sync, memory sync, and git workflow.
+
+`system/AGENTS.md` exists and is installed into `/Users/rldyourmnd/.codex/AGENTS.md` on the current machine. It is a compact global Codex router/policy file, not a full copy of every plugin workflow.
 
 System Codex has this marketplace registered as a local source:
 
@@ -86,6 +91,8 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 
 `scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, OpenAI skill metadata, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, plugin cache sync, secret patterns, and whitespace.
 
+`scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, plugins, MCP, cache, and repository validation.
+
 ## Invariants
 
 - Do not add planned plugins to `.agents/plugins/marketplace.json` until they are actually created and ready.
@@ -106,6 +113,8 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates marketplace and plugin manifests.
 - `scripts/validate_marketplace.sh`: runs the full reusable marketplace validation suite.
+- `scripts/install_system_codex.sh --dry-run`: previews system Codex installation.
+- `scripts/doctor_system_codex.sh`: validates installed system Codex state.
 - `jq -r '.plugins[] | [.name,.category,.policy.installation,.policy.authentication,.source.path] | @tsv' .agents/plugins/marketplace.json`: shows active plugin order and policy.
 - `codex plugin marketplace add .`: registers or confirms this marketplace.
 - `codex mcp list`: verifies runtime MCP registrations after marketplace/plugin changes are installed.
