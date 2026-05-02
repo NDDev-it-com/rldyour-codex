@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
-Scope: README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
+Last commit: 7f53801 chore(codex): add marketplace validation instructions
+Scope: README.md, AGENTS.md, scripts/validate_marketplace.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -14,6 +14,8 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 ## Source Of Truth
 
 - `README.md`: owner-facing control model, active catalog, planned plugin architecture, plugin creation rules, and local installation command.
+- `AGENTS.md`: concise Codex project instructions loaded for repository work.
+- `scripts/validate_marketplace.sh`: reusable full marketplace validation command.
 - `.agents/plugins/marketplace.json`: active installable plugin catalog and plugin order.
 - `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, linked capabilities, and plugin interface metadata.
 - `.gitignore`: repository-level ignored runtime artifacts, browser evidence, env files, and Serena runtime state.
@@ -40,6 +42,8 @@ The active marketplace contains nine plugins in this order:
 - `rldyour-rules`: Developer Tools, `AVAILABLE`, `ON_USE`, source path `./plugins/rldyour-rules`.
 
 Created plugins are listed in the active catalog. Planned plugins stay documented in `README.md` and are not added to `marketplace.json` until explicitly created.
+
+Root `AGENTS.md` exists and records durable project instructions for Codex: language policy, source-of-truth paths, plugin boundaries, development rules, validation commands, cache sync, memory sync, and git workflow.
 
 System Codex has this marketplace registered as a local source:
 
@@ -80,6 +84,8 @@ Current plugin manifest versions:
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
+`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, OpenAI skill metadata, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, plugin cache sync, secret patterns, and whitespace.
+
 ## Invariants
 
 - Do not add planned plugins to `.agents/plugins/marketplace.json` until they are actually created and ready.
@@ -99,6 +105,7 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 ## Verification
 
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates marketplace and plugin manifests.
+- `scripts/validate_marketplace.sh`: runs the full reusable marketplace validation suite.
 - `jq -r '.plugins[] | [.name,.category,.policy.installation,.policy.authentication,.source.path] | @tsv' .agents/plugins/marketplace.json`: shows active plugin order and policy.
 - `codex plugin marketplace add .`: registers or confirms this marketplace.
 - `codex mcp list`: verifies runtime MCP registrations after marketplace/plugin changes are installed.

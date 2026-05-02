@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
-Scope: plugins/rldyour-rules, .agents/plugins/marketplace.json, README.md
+Last commit: 7f53801 chore(codex): add marketplace validation instructions
+Scope: plugins/rldyour-rules, .agents/plugins/marketplace.json, README.md, AGENTS.md, scripts/validate_marketplace.sh
 Area: RULES
 -->
 
@@ -40,6 +40,8 @@ For non-trivial engineering decisions, the rules plugin requires structured reas
 When serious technical debt is found outside scope, Codex should ask the owner in Russian with 2-3 concrete options before expanding scope.
 
 `AGENTS.md` should be created or updated automatically when durable Codex project rules, setup commands, quality gates, architecture constraints, deploy contracts, or workflow guidance change. `CLAUDE.md` should be updated when it exists, when Claude Code compatibility is explicit, or when the owner asks for it.
+
+Root `AGENTS.md` now exists for this repository. Root `CLAUDE.md` and `REVIEW.md` are intentionally absent because there is no explicit Claude Code compatibility requirement or durable review-specific file requirement yet.
 
 Important architecture, technology, dependency, deployment, security, or irreversible design decisions should produce an ADR or equivalent decision record.
 
@@ -90,6 +92,7 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 
 - `jq empty plugins/rldyour-rules/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates plugin and marketplace JSON.
 - `uv run --with pyyaml python /Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-rules/skills/<skill>`: validates each rules skill.
+- `scripts/validate_marketplace.sh`: validates the full marketplace and is the preferred root quality gate for this repository.
 - `uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `agents/openai.yaml` parse and implicit invocation.
 - `rg -n 'TODO|\\[TODO|PLACEHOLDER|FIXME|HACK|ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' plugins/rldyour-rules`: should show only policy text, not real credentials or placeholders.
 - `diff -qr plugins/rldyour-rules /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-rules/local`: verifies system cache matches the repository plugin.
