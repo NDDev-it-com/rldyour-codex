@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
-Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
+Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
+Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -24,6 +24,10 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `scripts/install_system_codex.sh`: installs global AGENTS, patches rldyour-owned config sections, registers marketplace, and syncs plugin cache.
 - `scripts/doctor_system_codex.sh`: verifies installed system state.
 - `scripts/validate_marketplace.sh`: local validation entry point for runtime and repository consistency.
+- `scripts/smoke_mcp_runtime.sh`: runtime MCP smoke check for installed config, `codex mcp get`, command availability, and remote endpoint reachability.
+- `scripts/smoke_hooks.sh`: non-mutating smoke check for repository and installed Serena/Flow hook scripts.
+- `scripts/bootstrap_check.sh`: end-to-end bootstrap check for dry-run and apply-mode system setup validation.
+- `pyrightconfig.json`: minimal Python project configuration for this scripts-focused repository.
 
 ## Entry Points
 
@@ -33,6 +37,10 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `scripts/install_system_codex.sh --dry-run`: previews global Codex installation actions.
 - `scripts/install_system_codex.sh --apply`: installs global Codex state into `CODEX_HOME`.
 - `scripts/doctor_system_codex.sh`: validates installed global Codex state.
+- `scripts/bootstrap_check.sh --dry-run`: previews install and validates repository-local JSON, shell scripts, and repo hook smoke.
+- `scripts/bootstrap_check.sh --apply`: runs install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, state checks, and git status.
+- `scripts/smoke_mcp_runtime.sh`: checks every configured MCP server through installed Codex runtime metadata and endpoint/command availability.
+- `scripts/smoke_hooks.sh`: checks the hook scripts that will be used after restart from both repository sources and installed plugin cache.
 - `/Users/rldyourmnd/.codex/config.toml`: direct runtime configuration file for the current machine.
 - `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex`: installed plugin cache root.
 
@@ -88,9 +96,13 @@ The active plugin cache contains local copies for all nine rldyour plugins:
 - `rldyour-security`.
 - `rldyour-serena-mcp`.
 
-The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, and cache sync for every rldyour plugin. The LSP health check reports no missing commands and one expected project warning: this marketplace repository has Python scripts but no `pyproject.toml` or `pyrightconfig.json`.
+The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, MCP runtime smoke, plugin cache sync, hook smoke, secret patterns, and whitespace.
 
-After commit `3a2497e`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`, patched YOLO permission defaults, and installed all twelve MCP servers. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
+The LSP health check reports no missing commands and zero warnings. `pyrightconfig.json` makes the Python script scope explicit for Pyright and removes the previous Python project-config warning.
+
+After commit `72329c8`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`, patched YOLO permission defaults, and installed all twelve MCP servers. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
+
+`scripts/bootstrap_check.sh --apply` passed on the current machine after commit `72329c8`. It ran install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, Serena state, Flow state, and `git status -sb`.
 
 `scripts/doctor_system_codex.sh` passed on the current machine with zero warnings and zero failures after `scripts/install_system_codex.sh --apply`. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
 
@@ -112,6 +124,10 @@ Remote MCP URLs:
 - `grep`: `https://mcp.grep.app`.
 - `figma`: `https://mcp.figma.com/mcp`.
 - `openaiDeveloperDocs`: `https://developers.openai.com/mcp`.
+
+`scripts/smoke_mcp_runtime.sh` treats HTTP responses below 500 as reachable for remote MCP endpoints. This accepts method/auth negotiation responses such as HTTP 405 while still failing server-side outages.
+
+`scripts/smoke_hooks.sh` resolves both repository plugin layout (`plugins/<plugin>`) and installed cache layout (`<plugin>/local`) so it validates the same hook scripts Codex will load after restart.
 
 Environment variables and auth:
 
@@ -138,6 +154,7 @@ Environment variables and auth:
 - When changing hooks, update the repository hook files and `hooks.json`, verify cache sync, then restart Codex.
 - When changing system-only config, record only sanitized facts in memories.
 - Use `scripts/install_system_codex.sh --dry-run` before `--apply` on a new machine.
+- Use `scripts/bootstrap_check.sh --dry-run` for a non-mutating repository-local bootstrap preview. Use `scripts/bootstrap_check.sh --apply` when the current machine should be installed and verified end-to-end.
 
 ## Verification
 
@@ -145,6 +162,9 @@ Environment variables and auth:
 - `codex mcp get openaiDeveloperDocs`: verifies the official OpenAI Docs MCP endpoint.
 - `scripts/validate_marketplace.sh`: verifies the full repository, installed MCP config, and installed-cache consistency contract.
 - `scripts/doctor_system_codex.sh`: verifies the installed system Codex state.
+- `scripts/bootstrap_check.sh --apply`: verifies the clone-to-installed-runtime flow on the current machine.
+- `scripts/smoke_mcp_runtime.sh`: verifies installed MCP server names, `codex mcp get`, local MCP command executables, and remote MCP endpoint reachability.
+- `scripts/smoke_hooks.sh`: verifies repository and installed Serena/Flow hooks with non-mutating sample payloads.
 - `diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates repository marketplace and plugin manifests.
 - `rg -n 'ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' .serena/memories plugins .agents`: should show only policy text and placeholders, not real credentials.
