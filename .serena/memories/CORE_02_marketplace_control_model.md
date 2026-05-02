@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 0f90e9f feat(skills): enforce Russian automatic routing
+Last commit: 6af53aa feat(skills): optimize plugin routing metadata
 Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -78,18 +78,18 @@ Plugin manifests use `.codex-plugin/plugin.json`. Current plugin capability boun
 Current plugin manifest versions:
 
 - `rldyour-mcps`: `0.1.4`.
-- `rldyour-explore`: `0.1.1`.
-- `rldyour-serena-mcp`: `0.1.1`.
-- `rldyour-security`: `0.1.0`.
-- `rldyour-browser`: `0.1.0`.
-- `rldyour-design`: `0.1.0`.
-- `rldyour-lsps`: `0.1.0`.
-- `rldyour-flow`: `0.1.0`.
-- `rldyour-rules`: `0.1.0`.
+- `rldyour-explore`: `0.1.2`.
+- `rldyour-serena-mcp`: `0.1.2`.
+- `rldyour-security`: `0.1.1`.
+- `rldyour-browser`: `0.1.1`.
+- `rldyour-design`: `0.1.1`.
+- `rldyour-lsps`: `0.1.1`.
+- `rldyour-flow`: `0.1.1`.
+- `rldyour-rules`: `0.1.1`.
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
-`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, Russian automatic routing descriptions, OpenAI skill metadata, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, plugin cache sync, secret patterns, and whitespace.
+`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, compact bilingual routing descriptions, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, plugin cache sync, secret patterns, and whitespace.
 
 `scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, plugins, MCP, cache, and repository validation.
 
@@ -99,7 +99,7 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 - Do not store secrets, tokens, cookies, private keys, or raw credentials in this repository.
 - Keep technical identifiers stable and ASCII.
 - Keep each plugin's responsibility boundary explicit.
-- Keep Russian trigger phrases in each callable rldyour skill `SKILL.md` description so implicit invocation works with the owner's Russian prompts.
+- Keep compact Russian and English trigger phrases in each callable rldyour skill `SKILL.md` description so routing works with the owner's Russian prompts and English technical terms.
 - Do not commit browser evidence or local Serena runtime/cache state.
 
 ## Change Rules

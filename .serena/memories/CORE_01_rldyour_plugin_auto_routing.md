@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 0f90e9f feat(skills): enforce Russian automatic routing
+Last commit: 6af53aa feat(skills): optimize plugin routing metadata
 Scope: plugins/rldyour-*, .agents/plugins/marketplace.json, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -15,7 +15,7 @@ The rldyour Codex plugin set is designed around automatic skill routing for the 
 
 - `plugins/rldyour-*/.codex-plugin/plugin.json`: marketplace-facing plugin descriptions, capabilities, keywords, and default prompts.
 - `plugins/rldyour-*/skills/*/SKILL.md`: primary automatic trigger surface through YAML frontmatter `description`.
-- `plugins/rldyour-*/skills/*/agents/openai.yaml`: UI metadata and `policy.allow_implicit_invocation: true`.
+- `plugins/rldyour-*/skills/*/agents/openai.yaml`: UI metadata and invocation policy.
 - `plugins/rldyour-*/README.md`: human-readable trigger maps and plugin boundaries.
 - `plugins/rldyour-mcps/.mcp.json`: MCP transport runtime layer used by workflow plugins.
 - `/Users/rldyourmnd/.codex/config.toml`: active system Codex plugin enablement and MCP registrations.
@@ -35,11 +35,13 @@ The rldyour Codex plugin set is designed around automatic skill routing for the 
 
 The active rldyour marketplace contributes nine plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules`.
 
-All workflow skills in `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules` keep `policy.allow_implicit_invocation: true`.
+Most workflow skills in `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules` keep `policy.allow_implicit_invocation: true`.
 
-The owner communicates with Codex in Russian. Plugin docs, memory files, code comments, token files, and commit messages remain English. Every callable rldyour skill must include Russian trigger phrases in `SKILL.md` frontmatter `description`, because Codex uses the description as the primary implicit invocation surface.
+The six `rldyour-flow` reviewer track skills set `policy.allow_implicit_invocation: false` and are orchestrated by `ry-start` or `ry-review`: `flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, and `flow-security-review`.
 
-Commit `0f90e9f feat(skills): enforce Russian automatic routing` updated all 37 callable rldyour skill descriptions so they contain Russian trigger phrases. `scripts/validate_marketplace.sh` now fails when a callable rldyour skill description does not contain Cyrillic trigger text.
+The owner communicates with Codex in Russian. Plugin docs, memory files, code comments, token files, and commit messages remain English. Every callable rldyour skill must include compact Russian and English trigger phrases in `SKILL.md` frontmatter `description`, because Codex uses the description as the primary routing surface.
+
+Commit `6af53aa feat(skills): optimize plugin routing metadata` compacted all 37 callable rldyour skill descriptions. The current maximum description length is 187 characters and the average length is 166.8 characters. `scripts/validate_marketplace.sh` now fails when a callable rldyour skill description is longer than 240 characters, is duplicated, lacks Cyrillic trigger text, or lacks English trigger text.
 
 `rldyour-mcps` has no skills and cannot auto-invoke by itself. It is the runtime dependency layer for MCP tools used by automatic workflow plugins.
 
@@ -66,7 +68,7 @@ Current skill directory counts verified from repository files:
 
 The primary auto-routing contract is the frontmatter `description` in each `SKILL.md`. When changing automatic behavior, update `SKILL.md` first, then keep `plugin.json`, `agents/openai.yaml`, and README trigger maps aligned.
 
-Every callable skill contributed by these workflow plugins must keep `policy.allow_implicit_invocation: true`.
+Every callable workflow skill should keep `policy.allow_implicit_invocation: true` unless it is an orchestrated-only reviewer track. The current orchestrated-only exception list is encoded in `scripts/validate_marketplace.sh`.
 
 System Codex cache must be re-synced after plugin changes so the runtime uses the repository version after restart. Active cache roots are under `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`.
 
@@ -83,8 +85,8 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 - Use `skill-creator` guidance when adding or updating skills.
 - Use `plugin-creator` guidance when adding or changing plugin manifests or marketplace metadata.
 - Validate `SKILL.md` files after description changes.
-- Keep Russian trigger phrases in every callable rldyour skill description; `scripts/validate_marketplace.sh` enforces this through the `Russian automatic routing` step.
-- Validate `agents/openai.yaml` parse and `allow_implicit_invocation` after UI metadata changes.
+- Keep compact Russian and English trigger phrases in every callable rldyour skill description; `scripts/validate_marketplace.sh` enforces this through the `Skill routing descriptions` step.
+- Validate `agents/openai.yaml` parse, default prompt length, `$skill-name` prompt reference, short description length, MCP dependencies, and implicit invocation policy after UI metadata changes.
 - Re-sync changed plugin directories into the active Codex plugin cache.
 - Restart Codex after changing skill descriptions, manifests, hook definitions, or MCP server definitions.
 
@@ -92,5 +94,5 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 
 - `jq empty plugins/rldyour-*/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates JSON metadata.
 - `/opt/homebrew/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates skill frontmatter.
-- `/opt/homebrew/bin/uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates OpenAI skill metadata and implicit invocation policy.
+- `scripts/validate_marketplace.sh`: validates compact bilingual skill routing descriptions, OpenAI skill metadata, MCP dependencies, cache sync, scripts, LSP health, and secret patterns.
 - `diff -qr plugins/<plugin> <codex-plugin-cache>/<plugin>/local`: verifies the system cache matches the repository plugin.
