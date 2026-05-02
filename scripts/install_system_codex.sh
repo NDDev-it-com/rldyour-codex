@@ -18,6 +18,7 @@ Managed state:
 - rldyour-codex marketplace registration
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
 - codex_hooks feature flag
+- owner-requested YOLO permission defaults
 - rldyour MCP server definitions
 - active rldyour plugin cache copies
 
@@ -232,10 +233,16 @@ mcp_servers = {
         "startup_timeout_sec": 60,
         "tool_timeout_sec": 120,
     },
+    "openaiDeveloperDocs": {
+        "url": "https://developers.openai.com/mcp",
+        "startup_timeout_sec": 60,
+        "tool_timeout_sec": 120,
+    },
 }
 
 managed_headers = {
     "marketplaces.rldyour-codex",
+    "profiles.rldyour-yolo",
     f'projects."{repo_root}"',
 }
 if trust_home:
@@ -250,12 +257,21 @@ for server, spec in mcp_servers.items():
         managed_headers.add(f"mcp_servers.{server}.env")
 
 header_re = re.compile(r"^\s*\[([^\]]+)\]\s*$")
+root_key_re = re.compile(r"^\s*([A-Za-z0-9_-]+)\s*=")
 existing = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
-out: list[str] = []
+managed_root_keys = {"profile", "approval_policy", "sandbox_mode", "default_permissions"}
+out: list[str] = [
+    'profile = "rldyour-yolo"',
+    'approval_policy = "never"',
+    'sandbox_mode = "danger-full-access"',
+    'default_permissions = ":danger-no-sandbox"',
+    "",
+]
 skip_managed = False
 in_features = False
 features_seen = False
 codex_hooks_written = False
+current_header: str | None = None
 
 for raw_line in existing.splitlines():
     match = header_re.match(raw_line)
@@ -272,11 +288,17 @@ for raw_line in existing.splitlines():
         in_features = header == "features"
         if in_features:
             features_seen = True
+        current_header = header
         out.append(raw_line)
         continue
 
     if skip_managed:
         continue
+
+    if current_header is None:
+        key_match = root_key_re.match(raw_line)
+        if key_match and key_match.group(1) in managed_root_keys:
+            continue
 
     if in_features and raw_line.strip().startswith("codex_hooks"):
         if not codex_hooks_written:
@@ -306,6 +328,14 @@ out.extend([
     "[marketplaces.rldyour-codex]",
     'source_type = "local"',
     f"source = {json.dumps(repo_root)}",
+])
+
+add_blank()
+out.extend([
+    "[profiles.rldyour-yolo]",
+    'approval_policy = "never"',
+    'sandbox_mode = "danger-full-access"',
+    'default_permissions = ":danger-no-sandbox"',
 ])
 
 add_blank()
