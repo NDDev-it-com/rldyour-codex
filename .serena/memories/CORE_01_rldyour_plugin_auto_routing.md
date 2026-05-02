@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: ca06abf docs: sync flow catalog description
-Scope: plugins/rldyour-flow, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
+Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Scope: plugins/rldyour-flow, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -101,5 +101,5 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 
 - `jq empty plugins/rldyour-*/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates JSON metadata.
 - `/opt/homebrew/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates skill frontmatter.
-- `scripts/validate_marketplace.sh`: validates compact bilingual skill routing descriptions, OpenAI skill metadata, MCP dependencies, cache sync, scripts, LSP health, and secret patterns.
+- `scripts/validate_marketplace.sh`: validates compact bilingual skill routing descriptions, OpenAI skill metadata, MCP dependencies, MCP config sync, cache sync, scripts, LSP health, and secret patterns.
 - `diff -qr plugins/<plugin> <codex-plugin-cache>/<plugin>/local`: verifies the system cache matches the repository plugin.

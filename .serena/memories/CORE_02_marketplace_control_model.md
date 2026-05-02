@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: ca06abf docs: sync flow catalog description
+Last commit: 81c5e10 chore(validation): enforce MCP config sync
 Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -89,11 +89,11 @@ Current plugin manifest versions:
 
 `rldyour-flow` `0.1.2` exposes deep `ry-init` context packs, `ry-start` context sufficiency gates, advisory SessionStart context, advisory PostToolUse commit advice, reviewer workflows, deployment workflow, and post-task sync.
 
-Commit `ca06abf docs: sync flow catalog description` updated root `README.md` so the active catalog and planned architecture sections describe the `rldyour-flow` `0.1.2` context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, and post-task sync.
+Root `README.md` describes the active catalog, planned architecture, system install workflow, and the portable MCP source-of-truth rule for `plugins/rldyour-mcps/.mcp.json`.
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
-`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, compact bilingual routing descriptions, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, plugin cache sync, secret patterns, and whitespace.
+`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, compact bilingual routing descriptions, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, MCP config sync, plugin cache sync, secret patterns, and whitespace.
 
 `scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, plugins, MCP, cache, and repository validation.
 

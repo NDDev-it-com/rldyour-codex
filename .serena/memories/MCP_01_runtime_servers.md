@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
-Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, /Users/rldyourmnd/.codex/config.toml
+Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, scripts/validate_marketplace.sh, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
 
@@ -17,6 +17,7 @@ Area: MCP
 - `plugins/rldyour-mcps/.codex-plugin/plugin.json`: plugin manifest with `mcpServers: "./.mcp.json"` and no `skills`.
 - `plugins/rldyour-mcps/README.md`: runtime rules, responsibility boundary, startup rules, language rules, and verification commands.
 - `plugins/rldyour-mcps/.env.example`: placeholder-only environment variable shape.
+- `scripts/validate_marketplace.sh`: validates repository MCP definitions against the installed system Codex MCP config.
 - `/Users/rldyourmnd/.codex/config.toml`: active system MCP registrations after marketplace installation.
 
 ## Entry Points
@@ -46,6 +47,8 @@ Repository `.mcp.json` intentionally stores portable commands (`uvx`, `bunx`, `d
 - `/opt/homebrew/bin/uvx` for `serena` and `semgrep`.
 - `/Users/rldyourmnd/.local/bin/bunx` for `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, and `shadcn`.
 - `/opt/homebrew/bin/dart` for `dart-flutter`.
+
+`scripts/install_system_codex.sh --apply` is the supported way to project portable `.mcp.json` definitions into the active system config. `scripts/validate_marketplace.sh` now has an `MCP config sync` step that compares repository `.mcp.json` with `/Users/rldyourmnd/.codex/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
 
 Remote MCP servers use URL connections:
 
@@ -90,6 +93,7 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 - When adding a local MCP, use only approved runtimes and set explicit startup/tool timeouts.
 - When adding a remote MCP, use explicit `url` and avoid local command wrappers.
 - Document any new environment variable in `.env.example` with a placeholder only.
+- After changing `.mcp.json`, run `scripts/install_system_codex.sh --dry-run`, `scripts/install_system_codex.sh --apply`, and `scripts/doctor_system_codex.sh` so the installed runtime is synchronized.
 - Update `plugins/rldyour-mcps/README.md` and this memory when server names, runtimes, timeout policy, or secret handling changes.
 
 ## Verification
@@ -98,4 +102,5 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 - `jq empty plugins/rldyour-mcps/.mcp.json plugins/rldyour-mcps/.codex-plugin/plugin.json`: validates JSON.
 - `codex mcp list`: checks active MCP registration after plugin installation.
 - `codex mcp get serena`, `codex mcp get figma`: checks representative local and remote MCP definitions.
+- `scripts/validate_marketplace.sh`: checks installed MCP config synchronization and prints `MCP config in sync: 11 servers` when repository and system config match.
 - `rg -n 'ctx7sk|password|secret|api[_-]?key|access[_-]?token|bearer|private[_-]?key' plugins/rldyour-mcps`: should show only placeholders or security text, not real credentials.

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: c4ba7bd fix(serena): make knowledge commit staging robust
+Last commit: 81c5e10 chore(validation): enforce MCP config sync
 Scope: plugins/rldyour-serena-mcp
 Area: MCP
 -->
@@ -14,6 +14,7 @@ Area: MCP
 ## Source Of Truth
 
 - `plugins/rldyour-serena-mcp/.codex-plugin/plugin.json`: manifest with `skills: "./skills/"` and `hooks: "./hooks.json"`.
+- `plugins/rldyour-serena-mcp/README.md`: plugin scope, automatic invocation, trigger map, hook summary, and memory quality target.
 - `plugins/rldyour-serena-mcp/skills/serena-code-workflow/SKILL.md`: Serena-first semantic code workflow.
 - `plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md`: fact-only `.serena` knowledge maintenance rules.
 - `plugins/rldyour-serena-mcp/hooks.json`: Codex hook registrations.
@@ -44,7 +45,7 @@ Hook commands in `hooks.json` first try the repository-local hook path, then the
 
 `stop_memory_sync.sh` uses `.serena/.sync_marker` to avoid a Stop-hook loop for the same HEAD during a continuation.
 
-The current active state before this memory update is Serena-current: memory metadata points to an ancestor commit and all changes since that metadata are knowledge-only. The repository has nine memory files before adding `CORE_04_system_codex_runtime.md`.
+The current repository has eleven durable memory files in `.serena/memories`. Generated local Serena project files, runtime markers, and cache files remain ignored; `rldyour-flow` owns scoped project initialization, and portable Serena project config should be promoted into the repository only when the owner explicitly wants that behavior.
 
 ## Contracts And Data
 
