@@ -103,7 +103,7 @@ else
 fi
 
 step "Secret pattern scan"
-if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer [A-Za-z0-9._-]+' .serena/memories plugins .agents AGENTS.md scripts; then
+if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer [A-Za-z0-9._-]+' .serena/memories plugins .agents AGENTS.md README.md scripts system; then
   printf 'Potential secret pattern detected\n' >&2
   exit 1
 fi
