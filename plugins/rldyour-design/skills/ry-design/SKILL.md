@@ -1,6 +1,6 @@
 ---
 name: ry-design
-description: End-to-end design implementation command for Codex. Use automatically when the user invokes $ry-design or asks for a complete design/UI implementation flow such as implementing a Figma layout, building a page or component, creating frontend UI, restyling an interface, building a centralized design system, producing pixel-perfect frontend work, or validating design quality. Orchestrates Figma MCP, centralized tokens, strict FSD placement, shadcn/ui MCP, ReactBits.dev, browser validation, and Serena memory sync when useful.
+description: "End-to-end design implementation command for Codex. Use automatically when the user invokes $ry-design or asks in Russian or English for complete design/UI work: сделай дизайн, реализуй UI, сверстай страницу, перенеси Figma, обнови интерфейс, дизайн-система, pixel-perfect, проверь дизайн. Orchestrates Figma MCP, centralized tokens, strict FSD placement, shadcn/ui MCP, ReactBits.dev, browser validation, and Serena memory sync when useful."
 ---
 
 # ry-design

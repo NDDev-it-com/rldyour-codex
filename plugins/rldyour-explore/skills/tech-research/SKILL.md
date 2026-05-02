@@ -1,6 +1,6 @@
 ---
 name: tech-research
-description: Technical research before feature implementation, complex bug fixing, migrations, library/API/framework setup, or open-source repository architecture analysis. Use automatically for Russian or English requests that ask to research, investigate, study the internet for a technical topic, inspect documentation, study MCP/tool sources, find GitHub production patterns, understand API behavior, compare implementation options, or validate best practices before coding. Use Context7 for official documentation, DeepWiki for repository architecture, and Grep by Vercel for real GitHub usage patterns. User-facing answers stay in Russian unless the user asks otherwise.
+description: "Technical research before feature implementation, complex bug fixing, migrations, library/API/framework setup, or open-source repository architecture analysis. Use automatically for Russian or English technical requests: исследуй интернет, изучи в интернете, посмотри документацию, изучи MCP/tool sources, найди GitHub patterns, best practices, API behavior, migration/setup options before coding. Use Context7 for official docs, DeepWiki for repo architecture, and Grep by Vercel for real GitHub usage patterns. User-facing answers stay Russian unless requested otherwise."
 ---
 
 # Tech Research
@@ -16,12 +16,13 @@ User-facing conversation stays in Russian unless requested otherwise. API names,
 Use this skill without waiting for an explicit `$tech-research` call when the request is technical and asks to:
 
 - Research, investigate, study, look up, or verify a technical topic before implementation.
+- Handle Russian prompts such as `исследуй интернет`, `изучи в интернете`, `посмотри документацию`, `найди лучшие практики`, `посмотри как это сделано`, or `изучи MCP` when the subject is technical.
 - Inspect official docs for a library, framework, SDK, API, migration, configuration, or runtime behavior.
 - Understand an open-source repository, feature architecture, design decision, data flow, or tradeoff.
 - Find production GitHub usage patterns, parameters, error handling, or edge cases.
 - Validate best practices, version-specific behavior, compatibility, or migration risks.
 
-If the request needs current non-technical sources, news, pricing, legal/security advisories, or broad internet evidence beyond MCP research, add `web-research`.
+If the owner explicitly asks to research the internet for a technical implementation, run this Triple-MCP workflow first and add `web-research` for current/latest/source-backed web evidence beyond Context7, DeepWiki, and Grep.
 
 ## When To Use
 

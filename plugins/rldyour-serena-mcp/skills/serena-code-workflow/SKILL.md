@@ -1,6 +1,6 @@
 ---
 name: serena-code-workflow
-description: Serena-first semantic code workflow for Codex. Use automatically when inspecting, indexing, exploring, understanding, editing, refactoring, reviewing, or tracing repository code, projects, directories, files, symbols, call sites, dependencies, implementation scope, architecture, or code relationships. Prefer Serena MCP workflow tools and symbol tools before raw file reads, grep, or line-based edits.
+description: "Serena-first semantic code workflow for Codex. Use automatically for Russian or English repository work: изучи код, изучи проект, посмотри файл, проиндексируй, исследуй директорию, найди символы, найди ссылки, рефакторинг, ревью кода, архитектура, связи кода, implementation scope. Prefer Serena MCP workflow and symbol tools before raw file reads, grep, or line-based edits."
 ---
 
 # Serena Code Workflow

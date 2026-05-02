@@ -26,6 +26,36 @@ while IFS= read -r skill_md; do
 done < <(find plugins -path '*/skills/*/SKILL.md' -print | sort)
 printf 'validated skills: %s\n' "$skill_count"
 
+step "Russian automatic routing"
+python3 - <<'PY'
+from pathlib import Path
+import re
+import sys
+
+errors = []
+count = 0
+for path in sorted(Path("plugins").glob("rldyour-*/skills/*/SKILL.md")):
+    text = path.read_text(encoding="utf-8")
+    match = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+    if not match:
+        errors.append(f"{path}: missing YAML frontmatter")
+        continue
+    frontmatter = match.group(1)
+    desc = re.search(r"^description:\s*(.+)$", frontmatter, re.M)
+    if not desc:
+        errors.append(f"{path}: missing description")
+        continue
+    count += 1
+    if not re.search(r"[А-Яа-яЁё]", desc.group(1)):
+        errors.append(f"{path}: description must include Russian trigger phrases for implicit routing")
+
+if errors:
+    print("\n".join(errors), file=sys.stderr)
+    raise SystemExit(1)
+
+print(f"validated Russian routing descriptions: {count}")
+PY
+
 step "OpenAI skill metadata"
 "$UV_BIN" run --with pyyaml python - <<'PY'
 from pathlib import Path

@@ -1,6 +1,6 @@
 ---
 name: lsp-setup
-description: Explicit LSP installation and update workflow for Codex. Use only when the user asks to install, update, repair, or ensure system language servers are present. Prefer Homebrew for system packages and use toolchain-specific managers only when they are the correct source of truth, such as rustup for rust-analyzer components.
+description: "Explicit LSP installation and update workflow for Codex. Use only when the user asks in Russian or English to install, update, repair, or ensure language servers: установи LSP, обнови лсп, почини language server, поставь серверы языков, проверь что установлено. Prefer Homebrew for system packages and toolchain-specific managers only when they are the source of truth, such as rustup for rust-analyzer components."
 ---
 
 # LSP Setup
@@ -35,4 +35,3 @@ plugins/rldyour-lsps/scripts/check_lsps.sh
 ## Install Profile Reference
 
 Read `references/install-profiles.md` before changing the install script or adding new LSPs.
-

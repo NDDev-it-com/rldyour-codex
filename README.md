@@ -12,6 +12,7 @@ Main principle: nothing is treated as enabled or correct unless the owner explic
 - Each tool or workflow must describe its purpose, access model, risks, and usage rules.
 - Repository documentation is written in English.
 - Technical identifiers stay stable and ASCII.
+- Every callable rldyour skill must include Russian trigger phrases in the `SKILL.md` frontmatter `description`; the owner prompts Codex in Russian, and Codex uses descriptions as the primary implicit invocation surface.
 - Secrets, tokens, cookies, and private keys are never stored in this repository.
 
 ## Active Catalog

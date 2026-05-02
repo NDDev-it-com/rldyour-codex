@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: Mandatory browser validation for design implementation. Use automatically after any meaningful frontend UI, styling, responsive layout, Figma-to-code, design-system, shadcn/ui, ReactBits, animation, or interaction implementation, and before final delivery when a browser can be run. Delegates browser evidence to rldyour-browser workflows and requires screenshots under browser/.
+description: "Mandatory browser validation for design implementation. Use automatically after meaningful UI/styling/responsive/Figma-to-code/design-system/shadcn/ui/ReactBits/animation work and for Russian prompts: проверь дизайн, проверь визуально, проверь верстку, проверь адаптив, pixel-perfect, скриншоты. Delegates browser evidence to rldyour-browser workflows and requires screenshots under browser/."
 ---
 
 # Design Validation
