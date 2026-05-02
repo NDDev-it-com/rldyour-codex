@@ -11,6 +11,12 @@ Post-task sync is the last phase of meaningful work. It prevents forgotten chang
 5. GitHub sync fifth.
 6. Merged branch/worktree cleanup last.
 
+## Session And Commit Advice
+
+The flow SessionStart hook gives Codex a compact repository state packet before work starts or resumes. Treat it as an input to planning: inspect dirty files, ahead/behind state, worktree count, docs, and Serena freshness before making assumptions.
+
+The flow PostToolUse hook emits commit advice after Bash `git commit` commands. Advice is informational and should be reviewed before pushing or final delivery, but it must not be treated as a hard failure by itself.
+
 ## Serena Interaction
 
 `rldyour-serena-mcp` owns `.serena/memories`, `.serena/plans`, and `.serena/research`. The flow hook must not duplicate that work. It waits until the Serena state script reports current knowledge, then asks for `flow-post-task-sync`.
@@ -45,4 +51,3 @@ Runtime markers are ignored by git:
 - Remove merged worktrees and branches only after verifying they are merged into `main` and pushed if needed.
 - Delete remote branches after merge when the branch was created for this workflow and no open PR depends on it.
 - Ask the user if branch ownership, merge status, or remote state is unclear.
-

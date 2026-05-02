@@ -15,15 +15,17 @@ Implement a task to a high-quality, scalable, synchronized state. Speed is secon
 2. Understand the prompt. For ambiguity, ask concise Russian questions with options.
 3. Research code through Serena memories and semantic tools.
 4. Research current docs, patterns, and alternatives through `rldyour-explore`.
-5. Write a detailed plan. Verify each plan item against code using Serena before editing.
-6. Create or use a feature branch/worktree. Use stacked PRs only when the task naturally splits into independent logical PRs.
-7. Implement strictly by plan, adapting only after code evidence. Make frequent atomic Conventional Commits.
-8. Fix all issues in touched scope plus affected integration path. If wider technical debt is found, ask whether to expand scope.
-9. Run quality gates using project scripts, `rldyour-lsps`, and detected stack checks.
-10. Trigger browser validation for UI/browser-visible work unless auth blocks it; if auth blocks, report the limitation and use available evidence.
-11. Trigger security review for security-sensitive changes or explicit user request.
-12. Run review phase with subagents for architecture, quality, consistency, integration, verification, and security when applicable.
-13. Run `flow-post-task-sync` before final response.
+5. Read `references/context-sufficiency-gate.md` and pass the gate before editing code.
+6. Write a detailed plan. Verify each plan item against code using Serena before editing.
+7. Create or use a feature branch/worktree. Use stacked PRs only when the task naturally splits into independent logical PRs.
+8. Implement strictly by plan, adapting only after code evidence. Make frequent atomic Conventional Commits.
+9. Provide progress checkpoints after meaningful milestones or every 2-3 completed plan groups.
+10. Fix all issues in touched scope plus affected integration path. If wider technical debt is found, ask whether to expand scope.
+11. Run quality gates using project scripts, `rldyour-lsps`, and detected stack checks.
+12. Trigger browser validation for UI/browser-visible work unless auth blocks it; if auth blocks, report the limitation and use available evidence.
+13. Trigger security review for security-sensitive changes or explicit user request.
+14. Run review phase with subagents for architecture, quality, consistency, integration, verification, and security when applicable.
+15. Run `flow-post-task-sync` before final response.
 
 ## Automatic Helper Routing
 
@@ -35,6 +37,12 @@ The owner normally invokes only `rldyour-flow` commands and writes prompts in Ru
 - Design/frontend UI work: use `ry-design`, `figma-to-code`, `design-system-implementation`, `fsd-frontend-architecture`, and `design-validation` when the task mentions Figma, дизайн, UI, верстка, дизайн-система, shadcn/ui, ReactBits, FSD, tokens, or pixel-perfect design.
 - Security-sensitive work: use `owasp-top-10-implementation` during auth/authz/API/input/file/dependency/config/secrets/payment/admin/external-integration work. Use `ry-sec-review` for explicit security-review requests and orchestrate `flow-security-review` in the review phase when the touched scope is sensitive.
 - Verification and finish: use `verification-quality-gates`, `flow-verification-review`, `serena-memory-sync`, and `flow-post-task-sync` before final delivery when the task produced durable code, config, docs, plugin, memory, hook, or workflow changes.
+
+## Context Sufficiency
+
+Do not implement from a shallow prompt. Before editing, the model must know the relevant architecture, files, symbols, DB/schema/API/config contracts, tests, integration paths, current project patterns, and current external API/framework guidance needed for the task.
+
+If the model cannot answer the gate questions in `references/context-sufficiency-gate.md`, it must gather more evidence through Serena, LSP, `rldyour-explore`, browser/security/design workflows, or ask the owner with options. This is a quality guard, not a hard blocker: the correct response is to enrich context until implementation is safe.
 
 ## Subagent Permission
 

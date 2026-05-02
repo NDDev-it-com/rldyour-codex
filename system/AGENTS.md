@@ -28,7 +28,7 @@ Use the installed rldyour plugins automatically when the task matches their scop
 - `rldyour-serena-mcp`: repository understanding, code exploration, semantic symbol work, refactors, code review, and Serena memory sync.
 - `rldyour-explore`: technical research, official docs, repository architecture research, production code patterns, and web research.
 - `rldyour-rules`: quality-first engineering, architecture boundaries, dependency compatibility, verification gates, project instructions, and ADR policy.
-- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, orchestrated reviewer tracks, and post-task synchronization.
+- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, advisory session/commit hooks, and post-task synchronization.
 - `rldyour-lsps`: language-server selection, setup, health checks, and Serena LSP integration.
 - `rldyour-browser`: browser validation, screenshots, responsive checks, user flows, business logic, console/network/runtime debugging, and performance diagnosis.
 - `rldyour-design`: Figma-to-code, centralized design systems, FSD frontend placement, shadcn/ui, ReactBits, and design validation.

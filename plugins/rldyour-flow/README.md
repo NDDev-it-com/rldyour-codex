@@ -5,7 +5,7 @@
 It provides Russian-first command skills:
 
 - `ry-init`: initialize project, module, or feature scope with Serena-first context.
-- `ry-start`: implement a task through research, plan, worktree, commits, quality gates, reviews, and sync.
+- `ry-start`: implement a task through context sufficiency, research, plan, worktree, commits, quality gates, reviews, and sync.
 - `ry-newp`: design and optionally scaffold a new project after deep questioning.
 - `ry-review`: review a diff/scope plus affected integration graph.
 - `ry-deploy`: synchronize local, GitHub, and server state, then deploy and verify.
@@ -13,7 +13,13 @@ It provides Russian-first command skills:
 
 ## Hook Strategy
 
-The plugin includes a Stop hook, but it does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `flow-post-task-sync` for docs and git synchronization.
+The plugin includes advisory SessionStart and PostToolUse hooks plus a Stop hook.
+
+The SessionStart hook is read-only. It adds a compact repository context packet to the session: branch, HEAD, upstream drift, dirty files, worktree count, Serena memory freshness, and whether flow sync is pending. It tells Codex to run scoped `ry-init` when context is insufficient, but it does not mutate files or block execution.
+
+The PostToolUse hook watches Bash `git commit` commands and emits non-blocking commit advice for conventional commit format, oversized subjects, suspicious sensitive paths, runtime markers, browser evidence, or very broad commits. It never rejects the command.
+
+The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `flow-post-task-sync` for docs and git synchronization.
 
 Loop prevention uses `.serena/.flow_sync_marker`, which is ignored by git. If the same state already requested a continuation, the hook allows stop to avoid an infinite loop.
 

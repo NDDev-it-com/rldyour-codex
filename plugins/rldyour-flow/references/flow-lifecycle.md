@@ -16,7 +16,7 @@ This reference defines the executable workflow behind `ry-init`, `ry-start`, `ry
 
 ## ry-init
 
-Purpose: build a reliable model of a project, module, backend/frontend/mobile area, or feature scope.
+Purpose: build a reliable model of a project, module, backend/frontend/mobile area, or feature scope. The output is a scoped context pack, not a shallow file list.
 
 Core order:
 
@@ -25,8 +25,10 @@ Core order:
 3. Serena readiness: `check_onboarding_performed`, onboarding if needed, `list_memories`, relevant `read_memory`.
 4. Scope detection: project, module, sphere, or feature. For a sphere such as backend, inspect the whole sphere and its integration points.
 5. Semantic map: `get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, `search_for_pattern` only when needed.
-6. External enrichment only for unclear architecture, framework behavior, or current best practices.
-7. Synthesis in Russian, with exact source-of-truth paths.
+6. Data and contract map: database tables/fields, schemas, migrations, API contracts, generated artifacts, configuration keys, environment variables, and integration boundaries that affect the scope.
+7. Pattern map: established project patterns for naming, layering, validation, errors, tests, state management, and dependency usage.
+8. External enrichment only for unclear architecture, framework behavior, or current best practices.
+9. Synthesis in Russian, with exact source-of-truth paths, symbols, contracts, checks, and known gaps.
 
 ## ry-start
 
@@ -38,13 +40,21 @@ Core order:
 2. Understand prompt and affected scope.
 3. Research project code through Serena and project memories.
 4. Research current best practices and libraries through `rldyour-explore`.
-5. Produce a detailed implementation plan.
-6. Verify the plan against real code and adjust until coherent.
-7. Create or select branch/worktree and implement through atomic commits.
-8. Run quality gates and fix all issues in touched scope plus integration path.
-9. Run reviewer workflow. Use subagents when the `ry-start` workflow calls for parallel review.
-10. Run browser/security/design/LSP workflows when triggered by the change type.
-11. Synchronize Serena memories, AGENTS.md, CLAUDE.md, git, GitHub, and worktree cleanup through `flow-post-task-sync`.
+5. Pass the context sufficiency gate before editing: code paths, symbols, data contracts, integration points, existing patterns, checks, and research evidence must be known or explicitly marked as unknown.
+6. Produce a detailed implementation plan.
+7. Verify the plan against real code and adjust until coherent.
+8. Create or select branch/worktree and implement through atomic commits.
+9. Run progress checkpoints after meaningful milestones or every 2-3 plan groups: compare implementation against the plan, context pack, existing patterns, and touched integration path.
+10. Run quality gates and fix all issues in touched scope plus integration path.
+11. Run reviewer workflow. Use subagents when the `ry-start` workflow calls for parallel review.
+12. Run browser/security/design/LSP workflows when triggered by the change type.
+13. Synchronize Serena memories, AGENTS.md, CLAUDE.md, git, GitHub, and worktree cleanup through `flow-post-task-sync`.
+
+## Session Context
+
+The SessionStart hook is advisory and read-only. It adds compact state at session startup or resume so Codex knows whether repository sync, Serena memory freshness, docs, dirty files, or worktrees need attention. This context informs planning; it is not a blocker.
+
+The PostToolUse commit advice hook is advisory and read-only. It checks recently created commits for conventional commit format, suspicious sensitive paths, runtime markers, browser evidence, and broad commit scope. It informs the next model step without rejecting the command.
 
 ## ry-newp
 
@@ -100,4 +110,3 @@ Deploy order:
 7. Verify logs, health, tests, and business-critical flows.
 8. If deployment fails, perform RCA through logs, code, and internet research, then fix-forward. Ask the user with options for risky operations.
 9. DB rollback only when an explicit rollback contract and backup/restore point are verified.
-
