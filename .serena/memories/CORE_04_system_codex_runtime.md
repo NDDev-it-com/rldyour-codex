@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
-Scope: /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, plugins/rldyour-*, .agents/plugins/marketplace.json
+Last commit: 7f53801 chore(codex): add marketplace validation instructions
+Scope: /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
 
@@ -18,11 +18,14 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `.agents/plugins/marketplace.json`: repository marketplace catalog.
 - `plugins/rldyour-*/.codex-plugin/plugin.json`: repository plugin manifests.
 - `plugins/rldyour-mcps/.mcp.json`: repository MCP server definitions.
+- `AGENTS.md`: project-level Codex instructions for this repository.
+- `scripts/validate_marketplace.sh`: local validation entry point for runtime and repository consistency.
 
 ## Entry Points
 
 - `codex plugin marketplace add .`: registers this repository as the local `rldyour-codex` marketplace.
 - `codex mcp list`: shows active MCP registrations from system Codex.
+- `scripts/validate_marketplace.sh`: validates repository metadata, skills, hooks/scripts, local tool availability, MCP registration, cache sync, secret patterns, and whitespace.
 - `/Users/rldyourmnd/.codex/config.toml`: direct runtime configuration file for the current machine.
 - `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex`: installed plugin cache root.
 
@@ -68,6 +71,8 @@ The active plugin cache contains local copies for all nine rldyour plugins:
 - `rldyour-security`.
 - `rldyour-serena-mcp`.
 
+The full validation script currently validates 37 skills and 37 `agents/openai.yaml` metadata files. It also checks that every cached rldyour plugin matches its repository source. The LSP health check reports no missing commands and one expected project warning: this marketplace repository has Python scripts but no `pyproject.toml` or `pyrightconfig.json`.
+
 ## Contracts And Data
 
 System MCP registrations are installed in `/Users/rldyourmnd/.codex/config.toml`, not only in repository `.mcp.json`.
@@ -108,6 +113,7 @@ Environment variables and auth:
 ## Verification
 
 - `codex mcp list`: verifies enabled MCP server names, commands, URLs, status, and auth mode.
+- `scripts/validate_marketplace.sh`: verifies the full repository and installed-cache consistency contract.
 - `diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates repository marketplace and plugin manifests.
 - `rg -n 'ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' .serena/memories plugins .agents`: should show only policy text and placeholders, not real credentials.
