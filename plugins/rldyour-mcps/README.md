@@ -22,6 +22,8 @@ All local MCP servers must run only through owner-approved runtimes:
 
 This plugin does not use `npx`, `npm`, or direct `node` commands for MCP servers. Remote MCP servers with `url` remain URL connections and do not start local processes.
 
+Local MCP launcher packages are pinned for reproducibility. Do not use `@latest` or unpinned `uvx --from` package specs in `.mcp.json`. Update versions intentionally in both `.mcp.json` and `config/mcp-runtime-versions.env`, then run MCP capability smoke.
+
 ## Stable Startup Rule
 
 Codex starts MCP servers as a batch during session startup. `startup_timeout_sec` covers not only process launch, but also the MCP handshake: `initialize` and the first tool list. Every MCP in this plugin therefore has an explicit timeout instead of relying on Codex's shorter default.
@@ -54,7 +56,7 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | `context7` | Current library documentation | `bunx`, `CONTEXT7_API_KEY` |
 | `deepwiki` | Repository documentation and explanations | remote URL |
 | `grep` | Search across public GitHub repositories | remote URL |
-| `semgrep` | Static analysis and security checks | `uvx --from semgrep semgrep mcp` |
+| `semgrep` | Static analysis and security checks | `uvx --from semgrep==1.161.0 semgrep mcp` |
 | `shadcn` | shadcn/ui registry work | `bunx` |
 | `dart-flutter` | Dart/Flutter MCP for Dart and Flutter projects | `dart` |
 | `figma` | Figma design context | remote URL, OAuth |
@@ -80,6 +82,8 @@ After installing or updating the plugin, check:
 codex mcp list
 codex mcp get serena
 codex mcp get figma
+scripts/smoke_mcp_runtime.sh
+scripts/smoke_mcp_capabilities.sh
 ```
 
 Expected state:
@@ -119,7 +123,7 @@ After plugin installation, browser/OAuth authorization may be required. If Codex
 Serena is configured without automatically opening the dashboard:
 
 ```text
-uvx --from serena-agent@latest --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --open-web-dashboard False
+uvx --from serena-agent==1.2.0 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --open-web-dashboard False
 ```
 
 If the dashboard is needed manually, open it through Serena tools or directly through the local URL Serena prints in logs.

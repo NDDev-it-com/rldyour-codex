@@ -17,6 +17,8 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `plugins/<plugin>/skills/*/SKILL.md`: primary automatic skill routing contract.
 - `plugins/<plugin>/skills/*/agents/openai.yaml`: UI metadata and implicit invocation policy.
 - `plugins/rldyour-mcps/.mcp.json`: repository MCP runtime definitions.
+- `config/mcp-runtime-versions.env`: pinned local MCP launcher and Codex CLI versions used by scripts and CI.
+- `.github/workflows/validate.yml`: push/pull-request validation for marketplace, temporary system install, MCP capability smoke, hook lifecycle smoke, and clean bootstrap.
 - `/Users/rldyourmnd/.codex/config.toml`: active system Codex registration, YOLO permission defaults, and MCP runtime config.
 - `.serena/memories/*.md`: high-signal verified project knowledge.
 
@@ -52,7 +54,9 @@ Additional targeted checks:
 ```bash
 codex mcp list
 scripts/smoke_mcp_runtime.sh
+scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
+scripts/smoke_clean_bootstrap.sh
 scripts/bootstrap_check.sh --apply
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool

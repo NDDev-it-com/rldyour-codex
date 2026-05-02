@@ -211,7 +211,7 @@ for plugin_dir in "$ROOT"/plugins/rldyour-*; do
     fail "missing cache $cache_dir"
     continue
   fi
-  if diff -qr "$plugin_dir" "$cache_dir" >/dev/null; then
+  if diff -qr -x __pycache__ -x '*.pyc' "$plugin_dir" "$cache_dir" >/dev/null; then
     pass "cache in sync $plugin_name"
   else
     fail "cache differs $plugin_name"

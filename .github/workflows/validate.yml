@@ -1,0 +1,70 @@
+name: validate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  marketplace:
+    name: Marketplace and system smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      CODEX_HOME: ${{ runner.temp }}/codex-home
+      RLDYOUR_MCP_CAPABILITY_LIST_ONLY: "1"
+      RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.13"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2.2.0
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1.7.2
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq ripgrep shellcheck
+
+      - name: Install pinned Codex CLI
+        run: |
+          # shellcheck source=config/mcp-runtime-versions.env
+          . config/mcp-runtime-versions.env
+          npm install -g "@openai/codex@${CODEX_CLI_VERSION}"
+          codex --version
+
+      - name: Install rldyour Codex into temporary CODEX_HOME
+        run: |
+          scripts/install_system_codex.sh --dry-run --codex-home "$CODEX_HOME"
+          scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME"
+
+      - name: Validate marketplace
+        run: scripts/validate_marketplace.sh
+
+      - name: Doctor temporary system Codex
+        run: scripts/doctor_system_codex.sh --codex-home "$CODEX_HOME"
+
+      - name: Clean bootstrap smoke
+        run: scripts/smoke_clean_bootstrap.sh

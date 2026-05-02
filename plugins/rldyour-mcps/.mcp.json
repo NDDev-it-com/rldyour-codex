@@ -4,7 +4,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "serena-agent@latest",
+        "serena-agent==1.2.0",
         "--python",
         "3.13",
         "--prerelease",
@@ -22,7 +22,7 @@
     "sequential-thinking": {
       "command": "bunx",
       "args": [
-        "@modelcontextprotocol/server-sequential-thinking"
+        "@modelcontextprotocol/server-sequential-thinking@2025.12.18"
       ],
       "env": {
         "DISABLE_THOUGHT_LOGGING": "true"
@@ -33,7 +33,7 @@
     "playwright": {
       "command": "bunx",
       "args": [
-        "@playwright/mcp@latest",
+        "@playwright/mcp@0.0.73",
         "--headless",
         "--caps=network,storage,testing,devtools"
       ],
@@ -43,7 +43,7 @@
     "chrome-devtools": {
       "command": "bunx",
       "args": [
-        "chrome-devtools-mcp@latest",
+        "chrome-devtools-mcp@0.23.0",
         "--headless",
         "--isolated",
         "--no-usage-statistics",
@@ -55,7 +55,7 @@
     "context7": {
       "command": "bunx",
       "args": [
-        "@upstash/context7-mcp"
+        "@upstash/context7-mcp@2.2.3"
       ],
       "env_vars": [
         "CONTEXT7_API_KEY"
@@ -77,7 +77,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "semgrep",
+        "semgrep==1.161.0",
         "semgrep",
         "mcp"
       ],
@@ -87,7 +87,7 @@
     "shadcn": {
       "command": "bunx",
       "args": [
-        "shadcn@latest",
+        "shadcn@4.6.0",
         "mcp"
       ],
       "startup_timeout_sec": 90,
