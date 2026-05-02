@@ -16,7 +16,7 @@ The plugin is optimized for automatic Serena skill selection. Codex should route
 - Keep `.serena/memories` fact-only, high-signal, and synchronized with verified code state.
 - Store durable non-trivial plans in `.serena/plans`.
 - Store long source-backed research summaries in `.serena/research`.
-- Keep generated local Serena project files, runtime markers, and cache files out of commits. Future `rldyour-flow` initialization will decide when project config should become portable.
+- Keep generated local Serena project files, runtime markers, and cache files out of commits. `rldyour-flow` owns scoped project initialization; promote Serena project config to portable repository state only when the owner explicitly wants that behavior.
 
 ## Skills
 

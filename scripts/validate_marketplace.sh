@@ -215,6 +215,61 @@ plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool >/de
 step "MCP registration"
 codex mcp list >/dev/null
 
+step "MCP config sync"
+python3 - "$CODEX_HOME_DIR" <<'PY'
+from __future__ import annotations
+
+import json
+import sys
+import tomllib
+from pathlib import Path
+
+repo_path = Path("plugins/rldyour-mcps/.mcp.json")
+config_path = Path(sys.argv[1]) / "config.toml"
+
+repo_servers = json.loads(repo_path.read_text(encoding="utf-8"))["mcpServers"]
+config_servers = tomllib.loads(config_path.read_text(encoding="utf-8")).get("mcp_servers", {})
+
+errors: list[str] = []
+repo_names = set(repo_servers)
+config_names = set(config_servers)
+
+for name in sorted(repo_names - config_names):
+    errors.append(f"missing installed MCP server {name!r}")
+for name in sorted(config_names - repo_names):
+    errors.append(f"extra installed MCP server {name!r}")
+
+
+def normalized_command(value: object) -> str | None:
+    if value is None:
+        return None
+    return Path(str(value)).name
+
+
+for name in sorted(repo_names & config_names):
+    repo = repo_servers[name]
+    config = config_servers[name]
+
+    repo_command = normalized_command(repo.get("command"))
+    config_command = normalized_command(config.get("command"))
+    if repo_command != config_command:
+        errors.append(
+            f"{name}: command mismatch, repo {repo.get('command')!r}, installed {config.get('command')!r}"
+        )
+
+    for key in ("url", "args", "env_vars", "startup_timeout_sec", "tool_timeout_sec"):
+        if repo.get(key) != config.get(key):
+            errors.append(f"{name}: {key} mismatch, repo {repo.get(key)!r}, installed {config.get(key)!r}")
+
+    if (repo.get("env") or {}) != (config.get("env") or {}):
+        errors.append(f"{name}: env mismatch")
+
+if errors:
+    raise SystemExit("\n".join(errors))
+
+print(f"MCP config in sync: {len(repo_servers)} servers")
+PY
+
 step "Plugin cache sync"
 if [ -d "$CACHE_ROOT" ]; then
   for plugin_dir in plugins/rldyour-*; do
