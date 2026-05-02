@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 243330d fix(ci): use parse-safe codex home path
+Last commit: 5870bad fix(ci): make marketplace validation portable
 Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -156,7 +156,7 @@ Serena runtime is explicitly headless in `.mcp.json` and installed config: `--en
 
 `scripts/smoke_hooks.sh` resolves both repository plugin layout (`plugins/<plugin>`) and installed cache layout (`<plugin>/local`) so it validates the same hook scripts Codex will load after restart. It now also creates a temporary git repository to validate real Serena and Flow lifecycle state transitions for SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, Stop sync prompts, Stop loop guard, and commit advice.
 
-`.github/workflows/validate.yml` runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI into CI, applies the marketplace into `CODEX_HOME=/tmp/rldyour-codex-home`, runs marketplace validation, doctor, and clean bootstrap smoke. CI capability smoke uses list-only mode to avoid auth-sensitive or long-running safe tool calls. The workflow must not use `runner.*` expressions in job-level `env` because GitHub rejects that context during workflow parsing.
+`.github/workflows/validate.yml` runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI into CI, applies the marketplace into `CODEX_HOME=/tmp/rldyour-codex-home`, runs marketplace validation, doctor, and clean bootstrap smoke. CI capability smoke uses list-only mode to avoid auth-sensitive or long-running safe tool calls. CI sets `RLDYOUR_SKIP_LSP_HEALTH=1` because full LSP health is an owner-machine check, not a portable GitHub runner check. The workflow must not use `runner.*` expressions in job-level `env` because GitHub rejects that context during workflow parsing.
 
 Environment variables and auth:
 
