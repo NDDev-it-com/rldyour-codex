@@ -1,6 +1,6 @@
 ---
 name: owasp-top-10-implementation
-description: Non-blocking OWASP Top 10 secure implementation guidance. Use automatically during security-relevant feature work, bug fixes, refactors, API changes, authentication/authorization work, input/output handling, file handling, dependency/config changes, logging/error handling, crypto/secrets work, external integration work, or whenever the user asks to keep implementation secure or follow OWASP. Provide security comments and practical corrections, but do not block normal execution unless normal Codex safety rules apply to explicit destructive or malicious requests.
+description: "Non-blocking OWASP Top 10 secure implementation guidance. Use automatically for Russian or English security-relevant work: безопасность, секьюрити, OWASP, авторизация, аутентификация, права доступа, секреты, инъекции, XSS, SSRF, file handling, dependencies/config, logging/errors, crypto, external integrations. Provide practical security comments/corrections without blocking normal execution unless normal Codex safety rules apply."
 ---
 
 # OWASP Top 10 Implementation Guidance

@@ -35,6 +35,8 @@ Use the installed rldyour plugins automatically when the task matches their scop
 - `rldyour-security`: OWASP-oriented secure implementation guidance and `$ry-sec-review`.
 - `rldyour-mcps`: MCP runtime only. It must not be treated as a behavior policy plugin.
 
+The owner normally writes prompts in Russian and explicitly invokes only `rldyour-flow` commands. When a helper plugin matches the Russian intent, use the helper skill automatically instead of waiting for the owner to name it.
+
 Curated `github@openai-curated` and `gmail@openai-curated` are intentionally enabled.
 
 ## Tool Priority
@@ -129,4 +131,3 @@ scripts/doctor_system_codex.sh
 ```
 
 Restart Codex after changing global `AGENTS.md`, `~/.codex/config.toml`, installed plugins, hooks, skills, or MCP runtime definitions.
-

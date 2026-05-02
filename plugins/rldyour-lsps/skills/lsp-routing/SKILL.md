@@ -1,6 +1,6 @@
 ---
 name: lsp-routing
-description: Automatic language-server routing for Codex. Use automatically for Russian or English requests that mention LSP, language servers, diagnostics, type checking, code intelligence, symbol navigation, semantic refactors, project setup, or implementation work involving Python, Rust, Dart, Flutter, TypeScript, JavaScript, Go, C, C++, Qt, QML, YAML, Docker, HTML, CSS, Shell, JSON, TOML, or Markdown.
+description: Automatic language-server routing for Codex. Use automatically for Russian or English requests that mention LSP/лсп, language servers/серверы языков, диагностики, type checking, типы, code intelligence, symbol navigation, semantic refactors, project setup, or implementation involving Python, Rust, Dart, Flutter, TypeScript, JavaScript, Go, C, C++, Qt, QML, YAML, Docker, HTML, CSS, Shell, JSON, TOML, or Markdown.
 ---
 
 # LSP Routing
@@ -49,4 +49,3 @@ Use this skill when a task involves:
 Do not start a `stdio` language server manually unless a real LSP client controls the session. For checks, verify command availability, versions, and project prerequisites.
 
 Do not use first-run `bunx` or `uvx` as a long-lived LSP runtime. Use stable local executables. Package managers are allowed for explicit setup and health checks.
-
