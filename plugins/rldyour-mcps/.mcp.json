@@ -13,6 +13,8 @@
         "start-mcp-server",
         "--project-from-cwd",
         "--context=codex",
+        "--enable-web-dashboard",
+        "False",
         "--open-web-dashboard",
         "False"
       ],
