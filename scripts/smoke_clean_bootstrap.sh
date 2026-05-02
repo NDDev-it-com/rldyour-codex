@@ -60,6 +60,7 @@ trap cleanup EXIT
 
 CLONE_DIR="$TMP_ROOT/repo"
 CODEX_HOME_DIR="$TMP_ROOT/codex-home"
+SERENA_HOME_DIR="$TMP_ROOT/serena-home"
 
 printf 'Clean bootstrap workspace: %s\n' "$TMP_ROOT"
 git clone --quiet --local "$ROOT" "$CLONE_DIR"
@@ -72,6 +73,7 @@ scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME_DIR"
 RLDYOUR_MCP_CAPABILITY_LIST_ONLY=1 \
 RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV=1 \
 CODEX_HOME="$CODEX_HOME_DIR" \
+SERENA_HOME="$SERENA_HOME_DIR" \
   scripts/doctor_system_codex.sh --codex-home "$CODEX_HOME_DIR"
 
 CODEX_HOME="$CODEX_HOME_DIR" codex mcp list >/dev/null
