@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 6af53aa feat(skills): optimize plugin routing metadata
+Last commit: ca06abf docs: sync flow catalog description
 Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -84,8 +84,12 @@ Current plugin manifest versions:
 - `rldyour-browser`: `0.1.1`.
 - `rldyour-design`: `0.1.1`.
 - `rldyour-lsps`: `0.1.1`.
-- `rldyour-flow`: `0.1.1`.
+- `rldyour-flow`: `0.1.2`.
 - `rldyour-rules`: `0.1.1`.
+
+`rldyour-flow` `0.1.2` exposes deep `ry-init` context packs, `ry-start` context sufficiency gates, advisory SessionStart context, advisory PostToolUse commit advice, reviewer workflows, deployment workflow, and post-task sync.
+
+Commit `ca06abf docs: sync flow catalog description` updated root `README.md` so the active catalog and planned architecture sections describe the `rldyour-flow` `0.1.2` context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, and post-task sync.
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 

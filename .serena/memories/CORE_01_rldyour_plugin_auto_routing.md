@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 6af53aa feat(skills): optimize plugin routing metadata
-Scope: plugins/rldyour-*, .agents/plugins/marketplace.json, /Users/rldyourmnd/.codex/config.toml
+Last commit: ca06abf docs: sync flow catalog description
+Scope: plugins/rldyour-flow, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -28,7 +28,7 @@ The rldyour Codex plugin set is designed around automatic skill routing for the 
 - `rldyour-serena-mcp`: auto-routes code and memory work. Use `serena-code-workflow` for repository inspection, indexing, symbol-aware exploration, refactors, and non-trivial edits. Use `serena-memory-sync` after meaningful verified changes, Stop hook sync prompts, durable plans, or reusable research.
 - `rldyour-design`: auto-routes design work. Use `ry-design` for end-to-end design implementation, with subskills for Figma-to-code, design systems, FSD placement, and design validation.
 - `rldyour-lsps`: auto-routes language-server work. Use `lsp-routing` for choosing language-server workflows, `serena-lsp-integration` for Serena language key alignment, `lsp-health-check` for `$ry-lsp-check` verification, and `lsp-setup` for explicit brew-first setup.
-- `rldyour-flow`: auto-routes SDLC command workflows. Use `ry-init` for scoped initialization, `ry-start` for feature/task lifecycle implementation, `ry-newp` for new-project planning, `ry-review` for report-only review, `ry-deploy` for server deployment verification, and `flow-post-task-sync` after meaningful work or Stop hook prompts.
+- `rldyour-flow`: auto-routes SDLC command workflows. Use `ry-init` for scoped context-pack initialization, `ry-start` for feature/task lifecycle implementation with a context sufficiency gate, `ry-newp` for new-project planning, `ry-review` for report-only review, `ry-deploy` for server deployment verification, and `flow-post-task-sync` after meaningful work or Stop hook prompts.
 - `rldyour-rules`: auto-routes quality-first engineering rules. Use `quality-first-engineering` for clean code and no-hacks policy, `architecture-boundaries` for FSD/VSA placement, `implementation-discipline` for synchronized implementation, `dependency-compatibility-policy` for latest-compatible dependencies, `verification-quality-gates` for evidence, `project-instructions-policy` for `AGENTS.md`/`CLAUDE.md`/ADR rules, and `ry-rules-review` for explicit rules audits.
 
 ## Current Behavior
@@ -48,6 +48,13 @@ Commit `6af53aa feat(skills): optimize plugin routing metadata` compacted all 37
 `rldyour-lsps` has no MCP transport definitions. It is a skills-only workflow layer for local LSP executables, project prerequisite checks, and Serena LSP integration guidance.
 
 `rldyour-flow` has no MCP transport definitions. It is a skills-and-hooks workflow layer that coordinates existing workflow plugins, Serena memory freshness, project instruction docs, git history, GitHub sync, and branch/worktree cleanup.
+
+Commit `e506ccb feat(flow): add context sufficiency hooks` added two non-blocking flow hook entry points:
+
+- `SessionStart`: emits compact repository context through `hookSpecificOutput.additionalContext`.
+- `PostToolUse` with matcher `Bash`: emits commit quality advice through `systemMessage` after `git commit` commands when warnings exist.
+
+The same commit added `references/init-context-pack.md` and `references/context-sufficiency-gate.md` as the detailed contracts for deep `ry-init` initialization and safe `ry-start` pre-edit context.
 
 `rldyour-rules` has no MCP transport definitions and no hooks. It is a skills-only policy layer that coordinates quality, architecture, dependency, verification, project-instruction, and ADR rules with existing workflow plugins.
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 03a05d1 feat(codex): add system install workflow
+Last commit: ca06abf docs: sync flow catalog description
 Scope: plugins/rldyour-rules, .agents/plugins/marketplace.json, README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
 Area: RULES
 -->
@@ -61,7 +61,7 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 - `rldyour-browser`: browser-visible verification.
 - `rldyour-security`: security-sensitive implementation guidance and review.
 - `rldyour-design`: frontend design-system and FSD design workflows.
-- `rldyour-flow`: SDLC orchestration and post-task sync.
+- `rldyour-flow`: SDLC orchestration, scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer workflow, deployment workflow, and post-task sync.
 
 `rldyour-rules` contains detailed reference files for policy, not just skill frontmatter:
 
