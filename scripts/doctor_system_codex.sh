@@ -108,6 +108,21 @@ checks.append(("codex_hooks enabled", re.search(r"(?ms)^\[features\]\s*(?:\n(?!\
 checks.append(("marketplace source", f'source = "{repo_root}"' in text))
 checks.append(("repo trusted", f'[projects."{repo_root}"]' in text and 'trust_level = "trusted"' in text))
 
+try:
+    import tomllib
+    config_data = tomllib.loads(text)
+except Exception:
+    config_data = {}
+
+checks.append(("yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
+checks.append(("approval policy never", config_data.get("approval_policy") == "never"))
+checks.append(("sandbox danger full access", config_data.get("sandbox_mode") == "danger-full-access"))
+checks.append(("default permissions danger no sandbox", config_data.get("default_permissions") == ":danger-no-sandbox"))
+yolo_profile = (config_data.get("profiles") or {}).get("rldyour-yolo") or {}
+checks.append(("profile rldyour-yolo approval policy", yolo_profile.get("approval_policy") == "never"))
+checks.append(("profile rldyour-yolo sandbox", yolo_profile.get("sandbox_mode") == "danger-full-access"))
+checks.append(("profile rldyour-yolo permissions", yolo_profile.get("default_permissions") == ":danger-no-sandbox"))
+
 plugins = [
     "gmail@openai-curated",
     "github@openai-curated",
@@ -137,6 +152,7 @@ mcp_servers = [
     "shadcn",
     "dart-flutter",
     "figma",
+    "openaiDeveloperDocs",
 ]
 for server in mcp_servers:
     checks.append((f"mcp configured {server}", f"[mcp_servers.{server}]" in text))
@@ -166,7 +182,7 @@ fi
 section "MCP runtime"
 if [ -n "$CODEX_CMD" ]; then
   if env CODEX_HOME="$CODEX_HOME_DIR" "$CODEX_CMD" mcp list >/tmp/rldyour-codex-mcp-list.txt 2>/tmp/rldyour-codex-mcp-list.err; then
-    for server in serena sequential-thinking playwright chrome-devtools context7 deepwiki grep semgrep shadcn dart-flutter figma; do
+    for server in serena sequential-thinking playwright chrome-devtools context7 deepwiki grep semgrep shadcn dart-flutter figma openaiDeveloperDocs; do
       if grep -q "^${server}[[:space:]]" /tmp/rldyour-codex-mcp-list.txt; then
         pass "mcp listed $server"
       else

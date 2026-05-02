@@ -17,7 +17,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `plugins/<plugin>/skills/*/SKILL.md`: primary automatic skill routing contract.
 - `plugins/<plugin>/skills/*/agents/openai.yaml`: UI metadata and implicit invocation policy.
 - `plugins/rldyour-mcps/.mcp.json`: repository MCP runtime definitions.
-- `/Users/rldyourmnd/.codex/config.toml`: active system Codex registration and MCP runtime config.
+- `/Users/rldyourmnd/.codex/config.toml`: active system Codex registration, YOLO permission defaults, and MCP runtime config.
 - `.serena/memories/*.md`: high-signal verified project knowledge.
 
 ## Plugin Boundaries
@@ -74,5 +74,5 @@ diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<
 
 - `system/AGENTS.md` is the canonical template for the owner's global `~/.codex/AGENTS.md`.
 - `scripts/install_system_codex.sh --dry-run` shows what would be installed.
-- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, registers the marketplace, and syncs plugin cache.
+- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, applies owner-requested YOLO defaults, registers the marketplace, and syncs plugin cache.
 - `scripts/doctor_system_codex.sh` verifies the installed system Codex state.

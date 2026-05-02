@@ -58,6 +58,7 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | `shadcn` | shadcn/ui registry work | `bunx` |
 | `dart-flutter` | Dart/Flutter MCP for Dart and Flutter projects | `dart` |
 | `figma` | Figma design context | remote URL, OAuth |
+| `openaiDeveloperDocs` | Official OpenAI and Codex product documentation | remote URL |
 
 ## Secrets
 
@@ -88,6 +89,7 @@ Expected state:
 - `figma` uses OAuth.
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
 - `semgrep` starts through the current official `semgrep mcp`, not the archived `semgrep-mcp`.
+- `openaiDeveloperDocs` uses the official OpenAI Docs MCP endpoint for OpenAI and Codex product documentation.
 - Local MCP servers do not use `npx`, `npm`, or direct `node` commands.
 
 ## Local Dependencies
@@ -137,3 +139,4 @@ If the dashboard is needed manually, open it through Serena tools or directly th
 - shadcn MCP: https://ui.shadcn.com/docs/mcp
 - Dart/Flutter MCP: https://docs.flutter.dev/ai/mcp-server
 - Figma MCP: https://help.figma.com/hc/en-us/articles/39888629089175-Codex-and-Figma-Set-up-the-MCP-server
+- OpenAI Docs MCP: https://developers.openai.com/learn/docs-mcp

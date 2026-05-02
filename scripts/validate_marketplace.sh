@@ -105,6 +105,7 @@ KNOWN_MCP_SERVERS = {
     "shadcn",
     "dart-flutter",
     "figma",
+    "openaiDeveloperDocs",
 }
 
 

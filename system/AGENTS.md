@@ -39,6 +39,8 @@ The owner normally writes prompts in Russian and explicitly invokes only `rldyou
 
 Curated `github@openai-curated` and `gmail@openai-curated` are intentionally enabled.
 
+`openaiDeveloperDocs` is intentionally configured as the official OpenAI Docs MCP. For OpenAI, Codex, API, model, plugin, skill, MCP, hook, or config questions, use it before general web search when available.
+
 ## Tool Priority
 
 | Task | Primary | Fallback | Reason |
@@ -48,6 +50,7 @@ Curated `github@openai-curated` and `gmail@openai-curated` are intentionally ena
 | Code relationships | Serena `find_referencing_symbols` | `rg` | Trace callers and impact |
 | Symbol editing | Serena symbol tools | `apply_patch` | Precise and structure-aware |
 | Technical docs | Context7 | web search | Official and versioned docs |
+| OpenAI/Codex docs | OpenAI Docs MCP | official OpenAI web pages | Product source of truth |
 | Repo architecture | DeepWiki | source read | Public repo structure and design |
 | Code patterns | Grep by Vercel | web search | Real production usage |
 | Planning | Sequential Thinking | explicit local plan | Reduces decision errors |
@@ -121,6 +124,8 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 ## System Codex Setup
 
 The canonical source for this global setup is the `rldyour-codex` repository.
+
+System Codex is intentionally configured for owner-controlled YOLO execution with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, and `profile = "rldyour-yolo"`. Continue to avoid destructive actions unless the owner explicitly requests them.
 
 Use:
 
