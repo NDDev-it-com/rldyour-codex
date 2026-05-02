@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 39d7311 fix(ci): update artifact upload action
-Scope: VERSION, CHANGELOG.md, docs/release-process.md, docs/rollback-restore.md, docs/dependency-updates.md, docs/observability.md, config/skill-routing-policy.json, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, .gitignore, AGENTS.md, README.md, system/AGENTS.md
+Last commit: d12a51f fix(serena): clarify knowledge-only memory sync state
+Scope: VERSION, CHANGELOG.md, docs/release-process.md, docs/rollback-restore.md, docs/dependency-updates.md, docs/observability.md, config/skill-routing-policy.json, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, .gitignore, AGENTS.md, README.md, system/AGENTS.md, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py
 Area: CORE
 -->
 
@@ -59,6 +59,8 @@ Commit `5d0a389 feat(system): add release and observability workflows` adds form
 `scripts/doctor_system_codex.sh` passed after install with zero warnings and zero failures.
 
 `scripts/smoke_clean_bootstrap.sh` passed after commit `5d0a389`. The clean-bootstrap run installed into a temporary `CODEX_HOME`, used a temporary `SERENA_HOME`, passed doctor, validated plugin cache and hooks, and verified all twelve MCP registrations.
+
+Commit `d12a51f fix(serena): clarify knowledge-only memory sync state` made diagnostics more internally consistent by adding explicit Serena memory state fields: `memory_directly_mentions_head`, semantic `memory_matches_head`, and `memory_match_reason`. Knowledge-only commits now report `memory_matches_head: true` with reason `knowledge-only-commits-since-sync`, instead of looking stale while still being current.
 
 ## CI Model
 

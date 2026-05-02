@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 718264b feat(system): harden codex runtime validation
+Last commit: d12a51f fix(serena): clarify knowledge-only memory sync state
 Scope: plugins/rldyour-serena-mcp, plugins/rldyour-flow/hooks, scripts/smoke_hooks.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: MCP
 -->
@@ -77,6 +77,14 @@ Ignored runtime state:
 - `.serena/.dirty_stop_ack`
 
 `serena_memory_state.py` treats knowledge as current when a memory references the current HEAD, when newest synced metadata equals current HEAD, or when changes since the newest synced metadata are knowledge-only.
+
+After commit `d12a51f`, `serena_memory_state.py` separates literal and semantic memory matching:
+
+- `memory_directly_mentions_head`: true only when a memory metadata `Last commit:` directly references current `HEAD`.
+- `memory_matches_head`: semantic current-state match used by hooks and Flow; this is true for direct matches, newest-synced-is-head, or knowledge-only commits since the newest synced code commit.
+- `memory_match_reason`: explains why the state is current or stale. Current values include `direct-head-reference`, `newest-synced-head`, `knowledge-only-commits-since-sync`, `stale-or-missing`, and `sync-marker-requires-refresh`.
+
+This avoids reporting a false mismatch after knowledge-only commits while still exposing whether the current `HEAD` is directly referenced by memory metadata.
 
 `commit_serena_knowledge.sh` refuses to auto-commit if non-Serena-knowledge changes are present. It commits only existing Serena knowledge directories from `.serena/memories`, `.serena/plans`, and `.serena/research` with message `chore(serena): sync project knowledge after <head>`. Missing optional knowledge directories do not prevent staging existing memory changes.
 
