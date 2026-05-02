@@ -21,7 +21,7 @@ Keep Serena MCP usage aligned with real language-server support. Use Serena for 
 
 ## Configuration Policy
 
-Do not silently modify `.serena/project.yml`. Explain or apply changes only when the user explicitly asks for setup. Full project initialization belongs to the future `rldyour-flow` plugin.
+Do not silently modify `.serena/project.yml`. Explain or apply changes only when the user explicitly asks for setup. Full project initialization belongs to the `rldyour-flow` plugin.
 
 Use `.serena/project.local.yml` for machine-local executable paths. Use committed `.serena/project.yml` only for portable project settings.
 
@@ -38,4 +38,3 @@ For supported code files, use the existing Serena-first workflow:
 7. `search_for_pattern` only for broad text sweeps or unsupported file types
 
 For unsupported files, state the limitation and use direct reads, search, external validation, or browser/design/security plugins as appropriate.
-

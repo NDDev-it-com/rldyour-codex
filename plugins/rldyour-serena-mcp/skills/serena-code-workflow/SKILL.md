@@ -57,7 +57,7 @@ Use raw `rg`, direct file reads, and line patches only when Serena cannot answer
 
 For Serena project setup and indexing, follow Serena's project workflow. The official indexing operation is the Serena project command `serena project index`; MCP tools then use the resulting project and language-server state for semantic navigation. Do not invent a nonexistent MCP "index directory" tool.
 
-When a project is not onboarded, use Serena onboarding patterns and memory tools as the source of durable project context. Full project initialization commands belong to the future `rldyour-flow` plugin; this skill only defines the Serena-first rule and the correct tool priority.
+When a project is not onboarded, use Serena onboarding patterns and memory tools as the source of durable project context. Full project initialization commands belong to the `rldyour-flow` plugin; this skill only defines the Serena-first rule and the correct tool priority.
 
 ## Quality Rules
 
