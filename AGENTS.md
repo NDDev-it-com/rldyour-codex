@@ -18,7 +18,10 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `plugins/<plugin>/skills/*/agents/openai.yaml`: UI metadata and implicit invocation policy.
 - `plugins/rldyour-mcps/.mcp.json`: repository MCP runtime definitions.
 - `config/mcp-runtime-versions.env`: pinned local MCP launcher and Codex CLI versions used by scripts and CI.
-- `.github/workflows/validate.yml`: push/pull-request validation for marketplace, temporary system install, MCP capability smoke, hook lifecycle smoke, and clean bootstrap.
+- `VERSION` and `CHANGELOG.md`: marketplace release version and human-readable change history.
+- `.github/workflows/validate.yml`: Ubuntu/macOS push/pull-request validation for marketplace, temporary system install, MCP capability smoke, hook lifecycle smoke, and clean bootstrap.
+- `.github/workflows/dependency-check.yml`: scheduled MCP runtime pin freshness check.
+- `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
 - `/Users/rldyourmnd/.codex/config.toml`: active system Codex registration, YOLO permission defaults, and MCP runtime config.
 - `.serena/memories/*.md`: high-signal verified project knowledge.
 
@@ -61,6 +64,10 @@ scripts/bootstrap_check.sh --apply
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool
 plugins/rldyour-lsps/scripts/check_lsps.sh
+python3 scripts/validate_plugin_versions.py
+python3 scripts/validate_skill_routing.py
+python3 scripts/release_manifest.py
+python3 scripts/check_mcp_runtime_versions.py
 scripts/doctor_system_codex.sh
 ```
 
@@ -83,3 +90,5 @@ diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<
 - `scripts/install_system_codex.sh --dry-run` shows what would be installed.
 - `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, applies owner-requested YOLO defaults, registers the marketplace, and syncs plugin cache.
 - `scripts/doctor_system_codex.sh` verifies the installed system Codex state.
+- `scripts/rollback_system_codex.sh --list` lists installer backups; `--restore <backup>` restores backed up `AGENTS.md` and `config.toml`.
+- `scripts/collect_diagnostics.sh` writes a local ignored diagnostics bundle for failure triage.

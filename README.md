@@ -148,3 +148,25 @@ scripts/smoke_clean_bootstrap.sh
 `scripts/smoke_mcp_capabilities.sh` verifies MCP protocol behavior with `initialize`, `list_tools`, and safe `call_tool` probes where a deterministic read-only tool exists. Figma is skipped by default because it requires OAuth; pass `--include-auth` only after authorizing that runtime.
 
 GitHub Actions runs the same marketplace/system checks on push and pull request with a temporary `CODEX_HOME`, list-only MCP capability probes, and a clean bootstrap clone.
+
+## Release, Rollback, And Observability
+
+Marketplace release version is stored in `VERSION`. Plugin behavior versions stay in `plugins/<plugin>/.codex-plugin/plugin.json`. Release notes live in `CHANGELOG.md`.
+
+Operational workflows:
+
+```bash
+python3 scripts/release_manifest.py
+python3 scripts/check_mcp_runtime_versions.py
+scripts/rollback_system_codex.sh --list
+scripts/collect_diagnostics.sh
+```
+
+Reference documents:
+
+- `docs/release-process.md`: versioning, changelog, release evidence, and tag flow.
+- `docs/rollback-restore.md`: safe restore from installer backups or older Git tags.
+- `docs/dependency-updates.md`: pinned MCP runtime update policy.
+- `docs/observability.md`: diagnostics, CI artifacts, and failure triage.
+
+CI validates the repository on Ubuntu and macOS. A scheduled dependency-check workflow monitors pinned MCP runtime versions, and Dependabot tracks GitHub Actions updates.

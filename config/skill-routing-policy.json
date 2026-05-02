@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "description": "Deterministic policy tests for Russian and English prompt routing into rldyour skills.",
+  "cases": [
+    {
+      "id": "ru-technical-research",
+      "prompt": "изучи интернет и документацию по настройке GitHub Actions для Codex",
+      "prompt_terms": ["изучи интернет", "документацию"],
+      "expected": [
+        {
+          "skill": "rldyour-explore:tech-research",
+          "description_terms": ["исследуй интернет", "documentation", "best practices"]
+        },
+        {
+          "skill": "rldyour-explore:web-research",
+          "description_terms": ["изучи интернет", "latest/current"]
+        }
+      ]
+    },
+    {
+      "id": "ru-flow-start",
+      "prompt": "$rldyour-flow:ry-start реализуй фичу качественно и проверь все",
+      "prompt_terms": ["ry-start", "реализуй"],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-start",
+          "description_terms": ["ry-start", "реализуй", "Full task lifecycle"]
+        }
+      ]
+    },
+    {
+      "id": "ru-init-context",
+      "prompt": "ry-init backend инициализируй проект и загрузи контекст",
+      "prompt_terms": ["ry-init", "инициализируй"],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-init",
+          "description_terms": ["ry-init", "инициализируй", "Initialize"]
+        }
+      ]
+    },
+    {
+      "id": "ru-browser-validation",
+      "prompt": "проверь в браузере визуально адаптив и бизнес-логику",
+      "prompt_terms": ["проверь в браузере", "визуально"],
+      "expected": [
+        {
+          "skill": "rldyour-browser:browser-validation",
+          "description_terms": ["проверь в браузере", "визуально", "business logic"]
+        },
+        {
+          "skill": "rldyour-browser:browser-tool-routing",
+          "description_terms": ["проверь в браузере", "Playwright", "Chrome DevTools"]
+        }
+      ]
+    },
+    {
+      "id": "ru-security-review",
+      "prompt": "$ry-sec-review проверь безопасность auth и OWASP",
+      "prompt_terms": ["ry-sec-review", "безопасность"],
+      "expected": [
+        {
+          "skill": "rldyour-security:ry-sec-review",
+          "description_terms": ["ry-sec-review", "секьюрити ревью", "security review"]
+        }
+      ]
+    },
+    {
+      "id": "ru-figma-design",
+      "prompt": "перенеси макет из Figma pixel-perfect и сделай дизайн-систему",
+      "prompt_terms": ["Figma", "pixel-perfect"],
+      "expected": [
+        {
+          "skill": "rldyour-design:figma-to-code",
+          "description_terms": ["Figma", "pixel-perfect", "перенеси из фигмы"]
+        },
+        {
+          "skill": "rldyour-design:design-system-implementation",
+          "description_terms": ["дизайн-система", "tokens", "shadcn/ui"]
+        }
+      ]
+    },
+    {
+      "id": "ru-lsp-health",
+      "prompt": "проверь LSP и диагностики Serena для Python и TypeScript",
+      "prompt_terms": ["LSP", "диагностики"],
+      "expected": [
+        {
+          "skill": "rldyour-lsps:lsp-health-check",
+          "description_terms": ["проверь LSP", "diagnostics", "Serena"]
+        }
+      ]
+    },
+    {
+      "id": "ru-memory-sync",
+      "prompt": "обнови memories и синхронизируй память Serena после задачи",
+      "prompt_terms": ["memories", "синхронизируй"],
+      "expected": [
+        {
+          "skill": "rldyour-serena-mcp:serena-memory-sync",
+          "description_terms": ["обнови memories", "синхронизируй память", "Serena memories"]
+        }
+      ]
+    },
+    {
+      "id": "en-quality-rules",
+      "prompt": "review the implementation against quality rules and architecture boundaries",
+      "prompt_terms": ["quality", "architecture"],
+      "expected": [
+        {
+          "skill": "rldyour-rules:quality-first-engineering",
+          "description_terms": ["quality-first", "качество кода", "technical debt"]
+        },
+        {
+          "skill": "rldyour-rules:architecture-boundaries",
+          "description_terms": ["architecture", "FSD", "VSA"]
+        }
+      ]
+    }
+  ]
+}
