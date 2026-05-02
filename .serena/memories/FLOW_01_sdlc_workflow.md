@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: ca06abf docs: sync flow catalog description
-Scope: plugins/rldyour-flow, AGENTS.md, system/AGENTS.md
+Last updated: 2026-05-03
+Last commit: 718264b feat(system): harden codex runtime validation
+Scope: plugins/rldyour-flow, AGENTS.md, system/AGENTS.md, scripts/smoke_hooks.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: FLOW
 -->
 
@@ -24,6 +24,7 @@ Area: FLOW
 - `plugins/rldyour-flow/references/*.md`: detailed lifecycle, post-task sync, reviewer, deploy, and source-backed design contracts.
 - `plugins/rldyour-flow/references/init-context-pack.md`: `ry-init` context-pack contract for scope, architecture, symbols, data, contracts, integration paths, checks, risks, and ready-for tasks.
 - `plugins/rldyour-flow/references/context-sufficiency-gate.md`: `ry-start` gate that requires evidence for code, data, patterns, research, quality, and risks before edits.
+- `scripts/smoke_hooks.sh`: validates Flow hook behavior from repository sources and installed plugin cache, including temporary git lifecycle checks.
 
 ## Entry Points
 
@@ -62,6 +63,13 @@ Current `ry-start` helper routing:
 The flow SessionStart hook is advisory and read-only. It emits branch, HEAD, upstream, ahead/behind, dirty files, worktree count, project instruction docs, Serena freshness, and flow sync state. It explicitly tells Codex to trigger scoped `ry-init` when context is insufficient and to use the context sufficiency gate before edits.
 
 The flow PostToolUse hook is advisory and read-only. It watches Bash `git commit` commands and emits warnings for non-Conventional Commit subjects, first lines longer than 72 characters, commits touching more than 20 files, sensitive-looking file paths, Serena runtime markers, and committed browser image evidence. It never rejects the command.
+
+`scripts/smoke_hooks.sh` validates Flow hooks in two modes for both repository sources and installed plugin cache:
+
+- Synthetic payload smoke checks Flow `SessionStart`, Flow `PostToolUse`, and Flow Stop skip gate without mutating the current repository.
+- Temporary git lifecycle smoke creates a disposable repository, runs Flow `SessionStart`, verifies Flow Stop sync prompt after Serena knowledge is made current, verifies Flow Stop loop guard, creates a non-conventional commit, and verifies Flow commit-advice output.
+
+`scripts/validate_marketplace.sh` and `scripts/doctor_system_codex.sh` run this hook smoke, so Flow hook regressions fail normal validation.
 
 `flow_post_task_state.py` reads raw `git status --porcelain` output with `rstrip("\n")` and then uses `line[3:]` for paths. This preserves porcelain leading status columns and prevents paths such as `.agents/...` from losing the leading dot.
 
@@ -111,6 +119,7 @@ PostToolUse commit advice output uses:
 - Keep `README.md`, `plugin.json`, `SKILL.md` descriptions, and `agents/openai.yaml` aligned with automatic routing intent.
 - Keep compact Russian and English trigger phrases in all flow and helper skill descriptions used by `ry-start`.
 - Re-sync `plugins/rldyour-flow/` into the active Codex plugin cache after changes.
+- After changing Flow hooks, run `scripts/smoke_hooks.sh --repo-only`, `scripts/install_system_codex.sh --apply`, `scripts/smoke_hooks.sh --installed-only`, and `scripts/doctor_system_codex.sh`.
 
 ## Verification
 
@@ -122,4 +131,5 @@ PostToolUse commit advice output uses:
 - `printf '{"source":"startup"}' | plugins/rldyour-flow/hooks/session_start_context.sh`: verifies SessionStart JSON output.
 - `printf '{"tool_name":"Bash","tool_input":{"command":"git commit -m test"}}' | plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: verifies commit-advice hook exits cleanly against the current HEAD.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`: verifies state payload and dirty-path handling.
+- `scripts/smoke_hooks.sh`: verifies Flow and Serena hook behavior, including temporary git lifecycle transitions.
 - `diff -qr plugins/rldyour-flow /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-flow/local`: verifies system cache matches the repository plugin.

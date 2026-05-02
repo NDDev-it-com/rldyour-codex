@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
-Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/bootstrap_check.sh, /Users/rldyourmnd/.codex/config.toml
+Last commit: 718264b feat(system): harden codex runtime validation
+Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
 
@@ -17,8 +17,12 @@ Area: MCP
 - `plugins/rldyour-mcps/.codex-plugin/plugin.json`: plugin manifest with `mcpServers: "./.mcp.json"` and no `skills`.
 - `plugins/rldyour-mcps/README.md`: runtime rules, responsibility boundary, startup rules, language rules, and verification commands.
 - `plugins/rldyour-mcps/.env.example`: placeholder-only environment variable shape.
+- `config/mcp-runtime-versions.env`: pinned local MCP launcher package versions and MCP Python SDK version.
+- `scripts/install_system_codex.sh`: projects portable `.mcp.json` definitions into active system Codex config.
 - `scripts/validate_marketplace.sh`: validates repository MCP definitions against the installed system Codex MCP config.
 - `scripts/smoke_mcp_runtime.sh`: validates installed MCP runtime definitions through Codex and endpoint/command probes.
+- `scripts/smoke_mcp_capabilities.py`: validates MCP initialize, expected tool discovery, and safe call-tool probes.
+- `scripts/smoke_mcp_capabilities.sh`: wrapper that runs capability smoke with pinned `mcp` Python SDK.
 - `/Users/rldyourmnd/.codex/config.toml`: active system MCP registrations after marketplace installation.
 
 ## Entry Points
@@ -50,9 +54,39 @@ Repository `.mcp.json` intentionally stores portable commands (`uvx`, `bunx`, `d
 - `/Users/rldyourmnd/.local/bin/bunx` for `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, and `shadcn`.
 - `/opt/homebrew/bin/dart` for `dart-flutter`.
 
-`scripts/install_system_codex.sh --apply` is the supported way to project portable `.mcp.json` definitions into the active system config. `scripts/validate_marketplace.sh` now has an `MCP config sync` step that compares repository `.mcp.json` with `/Users/rldyourmnd/.codex/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
+`scripts/install_system_codex.sh --apply` is the supported way to project portable `.mcp.json` definitions into the active system config. The installer reads `plugins/rldyour-mcps/.mcp.json` directly, then replaces portable commands with local executable paths. This avoids a duplicated hardcoded MCP server list in the installer.
+
+`scripts/validate_marketplace.sh` has an `MCP config sync` step that compares repository `.mcp.json` with `/Users/rldyourmnd/.codex/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
+
+`scripts/validate_marketplace.sh` has an `MCP pinning policy` step. It rejects `@latest`, requires exact `uvx --from package==version` package specs, and requires pinned bunx package specs.
+
+Pinned local package specs in `.mcp.json`:
+
+- `serena`: `serena-agent==1.2.0`.
+- `sequential-thinking`: `@modelcontextprotocol/server-sequential-thinking@2025.12.18`.
+- `playwright`: `@playwright/mcp@0.0.73`.
+- `chrome-devtools`: `chrome-devtools-mcp@0.23.0`.
+- `context7`: `@upstash/context7-mcp@2.2.3`.
+- `semgrep`: `semgrep==1.161.0`.
+- `shadcn`: `shadcn@4.6.0`.
+
+`config/mcp-runtime-versions.env` stores the same pinned runtime package versions plus `CODEX_CLI_VERSION=0.128.0` and `MCP_PYTHON_SDK_VERSION=1.27.0`.
 
 `scripts/smoke_mcp_runtime.sh` checks that repository `.mcp.json` and installed `CODEX_HOME/config.toml` have the same server names, runs `codex mcp get <server>` for each server, verifies local command executables, and probes remote MCP URLs unless `--skip-url-check` is passed. It accepts remote HTTP responses below 500 as reachable endpoint negotiation responses.
+
+`scripts/smoke_mcp_capabilities.py` uses the MCP Python SDK to create stdio or streamable HTTP sessions, call `initialize`, run `list_tools`, and compare discovered tool names against expected tools for all twelve configured MCP servers. Default full mode also runs safe deterministic `call_tool` probes where available:
+
+- `serena`: `check_onboarding_performed`.
+- `sequential-thinking`: `sequentialthinking`.
+- `playwright`: `browser_navigate` to a `data:` URL and `browser_close`.
+- `chrome-devtools`: `new_page` to a `data:` URL.
+- `deepwiki`: `read_wiki_structure`.
+- `grep`: `searchGitHub`.
+- `semgrep`: `get_supported_languages`.
+- `shadcn`: `get_project_registries`.
+- `openaiDeveloperDocs`: `search_openai_docs`.
+
+`context7` safe call is skipped when `CONTEXT7_API_KEY` is not present in the shell environment. `figma` is skipped by default because it requires OAuth; use `--include-auth` only when authenticated probing is intended. `dart-flutter` is list-only because no repository-independent safe project call is used by the smoke script.
 
 Remote MCP servers use URL connections:
 
@@ -87,6 +121,10 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 
 `rldyour-mcps` is the runtime dependency layer for automatic workflow plugins such as `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, and `rldyour-design`.
 
+`scripts/smoke_clean_bootstrap.sh` validates this MCP runtime layer from committed source by installing into a temporary `CODEX_HOME`, running doctor with list-only capability smoke, and verifying `codex mcp list`.
+
+`.github/workflows/validate.yml` runs MCP registration, pinning, runtime smoke, and list-only capability smoke in CI through `scripts/validate_marketplace.sh` and `scripts/doctor_system_codex.sh`.
+
 ## Invariants
 
 - Do not add behavior rules, skills, hooks, memories, or workflow commands to `rldyour-mcps`.
@@ -98,10 +136,12 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 ## Change Rules
 
 - When adding a local MCP, use only approved runtimes and set explicit startup/tool timeouts.
+- Pin local launcher package versions. Do not use `@latest`.
 - When adding a remote MCP, use explicit `url` and avoid local command wrappers.
 - Document any new environment variable in `.env.example` with a placeholder only.
-- After changing `.mcp.json`, run `scripts/install_system_codex.sh --dry-run`, `scripts/install_system_codex.sh --apply`, and `scripts/doctor_system_codex.sh` so the installed runtime is synchronized.
+- After changing `.mcp.json`, update `config/mcp-runtime-versions.env` when package versions change, run `scripts/install_system_codex.sh --dry-run`, `scripts/install_system_codex.sh --apply`, and `scripts/doctor_system_codex.sh` so the installed runtime is synchronized.
 - Run `scripts/smoke_mcp_runtime.sh` after MCP runtime changes to prove installed Codex can resolve every configured server.
+- Run `scripts/smoke_mcp_capabilities.sh` after MCP runtime changes to prove tools can initialize and expose expected capabilities.
 - Update `plugins/rldyour-mcps/README.md` and this memory when server names, runtimes, timeout policy, or secret handling changes.
 
 ## Verification
@@ -112,4 +152,7 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 - `codex mcp get serena`, `codex mcp get figma`, `codex mcp get openaiDeveloperDocs`: checks representative local and remote MCP definitions.
 - `scripts/validate_marketplace.sh`: checks installed MCP config synchronization and prints `MCP config in sync: 12 servers` when repository and system config match.
 - `scripts/smoke_mcp_runtime.sh`: checks installed MCP runtime server metadata, local commands, and remote endpoints.
+- `scripts/smoke_mcp_capabilities.sh`: checks MCP initialize, expected tool discovery, and safe call-tool probes.
+- `scripts/smoke_clean_bootstrap.sh`: checks clean clone to temporary system install path.
+- `.github/workflows/validate.yml`: checks MCP runtime state in GitHub Actions.
 - `rg -n 'ctx7sk|password|secret|api[_-]?key|access[_-]?token|bearer|private[_-]?key' plugins/rldyour-mcps`: should show only placeholders or security text, not real credentials.
