@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Last updated: 2026-05-03
+Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, scripts/validate_marketplace.sh, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
@@ -33,6 +33,7 @@ Area: MCP
 - `shadcn`: shadcn/ui registry workflow through `bunx`.
 - `dart-flutter`: Dart/Flutter MCP through `dart`.
 - `figma`: remote Figma MCP through OAuth.
+- `openaiDeveloperDocs`: official OpenAI and Codex documentation MCP.
 
 ## Current Behavior
 
@@ -55,6 +56,7 @@ Remote MCP servers use URL connections:
 - `deepwiki`: `https://mcp.deepwiki.com/mcp`.
 - `grep`: `https://mcp.grep.app`.
 - `figma`: `https://mcp.figma.com/mcp`.
+- `openaiDeveloperDocs`: `https://developers.openai.com/mcp`.
 
 Startup timeouts are explicit to reduce startup race failures:
 
@@ -68,7 +70,7 @@ Playwright starts headless with `--caps=network,storage,testing,devtools`.
 
 Chrome DevTools starts headless and isolated with `--no-usage-statistics` and `--no-performance-crux`.
 
-`codex mcp list` verified that all eleven rldyour MCP servers are enabled in system Codex. `figma` uses OAuth. `context7` reads `CONTEXT7_API_KEY` through an environment-variable reference. The real Context7 API key is not committed.
+`codex mcp list` verified that all twelve rldyour MCP servers are enabled in system Codex. `codex mcp get openaiDeveloperDocs` verifies the official OpenAI Docs MCP as a `streamable_http` remote endpoint. `figma` uses OAuth. `context7` reads `CONTEXT7_API_KEY` through an environment-variable reference. The real Context7 API key is not committed.
 
 ## Contracts And Data
 
@@ -77,6 +79,8 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 `context7` reads `CONTEXT7_API_KEY` through `env_vars`; the key is not stored in `.mcp.json`. `.env.example` contains only a placeholder.
 
 `sequential-thinking` sets `DISABLE_THOUGHT_LOGGING: "true"`.
+
+`openaiDeveloperDocs` is the preferred MCP source for OpenAI, Codex, model, API, plugin, skill, MCP, hook, and configuration documentation.
 
 `rldyour-mcps` is the runtime dependency layer for automatic workflow plugins such as `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, and `rldyour-design`.
 
@@ -101,6 +105,6 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 - `jq '{servers: (.mcpServers | keys)}' plugins/rldyour-mcps/.mcp.json`: lists configured MCP servers.
 - `jq empty plugins/rldyour-mcps/.mcp.json plugins/rldyour-mcps/.codex-plugin/plugin.json`: validates JSON.
 - `codex mcp list`: checks active MCP registration after plugin installation.
-- `codex mcp get serena`, `codex mcp get figma`: checks representative local and remote MCP definitions.
-- `scripts/validate_marketplace.sh`: checks installed MCP config synchronization and prints `MCP config in sync: 11 servers` when repository and system config match.
+- `codex mcp get serena`, `codex mcp get figma`, `codex mcp get openaiDeveloperDocs`: checks representative local and remote MCP definitions.
+- `scripts/validate_marketplace.sh`: checks installed MCP config synchronization and prints `MCP config in sync: 12 servers` when repository and system config match.
 - `rg -n 'ctx7sk|password|secret|api[_-]?key|access[_-]?token|bearer|private[_-]?key' plugins/rldyour-mcps`: should show only placeholders or security text, not real credentials.

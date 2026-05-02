@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Last updated: 2026-05-03
+Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
 Scope: system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -38,7 +38,7 @@ Apply mode:
 - Backs up existing `CODEX_HOME/AGENTS.md` and `CODEX_HOME/config.toml` into `CODEX_HOME/backups/rldyour-codex/<timestamp>/` when they exist.
 - Installs `system/AGENTS.md` as `CODEX_HOME/AGENTS.md`.
 - Runs `codex plugin marketplace add <repo-root>` when the `codex` command is available.
-- Patches rldyour-owned sections in `CODEX_HOME/config.toml`: marketplace, repo trust, curated GitHub/Gmail plugins, nine rldyour plugins, `codex_hooks`, and eleven MCP servers.
+- Patches rldyour-owned sections in `CODEX_HOME/config.toml`: owner-requested YOLO defaults, marketplace, repo trust, curated GitHub/Gmail plugins, nine rldyour plugins, `codex_hooks`, and twelve MCP servers.
 - Resolves local executable paths for `uvx`, `bunx`, and `dart` from the current machine.
 - Syncs each `plugins/rldyour-*` directory into `CODEX_HOME/plugins/cache/rldyour-codex/<plugin>/local`.
 
@@ -48,9 +48,9 @@ Apply mode:
 
 - Installed `CODEX_HOME/AGENTS.md` matches `system/AGENTS.md`.
 - No global `AGENTS.override.md` is present.
-- `CODEX_HOME/config.toml` has hooks enabled, marketplace source, repo trust, required plugins, and MCP sections.
+- `CODEX_HOME/config.toml` has hooks enabled, marketplace source, repo trust, YOLO permission defaults, required plugins, and MCP sections.
 - `scripts/validate_marketplace.sh` passes.
-- `codex mcp list` contains all eleven MCP servers.
+- `codex mcp list` contains all twelve MCP servers.
 - Plugin cache directories match repository plugin directories.
 
 `scripts/validate_marketplace.sh` has an `MCP config sync` step. It reads `plugins/rldyour-mcps/.mcp.json` and `CODEX_HOME/config.toml`, then checks server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. It accepts absolute installed command paths when their basename matches the portable repository command.
@@ -61,7 +61,15 @@ Apply mode:
 
 The installer manages only rldyour-owned config sections and the curated GitHub/Gmail plugin enablement. It does not write secrets, OAuth tokens, cookies, or raw API keys.
 
-`CONTEXT7_API_KEY` is referenced by name only. Figma, GitHub, Gmail, and other auth remain runtime auth outside this repository.
+The installer also manages the owner-requested YOLO defaults:
+
+- top-level `profile = "rldyour-yolo"`;
+- top-level `approval_policy = "never"`;
+- top-level `sandbox_mode = "danger-full-access"`;
+- top-level `default_permissions = ":danger-no-sandbox"`;
+- `[profiles.rldyour-yolo]` with the same approval, sandbox, and default permission values.
+
+`CONTEXT7_API_KEY` is referenced by name only. Figma, GitHub, Gmail, and other auth remain runtime auth outside this repository. `openaiDeveloperDocs` uses the official remote endpoint `https://developers.openai.com/mcp` and does not require a repository secret.
 
 `plugins/rldyour-mcps/.mcp.json` is the portable MCP source of truth. Installed `CODEX_HOME/config.toml` is the machine-specific projection of that source.
 
@@ -74,6 +82,7 @@ The installer manages only rldyour-owned config sections and the curated GitHub/
 - Do not commit installed `~/.codex` files, auth state, logs, or plugin cache output.
 - Do not store raw credentials in `system/AGENTS.md`, scripts, memories, or README files.
 - Restart Codex after changing global AGENTS, config, installed plugins, hooks, skills, or MCP runtime definitions.
+- Keep YOLO defaults only because the owner explicitly requested unattended full-access execution.
 
 ## Change Rules
 
@@ -90,4 +99,5 @@ The installer manages only rldyour-owned config sections and the curated GitHub/
 - `scripts/install_system_codex.sh --apply`: installs current system state with backups.
 - `scripts/doctor_system_codex.sh`: verifies installed system state.
 - `scripts/validate_marketplace.sh`: validates repository, skills, hooks, scripts, MCP registration, MCP config sync, cache sync, secret patterns, and whitespace.
+- `codex mcp get openaiDeveloperDocs`: verifies the installed OpenAI Docs MCP endpoint.
 - `cmp -s system/AGENTS.md /Users/rldyourmnd/.codex/AGENTS.md`: verifies installed global AGENTS matches the template.
