@@ -1,6 +1,6 @@
 {
   "name": "rldyour-security",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Auto-invoked security guidance for Codex: OWASP Top 10 implementation comments and defensive ry-sec-review.",
   "author": {
     "name": "rldyourmnd",

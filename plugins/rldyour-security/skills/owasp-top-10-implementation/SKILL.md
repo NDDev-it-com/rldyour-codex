@@ -1,6 +1,6 @@
 ---
 name: owasp-top-10-implementation
-description: "Non-blocking OWASP Top 10 secure implementation guidance. Use automatically for Russian or English security-relevant work: безопасность, секьюрити, OWASP, авторизация, аутентификация, права доступа, секреты, инъекции, XSS, SSRF, file handling, dependencies/config, logging/errors, crypto, external integrations. Provide practical security comments/corrections without blocking normal execution unless normal Codex safety rules apply."
+description: "Apply non-blocking OWASP Top 10 guidance during security-relevant work. Use for безопасность, OWASP, auth/authz, права доступа, secrets, injection, XSS, SSRF."
 ---
 
 # OWASP Top 10 Implementation Guidance

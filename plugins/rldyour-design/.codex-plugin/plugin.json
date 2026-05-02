@@ -1,6 +1,6 @@
 {
   "name": "rldyour-design",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Auto-invoked design workflow skills for Figma-to-code, centralized design systems, strict FSD, shadcn/ui, ReactBits, and browser-validated UI implementation.",
   "author": {
     "name": "rldyourmnd",

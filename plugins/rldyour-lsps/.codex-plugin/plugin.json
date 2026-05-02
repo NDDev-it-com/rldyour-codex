@@ -1,6 +1,6 @@
 {
   "name": "rldyour-lsps",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Auto-invoked LSP workflow layer for Codex: language server routing, health checks, setup policy, and Serena LSP integration guidance.",
   "author": {
     "name": "rldyourmnd",

@@ -1,6 +1,6 @@
 ---
 name: ry-newp
-description: New project planning and optional scaffold workflow. Use automatically for ry-newp, new project, design new project, plan architecture, project from scratch, greenfield, спланируй новый проект, новый проект, архитектура нового проекта, ТЗ, проект с нуля. Asks skeptical multi-round questions, researches current best technologies, writes .serena/newproj documents, and may create a minimal scaffold only after approval.
+description: "Plan a new project with skeptical questions, research, architecture docs, and optional scaffold after approval. Use for ry-newp, new project, новый проект, ТЗ, проект с нуля."
 ---
 
 # ry-newp
@@ -23,4 +23,3 @@ Design a new project with enough rigor that implementation can start with clear 
 Produce English project documents and Russian user-facing summaries.
 
 Default docs: HLO, requirements, architecture, ADRs, tech stack, API, data, infra, security, testing, structure, conventions, delivery plan.
-

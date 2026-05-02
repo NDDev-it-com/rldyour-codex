@@ -13,4 +13,4 @@ dependencies:
       description: "Static security scanning when applicable."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

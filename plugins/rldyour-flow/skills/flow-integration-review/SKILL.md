@@ -1,6 +1,6 @@
 ---
 name: flow-integration-review
-description: Integration synchronization reviewer workflow for ry-start and ry-review. Use for cross-module contracts, API/data/schema/config synchronization, migrations, generated types, route-client alignment, проверь синхронизацию кода, проверь интеграции, все ли связано, не сломаны ли контракты. Read-only by default and suitable for subagent prompts.
+description: "Orchestrated integration review for ry-start/ry-review. Use explicitly for contracts, schemas, configs, generated types; триггеры: интеграции, синхронизация кода."
 ---
 
 # Flow Integration Review
@@ -13,4 +13,3 @@ Review whether all touched layers remain synchronized:
 - Backward compatibility and integration points.
 
 Trace references with Serena and report concrete mismatch risks. Do not modify files.
-

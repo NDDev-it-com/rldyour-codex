@@ -1,6 +1,6 @@
 {
   "name": "rldyour-rules",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Quality-first engineering rules for Codex: clean architecture, implementation discipline, dependency compatibility, verification gates, AGENTS.md policy, ADRs, and ry-rules-review.",
   "author": {
     "name": "rldyourmnd",

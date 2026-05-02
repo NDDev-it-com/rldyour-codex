@@ -1,6 +1,6 @@
 ---
 name: quality-first-engineering
-description: "Quality-first engineering rules for Codex. Use automatically for Russian or English coding, implementation, refactor, bug fix, architecture, review, cleanup, technical debt, clean code, scalability, maintainability, quality, no hacks, no temporary solutions, качество кода, чистый код, костыли, техдолг, масштабируемость, консистентность, аккуратная реализация."
+description: "Apply quality-first engineering: clean, scalable, consistent code with no hacks or hidden debt. Use for качество кода, чистый код, костыли, техдолг, масштабируемость."
 ---
 
 # Quality-First Engineering
@@ -32,4 +32,3 @@ Apply the owner's default engineering standard: correctness, clean architecture,
 Fix quality issues inside the touched scope and affected integration path. If serious technical debt is found outside scope, stop expanding and ask the user in Russian with 2-3 concrete options.
 
 Read `references/rules-policy.md` when a task requires the full policy.
-

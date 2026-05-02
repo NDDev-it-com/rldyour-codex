@@ -1,6 +1,6 @@
 ---
 name: browser-tool-routing
-description: "Decide when Codex should use Playwright MCP, Chrome DevTools MCP, or both. Use automatically for Russian or English browser tasks: проверь в браузере, визуально, скриншот, pixel-perfect, адаптив, UI validation, functional flow testing, business-logic verification, console/network/runtime debugging, layout issues, Lighthouse/performance analysis, and any task where browser evidence is needed."
+description: "Route browser tasks to Playwright, Chrome DevTools, or both. Use for проверь в браузере, визуально, скриншот, pixel-perfect, адаптив, UI validation, console/network/performance."
 ---
 
 # Browser Tool Routing

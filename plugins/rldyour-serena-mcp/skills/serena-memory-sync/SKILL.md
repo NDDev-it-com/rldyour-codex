@@ -1,6 +1,6 @@
 ---
 name: serena-memory-sync
-description: "High-signal fact-only Serena project knowledge maintenance. Use automatically after meaningful code/plugin changes, Stop hook sync prompts, commits, durable architecture/design/security/research decisions, or Russian prompts: обнови memories, синхронизируй память, актуализируй Serena, сохрани план, сохрани исследование. Code, git diff, and tests are the source of truth; update only verified facts that help future Codex sessions implement with confidence."
+description: "Maintain fact-only Serena memories, plans, and research from verified code/diffs/tests. Use after durable changes or prompts: обнови memories, синхронизируй память."
 ---
 
 # Serena Memory Sync

@@ -1,6 +1,6 @@
 ---
 name: lsp-health-check
-description: "LSP health-check workflow and $ry-lsp-check command for Codex. Use automatically for Russian or English prompts: проверь LSP, проверь лсп, работают ли language servers, проверь диагностики, почини diagnostics, проверь Serena prerequisites, validate setup for Python, Rust, Dart, Flutter, TypeScript, JavaScript, Go, C, C++, Qt, YAML, Docker, HTML, CSS, Shell, JSON, TOML, or Markdown."
+description: "Check LSP and Serena prerequisites for Python, Rust, Dart/Flutter, TS/JS, Go, C/C++, Qt, YAML, Docker, HTML/CSS, Shell. Use for проверь LSP/лсп, диагностики."
 ---
 
 # LSP Health Check

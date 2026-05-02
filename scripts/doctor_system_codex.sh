@@ -173,18 +173,17 @@ if [ -n "$CODEX_CMD" ]; then
         fail "mcp not listed $server"
       fi
     done
+    if grep -E '^context7[[:space:]].*CONTEXT7_API_KEY=\*+' /tmp/rldyour-codex-mcp-list.txt >/dev/null; then
+      pass "context7 runtime environment registered"
+    else
+      warn "context7 runtime environment is not visible in codex mcp list output"
+    fi
   else
     fail "codex mcp list failed"
     sed -n '1,40p' /tmp/rldyour-codex-mcp-list.err >&2 || true
   fi
 else
   fail "codex command missing"
-fi
-
-if [ -z "${CONTEXT7_API_KEY:-}" ]; then
-  warn "CONTEXT7_API_KEY is not set in this shell; Context7 may rely on another environment source"
-else
-  pass "CONTEXT7_API_KEY present in environment"
 fi
 
 section "Plugin cache"

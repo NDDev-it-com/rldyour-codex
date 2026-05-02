@@ -10,5 +10,4 @@ dependencies:
       description: "Reference tracing across integration boundaries."
 
 policy:
-  allow_implicit_invocation: true
-
+  allow_implicit_invocation: false

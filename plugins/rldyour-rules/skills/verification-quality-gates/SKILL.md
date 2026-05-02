@@ -1,6 +1,6 @@
 ---
 name: verification-quality-gates
-description: "Verification and quality gate rules for Codex. Use automatically before finalizing code changes, reviews, refactors, dependency updates, browser-visible work, security-sensitive work, design work, deploy work, tests, lint, type checks, LSP diagnostics, проверки, тесты, линтер, типы, качество, browser check, security check."
+description: "Run matching quality gates before delivery: tests, lint, types, LSP diagnostics, browser/security/design checks. Use for проверки, тесты, линтер, типы, качество."
 ---
 
 # Verification Quality Gates
@@ -26,4 +26,3 @@ Finish work with real evidence, not assumptions. Verification should match the c
 - Do not replace missing verification with confidence language.
 
 Read `references/quality-gates.md` for the full checklist.
-

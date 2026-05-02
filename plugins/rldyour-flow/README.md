@@ -26,7 +26,7 @@ Loop prevention uses `.serena/.flow_sync_marker`, which is ignored by git. If th
 - `flow-verification-review`
 - `flow-security-review`
 
-`ry-start` and `ry-review` may use these as parallel subagent review tracks when the command workflow explicitly calls for review agents.
+`ry-start` and `ry-review` orchestrate these as parallel subagent review tracks when the command workflow calls for review agents. They are not broad implicit-entry skills; this keeps normal Russian prompts routed through command and domain skills first.
 
 ## Sources
 

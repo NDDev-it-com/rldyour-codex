@@ -1,6 +1,6 @@
 ---
 name: ry-sec-review
-description: "Defensive security review command for implementations, diffs, pull requests, or sensitive code paths. Use automatically when the user invokes $ry-sec-review or asks in Russian or English: проверь безопасность, секьюрити ревью, найди уязвимости, проверь auth/authz, секреты, инъекции, OWASP, audit diff. Follow a Mythos-inspired workflow: recon, hypotheses, source-to-sink tracing, exploitability assessment, confidence ranking, remediation, and verification. Do not generate weaponized exploit code or unsafe destructive instructions."
+description: "Defensive Mythos-style security review for diffs, PRs, and sensitive code. Use for $ry-sec-review, проверь безопасность, секьюрити ревью, auth/authz, secrets, OWASP."
 ---
 
 # ry-sec-review

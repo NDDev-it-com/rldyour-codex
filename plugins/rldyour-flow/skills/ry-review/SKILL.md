@@ -1,6 +1,6 @@
 ---
 name: ry-review
-description: Report-only deep review workflow for Codex. Use automatically for ry-review, review this, review PR, check implementation, audit diff, проверь реализацию, сделай ревью, найди проблемы, проверь качество, проверь архитектуру, проверь консистентность, проверь тесты. Reviews current diff or requested scope plus affected integration graph with research and reviewer tracks.
+description: "Report-only deep review of diff, PR, or scope with research and reviewer tracks. Use for ry-review, review, audit diff, проверь реализацию, сделай ревью, найди проблемы."
 ---
 
 # ry-review
@@ -21,7 +21,7 @@ Find real issues before merge or deploy. Default mode is report-only: do not edi
 
 ## Reviewer Tracks
 
-Read `references/reviewer-protocol.md`.
+Read `references/reviewer-protocol.md`. These tracks are orchestrated by `ry-review` or `ry-start`; they are not broad implicit-entry skills.
 
 - `flow-architecture-review`
 - `flow-quality-review`
@@ -29,4 +29,3 @@ Read `references/reviewer-protocol.md`.
 - `flow-integration-review`
 - `flow-verification-review`
 - `flow-security-review` when sensitive or requested
-

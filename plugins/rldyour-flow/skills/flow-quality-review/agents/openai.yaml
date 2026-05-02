@@ -10,5 +10,4 @@ dependencies:
       description: "Targeted symbol body inspection for quality review."
 
 policy:
-  allow_implicit_invocation: true
-
+  allow_implicit_invocation: false

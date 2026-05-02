@@ -34,7 +34,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - Use `apply_patch` for manual file edits.
 - Do not commit secrets, tokens, cookies, private keys, raw credentials, browser evidence, or Serena runtime markers.
 - Use `plugin-creator` guidance for plugin manifests and marketplace changes.
-- Use `skill-creator` guidance for skill changes. Every callable rldyour skill must include Russian trigger phrases in `SKILL.md` frontmatter `description` because the owner prompts Codex in Russian and descriptions are the primary implicit invocation contract.
+- Use `skill-creator` guidance for skill changes. Every callable rldyour skill must include compact Russian and English trigger phrases in `SKILL.md` frontmatter `description`; details belong in the skill body or references. Reviewer track skills may set `allow_implicit_invocation: false` when orchestrated by `ry-start` or `ry-review`.
 - Use Serena-first code inspection where supported; use `rg` and direct reads for docs, JSON, shell scripts, and other text-level work.
 - After meaningful changes, update `.serena/memories` with verified facts only.
 - After plugin changes that affect runtime behavior, sync changed plugin directories into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local` and restart Codex.

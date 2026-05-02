@@ -1,6 +1,6 @@
 ---
 name: implementation-discipline
-description: "Implementation discipline rules for Codex. Use automatically when writing, changing, refactoring, deleting, synchronizing, or reviewing code, APIs, schemas, configs, generated types, migrations, tests, imports, naming, error handling, reuse, duplication, реализация, доработка, рефакторинг, синхронизация кода, переиспользование, нейминг, ошибки."
+description: "Apply disciplined implementation rules for code, APIs, schemas, configs, tests, naming, errors, reuse, and sync. Use for реализация, доработка, рефакторинг, нейминг."
 ---
 
 # Implementation Discipline
@@ -27,4 +27,3 @@ Make every change precise, synchronized, maintainable, and consistent with the s
 - If two areas solve the same problem differently, choose the project-consistent pattern or ask before normalizing wider scope.
 
 Read `references/rules-policy.md` for the full implementation discipline checklist.
-

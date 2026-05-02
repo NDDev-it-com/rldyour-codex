@@ -1,6 +1,6 @@
 ---
 name: lsp-setup
-description: "Explicit LSP installation and update workflow for Codex. Use only when the user asks in Russian or English to install, update, repair, or ensure language servers: установи LSP, обнови лсп, почини language server, поставь серверы языков, проверь что установлено. Prefer Homebrew for system packages and toolchain-specific managers only when they are the source of truth, such as rustup for rust-analyzer components."
+description: "Install, update, or repair language servers with brew-first policy and toolchain fallbacks. Use only for установи LSP, обнови лсп, почини language server, поставь серверы."
 ---
 
 # LSP Setup

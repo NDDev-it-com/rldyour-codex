@@ -1,6 +1,6 @@
 {
   "name": "rldyour-browser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Auto-invoked browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.",
   "author": {
     "name": "rldyourmnd",
