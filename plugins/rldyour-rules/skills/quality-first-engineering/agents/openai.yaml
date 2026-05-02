@@ -1,0 +1,17 @@
+interface:
+  display_name: "Quality-First Engineering"
+  short_description: "Apply rldyour quality rules"
+  default_prompt: "Use $quality-first-engineering to keep this implementation clean, scalable, and no-hacks."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "sequential-thinking"
+      description: "Structured reasoning for non-trivial decisions."
+    - type: "mcp"
+      value: "serena"
+      description: "Code source-of-truth inspection."
+
+policy:
+  allow_implicit_invocation: true
+

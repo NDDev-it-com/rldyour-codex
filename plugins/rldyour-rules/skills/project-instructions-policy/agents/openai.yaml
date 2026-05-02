@@ -1,0 +1,14 @@
+interface:
+  display_name: "Project Instructions"
+  short_description: "Maintain AGENTS, CLAUDE, REVIEW, ADR"
+  default_prompt: "Use $project-instructions-policy to update durable project instructions and ADRs."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Verify documentation facts against code and memories."
+
+policy:
+  allow_implicit_invocation: true
+

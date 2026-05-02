@@ -26,6 +26,7 @@ The active marketplace currently contains:
 - `rldyour-design`: Figma-to-code, centralized token-based design system, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: autonomous SDLC command workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, reviewer tracks, and post-task synchronization.
+- `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, project instructions, ADR policy, and `ry-rules-review`.
 
 ## Planned Plugin Architecture
 
@@ -37,7 +38,7 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser evidence.
 - `rldyour-lsps`: created. Language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: created. Command-like SDLC skills, reviewer workflows, and post-task sync hook for Serena/docs/git/GitHub cleanup.
-- `rldyour-rules`: hard rules for project work, coding standards, verification, and system `AGENTS.md`.
+- `rldyour-rules`: created. Hard and advisory rules for quality-first engineering, architecture, dependencies, verification, project instructions, and ADRs.
 - `rldyour-security`: created. Skills-only security guidance, OWASP Top 10 coverage, and defensive review workflow.
 - `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.
 

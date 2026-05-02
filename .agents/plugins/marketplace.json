@@ -99,6 +99,18 @@
         "authentication": "ON_USE"
       },
       "category": "Developer Tools"
+    },
+    {
+      "name": "rldyour-rules",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rldyour-rules"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Developer Tools"
     }
   ]
 }
