@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
-Scope: plugins/rldyour-flow, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, /Users/rldyourmnd/.codex/config.toml
+Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
+Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -46,6 +46,8 @@ Commit `6af53aa feat(skills): optimize plugin routing metadata` compacted all 37
 `rldyour-mcps` has no skills and cannot auto-invoke by itself. It is the runtime dependency layer for MCP tools used by automatic workflow plugins.
 
 `openaiDeveloperDocs` is part of `rldyour-mcps` and is the preferred runtime MCP for OpenAI, Codex, API, model, plugin, skill, MCP, hook, and config documentation. The global `system/AGENTS.md` routes OpenAI/Codex documentation questions to OpenAI Docs MCP before general web search.
+
+`rldyour-explore` also routes OpenAI and Codex research through `openaiDeveloperDocs`. `tech-research` lists `openaiDeveloperDocs` as the first documentation step for OpenAI, Codex, models, APIs, plugins, skills, MCP, hooks, and config. `web-research` uses `openaiDeveloperDocs` first for OpenAI/Codex current documentation and falls back only to official OpenAI web pages before broader search.
 
 `rldyour-lsps` has no MCP transport definitions. It is a skills-only workflow layer for local LSP executables, project prerequisite checks, and Serena LSP integration guidance.
 
@@ -103,5 +105,5 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 
 - `jq empty plugins/rldyour-*/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates JSON metadata.
 - `/opt/homebrew/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates skill frontmatter.
-- `scripts/validate_marketplace.sh`: validates compact bilingual skill routing descriptions, OpenAI skill metadata, MCP dependencies, MCP config sync, cache sync, scripts, LSP health, and secret patterns.
+- `scripts/validate_marketplace.sh`: validates compact bilingual skill routing descriptions, OpenAI skill metadata, MCP dependencies, MCP config sync, MCP runtime smoke, cache sync, hook smoke, scripts, LSP health, and secret patterns.
 - `diff -qr plugins/<plugin> <codex-plugin-cache>/<plugin>/local`: verifies the system cache matches the repository plugin.

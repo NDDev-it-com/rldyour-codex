@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
-Scope: plugins/rldyour-lsps, .agents/plugins/marketplace.json, README.md
+Last updated: 2026-05-03
+Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
+Scope: plugins/rldyour-lsps, pyrightconfig.json, .agents/plugins/marketplace.json, README.md
 Area: LSP
 -->
 
@@ -23,6 +23,7 @@ Area: LSP
 - `plugins/rldyour-lsps/references/install-profiles.md`: install policy, brew package set, and toolchain exceptions.
 - `plugins/rldyour-lsps/scripts/check_lsps.sh`: deterministic command and project prerequisite health check.
 - `plugins/rldyour-lsps/scripts/install_lsps_brew.sh`: explicit brew-first install profile.
+- `pyrightconfig.json`: repository-level Python configuration for script directories.
 
 ## Entry Points
 
@@ -43,9 +44,9 @@ Serena-native keys documented by the plugin are `python`, `typescript`, `typescr
 
 The active system was verified with `plugins/rldyour-lsps/scripts/check_lsps.sh` after setup. Required commands are present: `pyright-langserver`, `ruff`, `typescript-language-server`, `rust-analyzer`, `dart`, `gopls`, `clangd`, `yaml-language-server`, `bash-language-server`, `shellcheck`, `vscode-html-language-server`, `vscode-css-language-server`, `vscode-json-language-server`, `docker-language-server`, `taplo`, `marksman`, and `qmlls`.
 
-The current repository still warns because Python files exist under plugin scripts but the repo has no `pyproject.toml` or `pyrightconfig.json`.
+The current repository has a minimal `pyrightconfig.json` that includes `scripts`, `plugins/rldyour-flow/scripts`, and `plugins/rldyour-serena-mcp/scripts`; excludes cache and dependency directories; sets `pythonVersion` to `3.13`; and uses `typeCheckingMode: "basic"`.
 
-`check_lsps.sh` exits with failure only for missing required executable commands. Project prerequisite warnings are reported but do not fail the command.
+`plugins/rldyour-lsps/scripts/check_lsps.sh` exits with failure only for missing required executable commands. Project prerequisite warnings are reported but do not fail the command. On the current repository it reports `missing: 0` and `warnings: 0`.
 
 ## Contracts And Data
 
@@ -56,6 +57,8 @@ Installation is explicit only. `lsp-setup` may run the brew-first installer afte
 The brew-first install script manages `go`, `gopls`, `shellcheck`, `vscode-langservers-extracted`, `docker-language-server`, `taplo`, `marksman`, `qtdeclarative`, and `qtlanguageserver`. When `rustup` is available, it also runs `rustup component add rust-src rust-analyzer`.
 
 `.serena/project.yml` must not be silently mutated by this plugin. It may be inspected, explained, or changed only on explicit setup request. Future full project initialization belongs to `rldyour-flow`.
+
+`pyrightconfig.json` is intentionally repository-level because this marketplace stores Python utility scripts without a Python package or `pyproject.toml`.
 
 Serena should use its built-in language keys first for supported languages. External LSP health checks supplement Serena for technologies that are not documented as Serena-native in this plugin, such as HTML, CSS, Docker, and QML.
 
@@ -82,4 +85,5 @@ Serena should use its built-in language keys first for supported languages. Exte
 - `uv run --with pyyaml python /Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-lsps/skills/<skill>`: validates each LSP skill.
 - `shellcheck plugins/rldyour-lsps/scripts/check_lsps.sh plugins/rldyour-lsps/scripts/install_lsps_brew.sh`: validates shell scripts.
 - `plugins/rldyour-lsps/scripts/check_lsps.sh`: verifies local command availability and project prerequisites.
+- `jq empty pyrightconfig.json`: validates the Python LSP project configuration file.
 - `diff -qr plugins/rldyour-lsps /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-lsps/local`: verifies system cache matches the repository plugin.

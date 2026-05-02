@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
-Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, scripts/validate_marketplace.sh, /Users/rldyourmnd/.codex/config.toml
+Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
+Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/bootstrap_check.sh, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
 
@@ -18,6 +18,7 @@ Area: MCP
 - `plugins/rldyour-mcps/README.md`: runtime rules, responsibility boundary, startup rules, language rules, and verification commands.
 - `plugins/rldyour-mcps/.env.example`: placeholder-only environment variable shape.
 - `scripts/validate_marketplace.sh`: validates repository MCP definitions against the installed system Codex MCP config.
+- `scripts/smoke_mcp_runtime.sh`: validates installed MCP runtime definitions through Codex and endpoint/command probes.
 - `/Users/rldyourmnd/.codex/config.toml`: active system MCP registrations after marketplace installation.
 
 ## Entry Points
@@ -50,6 +51,8 @@ Repository `.mcp.json` intentionally stores portable commands (`uvx`, `bunx`, `d
 - `/opt/homebrew/bin/dart` for `dart-flutter`.
 
 `scripts/install_system_codex.sh --apply` is the supported way to project portable `.mcp.json` definitions into the active system config. `scripts/validate_marketplace.sh` now has an `MCP config sync` step that compares repository `.mcp.json` with `/Users/rldyourmnd/.codex/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
+
+`scripts/smoke_mcp_runtime.sh` checks that repository `.mcp.json` and installed `CODEX_HOME/config.toml` have the same server names, runs `codex mcp get <server>` for each server, verifies local command executables, and probes remote MCP URLs unless `--skip-url-check` is passed. It accepts remote HTTP responses below 500 as reachable endpoint negotiation responses.
 
 Remote MCP servers use URL connections:
 
@@ -98,6 +101,7 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 - When adding a remote MCP, use explicit `url` and avoid local command wrappers.
 - Document any new environment variable in `.env.example` with a placeholder only.
 - After changing `.mcp.json`, run `scripts/install_system_codex.sh --dry-run`, `scripts/install_system_codex.sh --apply`, and `scripts/doctor_system_codex.sh` so the installed runtime is synchronized.
+- Run `scripts/smoke_mcp_runtime.sh` after MCP runtime changes to prove installed Codex can resolve every configured server.
 - Update `plugins/rldyour-mcps/README.md` and this memory when server names, runtimes, timeout policy, or secret handling changes.
 
 ## Verification
@@ -107,4 +111,5 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 - `codex mcp list`: checks active MCP registration after plugin installation.
 - `codex mcp get serena`, `codex mcp get figma`, `codex mcp get openaiDeveloperDocs`: checks representative local and remote MCP definitions.
 - `scripts/validate_marketplace.sh`: checks installed MCP config synchronization and prints `MCP config in sync: 12 servers` when repository and system config match.
+- `scripts/smoke_mcp_runtime.sh`: checks installed MCP runtime server metadata, local commands, and remote endpoints.
 - `rg -n 'ctx7sk|password|secret|api[_-]?key|access[_-]?token|bearer|private[_-]?key' plugins/rldyour-mcps`: should show only placeholders or security text, not real credentials.

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
-Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
+Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
+Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -19,6 +19,10 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 - `scripts/validate_marketplace.sh`: reusable full marketplace validation command.
 - `scripts/install_system_codex.sh`: dry-run-first installer for global Codex state.
 - `scripts/doctor_system_codex.sh`: installed system Codex verification command.
+- `scripts/bootstrap_check.sh`: end-to-end bootstrap smoke command.
+- `scripts/smoke_mcp_runtime.sh`: installed MCP runtime smoke command.
+- `scripts/smoke_hooks.sh`: repository and installed hook smoke command.
+- `pyrightconfig.json`: Python script scope for this repository.
 - `.agents/plugins/marketplace.json`: active installable plugin catalog and plugin order.
 - `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, linked capabilities, and plugin interface metadata.
 - `.gitignore`: repository-level ignored runtime artifacts, browser evidence, env files, and Serena runtime state.
@@ -93,9 +97,11 @@ Root `README.md` describes the active catalog, planned architecture, system inst
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
-`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, compact bilingual routing descriptions, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, MCP config sync, plugin cache sync, secret patterns, and whitespace.
+`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, compact bilingual routing descriptions, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, MCP config sync, MCP runtime smoke, plugin cache sync, hook smoke, secret patterns, and whitespace.
 
 `scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups, including YOLO permission defaults and twelve MCP servers. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, YOLO defaults, plugins, MCP, cache, and repository validation.
+
+`scripts/bootstrap_check.sh --dry-run` is the non-mutating bootstrap preview. `scripts/bootstrap_check.sh --apply` is the end-to-end current-machine bootstrap smoke flow: install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, Serena state, Flow state, and git status.
 
 ## Invariants
 
@@ -113,6 +119,7 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 - Keep `README.md` active catalog aligned with `.agents/plugins/marketplace.json`.
 - Restart Codex after changing marketplace metadata, plugin manifests, hooks, skills, or `.mcp.json`.
 - Re-sync changed plugin directories into the active Codex plugin cache when applying changes to the system Codex runtime.
+- Use `scripts/bootstrap_check.sh --apply` when validating a full new-machine or resynced-machine setup path.
 
 ## Verification
 
@@ -120,6 +127,9 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 - `scripts/validate_marketplace.sh`: runs the full reusable marketplace validation suite.
 - `scripts/install_system_codex.sh --dry-run`: previews system Codex installation.
 - `scripts/doctor_system_codex.sh`: validates installed system Codex state.
+- `scripts/bootstrap_check.sh --apply`: validates full install and runtime smoke flow.
+- `scripts/smoke_mcp_runtime.sh`: validates installed MCP runtime behavior.
+- `scripts/smoke_hooks.sh`: validates repository and installed hook execution.
 - `jq -r '.plugins[] | [.name,.category,.policy.installation,.policy.authentication,.source.path] | @tsv' .agents/plugins/marketplace.json`: shows active plugin order and policy.
 - `codex plugin marketplace add .`: registers or confirms this marketplace.
 - `codex mcp list`: verifies runtime MCP registrations after marketplace/plugin changes are installed.

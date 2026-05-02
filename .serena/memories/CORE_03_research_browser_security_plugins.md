@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Last updated: 2026-05-03
+Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->
@@ -41,7 +41,11 @@ All skills in these plugins keep `policy.allow_implicit_invocation: true`.
 
 `tech-research` is the first choice for technical research. It uses Context7 for official documentation, DeepWiki for repository architecture, and Grep by Vercel for real GitHub usage patterns. Use `web-research` in addition when technical work needs fresh external sources beyond those MCPs or when the user explicitly asks to study the internet.
 
+For OpenAI or Codex topics, `tech-research` uses `openaiDeveloperDocs` before Context7, DeepWiki, Grep, or general web sources. This includes OpenAI/Codex product behavior, configuration, plugins, skills, MCP, hooks, models, APIs, and migration guidance.
+
 `web-research` first defines scope and questions, then searches in multiple passes, reads authoritative sources, rejects weak sources, compares conflicts, and answers in Russian with links. It is the correct path for current information, recommendations, standards, policies, pricing, legal/security updates, and any unstable fact.
+
+For OpenAI or Codex current documentation, `web-research` uses `openaiDeveloperDocs` first and falls back to official OpenAI web pages before broader search.
 
 `browser-validation` uses Playwright MCP as primary evidence for user flows, screenshots, responsive checks, accessibility snapshots, testing assertions, storage, and network checks. It adds Chrome DevTools MCP when console, network, runtime, layout, hydration, or performance diagnosis is needed.
 
