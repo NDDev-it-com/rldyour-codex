@@ -25,6 +25,7 @@ jobs:
       CODEX_HOME: /tmp/rldyour-codex-home
       RLDYOUR_MCP_CAPABILITY_LIST_ONLY: "1"
       RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV: "1"
+      RLDYOUR_SKIP_LSP_HEALTH: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
