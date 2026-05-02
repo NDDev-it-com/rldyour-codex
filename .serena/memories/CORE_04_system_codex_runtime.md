@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 718264b feat(system): harden codex runtime validation
+Last commit: abb4db6 fix(mcp): disable serena dashboard in runtime
 Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -111,7 +111,7 @@ After commit `718264b`, `scripts/install_system_codex.sh --apply` synced all rep
 
 `scripts/bootstrap_check.sh --apply` passed on the current machine after commit `72329c8`. It ran install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, Serena state, Flow state, and `git status -sb`.
 
-`scripts/smoke_clean_bootstrap.sh` passed after commit `718264b`. It cloned the committed repository into a temporary directory, installed the system runtime into a temporary `CODEX_HOME`, ran `scripts/doctor_system_codex.sh` in list-only capability mode, and verified `codex mcp list`.
+`scripts/smoke_clean_bootstrap.sh` passed after commit `27de40d`. It cloned the committed repository into a temporary directory, installed the system runtime into a temporary `CODEX_HOME`, ran `scripts/doctor_system_codex.sh` in list-only capability mode with a temporary `SERENA_HOME`, and verified `codex mcp list`. The temporary `SERENA_HOME` prevents clean-bootstrap Serena probes from registering temporary clone paths in the owner's global Serena config.
 
 `scripts/doctor_system_codex.sh` passed on the current machine with zero warnings and zero failures after `scripts/install_system_codex.sh --apply`. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
 
@@ -151,6 +151,8 @@ Remote MCP URLs:
 `scripts/smoke_mcp_runtime.sh` treats HTTP responses below 500 as reachable for remote MCP endpoints. This accepts method/auth negotiation responses such as HTTP 405 while still failing server-side outages.
 
 `scripts/smoke_mcp_capabilities.py` uses the MCP Python SDK and validates all twelve configured MCP names against expected tool sets. In default full mode it calls deterministic safe tools for Serena, Sequential Thinking, Playwright, Chrome DevTools, DeepWiki, Grep, Semgrep, shadcn, and OpenAI Developer Docs. Context7 safe calls are skipped when `CONTEXT7_API_KEY` is not present in the shell environment. Figma is skipped by default because it requires OAuth; use `--include-auth` only when browser-auth probing is intended.
+
+Serena runtime is explicitly headless in `.mcp.json` and installed config: `--enable-web-dashboard False --open-web-dashboard False`.
 
 `scripts/smoke_hooks.sh` resolves both repository plugin layout (`plugins/<plugin>`) and installed cache layout (`<plugin>/local`) so it validates the same hook scripts Codex will load after restart. It now also creates a temporary git repository to validate real Serena and Flow lifecycle state transitions for SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, Stop sync prompts, Stop loop guard, and commit advice.
 
