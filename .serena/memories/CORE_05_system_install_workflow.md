@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: abb4db6 fix(mcp): disable serena dashboard in runtime
+Last commit: 243330d fix(ci): use parse-safe codex home path
 Scope: system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, plugins/rldyour-explore, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -83,7 +83,7 @@ Apply mode:
 
 `scripts/smoke_clean_bootstrap.sh` requires a clean working tree, clones the committed repository into a temporary directory, installs into a temporary `CODEX_HOME`, runs doctor with list-only MCP capability mode and a temporary `SERENA_HOME`, verifies `codex mcp list`, and removes the temporary workspace unless `--keep` is used. The temporary `SERENA_HOME` prevents bootstrap probes from modifying the owner's global Serena project registry.
 
-`.github/workflows/validate.yml` uses a temporary `CODEX_HOME` and runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI from `config/mcp-runtime-versions.env`, installs the marketplace into temporary state, runs `scripts/validate_marketplace.sh`, runs `scripts/doctor_system_codex.sh`, and runs `scripts/smoke_clean_bootstrap.sh`.
+`.github/workflows/validate.yml` uses `CODEX_HOME=/tmp/rldyour-codex-home` and runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI from `config/mcp-runtime-versions.env`, installs the marketplace into temporary state, runs `scripts/validate_marketplace.sh`, runs `scripts/doctor_system_codex.sh`, and runs `scripts/smoke_clean_bootstrap.sh`. The workflow avoids `runner.*` in job-level `env` because GitHub Actions does not allow that context there.
 
 ## Contracts And Data
 
