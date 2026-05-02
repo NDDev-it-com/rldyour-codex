@@ -54,6 +54,7 @@ codex mcp list
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool
 plugins/rldyour-lsps/scripts/check_lsps.sh
+scripts/doctor_system_codex.sh
 ```
 
 For plugin cache verification:
@@ -69,3 +70,9 @@ diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<
 - Use `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` for knowledge-only Serena updates.
 - Before final delivery, ensure `git status -sb` is clean and pushed when the task produced commits.
 
+## System Install
+
+- `system/AGENTS.md` is the canonical template for the owner's global `~/.codex/AGENTS.md`.
+- `scripts/install_system_codex.sh --dry-run` shows what would be installed.
+- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, registers the marketplace, and syncs plugin cache.
+- `scripts/doctor_system_codex.sh` verifies the installed system Codex state.

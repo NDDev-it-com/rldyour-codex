@@ -92,3 +92,27 @@ codex plugin marketplace add .
 ```
 
 After changing `marketplace.json`, a plugin manifest, hooks, skills, or `.mcp.json`, start a new Codex session so the runtime reloads the configuration.
+
+## System Codex Installation
+
+This repository also stores the canonical global Codex setup for the owner.
+
+Dry-run first:
+
+```bash
+scripts/install_system_codex.sh --dry-run
+```
+
+Apply to the active Codex home:
+
+```bash
+scripts/install_system_codex.sh --apply
+```
+
+Verify the installed system state:
+
+```bash
+scripts/doctor_system_codex.sh
+```
+
+The installer writes `~/.codex/AGENTS.md`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks, and synchronizes the local plugin cache. Existing `~/.codex/AGENTS.md` and `~/.codex/config.toml` are backed up before write operations. Secrets and OAuth tokens are never written by this repository.
