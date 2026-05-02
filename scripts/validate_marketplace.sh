@@ -197,6 +197,7 @@ import ast
 paths = [
     Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
     Path("plugins/rldyour-flow/scripts/flow_post_task_state.py"),
+    Path("scripts/smoke_mcp_capabilities.py"),
 ]
 
 for path in paths:
@@ -271,8 +272,75 @@ if errors:
 print(f"MCP config in sync: {len(repo_servers)} servers")
 PY
 
+step "MCP pinning policy"
+python3 - <<'PY'
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+servers = json.loads(Path("plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
+errors: list[str] = []
+
+
+def bun_package_is_pinned(package: str) -> bool:
+    if package.endswith("@latest"):
+        return False
+    if package.startswith("@"):
+        _, _, version = package.rpartition("@")
+        return bool(re.match(r"^\d", version))
+    _, sep, version = package.partition("@")
+    return bool(sep and re.match(r"^\d", version))
+
+
+for name, spec in sorted(servers.items()):
+    command = spec.get("command")
+    args = [str(arg) for arg in spec.get("args") or []]
+    if any("@latest" in arg for arg in args):
+        errors.append(f"{name}: @latest is not allowed in MCP runtime args")
+    if command == "bunx":
+        if not args:
+            errors.append(f"{name}: bunx MCP server must declare a package argument")
+        elif not bun_package_is_pinned(args[0]):
+            errors.append(f"{name}: bunx package is not pinned: {args[0]}")
+    if command == "uvx":
+        for index, arg in enumerate(args):
+            if arg == "--from":
+                if index + 1 >= len(args):
+                    errors.append(f"{name}: uvx --from missing package spec")
+                    continue
+                package = args[index + 1]
+                if "==" not in package:
+                    errors.append(f"{name}: uvx --from package must use an exact version: {package}")
+
+if errors:
+    raise SystemExit("\n".join(errors))
+
+print("MCP local runtime package specs are pinned")
+PY
+
 step "MCP runtime smoke"
 scripts/smoke_mcp_runtime.sh --codex-home "$CODEX_HOME_DIR"
+
+step "MCP capability smoke"
+capability_args=(--codex-home "$CODEX_HOME_DIR")
+if [ "${RLDYOUR_MCP_CAPABILITY_LIST_ONLY:-0}" = "1" ]; then
+  capability_args+=(--list-only)
+fi
+if [ "${RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV:-0}" = "1" ]; then
+  capability_args+=(--allow-missing-env)
+fi
+if [ "${RLDYOUR_MCP_CAPABILITY_INCLUDE_AUTH:-0}" = "1" ]; then
+  capability_args+=(--include-auth)
+fi
+if [ -n "${RLDYOUR_MCP_CAPABILITY_SKIP_SERVERS:-}" ]; then
+  IFS=',' read -r -a skip_servers <<< "$RLDYOUR_MCP_CAPABILITY_SKIP_SERVERS"
+  for server in "${skip_servers[@]}"; do
+    [ -n "$server" ] && capability_args+=(--skip-server "$server")
+  done
+fi
+scripts/smoke_mcp_capabilities.sh "${capability_args[@]}"
 
 step "Plugin cache sync"
 if [ -d "$CACHE_ROOT" ]; then
@@ -283,7 +351,7 @@ if [ -d "$CACHE_ROOT" ]; then
       printf 'missing cache directory: %s\n' "$cache_dir" >&2
       exit 1
     fi
-    diff -qr "$plugin_dir" "$cache_dir" >/dev/null
+    diff -qr -x __pycache__ -x '*.pyc' "$plugin_dir" "$cache_dir" >/dev/null
     printf 'cache in sync %s\n' "$plugin_name"
   done
 else

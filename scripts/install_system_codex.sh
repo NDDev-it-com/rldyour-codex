@@ -136,6 +136,7 @@ patch_config() {
   export RLDYOUR_DART_CMD="$DART_CMD"
   export RLDYOUR_TRUST_HOME="$TRUST_HOME"
   export RLDYOUR_DRY_RUN=$((1 - APPLY))
+  export RLDYOUR_MCP_CONFIG="$ROOT/plugins/rldyour-mcps/.mcp.json"
 
   python3 <<'PY'
 from __future__ import annotations
@@ -153,6 +154,7 @@ bunx_cmd = os.environ["RLDYOUR_BUNX_CMD"]
 dart_cmd = os.environ["RLDYOUR_DART_CMD"]
 trust_home = os.environ.get("RLDYOUR_TRUST_HOME") == "1"
 dry_run = os.environ.get("RLDYOUR_DRY_RUN") == "1"
+mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
 
 rldyour_plugins = [
     "rldyour-mcps",
@@ -167,78 +169,19 @@ rldyour_plugins = [
 ]
 curated_plugins = ["gmail@openai-curated", "github@openai-curated"]
 
-mcp_servers = {
-    "serena": {
-        "command": uvx_cmd,
-        "args": ["--from", "serena-agent@latest", "--python", "3.13", "--prerelease", "allow", "serena", "start-mcp-server", "--project-from-cwd", "--context=codex", "--open-web-dashboard", "False"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 180,
-    },
-    "sequential-thinking": {
-        "command": bunx_cmd,
-        "args": ["@modelcontextprotocol/server-sequential-thinking"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 120,
-        "env": {"DISABLE_THOUGHT_LOGGING": "true"},
-    },
-    "playwright": {
-        "command": bunx_cmd,
-        "args": ["@playwright/mcp@latest", "--headless", "--caps=network,storage,testing,devtools"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 180,
-    },
-    "chrome-devtools": {
-        "command": bunx_cmd,
-        "args": ["chrome-devtools-mcp@latest", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 180,
-    },
-    "context7": {
-        "command": bunx_cmd,
-        "args": ["@upstash/context7-mcp"],
-        "env_vars": ["CONTEXT7_API_KEY"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 120,
-    },
-    "deepwiki": {
-        "url": "https://mcp.deepwiki.com/mcp",
-        "startup_timeout_sec": 60,
-        "tool_timeout_sec": 120,
-    },
-    "grep": {
-        "url": "https://mcp.grep.app",
-        "startup_timeout_sec": 60,
-        "tool_timeout_sec": 120,
-    },
-    "semgrep": {
-        "command": uvx_cmd,
-        "args": ["--from", "semgrep", "semgrep", "mcp"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 180,
-    },
-    "shadcn": {
-        "command": bunx_cmd,
-        "args": ["shadcn@latest", "mcp"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 120,
-    },
-    "dart-flutter": {
-        "command": dart_cmd,
-        "args": ["mcp-server", "--force-roots-fallback"],
-        "startup_timeout_sec": 90,
-        "tool_timeout_sec": 180,
-    },
-    "figma": {
-        "url": "https://mcp.figma.com/mcp",
-        "startup_timeout_sec": 60,
-        "tool_timeout_sec": 120,
-    },
-    "openaiDeveloperDocs": {
-        "url": "https://developers.openai.com/mcp",
-        "startup_timeout_sec": 60,
-        "tool_timeout_sec": 120,
-    },
+mcp_source = json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"]
+command_overrides = {
+    "uvx": uvx_cmd,
+    "bunx": bunx_cmd,
+    "dart": dart_cmd,
 }
+mcp_servers = {}
+for name, raw_spec in mcp_source.items():
+    spec = dict(raw_spec)
+    command = spec.get("command")
+    if isinstance(command, str) and command in command_overrides:
+        spec["command"] = command_overrides[command]
+    mcp_servers[name] = spec
 
 managed_headers = {
     "marketplaces.rldyour-codex",

@@ -133,6 +133,10 @@ Use:
 scripts/install_system_codex.sh --dry-run
 scripts/install_system_codex.sh --apply
 scripts/doctor_system_codex.sh
+scripts/smoke_mcp_runtime.sh
+scripts/smoke_mcp_capabilities.sh
+scripts/smoke_hooks.sh
+scripts/smoke_clean_bootstrap.sh
 ```
 
 Restart Codex after changing global `AGENTS.md`, `~/.codex/config.toml`, installed plugins, hooks, skills, or MCP runtime definitions.

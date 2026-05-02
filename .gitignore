@@ -6,6 +6,7 @@
 *.local
 __pycache__/
 node_modules/
+.playwright-mcp/
 
 # Browser MCP screenshots, videos, traces, PDFs, and temporary evidence are local artifacts.
 browser/**

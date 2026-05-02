@@ -1,0 +1,360 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import asyncio
+import json
+import os
+import shutil
+import sys
+import tomllib
+from collections.abc import Awaitable, Callable
+from pathlib import Path
+from typing import Any
+
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+from mcp.client.streamable_http import streamablehttp_client
+
+
+EXPECTED_TOOLS: dict[str, set[str]] = {
+    "serena": {"check_onboarding_performed", "get_symbols_overview", "find_symbol", "read_memory"},
+    "sequential-thinking": {"sequentialthinking"},
+    "playwright": {"browser_navigate", "browser_close", "browser_console_messages"},
+    "chrome-devtools": {"new_page", "list_console_messages", "take_screenshot"},
+    "context7": {"resolve-library-id", "query-docs"},
+    "deepwiki": {"read_wiki_structure", "ask_question"},
+    "grep": {"searchGitHub"},
+    "semgrep": {"get_supported_languages", "semgrep_scan", "semgrep_findings"},
+    "shadcn": {"get_project_registries", "search_items_in_registries"},
+    "dart-flutter": {"analyze_files", "run_tests", "pub_dev_search"},
+    "figma": {"get_design_context", "get_screenshot"},
+    "openaiDeveloperDocs": {"search_openai_docs", "list_openai_docs", "fetch_openai_doc"},
+}
+
+AUTH_REQUIRED = {"figma"}
+
+
+class ProbeFailure(Exception):
+    pass
+
+
+def _load_servers(root: Path, codex_home: Path) -> dict[str, dict[str, Any]]:
+    repo_path = root / "plugins/rldyour-mcps/.mcp.json"
+    config_path = codex_home / "config.toml"
+    if not repo_path.is_file():
+        raise ProbeFailure(f"missing {repo_path}")
+    if not config_path.is_file():
+        raise ProbeFailure(f"missing {config_path}")
+
+    repo_servers = json.loads(repo_path.read_text(encoding="utf-8"))["mcpServers"]
+    config_servers = tomllib.loads(config_path.read_text(encoding="utf-8")).get("mcp_servers", {})
+    if set(repo_servers) != set(config_servers):
+        raise ProbeFailure(
+            "MCP server name mismatch: "
+            f"repo={sorted(repo_servers)} installed={sorted(config_servers)}"
+        )
+    return {name: dict(config_servers[name]) for name in sorted(repo_servers)}
+
+
+def _merged_env(spec: dict[str, Any]) -> tuple[dict[str, str], list[str]]:
+    env = dict(os.environ)
+    missing: list[str] = []
+    for key, value in (spec.get("env") or {}).items():
+        env[str(key)] = str(value)
+    for key in spec.get("env_vars") or []:
+        key_text = str(key)
+        value = os.environ.get(key_text)
+        if value is None:
+            missing.append(key_text)
+        else:
+            env[key_text] = value
+    return env, missing
+
+
+def _content_len(result: Any) -> int:
+    content = getattr(result, "content", None)
+    return len(content) if isinstance(content, list) else 0
+
+
+async def _safe_call(name: str, session: ClientSession, missing_env: list[str]) -> str | None:
+    if name == "serena":
+        result = await session.call_tool("check_onboarding_performed", {})
+        if result.isError:
+            raise ProbeFailure("check_onboarding_performed returned isError=true")
+        return "check_onboarding_performed"
+
+    if name == "sequential-thinking":
+        result = await session.call_tool(
+            "sequentialthinking",
+            {
+                "thought": "MCP capability smoke test.",
+                "nextThoughtNeeded": False,
+                "thoughtNumber": 1,
+                "totalThoughts": 1,
+            },
+        )
+        if result.isError:
+            raise ProbeFailure("sequentialthinking returned isError=true")
+        return "sequentialthinking"
+
+    if name == "playwright":
+        result = await session.call_tool(
+            "browser_navigate",
+            {"url": "data:text/html,<title>mcp-smoke</title><h1>ok</h1>"},
+        )
+        if result.isError:
+            raise ProbeFailure("browser_navigate returned isError=true")
+        await session.call_tool("browser_close", {})
+        return "browser_navigate"
+
+    if name == "chrome-devtools":
+        result = await session.call_tool(
+            "new_page",
+            {"url": "data:text/html,<title>mcp-smoke</title><h1>ok</h1>"},
+        )
+        if result.isError:
+            raise ProbeFailure("new_page returned isError=true")
+        return "new_page"
+
+    if name == "context7":
+        if missing_env:
+            return None
+        result = await session.call_tool(
+            "resolve-library-id",
+            {"libraryName": "react", "query": "React documentation smoke test"},
+        )
+        if result.isError or _content_len(result) == 0:
+            raise ProbeFailure("resolve-library-id returned an empty or error result")
+        return "resolve-library-id"
+
+    if name == "deepwiki":
+        result = await session.call_tool(
+            "read_wiki_structure",
+            {"repoName": "modelcontextprotocol/python-sdk"},
+        )
+        if result.isError or _content_len(result) == 0:
+            raise ProbeFailure("read_wiki_structure returned an empty or error result")
+        return "read_wiki_structure"
+
+    if name == "grep":
+        result = await session.call_tool(
+            "searchGitHub",
+            {"query": "ClientSession", "useRegexp": False, "language": ["Python"]},
+        )
+        if result.isError or _content_len(result) == 0:
+            raise ProbeFailure("searchGitHub returned an empty or error result")
+        return "searchGitHub"
+
+    if name == "semgrep":
+        result = await session.call_tool("get_supported_languages", {})
+        if result.isError or _content_len(result) == 0:
+            raise ProbeFailure("get_supported_languages returned an empty or error result")
+        return "get_supported_languages"
+
+    if name == "shadcn":
+        result = await session.call_tool("get_project_registries", {})
+        if result.isError or _content_len(result) == 0:
+            raise ProbeFailure("get_project_registries returned an empty or error result")
+        return "get_project_registries"
+
+    if name == "openaiDeveloperDocs":
+        result = await session.call_tool(
+            "search_openai_docs",
+            {"query": "Codex MCP configuration", "limit": 3},
+        )
+        if result.isError or _content_len(result) == 0:
+            raise ProbeFailure("search_openai_docs returned an empty or error result")
+        return "search_openai_docs"
+
+    return None
+
+
+async def _stdio_session(
+    spec: dict[str, Any],
+    body: Callable[[ClientSession, list[str]], Awaitable[None]],
+) -> None:
+    command = str(spec.get("command") or "")
+    if not command:
+        raise ProbeFailure("missing command")
+    if Path(command).is_absolute():
+        if not os.access(command, os.X_OK):
+            raise ProbeFailure(f"command is not executable: {command}")
+    elif shutil.which(command) is None:
+        raise ProbeFailure(f"command not found: {command}")
+
+    env, missing_env = _merged_env(spec)
+    params = StdioServerParameters(command=command, args=[str(arg) for arg in spec.get("args") or []], env=env)
+    completed = False
+    try:
+        async with stdio_client(params) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                await body(session, missing_env)
+                completed = True
+    except BaseException:
+        if completed:
+            return
+        raise
+
+
+async def _http_session(
+    spec: dict[str, Any],
+    body: Callable[[ClientSession, list[str]], Awaitable[None]],
+) -> None:
+    url = str(spec.get("url") or "")
+    if not url:
+        raise ProbeFailure("missing url")
+    completed = False
+    try:
+        async with streamablehttp_client(url) as (read, write, _):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                await body(session, [])
+                completed = True
+    except BaseException:
+        if completed:
+            return
+        raise
+
+
+async def _probe_server(
+    name: str,
+    spec: dict[str, Any],
+    *,
+    list_only: bool,
+    allow_missing_env: bool,
+    include_auth: bool,
+    timeout: float,
+) -> tuple[str, str]:
+    if name in AUTH_REQUIRED and not include_auth:
+        return "skip", f"{name}: auth-required MCP skipped; use --include-auth to probe it"
+
+    async def body(session: ClientSession, missing_env: list[str]) -> None:
+        if missing_env and not allow_missing_env:
+            raise ProbeFailure(f"missing required environment variables: {', '.join(missing_env)}")
+        tools_result = await session.list_tools()
+        tool_names = {tool.name for tool in tools_result.tools}
+        expected = EXPECTED_TOOLS.get(name, set())
+        missing_tools = sorted(expected - tool_names)
+        if missing_tools:
+            raise ProbeFailure(f"missing expected tools: {', '.join(missing_tools)}")
+        print(f"ok      {name} list_tools {len(tool_names)} tools", flush=True)
+        if list_only:
+            return
+        called = await _safe_call(name, session, missing_env)
+        if called:
+            print(f"ok      {name} call_tool {called}", flush=True)
+        elif missing_env:
+            print(f"skip    {name} call_tool skipped; missing env: {', '.join(missing_env)}", flush=True)
+        else:
+            print(f"ok      {name} list-only capability has no safe call", flush=True)
+
+    session_factory = _http_session if "url" in spec else _stdio_session
+    try:
+        async with asyncio.timeout(timeout):
+            await session_factory(spec, body)
+    except TimeoutError as exc:
+        raise ProbeFailure(f"timed out after {timeout:g}s") from exc
+    return "ok", f"{name}: capability smoke passed"
+
+
+async def _probe_with_retries(
+    name: str,
+    spec: dict[str, Any],
+    *,
+    list_only: bool,
+    allow_missing_env: bool,
+    include_auth: bool,
+    timeout: float,
+    retries: int,
+) -> tuple[str, str]:
+    last_error: BaseException | None = None
+    for attempt in range(1, retries + 1):
+        try:
+            return await _probe_server(
+                name,
+                spec,
+                list_only=list_only,
+                allow_missing_env=allow_missing_env,
+                include_auth=include_auth,
+                timeout=timeout,
+            )
+        except BaseException as exc:
+            last_error = exc
+            if attempt < retries:
+                print(f"retry   {name} attempt {attempt} failed: {exc}", file=sys.stderr)
+                await asyncio.sleep(min(2 * attempt, 5))
+    return "fail", f"{name}: {last_error}"
+
+
+async def _main_async(args: argparse.Namespace) -> int:
+    root = args.root.resolve()
+    codex_home = args.codex_home.expanduser().resolve()
+    servers = _load_servers(root, codex_home)
+    selected = set(args.server or servers)
+    skipped = set(args.skip_server or [])
+    errors: list[str] = []
+
+    print("rldyour MCP capability smoke")
+    print(f"codex_home: {codex_home}")
+    print(f"mode: {'list-only' if args.list_only else 'list+safe-call'}")
+
+    for name, spec in servers.items():
+        if name not in selected:
+            continue
+        if name in skipped:
+            print(f"skip    {name}: skipped by --skip-server")
+            continue
+        status, message = await _probe_with_retries(
+            name,
+            spec,
+            list_only=args.list_only,
+            allow_missing_env=args.allow_missing_env,
+            include_auth=args.include_auth,
+            timeout=args.timeout,
+            retries=args.retries,
+        )
+        if status == "fail":
+            errors.append(message)
+            print(f"fail    {message}", file=sys.stderr)
+        elif status == "skip":
+            print(f"skip    {message}")
+        else:
+            print(f"ok      {message}")
+
+    if errors:
+        print("\n".join(errors), file=sys.stderr)
+        return 1
+
+    print("MCP capability smoke passed.")
+    return 0
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Probe MCP initialize/list_tools/safe call_tool behavior.")
+    parser.add_argument("--root", type=Path, default=Path.cwd(), help="Repository root.")
+    parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", "~/.codex")))
+    parser.add_argument("--server", action="append", help="Only probe this server. Repeatable.")
+    parser.add_argument("--skip-server", action="append", help="Skip this server. Repeatable.")
+    parser.add_argument("--list-only", action="store_true", help="Only initialize and list tools.")
+    parser.add_argument(
+        "--allow-missing-env",
+        action="store_true",
+        default=True,
+        help="Allow capability probes when env vars are absent. Enabled by default.",
+    )
+    parser.add_argument("--require-env", dest="allow_missing_env", action="store_false", help="Fail when env_vars are absent.")
+    parser.add_argument("--include-auth", action="store_true", help="Probe auth-required MCP servers such as figma.")
+    parser.add_argument("--timeout", type=float, default=90.0, help="Per-server timeout in seconds.")
+    parser.add_argument("--retries", type=int, default=2, help="Per-server retry count.")
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = _parse_args()
+    return asyncio.run(_main_async(args))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -132,11 +132,19 @@ The installer writes `~/.codex/AGENTS.md`, registers this marketplace, enables t
 
 `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
 
+Local MCP launcher packages are pinned in `.mcp.json` and documented in `config/mcp-runtime-versions.env`. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke.
+
 System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and `default_permissions = ":danger-no-sandbox"`. This mirrors the current Codex full-access behavior and should be used only on the owner's trusted machines.
 
 Runtime smoke checks:
 
 ```bash
 scripts/smoke_mcp_runtime.sh
+scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
+scripts/smoke_clean_bootstrap.sh
 ```
+
+`scripts/smoke_mcp_capabilities.sh` verifies MCP protocol behavior with `initialize`, `list_tools`, and safe `call_tool` probes where a deterministic read-only tool exists. Figma is skipped by default because it requires OAuth; pass `--include-auth` only after authorizing that runtime.
+
+GitHub Actions runs the same marketplace/system checks on push and pull request with a temporary `CODEX_HOME`, list-only MCP capability probes, and a clean bootstrap clone.
