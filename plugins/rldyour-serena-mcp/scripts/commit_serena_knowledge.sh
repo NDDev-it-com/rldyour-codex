@@ -27,8 +27,20 @@ fi
 
 HEAD_SHORT=$(git rev-parse --short=7 HEAD 2>/dev/null || echo "unknown")
 
-git add -- .serena/memories .serena/plans .serena/research 2>/dev/null || true
-if git diff --cached --quiet -- .serena/memories .serena/plans .serena/research; then
+KNOWLEDGE_PATHS=()
+for path in .serena/memories .serena/plans .serena/research; do
+  if [ -e "$path" ]; then
+    KNOWLEDGE_PATHS+=("$path")
+  fi
+done
+
+if [ "${#KNOWLEDGE_PATHS[@]}" -eq 0 ]; then
+  echo "No Serena knowledge directories exist"
+  exit 0
+fi
+
+git add -- "${KNOWLEDGE_PATHS[@]}"
+if git diff --cached --quiet -- "${KNOWLEDGE_PATHS[@]}"; then
   echo "No staged Serena knowledge changes to commit"
   exit 0
 fi
