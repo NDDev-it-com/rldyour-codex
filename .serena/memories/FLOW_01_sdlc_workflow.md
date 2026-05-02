@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 5006272 feat(codex): add lsp and flow workflow plugins
-Scope: plugins/rldyour-flow, .agents/plugins/marketplace.json, README.md, .gitignore
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Scope: plugins/rldyour-flow, plugins/rldyour-serena-mcp, .agents/plugins/marketplace.json, README.md, .gitignore
 Area: FLOW
 -->
 
@@ -38,6 +38,10 @@ User-facing workflow output stays Russian. Repository docs, plugin docs, memorie
 
 `flow-post-task-sync` runs after Serena memory freshness, not before it. The flow Stop hook exits without blocking when Serena state is stale, allowing the Serena Stop hook to request memory sync first. After Serena is current, the flow hook requests docs/git/GitHub cleanup.
 
+`flow_post_task_state.py` reads raw `git status --porcelain` output with `rstrip("\n")` and then uses `line[3:]` for paths. This preserves porcelain leading status columns and prevents paths such as `.agents/...` from losing the leading dot.
+
+The current repository has one worktree, branch `main`, upstream `origin/main`, no ahead/behind delta, and no dirty files before this memory update.
+
 ## Contracts And Data
 
 The Stop hook ignores `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json` through `.gitignore`. These files are runtime loop guards and must not be committed.
@@ -47,6 +51,8 @@ The Stop hook ignores `.serena/.flow_sync_marker` and `.serena/.flow_post_task_s
 `flow-post-task-sync` may update `AGENTS.md` when durable Codex project instructions changed. It updates `CLAUDE.md` only when that file exists or the project explicitly uses Claude Code compatibility. Both files must contain verified project facts, not conversation history or speculative plans.
 
 Reviewer tracks are `flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, and `flow-security-review`. `ry-start` and `ry-review` are the approved flow contexts for parallel reviewer subagents, and each reviewer prompt must be self-contained and read-only.
+
+Flow runtime markers are `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json`. They are ignored runtime loop guards, not knowledge files.
 
 ## Invariants
 

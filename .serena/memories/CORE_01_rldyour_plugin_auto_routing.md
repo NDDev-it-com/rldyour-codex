@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 8c13e13 feat(rules): add quality-first engineering rules plugin
-Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security, plugins/rldyour-serena-mcp, plugins/rldyour-design, plugins/rldyour-lsps, plugins/rldyour-flow, plugins/rldyour-rules, plugins/rldyour-mcps
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Scope: plugins/rldyour-*, .agents/plugins/marketplace.json, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -9,7 +9,7 @@ Area: CORE
 
 ## Purpose
 
-The rldyour Codex plugin set is designed around automatic skill routing. Workflow plugins define `SKILL.md` descriptions, `Auto Invocation` sections, `agents/openai.yaml` metadata, and plugin manifest descriptions so Codex can select the correct workflow without the owner manually invoking `$skill` names.
+The rldyour Codex plugin set is designed around automatic skill routing for the owner's personal Codex runtime. Workflow plugins define `SKILL.md` descriptions, `Auto Invocation` sections, `agents/openai.yaml` metadata, and plugin manifest descriptions so Codex can select the correct workflow without the owner manually invoking `$skill` names.
 
 ## Source Of Truth
 
@@ -18,6 +18,7 @@ The rldyour Codex plugin set is designed around automatic skill routing. Workflo
 - `plugins/rldyour-*/skills/*/agents/openai.yaml`: UI metadata and `policy.allow_implicit_invocation: true`.
 - `plugins/rldyour-*/README.md`: human-readable trigger maps and plugin boundaries.
 - `plugins/rldyour-mcps/.mcp.json`: MCP transport runtime layer used by workflow plugins.
+- `/Users/rldyourmnd/.codex/config.toml`: active system Codex plugin enablement and MCP registrations.
 
 ## Entry Points
 
@@ -32,6 +33,8 @@ The rldyour Codex plugin set is designed around automatic skill routing. Workflo
 
 ## Current Behavior
 
+The active rldyour marketplace contributes nine plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules`.
+
 All workflow skills in `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules` keep `policy.allow_implicit_invocation: true`.
 
 The owner communicates with Codex in Russian. Plugin docs, memory files, code comments, token files, and commit messages remain English. Skill descriptions are written in English but explicitly account for Russian or English user requests where relevant.
@@ -44,13 +47,24 @@ The owner communicates with Codex in Russian. Plugin docs, memory files, code co
 
 `rldyour-rules` has no MCP transport definitions and no hooks. It is a skills-only policy layer that coordinates quality, architecture, dependency, verification, project-instruction, and ADR rules with existing workflow plugins.
 
+Current skill directory counts verified from repository files:
+
+- `rldyour-browser`: 3 skills.
+- `rldyour-design`: 5 skills.
+- `rldyour-explore`: 2 skills.
+- `rldyour-flow`: 12 skills.
+- `rldyour-lsps`: 4 skills.
+- `rldyour-rules`: 7 skills.
+- `rldyour-security`: 2 skills.
+- `rldyour-serena-mcp`: 2 skills.
+
 ## Contracts And Data
 
 The primary auto-routing contract is the frontmatter `description` in each `SKILL.md`. When changing automatic behavior, update `SKILL.md` first, then keep `plugin.json`, `agents/openai.yaml`, and README trigger maps aligned.
 
 Every callable skill contributed by these workflow plugins must keep `policy.allow_implicit_invocation: true`.
 
-System Codex cache must be re-synced after plugin changes so the runtime uses the repository version after restart.
+System Codex cache must be re-synced after plugin changes so the runtime uses the repository version after restart. Active cache roots are under `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`.
 
 ## Invariants
 
@@ -67,6 +81,7 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 - Validate `SKILL.md` files after description changes.
 - Validate `agents/openai.yaml` parse and `allow_implicit_invocation` after UI metadata changes.
 - Re-sync changed plugin directories into the active Codex plugin cache.
+- Restart Codex after changing skill descriptions, manifests, hook definitions, or MCP server definitions.
 
 ## Verification
 

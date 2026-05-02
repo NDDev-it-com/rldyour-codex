@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 8c13e13 feat(rules): add quality-first engineering rules plugin
-Scope: README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Scope: README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -17,6 +17,7 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 - `.agents/plugins/marketplace.json`: active installable plugin catalog and plugin order.
 - `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, linked capabilities, and plugin interface metadata.
 - `.gitignore`: repository-level ignored runtime artifacts, browser evidence, env files, and Serena runtime state.
+- `/Users/rldyourmnd/.codex/config.toml`: active local marketplace registration and enabled plugin list for system Codex.
 
 ## Entry Points
 
@@ -40,6 +41,13 @@ The active marketplace contains nine plugins in this order:
 
 Created plugins are listed in the active catalog. Planned plugins stay documented in `README.md` and are not added to `marketplace.json` until explicitly created.
 
+System Codex has this marketplace registered as a local source:
+
+- `marketplaces.rldyour-codex.source_type`: `local`.
+- `marketplaces.rldyour-codex.source`: `/Users/rldyourmnd/Desktop/codex_base/rldyour-codex`.
+- Enabled rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules`.
+- External curated plugins also enabled in system Codex: `github@openai-curated` and `gmail@openai-curated`.
+
 ## Contracts And Data
 
 Marketplace root metadata:
@@ -47,6 +55,7 @@ Marketplace root metadata:
 - `name`: `rldyour-codex`.
 - `interface.displayName`: `rldyour Codex`.
 - Each plugin entry must keep `name`, `source.source`, `source.path`, `policy.installation`, `policy.authentication`, and `category`.
+- Current plugin entries use `policy.installation: AVAILABLE` and `policy.authentication: ON_USE`.
 
 Plugin manifests use `.codex-plugin/plugin.json`. Current plugin capability boundaries:
 
@@ -56,6 +65,18 @@ Plugin manifests use `.codex-plugin/plugin.json`. Current plugin capability boun
 - `rldyour-lsps` exposes `skills: "./skills/"` only. It does not define MCP servers, apps, or hooks.
 - `rldyour-flow` exposes `skills: "./skills/"` and `hooks: "./hooks.json"`. It does not define MCP servers or apps.
 - `rldyour-rules` exposes `skills: "./skills/"` only. It does not define MCP servers, apps, or hooks.
+
+Current plugin manifest versions:
+
+- `rldyour-mcps`: `0.1.4`.
+- `rldyour-explore`: `0.1.1`.
+- `rldyour-serena-mcp`: `0.1.1`.
+- `rldyour-security`: `0.1.0`.
+- `rldyour-browser`: `0.1.0`.
+- `rldyour-design`: `0.1.0`.
+- `rldyour-lsps`: `0.1.0`.
+- `rldyour-flow`: `0.1.0`.
+- `rldyour-rules`: `0.1.0`.
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
@@ -80,4 +101,5 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates marketplace and plugin manifests.
 - `jq -r '.plugins[] | [.name,.category,.policy.installation,.policy.authentication,.source.path] | @tsv' .agents/plugins/marketplace.json`: shows active plugin order and policy.
 - `codex plugin marketplace add .`: registers or confirms this marketplace.
+- `codex mcp list`: verifies runtime MCP registrations after marketplace/plugin changes are installed.
 - `git status -sb --ignored`: verifies only expected ignored Serena runtime files remain untracked.

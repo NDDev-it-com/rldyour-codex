@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 8c13e13 feat(rules): add quality-first engineering rules plugin
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
 Scope: plugins/rldyour-rules, .agents/plugins/marketplace.json, README.md
 Area: RULES
 -->
@@ -35,6 +35,8 @@ The plugin is advisory-first. It should guide and correct implementation inside 
 
 The owner chose FSD and VSA as defaults for new areas, not as mandatory rewrites of coherent existing projects. Existing project code remains the source of truth.
 
+For non-trivial engineering decisions, the rules plugin requires structured reasoning through Sequential Thinking when available. The expected minimum pattern is understand, analyze, decide; deeper decisions should add investigation, evaluation, planning, and verification.
+
 When serious technical debt is found outside scope, Codex should ask the owner in Russian with 2-3 concrete options before expanding scope.
 
 `AGENTS.md` should be created or updated automatically when durable Codex project rules, setup commands, quality gates, architecture constraints, deploy contracts, or workflow guidance change. `CLAUDE.md` should be updated when it exists, when Claude Code compatibility is explicit, or when the owner asks for it.
@@ -56,6 +58,14 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 - `rldyour-security`: security-sensitive implementation guidance and review.
 - `rldyour-design`: frontend design-system and FSD design workflows.
 - `rldyour-flow`: SDLC orchestration and post-task sync.
+
+`rldyour-rules` contains detailed reference files for policy, not just skill frontmatter:
+
+- `references/rules-policy.md`: quality priority, no-hacks policy, technical debt scope, and Sequential Thinking policy.
+- `references/architecture-policy.md`: FSD and VSA defaults plus existing-architecture preservation.
+- `references/dependency-policy.md`: latest-compatible dependency selection and compatibility checks.
+- `references/quality-gates.md`: evidence requirements and no-fake-green policy.
+- `references/project-instructions-and-adrs.md`: `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, and ADR rules.
 
 ## Invariants
 
