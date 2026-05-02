@@ -33,7 +33,7 @@ For those areas, use external LSP health checks, project file checks, browser/de
 
 ## Project Configuration Policy
 
-This plugin does not silently mutate `.serena/project.yml`. It may inspect the file, explain needed changes, or apply changes only when the user explicitly asks for setup. Full project initialization belongs to the future `rldyour-flow` plugin.
+This plugin does not silently mutate `.serena/project.yml`. It may inspect the file, explain needed changes, or apply changes only when the user explicitly asks for setup. Full project initialization belongs to the `rldyour-flow` plugin.
 
 When a project needs Serena language coverage, prefer this order:
 
@@ -73,4 +73,3 @@ For `cpp`, the language server is only as correct as the compile database:
 ## JavaScript
 
 Use `typescript` for JavaScript. A JavaScript-only project should still provide `jsconfig.json` or TypeScript configuration that lets the language server understand module resolution.
-
