@@ -3,5 +3,13 @@ interface:
   short_description: "Auto web research with sources"
   default_prompt: "Use $web-research to research current information online and answer with authoritative source links."
 
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "openaiDeveloperDocs"
+      description: "Official OpenAI and Codex documentation source for OpenAI/Codex web research."
+      transport: "streamable_http"
+      url: "https://developers.openai.com/mcp"
+
 policy:
   allow_implicit_invocation: true

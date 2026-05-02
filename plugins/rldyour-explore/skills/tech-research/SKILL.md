@@ -21,6 +21,7 @@ Use this skill without waiting for an explicit `$tech-research` call when the re
 - Understand an open-source repository, feature architecture, design decision, data flow, or tradeoff.
 - Find production GitHub usage patterns, parameters, error handling, or edge cases.
 - Validate best practices, version-specific behavior, compatibility, or migration risks.
+- Research OpenAI or Codex product behavior, configuration, plugins, skills, MCP, hooks, models, APIs, or migration guidance; use `openaiDeveloperDocs` first when available.
 
 If the owner explicitly asks to research the internet for a technical implementation, run this Triple-MCP workflow first and add `web-research` for current/latest/source-backed web evidence beyond Context7, DeepWiki, and Grep.
 
@@ -34,11 +35,12 @@ If the request is not technical, use `web-research`. If a technical request need
 
 1. Define scope: what is being implemented, which stack and versions matter, which files/modules may be affected, and which unknowns block a high-quality implementation.
 2. Split questions into documentation/API, comparable repository architecture, real production patterns, edge cases, security, tests, migrations, and compatibility.
-3. Context7: use for official library, framework, SDK, API, configuration, and migration documentation. Provide an exact library ID or version when known.
-4. DeepWiki: use for public open-source repositories when the task requires repository structure, feature implementation details, architectural decisions, data flow, or tradeoffs.
-5. Grep by Vercel: use for real GitHub patterns: how APIs are called in production, which parameters are commonly passed, how errors are handled, and which edge cases appear.
-6. Synthesize the decision: which approach is selected, which alternatives are rejected, which constraints remain, and how this affects local code.
-7. If the user requested implementation, move from research to code and verification instead of stopping at theory.
+3. OpenAI/Codex docs: when the subject is OpenAI, Codex, models, APIs, plugins, skills, MCP, hooks, or Codex config, use `openaiDeveloperDocs` first. Use official OpenAI web pages only as fallback.
+4. Context7: use for official library, framework, SDK, API, configuration, and migration documentation. Provide an exact library ID or version when known.
+5. DeepWiki: use for public open-source repositories when the task requires repository structure, feature implementation details, architectural decisions, data flow, or tradeoffs.
+6. Grep by Vercel: use for real GitHub patterns: how APIs are called in production, which parameters are commonly passed, how errors are handled, and which edge cases appear.
+7. Synthesize the decision: which approach is selected, which alternatives are rejected, which constraints remain, and how this affects local code.
+8. If the user requested implementation, move from research to code and verification instead of stopping at theory.
 
 ## Quality Rules
 

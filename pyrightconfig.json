@@ -1,0 +1,15 @@
+{
+  "include": [
+    "scripts",
+    "plugins/rldyour-flow/scripts",
+    "plugins/rldyour-serena-mcp/scripts"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    ".serena/cache",
+    ".venv",
+    "node_modules"
+  ],
+  "pythonVersion": "3.13",
+  "typeCheckingMode": "basic"
+}

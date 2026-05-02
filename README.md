@@ -122,8 +122,21 @@ Verify the installed system state:
 scripts/doctor_system_codex.sh
 ```
 
+Run the full bootstrap smoke flow on a new or resynced machine:
+
+```bash
+scripts/bootstrap_check.sh --apply
+```
+
 The installer writes `~/.codex/AGENTS.md`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks, applies the owner-requested YOLO permission defaults, and synchronizes the local plugin cache. Existing `~/.codex/AGENTS.md` and `~/.codex/config.toml` are backed up before write operations. Secrets and OAuth tokens are never written by this repository.
 
 `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
 
 System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and `default_permissions = ":danger-no-sandbox"`. This mirrors the current Codex full-access behavior and should be used only on the owner's trusted machines.
+
+Runtime smoke checks:
+
+```bash
+scripts/smoke_mcp_runtime.sh
+scripts/smoke_hooks.sh
+```
