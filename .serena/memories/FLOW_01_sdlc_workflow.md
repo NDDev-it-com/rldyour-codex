@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 6af53aa feat(skills): optimize plugin routing metadata
-Scope: plugins/rldyour-flow, plugins/rldyour-serena-mcp, .agents/plugins/marketplace.json, README.md, .gitignore
+Last commit: ca06abf docs: sync flow catalog description
+Scope: plugins/rldyour-flow, AGENTS.md, system/AGENTS.md
 Area: FLOW
 -->
 
@@ -9,17 +9,21 @@ Area: FLOW
 
 ## Purpose
 
-`plugins/rldyour-flow` defines the rldyour SDLC orchestration layer for Codex. It turns owner commands such as `ry-init`, `ry-start`, `ry-newp`, `ry-review`, and `ry-deploy` into reusable workflows and adds a Stop hook that finishes task state after Serena memories are current.
+`plugins/rldyour-flow` defines the rldyour SDLC orchestration layer for Codex. It turns owner commands such as `ry-init`, `ry-start`, `ry-newp`, `ry-review`, and `ry-deploy` into reusable workflows and adds advisory SessionStart/PostToolUse hooks plus a Stop hook that finishes task state after Serena memories are current.
 
 ## Source Of Truth
 
 - `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin manifest, capability list, automatic workflow description, and linked skills/hooks.
 - `plugins/rldyour-flow/skills/*/SKILL.md`: command and reviewer workflow trigger descriptions plus execution rules.
 - `plugins/rldyour-flow/skills/*/agents/openai.yaml`: UI metadata and invocation policy for command, post-task, and reviewer skills.
-- `plugins/rldyour-flow/hooks.json`: Stop hook registration.
+- `plugins/rldyour-flow/hooks.json`: SessionStart, PostToolUse, and Stop hook registration.
+- `plugins/rldyour-flow/hooks/session_start_context.sh`: read-only SessionStart hook that emits compact repository context through `hookSpecificOutput.additionalContext`.
+- `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: read-only PostToolUse hook that emits non-blocking commit quality advice through `systemMessage` after Bash `git commit`.
 - `plugins/rldyour-flow/hooks/stop_post_task_sync.sh`: post-task Stop hook implementation and loop guard.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`: deterministic state payload for dirty files, branch, upstream, worktrees, Serena freshness, and fingerprint.
 - `plugins/rldyour-flow/references/*.md`: detailed lifecycle, post-task sync, reviewer, deploy, and source-backed design contracts.
+- `plugins/rldyour-flow/references/init-context-pack.md`: `ry-init` context-pack contract for scope, architecture, symbols, data, contracts, integration paths, checks, risks, and ready-for tasks.
+- `plugins/rldyour-flow/references/context-sufficiency-gate.md`: `ry-start` gate that requires evidence for code, data, patterns, research, quality, and risks before edits.
 
 ## Entry Points
 
@@ -36,7 +40,13 @@ The plugin is skills-and-hooks only. It does not define MCP servers or app conne
 
 User-facing workflow output stays Russian. Repository docs, plugin docs, memories, plans, research archives, code comments, and commits stay English.
 
-`plugins/rldyour-flow/skills/ry-start/SKILL.md` now has an `Automatic Helper Routing` section. The owner normally invokes only `rldyour-flow` commands and writes Russian prompts, so `ry-start` must automatically route helper skills instead of waiting for explicit helper skill names.
+`plugins/rldyour-flow/.codex-plugin/plugin.json` version is `0.1.2`. The manifest describes deep `ry-init` context packs, `ry-start` context sufficiency, reviewer skills, deployment, and non-blocking sync hooks.
+
+`plugins/rldyour-flow/skills/ry-init/SKILL.md` now requires reading `references/init-context-pack.md` and building a scoped context pack. It must map modules, layers, symbols, DB fields, schemas, APIs, generated artifacts, configs, tests, integration paths, risks, gaps, and what Codex can safely change.
+
+`plugins/rldyour-flow/skills/ry-start/SKILL.md` now requires reading `references/context-sufficiency-gate.md` and passing the gate before edits. The gate is self-correcting, not a hard blocker: if evidence is missing, Codex must gather more code/research/browser/security/design evidence or ask the owner with options.
+
+`plugins/rldyour-flow/skills/ry-start/SKILL.md` has an `Automatic Helper Routing` section. The owner normally invokes only `rldyour-flow` commands and writes Russian prompts, so `ry-start` must automatically route helper skills instead of waiting for explicit helper skill names.
 
 Current `ry-start` helper routing:
 
@@ -48,6 +58,10 @@ Current `ry-start` helper routing:
 - Verification and finish route to `verification-quality-gates`, `flow-verification-review`, `serena-memory-sync`, and `flow-post-task-sync`.
 
 `flow-post-task-sync` runs after Serena memory freshness, not before it. The flow Stop hook exits without blocking when Serena state is stale, allowing the Serena Stop hook to request memory sync first. After Serena is current, the flow hook requests docs/git/GitHub cleanup.
+
+The flow SessionStart hook is advisory and read-only. It emits branch, HEAD, upstream, ahead/behind, dirty files, worktree count, project instruction docs, Serena freshness, and flow sync state. It explicitly tells Codex to trigger scoped `ry-init` when context is insufficient and to use the context sufficiency gate before edits.
+
+The flow PostToolUse hook is advisory and read-only. It watches Bash `git commit` commands and emits warnings for non-Conventional Commit subjects, first lines longer than 72 characters, commits touching more than 20 files, sensitive-looking file paths, Serena runtime markers, and committed browser image evidence. It never rejects the command.
 
 `flow_post_task_state.py` reads raw `git status --porcelain` output with `rstrip("\n")` and then uses `line[3:]` for paths. This preserves porcelain leading status columns and prevents paths such as `.agents/...` from losing the leading dot.
 
@@ -65,11 +79,21 @@ Reviewer tracks are `flow-architecture-review`, `flow-quality-review`, `flow-con
 
 Flow runtime markers are `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json`. They are ignored runtime loop guards, not knowledge files.
 
+SessionStart hook output uses:
+
+- `hookSpecificOutput.hookEventName`: `SessionStart`.
+- `hookSpecificOutput.additionalContext`: compact repository context and advisory next actions.
+
+PostToolUse commit advice output uses:
+
+- `systemMessage`: non-blocking commit review text when a warning exists.
+
 ## Invariants
 
 - Do not duplicate MCP transport definitions in `rldyour-flow`.
 - Do not commit flow runtime markers, browser artifacts, secrets, tokens, cookies, private keys, or local env files.
 - Do not let the flow Stop hook update Serena memories directly; Serena remains the memory source of truth.
+- Do not let advisory SessionStart or PostToolUse hooks mutate files, commit, push, or block execution.
 - Do not create infinite Stop-hook loops. Repeated prompts for the same fingerprint must allow stop and report the blocker.
 - Do not silently delete branches or worktrees unless they are verified merged into `main` and safe to remove.
 - Do not claim deployment success without server logs, health checks, or an explicit validation blocker.
@@ -77,6 +101,10 @@ Flow runtime markers are `.serena/.flow_sync_marker` and `.serena/.flow_post_tas
 ## Change Rules
 
 - Update `references/flow-lifecycle.md` when changing command-level lifecycle behavior.
+- Update `references/init-context-pack.md` when changing `ry-init` required context-pack sections or evidence.
+- Update `references/context-sufficiency-gate.md` when changing `ry-start` pre-edit evidence requirements.
+- Update `hooks/session_start_context.sh` and `hooks.json` together when changing SessionStart context behavior.
+- Update `hooks/post_tool_use_commit_advice.sh` and `hooks.json` together when changing commit advice behavior.
 - Update `references/post-task-sync.md`, `hooks/stop_post_task_sync.sh`, and `scripts/flow_post_task_state.py` together when changing Stop-hook sync semantics.
 - Update `references/reviewer-protocol.md` when adding, removing, or changing reviewer tracks.
 - Update `references/deploy-contract.md` when changing deploy contract fields or safety policy.
@@ -90,6 +118,8 @@ Flow runtime markers are `.serena/.flow_sync_marker` and `.serena/.flow_post_tas
 - `uv run --with pyyaml python /Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-flow/skills/<skill>`: validates each flow skill.
 - `scripts/validate_marketplace.sh`: validates `agents/openai.yaml` parse, default prompt length, `$skill-name` prompt reference, short description length, MCP dependencies, and reviewer implicit-invocation exceptions.
 - `python3 -m py_compile plugins/rldyour-flow/scripts/flow_post_task_state.py`: validates the Python state script.
-- `shellcheck plugins/rldyour-flow/hooks/stop_post_task_sync.sh plugins/rldyour-flow/scripts/*.sh`: validates shell scripts.
+- `shellcheck plugins/rldyour-flow/hooks/*.sh plugins/rldyour-flow/scripts/*.sh`: validates flow shell hooks and scripts.
+- `printf '{"source":"startup"}' | plugins/rldyour-flow/hooks/session_start_context.sh`: verifies SessionStart JSON output.
+- `printf '{"tool_name":"Bash","tool_input":{"command":"git commit -m test"}}' | plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: verifies commit-advice hook exits cleanly against the current HEAD.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`: verifies state payload and dirty-path handling.
 - `diff -qr plugins/rldyour-flow /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-flow/local`: verifies system cache matches the repository plugin.
