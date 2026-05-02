@@ -88,7 +88,7 @@ scripts/smoke_mcp_capabilities.sh
 
 Expected state:
 
-- `serena` starts through `uvx` and does not open the dashboard automatically.
+- `serena` starts through `uvx` with the web dashboard disabled.
 - `playwright` starts through `bunx` with `--caps=network,storage,testing,devtools`.
 - `figma` uses OAuth.
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
@@ -120,13 +120,13 @@ After plugin installation, browser/OAuth authorization may be required. If Codex
 
 ## Serena
 
-Serena is configured without automatically opening the dashboard:
+Serena is configured without starting or opening the web dashboard:
 
 ```text
-uvx --from serena-agent==1.2.0 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --open-web-dashboard False
+uvx --from serena-agent==1.2.0 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --enable-web-dashboard False --open-web-dashboard False
 ```
 
-If the dashboard is needed manually, open it through Serena tools or directly through the local URL Serena prints in logs.
+If the dashboard is needed manually, change this runtime policy intentionally and re-run the system installer.
 
 ## Sources
 
