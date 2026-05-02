@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 5d0a389 feat(system): add release and observability workflows
+Last commit: 39d7311 fix(ci): update artifact upload action
 Scope: VERSION, CHANGELOG.md, docs/release-process.md, docs/rollback-restore.md, docs/dependency-updates.md, docs/observability.md, config/skill-routing-policy.json, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, .gitignore, AGENTS.md, README.md, system/AGENTS.md
 Area: CORE
 -->
@@ -69,7 +69,7 @@ Commit `5d0a389 feat(system): add release and observability workflows` adds form
 
 The workflow keeps `CODEX_HOME=/tmp/rldyour-codex-home`, list-only MCP capability probes, missing-env tolerance for auth-dependent MCPs, and skipped LSP health for CI portability.
 
-On success, the validate workflow writes OS/ref/SHA/check summary to `GITHUB_STEP_SUMMARY`. On failure, it runs `scripts/collect_diagnostics.sh --output diagnostics/ci` and uploads `diagnostics/ci` with `actions/upload-artifact@v4.6.2`.
+On success, the validate workflow writes OS/ref/SHA/check summary to `GITHUB_STEP_SUMMARY`. On failure, it runs `scripts/collect_diagnostics.sh --output diagnostics/ci` and uploads `diagnostics/ci` with `actions/upload-artifact@v7.0.1`.
 
 `.github/workflows/dependency-check.yml` runs every Monday at `06:17` UTC and through `workflow_dispatch`. It runs the dependency freshness check with `--fail-on-outdated` so stale runtime pins become visible in CI.
 
