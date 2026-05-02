@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: 81c5e10 chore(validation): enforce MCP config sync
-Scope: plugins/rldyour-serena-mcp
+Last updated: 2026-05-03
+Last commit: 718264b feat(system): harden codex runtime validation
+Scope: plugins/rldyour-serena-mcp, plugins/rldyour-flow/hooks, scripts/smoke_hooks.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: MCP
 -->
 
@@ -21,6 +21,7 @@ Area: MCP
 - `plugins/rldyour-serena-mcp/hooks/*.sh`: UserPromptSubmit, PreToolUse, PostToolUse, and Stop hook behavior.
 - `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: computes whether Serena knowledge is current.
 - `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`: commits knowledge-only `.serena` updates.
+- `scripts/smoke_hooks.sh`: validates repository and installed Serena/Flow hooks with synthetic payloads and a real temporary git lifecycle.
 
 ## Entry Points
 
@@ -30,6 +31,7 @@ Area: MCP
 - `PreToolUse` hook: records `.serena/.auto_sync_head` before git commit-like Bash commands.
 - `PostToolUse` hook: writes `.serena/.serena_sync_state.json` after git commit-like changes touch non-Serena-knowledge files.
 - `Stop` hook: blocks final stop with a sync prompt when project knowledge is stale.
+- `scripts/smoke_hooks.sh`: validates Serena hook behavior in both repository source layout and installed plugin-cache layout.
 
 ## Current Behavior
 
@@ -46,6 +48,13 @@ Hook commands in `hooks.json` first try the repository-local hook path, then the
 `stop_memory_sync.sh` uses `.serena/.sync_marker` to avoid a Stop-hook loop for the same HEAD during a continuation.
 
 The current repository has eleven durable memory files in `.serena/memories`. Generated local Serena project files, runtime markers, and cache files remain ignored; `rldyour-flow` owns scoped project initialization, and portable Serena project config should be promoted into the repository only when the owner explicitly wants that behavior.
+
+`scripts/smoke_hooks.sh` now has two layers for both repository and installed plugin cache paths:
+
+- Synthetic non-mutating payload checks for Serena `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, Stop skip gate, Flow `SessionStart`, Flow `PostToolUse`, and Flow Stop skip gate.
+- Temporary git lifecycle checks that create a disposable repository, run Flow `SessionStart`, Serena `UserPromptSubmit`, Serena `PreToolUse` before a real git commit, Serena `PostToolUse` after the commit, Serena Stop sync prompt, Flow Stop sync prompt, Flow Stop loop guard, and Flow commit advice for a non-conventional commit.
+
+`scripts/validate_marketplace.sh` and `scripts/doctor_system_codex.sh` run `scripts/smoke_hooks.sh`, so hook lifecycle regressions fail local validation and system doctor.
 
 ## Contracts And Data
 
@@ -87,10 +96,12 @@ Ignored runtime state:
 - When changing memory format or sync semantics, update `serena-memory-sync/SKILL.md`, `serena_memory_state.py`, hook prompts, and this memory together.
 - Use Serena tools first for code inspection when supported; use raw `rg` and file reads as fallback for unsupported file types such as JSON and Markdown.
 - After changing this plugin, re-sync `plugins/rldyour-serena-mcp/` into the active Codex plugin cache.
+- After changing Serena or Flow hooks, run `scripts/smoke_hooks.sh --repo-only`, `scripts/install_system_codex.sh --apply`, `scripts/smoke_hooks.sh --installed-only`, and `scripts/doctor_system_codex.sh`.
 
 ## Verification
 
 - `jq empty plugins/rldyour-serena-mcp/.codex-plugin/plugin.json plugins/rldyour-serena-mcp/hooks.json`: validates manifest and hooks.
 - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool`: shows current memory freshness status.
 - `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`: commits knowledge-only `.serena` changes and refuses mixed changes.
+- `scripts/smoke_hooks.sh`: verifies repository and installed hook behavior, including temporary git lifecycle transitions.
 - `git status -sb --ignored`: confirms only expected ignored Serena runtime files remain ignored/untracked.

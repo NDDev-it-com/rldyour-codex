@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
-Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
+Last commit: 718264b feat(system): harden codex runtime validation
+Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -25,8 +25,13 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `scripts/doctor_system_codex.sh`: verifies installed system state.
 - `scripts/validate_marketplace.sh`: local validation entry point for runtime and repository consistency.
 - `scripts/smoke_mcp_runtime.sh`: runtime MCP smoke check for installed config, `codex mcp get`, command availability, and remote endpoint reachability.
-- `scripts/smoke_hooks.sh`: non-mutating smoke check for repository and installed Serena/Flow hook scripts.
+- `scripts/smoke_mcp_capabilities.py`: MCP client smoke check that initializes servers, lists expected tools, and optionally calls deterministic safe tools.
+- `scripts/smoke_mcp_capabilities.sh`: pinned `mcp` Python SDK wrapper for capability smoke.
+- `scripts/smoke_hooks.sh`: repository and installed Serena/Flow hook smoke with synthetic payload checks and real temporary git lifecycle checks.
+- `scripts/smoke_clean_bootstrap.sh`: clean-clone bootstrap smoke for clone, temporary `CODEX_HOME`, install, doctor, and MCP registration.
 - `scripts/bootstrap_check.sh`: end-to-end bootstrap check for dry-run and apply-mode system setup validation.
+- `config/mcp-runtime-versions.env`: pinned runtime package versions for Codex CLI, MCP Python SDK, Serena, Semgrep, and bunx-based local MCP servers.
+- `.github/workflows/validate.yml`: GitHub Actions validation for marketplace metadata, system install, doctor, and clean bootstrap on push, pull request, and manual dispatch.
 - `pyrightconfig.json`: minimal Python project configuration for this scripts-focused repository.
 
 ## Entry Points
@@ -40,7 +45,9 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `scripts/bootstrap_check.sh --dry-run`: previews install and validates repository-local JSON, shell scripts, and repo hook smoke.
 - `scripts/bootstrap_check.sh --apply`: runs install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, state checks, and git status.
 - `scripts/smoke_mcp_runtime.sh`: checks every configured MCP server through installed Codex runtime metadata and endpoint/command availability.
-- `scripts/smoke_hooks.sh`: checks the hook scripts that will be used after restart from both repository sources and installed plugin cache.
+- `scripts/smoke_mcp_capabilities.sh`: checks MCP `initialize`, `list_tools`, and safe `call_tool` behavior through the MCP Python SDK.
+- `scripts/smoke_hooks.sh`: checks the hook scripts that will be used after restart from both repository sources and installed plugin cache, including real temporary git lifecycle transitions.
+- `scripts/smoke_clean_bootstrap.sh`: proves a committed clean clone can install into a temporary `CODEX_HOME` and pass doctor plus MCP registration.
 - `/Users/rldyourmnd/.codex/config.toml`: direct runtime configuration file for the current machine.
 - `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex`: installed plugin cache root.
 
@@ -96,13 +103,15 @@ The active plugin cache contains local copies for all nine rldyour plugins:
 - `rldyour-security`.
 - `rldyour-serena-mcp`.
 
-The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, MCP runtime smoke, plugin cache sync, hook smoke, secret patterns, and whitespace.
+The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, MCP package pinning, MCP runtime smoke, MCP capability smoke, plugin cache sync, hook smoke, hook lifecycle smoke, secret patterns, and whitespace.
 
 The LSP health check reports no missing commands and zero warnings. `pyrightconfig.json` makes the Python script scope explicit for Pyright and removes the previous Python project-config warning.
 
-After commit `72329c8`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`, patched YOLO permission defaults, and installed all twelve MCP servers. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
+After commit `718264b`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`, patched YOLO permission defaults, and installed all twelve MCP servers from `plugins/rldyour-mcps/.mcp.json`. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
 
 `scripts/bootstrap_check.sh --apply` passed on the current machine after commit `72329c8`. It ran install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, Serena state, Flow state, and `git status -sb`.
+
+`scripts/smoke_clean_bootstrap.sh` passed after commit `718264b`. It cloned the committed repository into a temporary directory, installed the system runtime into a temporary `CODEX_HOME`, ran `scripts/doctor_system_codex.sh` in list-only capability mode, and verified `codex mcp list`.
 
 `scripts/doctor_system_codex.sh` passed on the current machine with zero warnings and zero failures after `scripts/install_system_codex.sh --apply`. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
 
@@ -110,7 +119,21 @@ After commit `72329c8`, `scripts/install_system_codex.sh --apply` synced all rep
 
 System MCP registrations are installed in `/Users/rldyourmnd/.codex/config.toml`, not only in repository `.mcp.json`.
 
-`plugins/rldyour-mcps/.mcp.json` is the portable MCP source of truth. The installed config resolves portable command names to local executable paths. `scripts/validate_marketplace.sh` compares repository and installed MCP definitions, allowing only that command-path resolution difference.
+`plugins/rldyour-mcps/.mcp.json` is the portable MCP source of truth. The installed config resolves portable command names to local executable paths. `scripts/install_system_codex.sh` reads `.mcp.json` directly and patches installed config from that source instead of maintaining a second hardcoded MCP list. `scripts/validate_marketplace.sh` compares repository and installed MCP definitions, allowing only that command-path resolution difference.
+
+Pinned runtime versions in `config/mcp-runtime-versions.env`:
+
+- `CODEX_CLI_VERSION=0.128.0`.
+- `MCP_PYTHON_SDK_VERSION=1.27.0`.
+- `SERENA_AGENT_VERSION=1.2.0`.
+- `SEMGREP_VERSION=1.161.0`.
+- `SEQUENTIAL_THINKING_MCP_VERSION=2025.12.18`.
+- `PLAYWRIGHT_MCP_VERSION=0.0.73`.
+- `CHROME_DEVTOOLS_MCP_VERSION=0.23.0`.
+- `CONTEXT7_MCP_VERSION=2.2.3`.
+- `SHADCN_VERSION=4.6.0`.
+
+Local package specs in `.mcp.json` are exact-version pinned. `@latest` is forbidden by `scripts/validate_marketplace.sh`.
 
 Active local command paths:
 
@@ -127,7 +150,11 @@ Remote MCP URLs:
 
 `scripts/smoke_mcp_runtime.sh` treats HTTP responses below 500 as reachable for remote MCP endpoints. This accepts method/auth negotiation responses such as HTTP 405 while still failing server-side outages.
 
-`scripts/smoke_hooks.sh` resolves both repository plugin layout (`plugins/<plugin>`) and installed cache layout (`<plugin>/local`) so it validates the same hook scripts Codex will load after restart.
+`scripts/smoke_mcp_capabilities.py` uses the MCP Python SDK and validates all twelve configured MCP names against expected tool sets. In default full mode it calls deterministic safe tools for Serena, Sequential Thinking, Playwright, Chrome DevTools, DeepWiki, Grep, Semgrep, shadcn, and OpenAI Developer Docs. Context7 safe calls are skipped when `CONTEXT7_API_KEY` is not present in the shell environment. Figma is skipped by default because it requires OAuth; use `--include-auth` only when browser-auth probing is intended.
+
+`scripts/smoke_hooks.sh` resolves both repository plugin layout (`plugins/<plugin>`) and installed cache layout (`<plugin>/local`) so it validates the same hook scripts Codex will load after restart. It now also creates a temporary git repository to validate real Serena and Flow lifecycle state transitions for SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, Stop sync prompts, Stop loop guard, and commit advice.
+
+`.github/workflows/validate.yml` runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI into a temporary CI environment, applies the marketplace into a temporary `CODEX_HOME`, runs marketplace validation, doctor, and clean bootstrap smoke. CI capability smoke uses list-only mode to avoid auth-sensitive or long-running safe tool calls.
 
 Environment variables and auth:
 
@@ -155,6 +182,7 @@ Environment variables and auth:
 - When changing system-only config, record only sanitized facts in memories.
 - Use `scripts/install_system_codex.sh --dry-run` before `--apply` on a new machine.
 - Use `scripts/bootstrap_check.sh --dry-run` for a non-mutating repository-local bootstrap preview. Use `scripts/bootstrap_check.sh --apply` when the current machine should be installed and verified end-to-end.
+- Use `scripts/smoke_clean_bootstrap.sh` only from a clean working tree because it proves committed source-of-truth state, not uncommitted local edits.
 
 ## Verification
 
@@ -164,7 +192,10 @@ Environment variables and auth:
 - `scripts/doctor_system_codex.sh`: verifies the installed system Codex state.
 - `scripts/bootstrap_check.sh --apply`: verifies the clone-to-installed-runtime flow on the current machine.
 - `scripts/smoke_mcp_runtime.sh`: verifies installed MCP server names, `codex mcp get`, local MCP command executables, and remote MCP endpoint reachability.
-- `scripts/smoke_hooks.sh`: verifies repository and installed Serena/Flow hooks with non-mutating sample payloads.
+- `scripts/smoke_mcp_capabilities.sh`: verifies MCP `initialize`, expected `list_tools`, and safe `call_tool` probes.
+- `scripts/smoke_hooks.sh`: verifies repository and installed Serena/Flow hooks with non-mutating sample payloads and temporary git lifecycle checks.
+- `scripts/smoke_clean_bootstrap.sh`: verifies clean clone, temporary system install, doctor, and MCP registration from committed state.
+- `.github/workflows/validate.yml`: verifies marketplace install and smoke checks in GitHub Actions.
 - `diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates repository marketplace and plugin manifests.
 - `rg -n 'ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' .serena/memories plugins .agents`: should show only policy text and placeholders, not real credentials.
