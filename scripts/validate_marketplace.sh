@@ -14,7 +14,7 @@ step() {
 }
 
 step "JSON metadata"
-jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json plugins/rldyour-mcps/.mcp.json plugins/rldyour-serena-mcp/hooks.json plugins/rldyour-flow/hooks.json
+jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json plugins/rldyour-mcps/.mcp.json plugins/rldyour-serena-mcp/hooks.json plugins/rldyour-flow/hooks.json pyrightconfig.json
 
 step "Skill frontmatter"
 skill_count=0
@@ -271,6 +271,9 @@ if errors:
 print(f"MCP config in sync: {len(repo_servers)} servers")
 PY
 
+step "MCP runtime smoke"
+scripts/smoke_mcp_runtime.sh --codex-home "$CODEX_HOME_DIR"
+
 step "Plugin cache sync"
 if [ -d "$CACHE_ROOT" ]; then
   for plugin_dir in plugins/rldyour-*; do
@@ -287,6 +290,9 @@ else
   printf 'cache root missing: %s\n' "$CACHE_ROOT" >&2
   exit 1
 fi
+
+step "Hook smoke"
+scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
 
 step "Secret pattern scan"
 if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer [A-Za-z0-9._-]+' .serena/memories plugins .agents AGENTS.md README.md scripts system; then

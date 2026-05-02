@@ -51,6 +51,9 @@ Additional targeted checks:
 
 ```bash
 codex mcp list
+scripts/smoke_mcp_runtime.sh
+scripts/smoke_hooks.sh
+scripts/bootstrap_check.sh --apply
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool
 plugins/rldyour-lsps/scripts/check_lsps.sh

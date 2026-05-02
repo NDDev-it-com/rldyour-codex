@@ -20,6 +20,7 @@ Use this skill without waiting for an explicit `$web-research` call when the req
 - Research non-technical topics, products, companies, people, market information, legal/security updates, standards, or recommendations.
 - Validate a claim where the answer may have changed recently.
 - Supplement technical MCP research with changelogs, issue threads, vendor announcements, advisories, pricing, or release notes.
+- Research OpenAI or Codex current documentation; use `openaiDeveloperDocs` first when available and fall back only to official OpenAI web pages before broader search.
 
 If the request is primarily technical and concerns docs, APIs, frameworks, repository architecture, or GitHub usage patterns, use `tech-research` first and add this skill only when broader web sources are needed.
 
@@ -34,6 +35,7 @@ If the request is technical and concerns a library, API, framework, open-source 
 1. Define scope: what the user wants to solve, what result is needed, and which questions actually block the answer or implementation.
 2. Form search hypotheses: which sources should exist, which domains are likely authoritative, and which dates or versions matter.
 3. Search in multiple passes: broad query, refined query, and domain-specific query across official sites, repositories, docs, standards, papers, changelogs, or issue trackers.
+   - For OpenAI or Codex topics, query `openaiDeveloperDocs` first, then use official OpenAI web pages only when the MCP does not answer the question.
 4. Open and read sources instead of answering from snippets. For unstable topics, compare publication dates, event dates, and the current date.
 5. Reject weak sources: SEO aggregators, AI rewrites, unverified posts, and outdated articles when a more primary source exists.
 6. Compare sources. If sources conflict, identify the conflict and choose the more reliable source.
