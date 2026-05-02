@@ -1,0 +1,14 @@
+interface:
+  display_name: "Implementation Discipline"
+  short_description: "Keep implementation synchronized"
+  default_prompt: "Use $implementation-discipline to synchronize code, contracts, tests, docs, and generated artifacts."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Trace changed symbols and integration paths."
+
+policy:
+  allow_implicit_invocation: true
+

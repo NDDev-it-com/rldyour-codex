@@ -1,0 +1,20 @@
+interface:
+  display_name: "Verification Gates"
+  short_description: "Choose and run quality gates"
+  default_prompt: "Use $verification-quality-gates to verify tests, types, lint, browser, security, and design evidence."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Affected code and test scope inspection."
+    - type: "mcp"
+      value: "playwright"
+      description: "Browser validation when UI behavior changes."
+    - type: "mcp"
+      value: "semgrep"
+      description: "Security scanning when relevant."
+
+policy:
+  allow_implicit_invocation: true
+
