@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Last commit: c4ba7bd fix(serena): make knowledge commit staging robust
 Scope: plugins/rldyour-serena-mcp
 Area: MCP
 -->
@@ -68,7 +68,7 @@ Ignored runtime state:
 
 `serena_memory_state.py` treats knowledge as current when a memory references the current HEAD, when newest synced metadata equals current HEAD, or when changes since the newest synced metadata are knowledge-only.
 
-`commit_serena_knowledge.sh` refuses to auto-commit if non-Serena-knowledge changes are present. It commits only `.serena/memories`, `.serena/plans`, and `.serena/research` with message `chore(serena): sync project knowledge after <head>`.
+`commit_serena_knowledge.sh` refuses to auto-commit if non-Serena-knowledge changes are present. It commits only existing Serena knowledge directories from `.serena/memories`, `.serena/plans`, and `.serena/research` with message `chore(serena): sync project knowledge after <head>`. Missing optional knowledge directories do not prevent staging existing memory changes.
 
 `serena_memory_state.py` parses `Last commit:` metadata using a 7-to-40 hex character commit SHA. Missing or unresolvable metadata is ignored rather than treated as authoritative.
 
