@@ -1,0 +1,14 @@
+interface:
+  display_name: "Flow Architecture Review"
+  short_description: "Review architecture boundaries"
+  default_prompt: "Use $flow-architecture-review to check architecture, dependencies, layers, and data flow."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Symbol and reference tracing for architecture review."
+
+policy:
+  allow_implicit_invocation: true
+

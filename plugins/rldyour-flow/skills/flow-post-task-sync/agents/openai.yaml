@@ -1,0 +1,14 @@
+interface:
+  display_name: "Flow Post-Task Sync"
+  short_description: "Finalize memories, docs, git, GitHub"
+  default_prompt: "Use $flow-post-task-sync to finalize Serena, AGENTS.md, CLAUDE.md, git, and GitHub state."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Memory freshness and project knowledge source of truth."
+
+policy:
+  allow_implicit_invocation: true
+

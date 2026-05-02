@@ -1,0 +1,14 @@
+interface:
+  display_name: "Flow Consistency Review"
+  short_description: "Review conventions and patterns"
+  default_prompt: "Use $flow-consistency-review to verify naming, style, and project pattern consistency."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Project pattern inspection and symbol overview."
+
+policy:
+  allow_implicit_invocation: true
+

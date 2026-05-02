@@ -1,0 +1,14 @@
+interface:
+  display_name: "LSP Health Check"
+  short_description: "Verify LSP commands and project prerequisites"
+  default_prompt: "Use $lsp-health-check to verify local language servers and project prerequisites."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Serena semantic reliability depends on working language servers for supported languages."
+
+policy:
+  allow_implicit_invocation: true
+

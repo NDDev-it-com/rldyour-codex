@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ "${RLDYOUR_SKIP_STOP_GATES:-0}" = "1" ] || [ "${RLDYOUR_SKIP_FLOW_SYNC:-0}" = "1" ]; then
+  exit 0
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  exit 0
+fi
+
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+cd "$ROOT"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+STATE_SCRIPT="$PLUGIN_DIR/scripts/flow_post_task_state.py"
+SYNC_MARKER=".serena/.flow_sync_marker"
+HOOK_INPUT=$(cat 2>/dev/null || true)
+
+if [ ! -f "$STATE_SCRIPT" ]; then
+  exit 0
+fi
+
+STATE_JSON=$(python3 "$STATE_SCRIPT" 2>/dev/null || true)
+if [ -z "$STATE_JSON" ]; then
+  exit 0
+fi
+
+SERENA_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("serena_current") else "false")' 2>/dev/null || echo "true")
+NEEDS_SYNC=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("needs_flow_sync") else "false")' 2>/dev/null || echo "false")
+FINGERPRINT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("fingerprint", ""))' 2>/dev/null || true)
+HEAD_SHA=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
+
+# Serena owns memory freshness. Flow waits for Serena Stop hook to finish first.
+if [ "$SERENA_CURRENT" != "true" ]; then
+  exit 0
+fi
+
+if [ "$NEEDS_SYNC" != "true" ] || [ -z "$FINGERPRINT" ]; then
+  rm -f "$SYNC_MARKER" .serena/.flow_post_task_state.json
+  exit 0
+fi
+
+STOP_HOOK_ACTIVE=$(printf "%s" "$HOOK_INPUT" | python3 -c '
+import json
+import sys
+
+try:
+    payload = json.load(sys.stdin)
+except Exception:
+    payload = {}
+
+print("true" if payload.get("stop_hook_active") is True else "false")
+' 2>/dev/null || echo "false")
+
+if [ "$STOP_HOOK_ACTIVE" = "true" ] && [ -f "$SYNC_MARKER" ] && [ "$(cat "$SYNC_MARKER" 2>/dev/null || true)" = "$FINGERPRINT" ]; then
+  python3 <<'PY'
+import json
+
+print(json.dumps({
+    "systemMessage": (
+        "rldyour-flow post-task sync was already requested for this state. "
+        "Allowing stop now to avoid a Stop-hook loop."
+    )
+}))
+PY
+  exit 0
+fi
+
+mkdir -p .serena
+printf "%s\n" "$FINGERPRINT" > "$SYNC_MARKER"
+printf "%s" "$STATE_JSON" > .serena/.flow_post_task_state.json
+
+SUMMARY=$(printf "%s" "$STATE_JSON" | python3 -c '
+import json
+import sys
+
+payload = json.load(sys.stdin)
+print(json.dumps({
+    "branch": payload.get("branch"),
+    "head": payload.get("head_sha"),
+    "dirty_files": payload.get("dirty_files", []),
+    "doc_files_present": payload.get("doc_files_present", []),
+    "doc_files_changed": payload.get("doc_files_changed", []),
+    "ahead": payload.get("ahead", 0),
+    "behind": payload.get("behind", 0),
+    "worktree_count": payload.get("worktree_count", 0),
+}, ensure_ascii=False, indent=2))
+')
+
+MESSAGE="[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD ${HEAD_SHA:-unknown}; now synchronize project docs and git state.
+
+Current state:
+${SUMMARY}
+
+Continue this turn and run the \$flow-post-task-sync workflow now.
+
+Required order:
+1. Verify Serena memories are current. Do not duplicate Serena memory sync.
+2. Inspect AGENTS.md and CLAUDE.md if present. Update them only with verified project rules, commands, deploy contracts, quality gates, or workflow facts that changed during this task.
+3. Review all uncommitted changes. Do not commit secrets, runtime markers, browser artifacts, or accidental junk.
+4. Run applicable quality checks or document why a check is unavailable.
+5. Commit atomically with Conventional Commits. Keep Serena knowledge/docs sync commits separate when useful.
+6. Push/synchronize with GitHub using git/gh when an upstream exists.
+7. Clean merged worktrees and merged branches only after confirming they are merged and safe to remove.
+8. Stop again after sync or report the exact blocker."
+
+echo "$MESSAGE" >&2
+exit 2

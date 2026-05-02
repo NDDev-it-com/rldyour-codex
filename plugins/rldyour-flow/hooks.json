@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'for p in \"plugins/rldyour-flow/hooks/stop_post_task_sync.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/hooks/stop_post_task_sync.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "timeout": 10,
+            "statusMessage": "Checking rldyour flow post-task sync"
+          }
+        ]
+      }
+    ]
+  }
+}

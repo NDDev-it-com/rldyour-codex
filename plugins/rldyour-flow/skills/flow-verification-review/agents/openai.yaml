@@ -1,0 +1,20 @@
+interface:
+  display_name: "Flow Verification Review"
+  short_description: "Review tests and evidence"
+  default_prompt: "Use $flow-verification-review to check tests, quality gates, browser evidence, and manual validation."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Trace public symbols and affected test scope."
+    - type: "mcp"
+      value: "playwright"
+      description: "Browser validation evidence when needed."
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Runtime evidence when needed."
+
+policy:
+  allow_implicit_invocation: true
+

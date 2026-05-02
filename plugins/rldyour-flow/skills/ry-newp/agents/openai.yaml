@@ -1,0 +1,23 @@
+interface:
+  display_name: "ry-newp"
+  short_description: "New project planning workflow"
+  default_prompt: "Use $ry-newp to plan a new project with architecture, questions, docs, and optional scaffold."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "context7"
+      description: "Official docs for current technology choices."
+    - type: "mcp"
+      value: "deepwiki"
+      description: "Architecture of comparable open-source repositories."
+    - type: "mcp"
+      value: "grep"
+      description: "Real-world implementation patterns."
+    - type: "mcp"
+      value: "serena"
+      description: "Project memory and later scaffold understanding."
+
+policy:
+  allow_implicit_invocation: true
+

@@ -22,3 +22,5 @@ browser/**
 .serena/.auto_sync_head
 .serena/.active_workflow_intent.json
 .serena/.dirty_stop_ack
+.serena/.flow_sync_marker
+.serena/.flow_post_task_state.json
