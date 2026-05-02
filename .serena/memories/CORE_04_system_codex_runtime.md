@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Last updated: 2026-05-03
+Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
 Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -40,6 +40,14 @@ This memory records the verified system Codex runtime state for the local `rldyo
 
 System Codex is configured with `model = "gpt-5.5"` and `model_reasoning_effort = "xhigh"`.
 
+System Codex is intentionally configured for owner-controlled YOLO execution:
+
+- `profile = "rldyour-yolo"`.
+- `approval_policy = "never"`.
+- `sandbox_mode = "danger-full-access"`.
+- `default_permissions = ":danger-no-sandbox"`.
+- `[profiles.rldyour-yolo]` repeats the same approval, sandbox, and default permission values so the named profile remains self-contained.
+
 Trusted projects in system config:
 
 - `/Users/rldyourmnd`.
@@ -61,7 +69,7 @@ Enabled plugin set in system config:
 
 System Codex has `[features] codex_hooks = true`, so hook-capable plugins can run their Codex lifecycle hooks after restart.
 
-`/Users/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`. The global instructions describe `rldyour-flow` scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
+`/Users/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`. The global instructions describe `rldyour-flow` scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, post-task synchronization, `openaiDeveloperDocs` routing for OpenAI/Codex documentation, and the owner-requested YOLO execution defaults.
 
 The registered marketplace is local:
 
@@ -82,7 +90,7 @@ The active plugin cache contains local copies for all nine rldyour plugins:
 
 The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, and cache sync for every rldyour plugin. The LSP health check reports no missing commands and one expected project warning: this marketplace repository has Python scripts but no `pyproject.toml` or `pyrightconfig.json`.
 
-After commit `81c5e10`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
+After commit `3a2497e`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`, patched YOLO permission defaults, and installed all twelve MCP servers. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
 
 `scripts/doctor_system_codex.sh` passed on the current machine with zero warnings and zero failures after `scripts/install_system_codex.sh --apply`. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
 
@@ -103,12 +111,14 @@ Remote MCP URLs:
 - `deepwiki`: `https://mcp.deepwiki.com/mcp`.
 - `grep`: `https://mcp.grep.app`.
 - `figma`: `https://mcp.figma.com/mcp`.
+- `openaiDeveloperDocs`: `https://developers.openai.com/mcp`.
 
 Environment variables and auth:
 
 - `context7` references `CONTEXT7_API_KEY` through `env_vars`; no raw key should be stored in repository files or memories.
 - `sequential-thinking` sets `DISABLE_THOUGHT_LOGGING`.
 - `figma` is registered as the remote MCP URL `https://mcp.figma.com/mcp`. Do not store Figma OAuth tokens or bearer tokens in this repository or in memories.
+- `openaiDeveloperDocs` is registered as the remote MCP URL `https://developers.openai.com/mcp`; it does not require a repository secret.
 
 ## Invariants
 
@@ -119,6 +129,7 @@ Environment variables and auth:
 - Keep hooks enabled only through explicit system config, not through hidden repository side effects.
 - Keep `system/AGENTS.md` as the tracked source and `~/.codex/AGENTS.md` as installed output.
 - After changing plugin hooks, run `scripts/install_system_codex.sh --apply` and restart Codex so the installed cache and active hook registry are reloaded.
+- YOLO permission defaults are intentional owner policy. Do not weaken or remove them unless the owner explicitly changes that policy.
 
 ## Change Rules
 
@@ -131,6 +142,7 @@ Environment variables and auth:
 ## Verification
 
 - `codex mcp list`: verifies enabled MCP server names, commands, URLs, status, and auth mode.
+- `codex mcp get openaiDeveloperDocs`: verifies the official OpenAI Docs MCP endpoint.
 - `scripts/validate_marketplace.sh`: verifies the full repository, installed MCP config, and installed-cache consistency contract.
 - `scripts/doctor_system_codex.sh`: verifies the installed system Codex state.
 - `diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.

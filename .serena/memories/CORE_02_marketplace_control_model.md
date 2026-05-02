@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Last updated: 2026-05-03
+Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
 Scope: README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -22,7 +22,7 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 - `.agents/plugins/marketplace.json`: active installable plugin catalog and plugin order.
 - `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, linked capabilities, and plugin interface metadata.
 - `.gitignore`: repository-level ignored runtime artifacts, browser evidence, env files, and Serena runtime state.
-- `/Users/rldyourmnd/.codex/config.toml`: active local marketplace registration and enabled plugin list for system Codex.
+- `/Users/rldyourmnd/.codex/config.toml`: active local marketplace registration, YOLO permission defaults, enabled plugin list, and MCP runtime config for system Codex.
 
 ## Entry Points
 
@@ -77,7 +77,7 @@ Plugin manifests use `.codex-plugin/plugin.json`. Current plugin capability boun
 
 Current plugin manifest versions:
 
-- `rldyour-mcps`: `0.1.4`.
+- `rldyour-mcps`: `0.1.5`.
 - `rldyour-explore`: `0.1.2`.
 - `rldyour-serena-mcp`: `0.1.2`.
 - `rldyour-security`: `0.1.1`.
@@ -89,13 +89,13 @@ Current plugin manifest versions:
 
 `rldyour-flow` `0.1.2` exposes deep `ry-init` context packs, `ry-start` context sufficiency gates, advisory SessionStart context, advisory PostToolUse commit advice, reviewer workflows, deployment workflow, and post-task sync.
 
-Root `README.md` describes the active catalog, planned architecture, system install workflow, and the portable MCP source-of-truth rule for `plugins/rldyour-mcps/.mcp.json`.
+Root `README.md` describes the active catalog, planned architecture, system install workflow, the portable MCP source-of-truth rule for `plugins/rldyour-mcps/.mcp.json`, and the owner-requested YOLO defaults applied by the installer.
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
 `scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, plugin manifests, skill frontmatter, compact bilingual routing descriptions, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, MCP config sync, plugin cache sync, secret patterns, and whitespace.
 
-`scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, plugins, MCP, cache, and repository validation.
+`scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups, including YOLO permission defaults and twelve MCP servers. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, YOLO defaults, plugins, MCP, cache, and repository validation.
 
 ## Invariants
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: 81c5e10 chore(validation): enforce MCP config sync
+Last updated: 2026-05-03
+Last commit: 3a2497e feat(system): enable OpenAI docs MCP and yolo mode
 Scope: plugins/rldyour-flow, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -44,6 +44,8 @@ The owner communicates with Codex in Russian. Plugin docs, memory files, code co
 Commit `6af53aa feat(skills): optimize plugin routing metadata` compacted all 37 callable rldyour skill descriptions. The current maximum description length is 187 characters and the average length is 166.8 characters. `scripts/validate_marketplace.sh` now fails when a callable rldyour skill description is longer than 240 characters, is duplicated, lacks Cyrillic trigger text, or lacks English trigger text.
 
 `rldyour-mcps` has no skills and cannot auto-invoke by itself. It is the runtime dependency layer for MCP tools used by automatic workflow plugins.
+
+`openaiDeveloperDocs` is part of `rldyour-mcps` and is the preferred runtime MCP for OpenAI, Codex, API, model, plugin, skill, MCP, hook, and config documentation. The global `system/AGENTS.md` routes OpenAI/Codex documentation questions to OpenAI Docs MCP before general web search.
 
 `rldyour-lsps` has no MCP transport definitions. It is a skills-only workflow layer for local LSP executables, project prerequisite checks, and Serena LSP integration guidance.
 
