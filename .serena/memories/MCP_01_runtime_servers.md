@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 718264b feat(system): harden codex runtime validation
+Last commit: abb4db6 fix(mcp): disable serena dashboard in runtime
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
@@ -101,7 +101,7 @@ Startup timeouts are explicit to reduce startup race failures:
 - Remote MCP servers use `startup_timeout_sec: 60`.
 - Tool timeouts are 120 or 180 seconds depending on expected workload.
 
-Serena starts headless with `--open-web-dashboard False` and `--project-from-cwd --context=codex`.
+Serena starts headless with `--enable-web-dashboard False`, `--open-web-dashboard False`, and `--project-from-cwd --context=codex`.
 
 Playwright starts headless with `--caps=network,storage,testing,devtools`.
 
@@ -121,7 +121,7 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 
 `rldyour-mcps` is the runtime dependency layer for automatic workflow plugins such as `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, and `rldyour-design`.
 
-`scripts/smoke_clean_bootstrap.sh` validates this MCP runtime layer from committed source by installing into a temporary `CODEX_HOME`, running doctor with list-only capability smoke, and verifying `codex mcp list`.
+`scripts/smoke_clean_bootstrap.sh` validates this MCP runtime layer from committed source by installing into a temporary `CODEX_HOME`, running doctor with list-only capability smoke and a temporary `SERENA_HOME`, and verifying `codex mcp list`. The temporary `SERENA_HOME` prevents clean-bootstrap probes from writing temporary clone paths into `/Users/rldyourmnd/.serena/serena_config.yml`.
 
 `.github/workflows/validate.yml` runs MCP registration, pinning, runtime smoke, and list-only capability smoke in CI through `scripts/validate_marketplace.sh` and `scripts/doctor_system_codex.sh`.
 

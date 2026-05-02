@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 718264b feat(system): harden codex runtime validation
+Last commit: abb4db6 fix(mcp): disable serena dashboard in runtime
 Scope: README.md, AGENTS.md, system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -107,7 +107,7 @@ Repository documentation, plugin metadata, code comments, commits, memory files,
 
 `scripts/bootstrap_check.sh --dry-run` is the non-mutating bootstrap preview. `scripts/bootstrap_check.sh --apply` is the end-to-end current-machine bootstrap smoke flow: install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, Serena state, Flow state, and git status.
 
-`scripts/smoke_clean_bootstrap.sh` is the committed-state bootstrap proof. It requires a clean working tree, clones the current repository into a temporary path, installs into a temporary `CODEX_HOME`, runs doctor in list-only MCP capability mode, verifies `codex mcp list`, and removes the temporary workspace by default.
+`scripts/smoke_clean_bootstrap.sh` is the committed-state bootstrap proof. It requires a clean working tree, clones the current repository into a temporary path, installs into a temporary `CODEX_HOME`, runs doctor in list-only MCP capability mode with a temporary `SERENA_HOME`, verifies `codex mcp list`, and removes the temporary workspace by default.
 
 `.github/workflows/validate.yml` runs on push to `main`, pull requests to `main`, and manual dispatch. It uses temporary Codex state, installs pinned Codex CLI from `config/mcp-runtime-versions.env`, applies the marketplace, runs marketplace validation, runs doctor, and runs clean bootstrap smoke.
 

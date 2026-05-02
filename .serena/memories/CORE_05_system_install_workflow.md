@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 718264b feat(system): harden codex runtime validation
+Last commit: abb4db6 fix(mcp): disable serena dashboard in runtime
 Scope: system/AGENTS.md, .github/workflows/validate.yml, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, plugins/rldyour-explore, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -81,7 +81,7 @@ Apply mode:
 
 `plugins/rldyour-lsps/scripts/check_lsps.sh` reports zero missing commands and zero warnings for this repository because `pyrightconfig.json` defines the Python script scope.
 
-`scripts/smoke_clean_bootstrap.sh` requires a clean working tree, clones the committed repository into a temporary directory, installs into a temporary `CODEX_HOME`, runs doctor with list-only MCP capability mode, verifies `codex mcp list`, and removes the temporary workspace unless `--keep` is used.
+`scripts/smoke_clean_bootstrap.sh` requires a clean working tree, clones the committed repository into a temporary directory, installs into a temporary `CODEX_HOME`, runs doctor with list-only MCP capability mode and a temporary `SERENA_HOME`, verifies `codex mcp list`, and removes the temporary workspace unless `--keep` is used. The temporary `SERENA_HOME` prevents bootstrap probes from modifying the owner's global Serena project registry.
 
 `.github/workflows/validate.yml` uses a temporary `CODEX_HOME` and runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI from `config/mcp-runtime-versions.env`, installs the marketplace into temporary state, runs `scripts/validate_marketplace.sh`, runs `scripts/doctor_system_codex.sh`, and runs `scripts/smoke_clean_bootstrap.sh`.
 
@@ -102,6 +102,8 @@ The installer also manages the owner-requested YOLO defaults:
 `CONTEXT7_API_KEY` is referenced by name only. Figma, GitHub, Gmail, and other auth remain runtime auth outside this repository. `openaiDeveloperDocs` uses the official remote endpoint `https://developers.openai.com/mcp` and does not require a repository secret.
 
 `plugins/rldyour-mcps/.mcp.json` is the portable MCP source of truth. Installed `CODEX_HOME/config.toml` is the machine-specific projection of that source. `config/mcp-runtime-versions.env` records the package versions that must be used when updating pinned MCP runtime specs.
+
+Serena MCP is installed with `--enable-web-dashboard False --open-web-dashboard False`, so a fresh Serena configuration cannot start the web dashboard during clean bootstrap or normal Codex startup.
 
 `scripts/smoke_mcp_runtime.sh` compares repository MCP server names to installed system config, runs `codex mcp get <server>` for every server, checks local command executables, and optionally checks remote MCP URLs. Remote HTTP responses below 500 are accepted as reachable endpoint negotiation responses.
 
