@@ -37,6 +37,8 @@ jobs:
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: false
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2.2.0
