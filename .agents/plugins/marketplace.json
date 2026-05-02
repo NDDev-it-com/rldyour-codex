@@ -75,6 +75,30 @@
         "authentication": "ON_USE"
       },
       "category": "Design"
+    },
+    {
+      "name": "rldyour-lsps",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rldyour-lsps"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "rldyour-flow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rldyour-flow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Developer Tools"
     }
   ]
 }

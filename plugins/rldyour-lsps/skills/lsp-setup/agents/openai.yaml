@@ -1,0 +1,13 @@
+interface:
+  display_name: "LSP Setup"
+  short_description: "Install or update LSP tooling explicitly"
+  default_prompt: "Use $lsp-setup to install missing language servers with the brew-first profile."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Serena semantic workflows benefit from stable local language server executables."
+
+policy:
+  allow_implicit_invocation: true

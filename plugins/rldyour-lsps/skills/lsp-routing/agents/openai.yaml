@@ -1,0 +1,14 @@
+interface:
+  display_name: "LSP Routing"
+  short_description: "Auto route language-server workflows"
+  default_prompt: "Use $lsp-routing to choose the correct language-server workflow for this project."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Preferred semantic code workflow when the language is supported by Serena."
+
+policy:
+  allow_implicit_invocation: true
+

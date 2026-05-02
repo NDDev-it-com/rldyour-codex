@@ -1,0 +1,32 @@
+interface:
+  display_name: "ry-start"
+  short_description: "Full feature lifecycle workflow"
+  default_prompt: "Use $ry-start to implement this task through research, plan, quality gates, review, and sync."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Semantic code inspection and precise editing."
+    - type: "mcp"
+      value: "context7"
+      description: "Official documentation research."
+    - type: "mcp"
+      value: "deepwiki"
+      description: "Repository architecture research."
+    - type: "mcp"
+      value: "grep"
+      description: "Production usage pattern search."
+    - type: "mcp"
+      value: "playwright"
+      description: "Browser validation when UI-visible work changes."
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Runtime/browser debugging and performance checks."
+    - type: "mcp"
+      value: "semgrep"
+      description: "Security scanning when applicable."
+
+policy:
+  allow_implicit_invocation: true
+

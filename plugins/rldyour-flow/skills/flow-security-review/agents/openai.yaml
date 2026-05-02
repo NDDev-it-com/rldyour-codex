@@ -1,0 +1,16 @@
+interface:
+  display_name: "Flow Security Review"
+  short_description: "Review security-sensitive changes"
+  default_prompt: "Use $flow-security-review to review auth, secrets, input validation, and OWASP-sensitive code."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Source-to-sink code inspection."
+    - type: "mcp"
+      value: "semgrep"
+      description: "Static security scanning when applicable."
+
+policy:
+  allow_implicit_invocation: true

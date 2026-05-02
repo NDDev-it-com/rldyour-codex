@@ -1,0 +1,14 @@
+interface:
+  display_name: "Serena LSP Integration"
+  short_description: "Align Serena with real LSP support"
+  default_prompt: "Use $serena-lsp-integration to align Serena language keys and LSP prerequisites."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Semantic code inspection and editing through supported language-server backed keys."
+
+policy:
+  allow_implicit_invocation: true
+

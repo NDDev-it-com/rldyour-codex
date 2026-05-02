@@ -1,0 +1,20 @@
+interface:
+  display_name: "ry-review"
+  short_description: "Deep report-only code review"
+  default_prompt: "Use $ry-review to review the current diff and affected integration graph."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Semantic diff and integration graph inspection."
+    - type: "mcp"
+      value: "context7"
+      description: "Official docs for review-sensitive technical claims."
+    - type: "mcp"
+      value: "grep"
+      description: "Real-world patterns for comparison."
+
+policy:
+  allow_implicit_invocation: true
+

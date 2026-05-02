@@ -1,0 +1,14 @@
+interface:
+  display_name: "Flow Integration Review"
+  short_description: "Review cross-layer synchronization"
+  default_prompt: "Use $flow-integration-review to verify contracts, schemas, configs, and integration paths."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Reference tracing across integration boundaries."
+
+policy:
+  allow_implicit_invocation: true
+

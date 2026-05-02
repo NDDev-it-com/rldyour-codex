@@ -1,0 +1,63 @@
+{
+  "name": "rldyour-flow",
+  "version": "0.1.0",
+  "description": "Autonomous Russian-first SDLC workflow for Codex: ry-init, ry-start, ry-newp, ry-review, ry-deploy, reviewer skills, and post-task sync.",
+  "author": {
+    "name": "rldyourmnd",
+    "email": "rldyourmnd@users.noreply.github.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "workflow",
+    "sdlc",
+    "ry-init",
+    "ry-start",
+    "ry-newp",
+    "ry-review",
+    "ry-deploy",
+    "serena",
+    "worktree",
+    "pull-request",
+    "deployment",
+    "code-review",
+    "post-task-sync",
+    "automatic-invocation",
+    "russian",
+    "rldyour"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks.json",
+  "interface": {
+    "displayName": "rldyour Flow",
+    "shortDescription": "Auto SDLC commands: init, start, review, deploy",
+    "longDescription": "This plugin defines the rldyour autonomous SDLC workflow for Codex. It provides Russian-first command skills for ry-init, ry-start, ry-newp, ry-review, and ry-deploy, plus reviewer skills for architecture, implementation quality, consistency, integration synchronization, verification/manual tests, and security. The workflow uses Serena-first code understanding, technical and web research, LSP quality gates, browser validation, security review, GitHub and worktree workflows, server deployment verification, and post-task synchronization. Its Stop hook does not compete with the Serena memory hook: it waits for Serena memories to become current, then asks Codex to synchronize AGENTS.md, CLAUDE.md, git commits, GitHub, and cleanup state without creating an infinite hook loop.",
+    "developerName": "rldyourmnd",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Automatic workflow skill routing",
+      "Skills",
+      "Hooks",
+      "Serena-first initialization",
+      "Feature lifecycle orchestration",
+      "New project planning",
+      "Multi-reviewer workflow",
+      "Deployment workflow",
+      "Post-task sync",
+      "Russian user-facing workflow"
+    ],
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "defaultPrompt": [
+      "Use $ry-init to initialize the current project scope.",
+      "Use $ry-start to implement a task through the full quality workflow.",
+      "Use $ry-review to review the current diff and integration graph."
+    ],
+    "brandColor": "#0F172A",
+    "screenshots": []
+  }
+}

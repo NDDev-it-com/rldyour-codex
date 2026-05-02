@@ -24,6 +24,8 @@ The active marketplace currently contains:
 - `rldyour-security`: non-blocking OWASP-oriented secure implementation guidance and `ry-sec-review` security review skill.
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized token-based design system, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
+- `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
+- `rldyour-flow`: autonomous SDLC command workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, reviewer tracks, and post-task synchronization.
 
 ## Planned Plugin Architecture
 
@@ -33,13 +35,17 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-serena-mcp`: created. Serena-specific workflow layer that depends on the Serena MCP server from `rldyour-mcps`.
 - `rldyour-browser`: created. Browser validation, pixel-perfect checks, functional checks, business-logic verification, and runtime debugging through Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser evidence.
-- `rldyour-lsps`: language-server configuration for navigation, diagnostics, and analysis when separate LSP setup is needed.
+- `rldyour-lsps`: created. Language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
+- `rldyour-flow`: created. Command-like SDLC skills, reviewer workflows, and post-task sync hook for Serena/docs/git/GitHub cleanup.
 - `rldyour-rules`: hard rules for project work, coding standards, verification, and system `AGENTS.md`.
-- `rldyour-flow`: command-like skills such as `ry-start`, `ry-init`, `ry-newp`, `ry-review`, and `ry-deploy`.
-- `rldyour-memories`: future memory policies if project memory behavior grows beyond the Serena-specific plugin.
-- `rldyour-hooks`: general Codex hooks and trigger policies that are not specific to Serena.
 - `rldyour-security`: created. Skills-only security guidance, OWASP Top 10 coverage, and defensive review workflow.
 - `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.
+
+Resolved architecture decisions:
+
+- No separate `rldyour-hooks` plugin. Hooks live inside the plugin that owns the lifecycle behavior.
+- No separate `rldyour-memories` plugin. Project memory behavior belongs to `rldyour-serena-mcp`.
+- No `rldyour-sec` alias plugin. Security behavior belongs to `rldyour-security`.
 
 ## MCP Skill Strategy
 
