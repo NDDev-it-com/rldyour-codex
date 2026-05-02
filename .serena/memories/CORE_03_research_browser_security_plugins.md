@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-04-29
-Last commit: b1bf776 docs(serena): record plugin auto routing
+Last updated: 2026-05-02
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->
@@ -9,7 +9,7 @@ Area: CORE
 
 ## Purpose
 
-`rldyour-explore`, `rldyour-browser`, and `rldyour-security` are skills-only workflow plugins that provide automatic research, browser validation/debugging, and security review guidance. They depend on MCP transports from `rldyour-mcps` instead of declaring duplicate MCP servers.
+`rldyour-explore`, `rldyour-browser`, and `rldyour-security` are skills-only workflow plugins that provide automatic research, browser validation/debugging, and security review guidance. They depend on MCP transports from `rldyour-mcps` instead of declaring duplicate MCP servers and are designed to activate from Russian or English user requests.
 
 ## Source Of Truth
 
@@ -39,9 +39,9 @@ Security:
 
 All skills in these plugins keep `policy.allow_implicit_invocation: true`.
 
-`tech-research` is the first choice for technical research. It uses Context7 for official documentation, DeepWiki for repository architecture, and Grep by Vercel for real GitHub usage patterns. Use `web-research` in addition when technical work needs fresh external sources beyond those MCPs.
+`tech-research` is the first choice for technical research. It uses Context7 for official documentation, DeepWiki for repository architecture, and Grep by Vercel for real GitHub usage patterns. Use `web-research` in addition when technical work needs fresh external sources beyond those MCPs or when the user explicitly asks to study the internet.
 
-`web-research` first defines scope and questions, then searches multiple passes, reads authoritative sources, rejects weak sources, compares conflicts, and answers in Russian with links.
+`web-research` first defines scope and questions, then searches in multiple passes, reads authoritative sources, rejects weak sources, compares conflicts, and answers in Russian with links. It is the correct path for current information, recommendations, standards, policies, pricing, legal/security updates, and any unstable fact.
 
 `browser-validation` uses Playwright MCP as primary evidence for user flows, screenshots, responsive checks, accessibility snapshots, testing assertions, storage, and network checks. It adds Chrome DevTools MCP when console, network, runtime, layout, hydration, or performance diagnosis is needed.
 
@@ -58,6 +58,8 @@ Research output stays Russian for user-facing answers. Source facts and engineer
 Browser artifacts must be written under `browser/`. Do not commit screenshots, traces, videos, PDFs, HAR-like exports, or temporary browser evidence unless the owner explicitly asks.
 
 Security review should use Serena for semantic code mapping when available and Semgrep as optional SAST support. Scanner findings still require manual validation.
+
+`rldyour-browser` requires screenshots and temporary browser evidence under `browser/`. Repository `.gitignore` must keep browser evidence out of commits unless the owner explicitly requests otherwise.
 
 ## Invariants
 

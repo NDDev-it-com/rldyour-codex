@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-04-29
-Last commit: 29b3027 docs(design): improve automatic skill routing
+Last updated: 2026-05-02
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
 Scope: plugins/rldyour-design
 Area: DESIGN
 -->
@@ -30,7 +30,9 @@ Area: DESIGN
 
 The plugin is optimized for automatic routing. User-facing conversation stays in Russian, while plugin documentation, code, token files, comments, and commits stay in English.
 
-Figma MCP is treated as the source of truth when Figma context is available. Figma output must be adapted into centralized design tokens, strict FSD placement, shadcn/ui primitives, optional ReactBits motion, and browser validation rather than pasted blindly.
+Figma MCP is treated as the source of truth when Figma context is available. Figma output must be adapted into a centralized design system, strict FSD placement, shadcn/ui primitives, optional ReactBits motion, and browser validation rather than pasted blindly.
+
+The owner selected centralized design tokens as mandatory for meaningful design-system work. Tokens should cover colors, typography, spacing, radii, shadows, motion, and component variants when the project has or needs a design system.
 
 Meaningful visible frontend work is not considered complete without browser evidence or an explicit validation blocker.
 
@@ -49,6 +51,7 @@ Design screenshots and browser evidence belong under `browser/` and must not be 
 - Keep design workflow docs in English and user-facing responses in Russian.
 - Keep shadcn/ui as the primary UI primitive source and ReactBits as a selective motion/interactive component source.
 - Preserve strict FSD layers: `app`, `pages`, `widgets`, `features`, `entities`, `shared`; no `processes`.
+- Keep project-specific existing frontend architecture as the source of truth when it is coherent; use FSD as the default for new areas and refactors.
 
 ## Change Rules
 

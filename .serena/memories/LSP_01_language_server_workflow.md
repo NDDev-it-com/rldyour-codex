@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-02
-Last commit: 5006272 feat(codex): add lsp and flow workflow plugins
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
 Scope: plugins/rldyour-lsps, .agents/plugins/marketplace.json, README.md
 Area: LSP
 -->
@@ -45,6 +45,8 @@ The active system was verified with `plugins/rldyour-lsps/scripts/check_lsps.sh`
 
 The current repository still warns because Python files exist under plugin scripts but the repo has no `pyproject.toml` or `pyrightconfig.json`.
 
+`check_lsps.sh` exits with failure only for missing required executable commands. Project prerequisite warnings are reported but do not fail the command.
+
 ## Contracts And Data
 
 Long-lived LSP sessions must use stable local executables. First-run `bunx` or `uvx` package-installing commands must not be used as long-lived `stdio` LSP runtimes because setup logs can corrupt protocol handshakes.
@@ -54,6 +56,8 @@ Installation is explicit only. `lsp-setup` may run the brew-first installer afte
 The brew-first install script manages `go`, `gopls`, `shellcheck`, `vscode-langservers-extracted`, `docker-language-server`, `taplo`, `marksman`, `qtdeclarative`, and `qtlanguageserver`. When `rustup` is available, it also runs `rustup component add rust-src rust-analyzer`.
 
 `.serena/project.yml` must not be silently mutated by this plugin. It may be inspected, explained, or changed only on explicit setup request. Future full project initialization belongs to `rldyour-flow`.
+
+Serena should use its built-in language keys first for supported languages. External LSP health checks supplement Serena for technologies that are not documented as Serena-native in this plugin, such as HTML, CSS, Docker, and QML.
 
 ## Invariants
 

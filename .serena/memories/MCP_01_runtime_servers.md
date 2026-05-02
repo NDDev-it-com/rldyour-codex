@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-04-29
-Last commit: b1bf776 docs(serena): record plugin auto routing
-Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example
+Last updated: 2026-05-02
+Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
 
@@ -17,6 +17,7 @@ Area: MCP
 - `plugins/rldyour-mcps/.codex-plugin/plugin.json`: plugin manifest with `mcpServers: "./.mcp.json"` and no `skills`.
 - `plugins/rldyour-mcps/README.md`: runtime rules, responsibility boundary, startup rules, language rules, and verification commands.
 - `plugins/rldyour-mcps/.env.example`: placeholder-only environment variable shape.
+- `/Users/rldyourmnd/.codex/config.toml`: active system MCP registrations after marketplace installation.
 
 ## Entry Points
 
@@ -40,6 +41,12 @@ Local MCP servers use explicit runtimes:
 - `bunx`: `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, `shadcn`.
 - `dart`: `dart-flutter`.
 
+Repository `.mcp.json` intentionally stores portable commands (`uvx`, `bunx`, `dart`). Active system Codex config resolves them to absolute local paths:
+
+- `/opt/homebrew/bin/uvx` for `serena` and `semgrep`.
+- `/Users/rldyourmnd/.local/bin/bunx` for `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, and `shadcn`.
+- `/opt/homebrew/bin/dart` for `dart-flutter`.
+
 Remote MCP servers use URL connections:
 
 - `deepwiki`: `https://mcp.deepwiki.com/mcp`.
@@ -57,6 +64,8 @@ Serena starts headless with `--open-web-dashboard False` and `--project-from-cwd
 Playwright starts headless with `--caps=network,storage,testing,devtools`.
 
 Chrome DevTools starts headless and isolated with `--no-usage-statistics` and `--no-performance-crux`.
+
+`codex mcp list` verified that all eleven rldyour MCP servers are enabled in system Codex. `figma` uses OAuth. `context7` reads `CONTEXT7_API_KEY` through an environment-variable reference. The real Context7 API key is not committed.
 
 ## Contracts And Data
 
