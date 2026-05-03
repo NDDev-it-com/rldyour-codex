@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 39d7311 fix(ci): update artifact upload action
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, plugins/rldyour-explore, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -107,6 +107,8 @@ The validate workflow writes a success summary to `GITHUB_STEP_SUMMARY`. On fail
 `scripts/validate_marketplace.sh` discovers `uv` from `PATH` instead of assuming the macOS Homebrew path. If the system `skill-creator` `quick_validate.py` is unavailable, it falls back to an internal lightweight `SKILL.md` frontmatter/title validation so CI remains self-contained. `RLDYOUR_SKIP_LSP_HEALTH=1` skips owner-machine LSP command checks in CI while local validation keeps them enabled by default.
 
 The CI uv setup step uses `enable-cache: false`; the repository does not maintain a uv lock file or dependency manifest that should drive setup-uv cache invalidation.
+
+After commit `614b71e`, the current machine was verified after Codex restart with `scripts/doctor_system_codex.sh`, `scripts/smoke_clean_bootstrap.sh`, `codex mcp list`, LSP health, runtime pin freshness, and GitHub Actions `validate`/`dependency-check`. `main` and `origin/main` matched at `614b71e`, and the repository had one worktree and no uncommitted tracked changes before this memory sync.
 
 ## Contracts And Data
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: ca06abf docs: sync flow catalog description
+Last updated: 2026-05-03
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-rules, .agents/plugins/marketplace.json, README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
 Area: RULES
 -->
@@ -46,6 +46,10 @@ Root `AGENTS.md` now exists for this repository. Root `CLAUDE.md` and `REVIEW.md
 `system/AGENTS.md` now exists as the global Codex instruction template. It intentionally stays compact and routes to rldyour plugins instead of duplicating all plugin skill workflows.
 
 Important architecture, technology, dependency, deployment, security, or irreversible design decisions should produce an ADR or equivalent decision record.
+
+All seven rules skills keep `policy.allow_implicit_invocation: true`. They are part of the 37 callable rldyour skills and are validated by `scripts/validate_marketplace.sh` for frontmatter, compact bilingual routing descriptions, and OpenAI metadata.
+
+Root `AGENTS.md` and `system/AGENTS.md` currently include release, rollback, dependency freshness, diagnostics, smoke checks, YOLO policy, plugin routing, and memory synchronization guidance. These files are source-of-truth instruction surfaces and must stay synchronized with behavior encoded in scripts and plugin skills.
 
 ## Contracts And Data
 
@@ -96,6 +100,8 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 - `uv run --with pyyaml python /Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-rules/skills/<skill>`: validates each rules skill.
 - `scripts/validate_marketplace.sh`: validates the full marketplace and is the preferred root quality gate for this repository.
 - `scripts/doctor_system_codex.sh`: validates installed global Codex state after system-level changes.
+- `python3 scripts/validate_skill_routing.py`: validates deterministic Russian and English prompt routing cases against current skill descriptions.
+- `python3 scripts/release_manifest.py | python3 -m json.tool`: validates release evidence output and current marketplace/plugin metadata.
 - `uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `agents/openai.yaml` parse and implicit invocation.
 - `rg -n 'TODO|\\[TODO|PLACEHOLDER|FIXME|HACK|ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' plugins/rldyour-rules`: should show only policy text, not real credentials or placeholders.
 - `diff -qr plugins/rldyour-rules /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-rules/local`: verifies system cache matches the repository plugin.

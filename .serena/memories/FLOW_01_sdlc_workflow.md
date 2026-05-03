@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 718264b feat(system): harden codex runtime validation
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-flow, AGENTS.md, system/AGENTS.md, scripts/smoke_hooks.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: FLOW
 -->
@@ -74,6 +74,8 @@ The flow PostToolUse hook is advisory and read-only. It watches Bash `git commit
 `flow_post_task_state.py` reads raw `git status --porcelain` output with `rstrip("\n")` and then uses `line[3:]` for paths. This preserves porcelain leading status columns and prevents paths such as `.agents/...` from losing the leading dot.
 
 Repository dirtiness is not stored as a durable memory fact. Use `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool` for current branch, upstream, worktree, dirty-file, ahead/behind, and Serena freshness state.
+
+After commit `614b71e`, `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool` reported `branch: main`, `upstream: origin/main`, `ahead: 0`, `behind: 0`, `worktree_count: 1`, `needs_flow_sync: false`, and `serena_current: true` before this memory-sync edit. Treat those values as point-in-time verification, not as durable branch state.
 
 ## Contracts And Data
 

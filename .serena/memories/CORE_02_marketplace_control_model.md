@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 5d0a389 feat(system): add release and observability workflows
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -80,6 +80,8 @@ System Codex has this marketplace registered as a local source:
 - Enabled rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules`.
 - External curated plugins also enabled in system Codex: `github@openai-curated` and `gmail@openai-curated`.
 
+The GitHub repository is `rldyourmnd/rldyour-codex`, private, with default branch `main`. The local repository and `origin/main` were synchronized at `614b71e` before this memory-sync edit.
+
 ## Contracts And Data
 
 Marketplace root metadata:
@@ -119,6 +121,8 @@ Root `README.md` describes the active catalog, planned architecture, system inst
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
 `scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, release metadata, generated release manifest syntax, plugin manifests, skill frontmatter, compact bilingual routing descriptions, deterministic routing policy cases, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, MCP config sync, MCP package pinning, MCP runtime smoke, MCP capability smoke, plugin cache sync, hook smoke, hook lifecycle smoke, secret patterns, and whitespace.
+
+Current active plugin count is nine rldyour plugins plus two curated external plugins in system Codex. Current callable rldyour skill count is 37.
 
 `scripts/install_system_codex.sh --dry-run` is the safe default system install preview. `scripts/install_system_codex.sh --apply` writes global Codex state with backups, including YOLO permission defaults and twelve MCP servers loaded from `plugins/rldyour-mcps/.mcp.json`. `scripts/doctor_system_codex.sh` verifies installed global AGENTS, config, YOLO defaults, plugins, MCP, cache, and repository validation.
 

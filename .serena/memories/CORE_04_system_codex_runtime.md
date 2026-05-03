@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 5d0a389 feat(system): add release and observability workflows
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -128,6 +128,10 @@ After commit `5d0a389 feat(system): add release and observability workflows`, `s
 
 `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` passed after commit `5d0a389`; all pinned versions in `config/mcp-runtime-versions.env` matched upstream latest at check time.
 
+After commit `614b71e chore(serena): document memory state semantics`, the active local system state was rechecked after a Codex restart. `scripts/doctor_system_codex.sh` passed with zero warnings and zero failures, `scripts/smoke_clean_bootstrap.sh` passed, `plugins/rldyour-lsps/scripts/check_lsps.sh` reported `missing: 0` and `warnings: 0`, and `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` reported all runtime pins current. The latest GitHub Actions runs on `main` for `validate` and `dependency-check` completed successfully.
+
+The active restarted Codex session exposed all installed rldyour skills and MCP tools. Context7 was verified through the actual MCP tool path with `resolve_library_id` and `query_docs`, proving that the active Codex runtime can use the Context7 documentation server even when standalone shell smoke skips the safe call because `CONTEXT7_API_KEY` is not exported into the shell environment.
+
 ## Contracts And Data
 
 System MCP registrations are installed in `/Users/rldyourmnd/.codex/config.toml`, not only in repository `.mcp.json`.
@@ -164,6 +168,8 @@ Remote MCP URLs:
 `scripts/smoke_mcp_runtime.sh` treats HTTP responses below 500 as reachable for remote MCP endpoints. This accepts method/auth negotiation responses such as HTTP 405 while still failing server-side outages.
 
 `scripts/smoke_mcp_capabilities.py` uses the MCP Python SDK and validates all twelve configured MCP names against expected tool sets. In default full mode it calls deterministic safe tools for Serena, Sequential Thinking, Playwright, Chrome DevTools, DeepWiki, Grep, Semgrep, shadcn, and OpenAI Developer Docs. Context7 safe calls are skipped when `CONTEXT7_API_KEY` is not present in the shell environment. Figma is skipped by default because it requires OAuth; use `--include-auth` only when browser-auth probing is intended.
+
+The `semgrep` MCP safe call validates MCP tool availability through `get_supported_languages`. Direct Semgrep CLI and `uvx --from semgrep==1.161.0` Pro scans are runtime-level checks outside repository config; do not infer or store Semgrep tokens from those checks.
 
 Serena runtime is explicitly headless in `.mcp.json` and installed config: `--enable-web-dashboard False --open-web-dashboard False`.
 
