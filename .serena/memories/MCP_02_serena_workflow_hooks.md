@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: d12a51f fix(serena): clarify knowledge-only memory sync state
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-serena-mcp, plugins/rldyour-flow/hooks, scripts/smoke_hooks.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: MCP
 -->
@@ -47,7 +47,7 @@ Hook commands in `hooks.json` first try the repository-local hook path, then the
 
 `stop_memory_sync.sh` uses `.serena/.sync_marker` to avoid a Stop-hook loop for the same HEAD during a continuation.
 
-The current repository has eleven durable memory files in `.serena/memories`. Generated local Serena project files, runtime markers, and cache files remain ignored; `rldyour-flow` owns scoped project initialization, and portable Serena project config should be promoted into the repository only when the owner explicitly wants that behavior.
+The current repository has twelve durable memory files in `.serena/memories`. There are no tracked `.serena/plans` or `.serena/research` files at this point. Generated local Serena project files, runtime markers, and cache files remain ignored; `rldyour-flow` owns scoped project initialization, and portable Serena project config should be promoted into the repository only when the owner explicitly wants that behavior.
 
 `scripts/smoke_hooks.sh` now has two layers for both repository and installed plugin cache paths:
 
@@ -55,6 +55,8 @@ The current repository has eleven durable memory files in `.serena/memories`. Ge
 - Temporary git lifecycle checks that create a disposable repository, run Flow `SessionStart`, Serena `UserPromptSubmit`, Serena `PreToolUse` before a real git commit, Serena `PostToolUse` after the commit, Serena Stop sync prompt, Flow Stop sync prompt, Flow Stop loop guard, and Flow commit advice for a non-conventional commit.
 
 `scripts/validate_marketplace.sh` and `scripts/doctor_system_codex.sh` run `scripts/smoke_hooks.sh`, so hook lifecycle regressions fail local validation and system doctor.
+
+Current verified memory-state behavior reports `memory_count: 12` for this repository and uses semantic current-state matching so a knowledge-only memory commit after the newest synced source commit remains current instead of appearing stale.
 
 ## Contracts And Data
 

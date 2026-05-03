@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: d12a51f fix(serena): clarify knowledge-only memory sync state
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: VERSION, CHANGELOG.md, docs/release-process.md, docs/rollback-restore.md, docs/dependency-updates.md, docs/observability.md, config/skill-routing-policy.json, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, .gitignore, AGENTS.md, README.md, system/AGENTS.md, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py
 Area: CORE
 -->
@@ -29,6 +29,17 @@ Commit `5d0a389 feat(system): add release and observability workflows` adds form
 - `.github/workflows/validate.yml`: Ubuntu/macOS validation matrix with success summary and failure diagnostic artifacts.
 - `.github/workflows/dependency-check.yml`: weekly/manual MCP runtime pin freshness workflow.
 - `.github/dependabot.yml`: weekly GitHub Actions update checks.
+
+## Entry Points
+
+- `python3 scripts/validate_plugin_versions.py`: validate release metadata, plugin manifest versions, and release document presence.
+- `python3 scripts/validate_skill_routing.py`: validate deterministic Russian and English routing policy cases.
+- `python3 scripts/release_manifest.py`: print a machine-readable release snapshot.
+- `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`: fail when pinned Codex/MCP runtime packages are stale.
+- `scripts/collect_diagnostics.sh [--include-doctor]`: collect sanitized local diagnostics under ignored `diagnostics/`.
+- `scripts/rollback_system_codex.sh --list`: list installer backups.
+- `scripts/rollback_system_codex.sh --restore <backup> --dry-run`: preview restore of backed up system Codex files.
+- `gh workflow run dependency-check.yml --repo rldyourmnd/rldyour-codex --ref main`: manually run runtime pin freshness checks on GitHub Actions.
 
 ## Current Behavior
 
@@ -62,6 +73,8 @@ Commit `5d0a389 feat(system): add release and observability workflows` adds form
 
 Commit `d12a51f fix(serena): clarify knowledge-only memory sync state` made diagnostics more internally consistent by adding explicit Serena memory state fields: `memory_directly_mentions_head`, semantic `memory_matches_head`, and `memory_match_reason`. Knowledge-only commits now report `memory_matches_head: true` with reason `knowledge-only-commits-since-sync`, instead of looking stale while still being current.
 
+Commit `614b71e chore(serena): document memory state semantics` documented the new Serena memory-state semantics in `.serena/memories/CORE_06_release_observability.md` and `.serena/memories/MCP_02_serena_workflow_hooks.md`. After that commit, local verification confirmed `scripts/doctor_system_codex.sh`, `scripts/smoke_clean_bootstrap.sh`, LSP health, and runtime pin freshness checks. GitHub Actions `validate` passed on Ubuntu and macOS, and the manual `dependency-check` workflow passed on `main`.
+
 ## CI Model
 
 `.github/workflows/validate.yml` now uses a matrix with:
@@ -76,6 +89,16 @@ On success, the validate workflow writes OS/ref/SHA/check summary to `GITHUB_STE
 `.github/workflows/dependency-check.yml` runs every Monday at `06:17` UTC and through `workflow_dispatch`. It runs the dependency freshness check with `--fail-on-outdated` so stale runtime pins become visible in CI.
 
 `.github/dependabot.yml` monitors GitHub Actions weekly with `package-ecosystem: "github-actions"`, `directory: "/"`, and `open-pull-requests-limit: 5`.
+
+## Contracts And Data
+
+`VERSION` is the marketplace release version and is independent from individual plugin manifest versions. Plugin behavior versions live in each `plugins/<plugin>/.codex-plugin/plugin.json`.
+
+`config/mcp-runtime-versions.env` is the pinned runtime version source used by local scripts, the installer, and CI. The repository should not use unpinned local MCP package specs or `@latest`.
+
+Diagnostics output belongs under ignored `diagnostics/`. Release bundles or generated manifests belong under ignored `dist/` unless the owner explicitly wants to publish them.
+
+GitHub Actions validation is the remote proof layer for committed state. Local `doctor` and `smoke_clean_bootstrap` prove the owner machine and clean-clone installation path; CI proves the same committed source on Ubuntu and macOS using temporary runtime state.
 
 ## Invariants
 

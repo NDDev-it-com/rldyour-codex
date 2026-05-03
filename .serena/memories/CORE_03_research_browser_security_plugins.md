@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->
@@ -54,6 +54,10 @@ For OpenAI or Codex current documentation, `web-research` uses `openaiDeveloperD
 `owasp-top-10-implementation` is advisory and non-blocking. It should surface concise security comments and apply high-confidence fixes in scope.
 
 `ry-sec-review` is defensive-only. Findings must come first, be severity ordered, include confidence, evidence, impact, fix, and verification, and avoid weaponized exploit code or destructive instructions.
+
+`plugins/rldyour-security/README.md` currently defines the security scope as OWASP Top 10 2025, ASVS 5.0.0, OWASP secure coding checklist principles, non-blocking implementation comments, and defensive review. The plugin has no hooks and does not block normal implementation work.
+
+All seven skills across `rldyour-explore`, `rldyour-browser`, and `rldyour-security` keep `policy.allow_implicit_invocation: true` and are validated as callable rldyour skills by `scripts/validate_marketplace.sh`.
 
 ## Contracts And Data
 

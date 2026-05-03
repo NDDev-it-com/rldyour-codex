@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: abb4db6 fix(mcp): disable serena dashboard in runtime
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
@@ -109,6 +109,10 @@ Chrome DevTools starts headless and isolated with `--no-usage-statistics` and `-
 
 `codex mcp list` verified that all twelve rldyour MCP servers are enabled in system Codex. `codex mcp get openaiDeveloperDocs` verifies the official OpenAI Docs MCP as a `streamable_http` remote endpoint. `figma` uses OAuth. `context7` reads `CONTEXT7_API_KEY` through an environment-variable reference. The real Context7 API key is not committed.
 
+On the owner machine, Semgrep CLI is also installed through Homebrew at `/opt/homebrew/bin/semgrep` for direct local use. The repository MCP runtime remains pinned to `uvx --from semgrep==1.161.0 semgrep mcp`; do not replace that portable MCP definition with the Homebrew CLI unless the owner explicitly changes the reproducibility policy.
+
+Semgrep authentication and Pro Engine availability are runtime state, not repository secrets. Verified local behavior: `semgrep show identity` and `uvx --from semgrep==1.161.0 semgrep show deployment` succeed without exposing tokens; `semgrep scan --pro` works for both the Homebrew CLI and the pinned `uvx` Semgrep runtime. The Semgrep MCP daemon may still print that DeepSemgrep/daemon mode is not running when the Semgrep deployment does not expose that capability; this does not by itself mean normal Semgrep MCP tools or `scan --pro` are broken.
+
 ## Contracts And Data
 
 Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin must not use `npx`, `npm`, or direct `node` commands for local MCP servers.
@@ -118,6 +122,8 @@ Allowed local runtimes are `uv`, `uvx`, `bun`, `bunx`, and `dart`. This plugin m
 `sequential-thinking` sets `DISABLE_THOUGHT_LOGGING: "true"`.
 
 `openaiDeveloperDocs` is the preferred MCP source for OpenAI, Codex, model, API, plugin, skill, MCP, hook, and configuration documentation.
+
+Do not store Semgrep auth output, deployment IDs, usernames, tokens, or organization details in repository files or memories. Only store the operational contract: repository MCP config is pinned and portable; local Semgrep auth/Pro state is managed outside the repository.
 
 `rldyour-mcps` is the runtime dependency layer for automatic workflow plugins such as `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, and `rldyour-design`.
 

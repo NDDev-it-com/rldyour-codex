@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 72329c8 feat(system): add bootstrap and runtime smoke checks
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-lsps, pyrightconfig.json, .agents/plugins/marketplace.json, README.md
 Area: LSP
 -->
@@ -47,6 +47,8 @@ The active system was verified with `plugins/rldyour-lsps/scripts/check_lsps.sh`
 The current repository has a minimal `pyrightconfig.json` that includes `scripts`, `plugins/rldyour-flow/scripts`, and `plugins/rldyour-serena-mcp/scripts`; excludes cache and dependency directories; sets `pythonVersion` to `3.13`; and uses `typeCheckingMode: "basic"`.
 
 `plugins/rldyour-lsps/scripts/check_lsps.sh` exits with failure only for missing required executable commands. Project prerequisite warnings are reported but do not fail the command. On the current repository it reports `missing: 0` and `warnings: 0`.
+
+The LSP health check was rerun after the latest Codex restart and still reports `missing: 0` and `warnings: 0`. The current repository prerequisite check succeeds because `pyrightconfig.json` is present and defines the Python script scope.
 
 ## Contracts And Data
 

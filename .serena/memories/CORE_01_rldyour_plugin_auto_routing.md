@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-03
-Last commit: 5d0a389 feat(system): add release and observability workflows
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -78,6 +78,10 @@ Current skill directory counts verified from repository files:
 - `rldyour-rules`: 7 skills.
 - `rldyour-security`: 2 skills.
 - `rldyour-serena-mcp`: 2 skills.
+
+Current `agents/openai.yaml` invocation policy counts verified from repository files: 31 callable/domain skills have `policy.allow_implicit_invocation: true`; the six Flow reviewer track skills have `policy.allow_implicit_invocation: false` and are orchestrated only by `ry-start` or `ry-review`.
+
+The active restarted Codex session lists the same rldyour skill set from the installed cache. This confirms repository plugin sources, installed plugin cache, and runtime skill discovery are aligned after restart.
 
 ## Contracts And Data
 

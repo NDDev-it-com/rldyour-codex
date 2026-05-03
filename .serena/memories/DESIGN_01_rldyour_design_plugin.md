@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-02
-Last commit: dbdd6ca chore(serena): record rules plugin knowledge
+Last updated: 2026-05-03
+Last commit: 614b71e chore(serena): document memory state semantics
 Scope: plugins/rldyour-design
 Area: DESIGN
 -->
@@ -36,6 +36,10 @@ The owner selected centralized design tokens as mandatory for meaningful design-
 
 Meaningful visible frontend work is not considered complete without browser evidence or an explicit validation blocker.
 
+`plugins/rldyour-design/README.md` currently documents Figma MCP, shadcn/ui MCP, ReactBits, strict FSD, centralized tokens, browser validation, and the rule that generated Figma output must be adapted into the project's architecture instead of pasted blindly.
+
+All five design skills keep `policy.allow_implicit_invocation: true`. They are part of the 37 callable rldyour skills validated by `scripts/validate_marketplace.sh`.
+
 ## Contracts And Data
 
 Every skill must keep `policy.allow_implicit_invocation: true` in `agents/openai.yaml`.
@@ -43,6 +47,8 @@ Every skill must keep `policy.allow_implicit_invocation: true` in `agents/openai
 The strongest automatic trigger fields are the YAML frontmatter `description` values in each `SKILL.md`. Marketplace and UI descriptions should mirror the same intent, but they are not the primary skill trigger contract.
 
 Design screenshots and browser evidence belong under `browser/` and must not be committed unless explicitly requested.
+
+Repository `.gitignore` ignores `browser/**` while keeping the `browser/` directory itself trackable, so browser evidence can be created during validation and cleaned without polluting git history.
 
 ## Invariants
 
@@ -66,3 +72,4 @@ Design screenshots and browser evidence belong under `browser/` and must not be 
 - `/opt/homebrew/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates a skill frontmatter file.
 - `/opt/homebrew/bin/uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `agents/openai.yaml` parse and `allow_implicit_invocation`.
 - `diff -qr plugins/rldyour-design <codex-plugin-cache>/rldyour-design/local`: verifies system cache matches the repository plugin.
+- `scripts/validate_marketplace.sh`: validates design skill frontmatter, OpenAI metadata, compact bilingual descriptions, routing policy compatibility, and plugin cache sync with the rest of the marketplace.
