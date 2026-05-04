@@ -17,6 +17,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 - Global and project instructions now state the explicit fullrepo-managed task sync order: Serena/docs, checks, normal branch push, fullrepo publish, and safe cleanup.
 - `chrome-devtools-mcp` runtime pin updated from `0.23.0` to `0.24.0`.
+- `@upstash/context7-mcp` runtime pin updated from `2.2.3` to `2.2.4`.
 - `rldyour-flow` now treats `fullrepo` as part of `ry-init` and `flow-post-task-sync`.
 - `rldyour-flow` now detects missing or stale instruction docs and routes post-task sync through `$instruction-docs-sync`.
 - `rldyour-serena-mcp` memory sync now supports fullrepo-managed `.serena` knowledge without committing AI files to normal branches.
