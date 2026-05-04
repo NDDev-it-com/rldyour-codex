@@ -63,7 +63,11 @@ CODEX_HOME_DIR="$TMP_ROOT/codex-home"
 SERENA_HOME_DIR="$TMP_ROOT/serena-home"
 
 printf 'Clean bootstrap workspace: %s\n' "$TMP_ROOT"
-git clone --quiet --local "$ROOT" "$CLONE_DIR"
+if ! git clone --quiet --local "$ROOT" "$CLONE_DIR"; then
+  printf 'Local clone failed; retrying with --no-local for cross-device filesystems.\n' >&2
+  rm -rf "$CLONE_DIR"
+  git clone --quiet --no-local "$ROOT" "$CLONE_DIR"
+fi
 
 cd "$CLONE_DIR"
 
