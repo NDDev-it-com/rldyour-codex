@@ -29,7 +29,9 @@ Do not create memory noise for trivial formatting, purely mechanical edits, or u
 - `.serena/plans/`: non-trivial implementation plans that are worth preserving across sessions.
 - `.serena/research/`: complex or long research results with source links and implementation impact.
 
-Local/runtime files must not be committed by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.yml`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`.
+In normal product repositories, these knowledge files are agent-only context. They are restored from and published to `fullrepo`, then ignored through `.git/info/exclude` instead of being committed to `main`. Repositories that are themselves agent tooling may intentionally track selected `.serena` knowledge files when they are part of the product source of truth.
+
+Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`.
 
 ## Memory Structure
 
@@ -134,7 +136,7 @@ Do not write:
 4. Save non-trivial plans to `.serena/plans/` only when they will help future sessions continue work.
 5. Save long research summaries to `.serena/research/` only when the research was complex, source-backed, and likely reusable.
 6. Keep exact paths, symbol names, commands, contracts, invariants, verification checks, and behavior. Avoid generic advice.
-7. Run `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` when this repository contains the plugin, or the absolute script path provided by the Stop hook when the plugin is loaded from Codex cache. Use it only when `.serena/memories`, `.serena/plans`, or `.serena/research` changed and the sync should be auto-committed.
+7. Run `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` when this repository contains the plugin, or the absolute script path provided by the Stop hook when the plugin is loaded from Codex cache. In repositories where `.serena` knowledge is still tracked, this creates the knowledge-only commit. In fullrepo-managed repositories, it acknowledges current memories and clears runtime sync markers without committing AI files to the current branch; `flow-post-task-sync` publishes the final `fullrepo` snapshot.
 
 ## Quality Rules
 
@@ -155,4 +157,4 @@ Report:
 - `New memories`: new files, if any.
 - `Plans/research archived`: files written, if any.
 - `Unresolved gaps`: anything that could not be verified from code.
-- `Commit`: whether the Serena knowledge-only auto-commit was created.
+- `Commit`: whether the Serena knowledge-only auto-commit was created or fullrepo-managed knowledge was acknowledged for later `fullrepo` publish.

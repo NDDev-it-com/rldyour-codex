@@ -79,6 +79,30 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
     return True, {}
 
 
+def _fullrepo_state() -> dict[str, Any]:
+    candidates = [
+        Path("plugins/rldyour-flow/scripts/fullrepo_sync.py"),
+        Path.home() / ".codex/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/fullrepo_sync.py",
+    ]
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        proc = subprocess.run(
+            ["python3", str(candidate), "--status-json"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0 or not proc.stdout.strip():
+            continue
+        try:
+            payload = json.loads(proc.stdout)
+        except json.JSONDecodeError:
+            continue
+        return payload if isinstance(payload, dict) else {}
+    return {}
+
+
 def state() -> dict[str, Any]:
     if _git("rev-parse", "--is-inside-work-tree").returncode != 0:
         return {"is_git_repo": False, "needs_flow_sync": False, "serena_current": True}
@@ -92,8 +116,19 @@ def state() -> dict[str, Any]:
     doc_files_present = [path for path in DOC_FILES if Path(path).is_file()]
     doc_files_changed = [path for path in dirty_files if path in DOC_FILES]
     worktree_count = _worktree_count()
+    fullrepo_state = _fullrepo_state()
 
-    needs_flow_sync = serena_current and bool(dirty_files or ahead or behind or doc_files_changed)
+    worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
+    if not isinstance(worktree_agent_paths, list):
+        worktree_agent_paths = []
+    fullrepo_needs_attention = bool(fullrepo_state) and (
+        not bool(fullrepo_state.get("exclude_installed", True))
+        or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("remote_fullrepo_exists", False)))
+    )
+
+    needs_flow_sync = serena_current and bool(
+        dirty_files or ahead or behind or doc_files_changed or fullrepo_needs_attention
+    )
 
     fingerprint_payload = {
         "head": head_full,
@@ -120,6 +155,8 @@ def state() -> dict[str, Any]:
         "worktree_count": worktree_count,
         "serena_current": serena_current,
         "serena_state": serena_state,
+        "fullrepo_state": fullrepo_state,
+        "fullrepo_needs_attention": fullrepo_needs_attention,
         "needs_flow_sync": needs_flow_sync,
         "fingerprint": fingerprint,
     }

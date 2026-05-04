@@ -179,6 +179,19 @@ else
   fail "repository marketplace validation"
 fi
 
+section "Fullrepo"
+if python3 "$ROOT/plugins/rldyour-flow/scripts/fullrepo_sync.py" --status-json >/tmp/rldyour-codex-fullrepo-state.json 2>/tmp/rldyour-codex-fullrepo-state.err; then
+  pass "fullrepo state script"
+  if python3 -m json.tool /tmp/rldyour-codex-fullrepo-state.json >/dev/null 2>&1; then
+    pass "fullrepo state JSON"
+  else
+    fail "fullrepo state JSON invalid"
+  fi
+else
+  fail "fullrepo state script failed"
+  sed -n '1,40p' /tmp/rldyour-codex-fullrepo-state.err >&2 || true
+fi
+
 section "MCP runtime"
 if [ -n "$CODEX_CMD" ]; then
   if env CODEX_HOME="$CODEX_HOME_DIR" "$CODEX_CMD" mcp list >/tmp/rldyour-codex-mcp-list.txt 2>/tmp/rldyour-codex-mcp-list.err; then

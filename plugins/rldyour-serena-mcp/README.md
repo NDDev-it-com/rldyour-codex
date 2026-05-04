@@ -16,7 +16,8 @@ The plugin is optimized for automatic Serena skill selection. Codex should route
 - Keep `.serena/memories` fact-only, high-signal, and synchronized with verified code state.
 - Store durable non-trivial plans in `.serena/plans`.
 - Store long source-backed research summaries in `.serena/research`.
-- Keep generated local Serena project files, runtime markers, and cache files out of commits. `rldyour-flow` owns scoped project initialization; promote Serena project config to portable repository state only when the owner explicitly wants that behavior.
+- In normal product repositories, keep Serena knowledge out of normal branches and publish it through `fullrepo` via `rldyour-flow`.
+- Keep generated local Serena runtime markers and cache files out of commits and out of `fullrepo`. `rldyour-flow` owns scoped project initialization.
 
 ## Skills
 
@@ -36,7 +37,7 @@ The plugin includes lifecycle hooks for:
 - `PreToolUse` / `PostToolUse`: mark project knowledge as stale after git commit-like changes.
 - `Stop`: continue the current turn with a Serena memory sync prompt when project knowledge is stale.
 
-The Stop hook does not spawn a separate sync agent. It asks the current Codex session to run `serena-memory-sync`, then optionally auto-commit knowledge-only changes through `scripts/commit_serena_knowledge.sh`.
+The Stop hook does not spawn a separate sync agent. It asks the current Codex session to run `serena-memory-sync`, then uses `scripts/commit_serena_knowledge.sh` to either create a knowledge-only commit when `.serena` is intentionally tracked or acknowledge fullrepo-managed knowledge without committing AI files to the current branch.
 
 ## Memory Quality Target
 

@@ -228,6 +228,7 @@ import ast
 paths = [
     Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
     Path("plugins/rldyour-flow/scripts/flow_post_task_state.py"),
+    Path("plugins/rldyour-flow/scripts/fullrepo_sync.py"),
     Path("scripts/smoke_mcp_capabilities.py"),
     Path("scripts/validate_plugin_versions.py"),
     Path("scripts/validate_skill_routing.py"),
@@ -401,8 +402,17 @@ fi
 step "Hook smoke"
 scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
 
+step "Fullrepo sync smoke"
+scripts/smoke_fullrepo_sync.sh
+
 step "Secret pattern scan"
-if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer [A-Za-z0-9._-]+' .serena/memories plugins .agents AGENTS.md README.md scripts system; then
+secret_scan_paths=(plugins .agents README.md scripts system)
+for optional_path in .serena/memories AGENTS.md; do
+  if [ -e "$optional_path" ]; then
+    secret_scan_paths+=("$optional_path")
+  fi
+done
+if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer [A-Za-z0-9._-]+' "${secret_scan_paths[@]}"; then
   printf 'Potential secret pattern detected\n' >&2
   exit 1
 fi

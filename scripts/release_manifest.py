@@ -69,6 +69,7 @@ def main() -> int:
             "branch": git_output("branch", "--show-current"),
             "remote": git_output("config", "--get", "remote.origin.url"),
             "dirty": bool(git_output("status", "--porcelain")),
+            "fullrepo_sha": git_output("rev-parse", "refs/heads/fullrepo^{commit}"),
         },
         "environment": {
             "codex_home": os.environ.get("CODEX_HOME", str(Path.home() / ".codex")),

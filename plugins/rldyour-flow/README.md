@@ -9,13 +9,24 @@ It provides Russian-first command skills:
 - `ry-newp`: design and optionally scaffold a new project after deep questioning.
 - `ry-review`: review a diff/scope plus affected integration graph.
 - `ry-deploy`: synchronize local, GitHub, and server state, then deploy and verify.
-- `flow-post-task-sync`: finish task state by synchronizing Serena memories, `AGENTS.md`, `CLAUDE.md`, git commits, GitHub, and branch/worktree cleanup.
+- `flow-post-task-sync`: finish task state by synchronizing Serena memories, agent-only files, git commits, GitHub, `fullrepo`, and branch/worktree cleanup.
+
+## Fullrepo Branch
+
+Normal branches keep product history clean. Agent-only files such as root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files are restored locally from `fullrepo` and ignored through `.git/info/exclude`.
+
+`plugins/rldyour-flow/scripts/fullrepo_sync.py` owns the deterministic behavior:
+
+- `--restore`: restore agent-only context from `origin/fullrepo`.
+- `--migrate-main`: remove tracked agent-only files from the current branch index while keeping them locally.
+- `--publish`: publish current `HEAD` plus agent-only files to `fullrepo` with safe `--force-with-lease`.
+- `--status-json`: expose state to hooks, diagnostics, and validation.
 
 ## Hook Strategy
 
 The plugin includes advisory SessionStart and PostToolUse hooks plus a Stop hook.
 
-The SessionStart hook is read-only. It adds a compact repository context packet to the session: branch, HEAD, upstream drift, dirty files, worktree count, Serena memory freshness, and whether flow sync is pending. It tells Codex to run scoped `ry-init` when context is insufficient, but it does not mutate files or block execution.
+The SessionStart hook is read-only. It adds a compact repository context packet to the session: branch, HEAD, upstream drift, dirty files, worktree count, Serena memory freshness, fullrepo state, and whether flow sync is pending. It tells Codex to run scoped `ry-init` when context is insufficient, but it does not mutate files or block execution.
 
 The PostToolUse hook watches Bash `git commit` commands and emits non-blocking commit advice for conventional commit format, oversized subjects, suspicious sensitive paths, runtime markers, browser evidence, or very broad commits. It never rejects the command.
 

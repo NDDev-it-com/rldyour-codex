@@ -43,6 +43,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - Use Serena-first code inspection where supported; use `rg` and direct reads for docs, JSON, shell scripts, and other text-level work.
 - After meaningful changes, update `.serena/memories` with verified facts only.
 - After plugin changes that affect runtime behavior, sync changed plugin directories into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local` and restart Codex.
+- `fullrepo` is the standard branch for portable agent-only context. Normal project branches should exclude project-root `AGENTS.md`, `CLAUDE.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files through `.git/info/exclude`; publish them with `scripts/sync_fullrepo_branch.sh --publish` after normal branch sync. This repository may intentionally track selected instruction templates that are product artifacts, such as `system/AGENTS.md`.
 
 ## Validation
 
@@ -60,7 +61,9 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_clean_bootstrap.sh
+scripts/smoke_fullrepo_sync.sh
 scripts/bootstrap_check.sh --apply
+scripts/sync_fullrepo_branch.sh --status
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool
 plugins/rldyour-lsps/scripts/check_lsps.sh
@@ -82,6 +85,7 @@ diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<
 - Keep `main` synchronized with `origin/main` unless working on an explicit branch or worktree workflow.
 - Prefer atomic commits with Conventional Commits.
 - Use `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` for knowledge-only Serena updates.
+- Use `scripts/sync_fullrepo_branch.sh --restore` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push.
 - Before final delivery, ensure `git status -sb` is clean and pushed when the task produced commits.
 
 ## System Install

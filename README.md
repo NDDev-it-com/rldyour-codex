@@ -143,11 +143,27 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_clean_bootstrap.sh
+scripts/smoke_fullrepo_sync.sh
 ```
 
 `scripts/smoke_mcp_capabilities.sh` verifies MCP protocol behavior with `initialize`, `list_tools`, and safe `call_tool` probes where a deterministic read-only tool exists. Figma is skipped by default because it requires OAuth; pass `--include-auth` only after authorizing that runtime.
 
 GitHub Actions runs the same marketplace/system checks on push and pull request with a temporary `CODEX_HOME`, list-only MCP capability probes, and a clean bootstrap clone.
+
+## Fullrepo Branch
+
+`fullrepo` is the portable complete-state branch for agent-only files. Normal project branches should keep product history clean and exclude project-root AI workflow files through `.git/info/exclude`.
+
+Use:
+
+```bash
+scripts/sync_fullrepo_branch.sh --restore
+scripts/sync_fullrepo_branch.sh --migrate-main
+scripts/sync_fullrepo_branch.sh --publish
+scripts/sync_fullrepo_branch.sh --status
+```
+
+`--restore` initializes local agent context from `origin/fullrepo`. `--migrate-main` removes tracked agent-only files from the current branch index while keeping them locally. `--publish` builds a snapshot from current `HEAD` plus local agent-only files and pushes it to `fullrepo` with safe `--force-with-lease`.
 
 ## Release, Rollback, And Observability
 

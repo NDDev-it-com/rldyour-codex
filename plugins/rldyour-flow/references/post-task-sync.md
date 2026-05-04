@@ -9,7 +9,8 @@ Post-task sync is the last phase of meaningful work. It prevents forgotten chang
 3. Quality checks and manual evidence third.
 4. Atomic commits fourth.
 5. GitHub sync fifth.
-6. Merged branch/worktree cleanup last.
+6. Fullrepo branch sync sixth.
+7. Merged branch/worktree cleanup last.
 
 ## Session And Commit Advice
 
@@ -21,6 +22,8 @@ The flow PostToolUse hook emits commit advice after Bash `git commit` commands. 
 
 `rldyour-serena-mcp` owns `.serena/memories`, `.serena/plans`, and `.serena/research`. The flow hook must not duplicate that work. It waits until the Serena state script reports current knowledge, then asks for `flow-post-task-sync`.
 
+In fullrepo-managed projects, Serena knowledge is not committed to normal branches. The Serena commit helper may acknowledge current knowledge and clear runtime sync markers without committing when `.serena` knowledge paths are untracked/ignored. Flow then publishes the complete snapshot to `fullrepo`.
+
 ## AGENTS.md And CLAUDE.md
 
 Codex reads `AGENTS.md` as project instructions. Update it when the task changes durable project rules, setup commands, quality gates, deploy contracts, architecture constraints, or agent workflow guidance.
@@ -28,6 +31,22 @@ Codex reads `AGENTS.md` as project instructions. Update it when the task changes
 `CLAUDE.md` is maintained for compatibility with Claude Code projects. Update it only when present or when a project explicitly uses it. Do not create a large generic `CLAUDE.md` in every project without need.
 
 Both files must contain verified facts, not chat history or speculative plans.
+
+For normal projects, root `AGENTS.md`, `CLAUDE.md`, and `REVIEW.md` are agent-only files and should be restored from `fullrepo`, ignored through `.git/info/exclude`, and excluded from normal branch history. Repositories that are themselves agent tooling may intentionally track selected instruction templates as product files, such as `system/AGENTS.md` in `rldyour-codex`.
+
+## Fullrepo Branch
+
+`fullrepo` is the portable complete-state branch. It lets a new machine initialize with the same agent-only project context while keeping `main` and feature branches free of AI workflow files.
+
+Post-task flow:
+
+1. Commit and push normal source/test/docs/config changes to the current upstream branch.
+2. Ensure `.git/info/exclude` has the rldyour fullrepo block.
+3. If the project is ready to clean its main branch, run `fullrepo_sync.py --migrate-main` once and commit that index cleanup.
+4. Run `fullrepo_sync.py --publish` after the normal branch is at its final `HEAD`.
+5. Verify `fullrepo_sync.py --status-json` and branch refs before final delivery.
+
+`fullrepo` uses safe force updates because it is a generated snapshot branch. Use `--force-with-lease`, not a blind `--force`, so an unexpected remote update cannot be silently overwritten.
 
 ## Loop Prevention
 

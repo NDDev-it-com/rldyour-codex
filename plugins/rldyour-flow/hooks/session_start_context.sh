@@ -65,6 +65,12 @@ serena_current = state.get("serena_current", True)
 serena_text = "current" if serena_current else "stale"
 memory_count = serena_state.get("memory_count")
 newest_synced = serena_state.get("newest_synced_sha") or "none"
+fullrepo_state = state.get("fullrepo_state", {})
+if not isinstance(fullrepo_state, dict):
+    fullrepo_state = {}
+tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
+if not isinstance(tracked_agent_paths, list):
+    tracked_agent_paths = []
 
 lines = [
     "rldyour-flow session context (non-blocking, read-only):",
@@ -83,6 +89,13 @@ lines = [
         f"{serena_text}, memory_count {memory_count if memory_count is not None else 'unknown'}, "
         f"newest synced commit {newest_synced}."
     ),
+    (
+        "- Fullrepo sync: "
+        f"branch {fullrepo_state.get('fullrepo_branch', 'fullrepo')}, "
+        f"remote exists {bool(fullrepo_state.get('remote_fullrepo_exists'))}, "
+        f"exclude installed {bool(fullrepo_state.get('exclude_installed', False))}, "
+        f"tracked agent-only paths {len(tracked_agent_paths)}."
+    ),
 ]
 
 if dirty_files:
@@ -99,7 +112,7 @@ if doc_files:
 
 if state.get("needs_flow_sync"):
     lines.append(
-        "- Flow sync signal: pending. Before final delivery, run flow-post-task-sync after Serena memories are current."
+        "- Flow sync signal: pending. Before final delivery, run flow-post-task-sync after Serena memories are current and publish fullrepo when agent-only files exist."
     )
 else:
     lines.append("- Flow sync signal: clean.")
@@ -107,6 +120,7 @@ else:
 lines.extend(
     [
         "- If a task starts with insufficient context, trigger scoped ry-init before editing.",
+        "- At init, restore agent-only context from fullrepo when available before relying on AGENTS.md, CLAUDE.md, or .serena knowledge.",
         "- Before edits, pass the context sufficiency gate: code paths, symbols, data contracts, integration points, existing patterns, checks, and research evidence must be known or explicitly marked as unknown.",
         "- This context is advisory only. Do not block execution only because this hook emitted warnings.",
     ]

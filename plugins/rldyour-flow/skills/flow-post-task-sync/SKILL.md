@@ -1,6 +1,6 @@
 ---
 name: flow-post-task-sync
-description: "Finalize task state: Serena memories, AGENTS.md/CLAUDE.md, git/GitHub, branches, worktrees. Use after ry-start/review/deploy/newp; триггеры: заверши задачу, синхронизируй."
+description: "Finalize task state: Serena memories, agent-only files, fullrepo, git/GitHub, branches, worktrees. Use after ry-start/review/deploy/newp; триггеры: заверши задачу, синхронизируй."
 ---
 
 # Flow Post-Task Sync
@@ -18,9 +18,15 @@ Leave the project in a synchronized, documented, committed state. This skill run
 5. Run applicable quality checks from project scripts and `plugins/rldyour-flow/scripts/detect_project_checks.sh`.
 6. Commit atomically with Conventional Commits. Use separate commits for implementation, tests, docs/instructions, and Serena knowledge when that improves history.
 7. Push to upstream when configured. If no upstream exists, ask before creating one.
-8. Remove merged local and remote branches/worktrees only after verifying they are merged into `main` and no open PR depends on them.
-9. Remove `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json` after successful sync.
+8. Keep normal branch history clean from agent-only files. Ensure `.git/info/exclude` contains the rldyour fullrepo block and move tracked agent-only files out of the current branch with `fullrepo_sync.py --migrate-main` only when the project is ready for that migration.
+9. Publish the complete project snapshot to `fullrepo` through `plugins/rldyour-flow/scripts/fullrepo_sync.py --publish` or `scripts/sync_fullrepo_branch.sh --publish`. This uses safe `--force-with-lease`, not a blind force push.
+10. Remove merged local and remote branches/worktrees only after verifying they are merged into `main` and no open PR depends on them.
+11. Remove `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json` after successful sync.
 
 ## Loop Guard
 
 Do not edit runtime marker files except to remove them after sync. If the Stop hook repeats for the same fingerprint, report the blocker instead of forcing new commits.
+
+## Fullrepo Branch
+
+`fullrepo` is the portable AI-context branch. It contains the normal branch tree plus agent-only files such as project `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar agent workflow files. The main branch should not track those files in normal projects; they should be restored locally from `fullrepo` and ignored through `.git/info/exclude`.

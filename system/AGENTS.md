@@ -120,6 +120,8 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 - Before final delivery, run the checks that match the touched scope and report exact commands.
 - If changes are committed, push when the task requires synchronization or when the workflow has reached a stable final state.
 - Keep `AGENTS.md`, Serena memories, and durable docs synchronized with changed behavior.
+- In normal product repositories, keep agent-only files out of `main` and feature branches. Restore them from `fullrepo`, ignore them through `.git/info/exclude`, and publish the complete snapshot to `fullrepo` with safe `--force-with-lease` after normal branch sync.
+- Agent-only files include project-root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files. Agent tooling repositories may intentionally track selected instruction templates as product artifacts.
 
 ## System Codex Setup
 
@@ -137,6 +139,9 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_clean_bootstrap.sh
+scripts/sync_fullrepo_branch.sh --status
+scripts/sync_fullrepo_branch.sh --restore
+scripts/sync_fullrepo_branch.sh --publish
 scripts/rollback_system_codex.sh --list
 scripts/collect_diagnostics.sh
 ```

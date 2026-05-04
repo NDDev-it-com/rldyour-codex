@@ -26,11 +26,13 @@ This repository has two versioning layers:
 scripts/validate_marketplace.sh
 scripts/doctor_system_codex.sh
 scripts/smoke_clean_bootstrap.sh
+scripts/smoke_fullrepo_sync.sh
+scripts/sync_fullrepo_branch.sh --status
 python3 scripts/release_manifest.py > diagnostics/release-manifest.json
 ```
 
 6. Commit with a Conventional Commit message.
-7. Push to `main` and wait for CI on Ubuntu and macOS.
+7. Push to `main`, publish `fullrepo` when agent-only files changed, and wait for CI on Ubuntu and macOS.
 8. Tag only after CI is green:
 
 ```bash

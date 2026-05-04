@@ -87,6 +87,7 @@ fi
 
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py >"$OUTPUT/serena-memory-state.json" 2>"$OUTPUT/serena-memory-state.stderr" || true
 plugins/rldyour-flow/scripts/flow_post_task_state.py >"$OUTPUT/flow-post-task-state.json" 2>"$OUTPUT/flow-post-task-state.stderr" || true
+python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json >"$OUTPUT/fullrepo-state.json" 2>"$OUTPUT/fullrepo-state.stderr" || true
 python3 scripts/release_manifest.py >"$OUTPUT/release-manifest.json" 2>"$OUTPUT/release-manifest.stderr" || true
 
 if [ "$INCLUDE_DOCTOR" = "1" ]; then

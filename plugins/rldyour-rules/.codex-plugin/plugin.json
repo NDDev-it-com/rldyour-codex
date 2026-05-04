@@ -1,7 +1,7 @@
 {
   "name": "rldyour-rules",
-  "version": "0.1.1",
-  "description": "Quality-first engineering rules for Codex: clean architecture, implementation discipline, dependency compatibility, verification gates, AGENTS.md policy, ADRs, and ry-rules-review.",
+  "version": "0.1.2",
+  "description": "Quality-first engineering rules for Codex: clean architecture, implementation discipline, dependency compatibility, verification gates, agent-only file policy, ADRs, and ry-rules-review.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -28,7 +28,7 @@
   "interface": {
     "displayName": "rldyour Rules",
     "shortDescription": "Quality-first project rules for Codex",
-    "longDescription": "This plugin defines the owner's engineering rules for Codex. It provides automatic skills for quality-first implementation, architecture boundaries, implementation discipline, dependency and compatibility policy, verification gates, project instruction documentation, and explicit ry-rules-review. The rules are advisory-first but non-negotiable for hard bans such as hacks, temporary workarounds, swallowed errors, secrets, and fake checks. User-facing conversation stays Russian; repository artifacts stay English.",
+    "longDescription": "This plugin defines the owner's engineering rules for Codex. It provides automatic skills for quality-first implementation, architecture boundaries, implementation discipline, dependency and compatibility policy, verification gates, project instruction documentation, agent-only file policy, and explicit ry-rules-review. The rules are advisory-first but non-negotiable for hard bans such as hacks, temporary workarounds, swallowed errors, secrets, and fake checks. User-facing conversation stays Russian; repository artifacts stay English.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [
@@ -40,6 +40,7 @@
       "Dependency compatibility",
       "Verification gates",
       "AGENTS.md policy",
+      "Agent-only file policy",
       "ADR policy",
       "Russian user-facing workflow"
     ],
