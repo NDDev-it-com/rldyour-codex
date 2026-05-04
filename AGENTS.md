@@ -86,6 +86,7 @@ diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<
 - Prefer atomic commits with Conventional Commits.
 - Use `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` for knowledge-only Serena updates.
 - Use `scripts/sync_fullrepo_branch.sh --restore` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push.
+- Standard finish order is Serena memories and durable docs from verified code, matching checks, atomic normal-branch commit and push, `fullrepo` publish from final `HEAD`, then safe cleanup of merged workflow branches and worktrees.
 - Before final delivery, ensure `git status -sb` is clean and pushed when the task produced commits.
 
 ## System Install

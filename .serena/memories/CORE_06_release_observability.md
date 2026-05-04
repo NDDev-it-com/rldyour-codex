@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 6abd7b8 fix(serena): classify agent files as knowledge paths
+Last commit: 6e0e1b9 docs(system): clarify fullrepo sync order
 Scope: VERSION, CHANGELOG.md, docs/release-process.md, docs/rollback-restore.md, docs/dependency-updates.md, docs/observability.md, config/skill-routing-policy.json, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, .gitignore, AGENTS.md, README.md, system/AGENTS.md, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py
 Area: CORE
 -->
@@ -86,6 +86,8 @@ Commit `614b71e chore(serena): document memory state semantics` documented the n
 Commit `018cc6e feat(flow): add fullrepo agent context sync` added `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `scripts/sync_fullrepo_branch.sh`, and `scripts/smoke_fullrepo_sync.sh`. It also updated `scripts/release_manifest.py` to include `fullrepo_sha`, `scripts/collect_diagnostics.sh` to collect `fullrepo-state.json`, `scripts/doctor_system_codex.sh` to report fullrepo state, `scripts/validate_marketplace.sh` to run fullrepo smoke, and docs to include fullrepo release, rollback, and observability procedures.
 
 Commit `6abd7b8 fix(serena): classify agent files as knowledge paths` updated `serena_memory_state.py` so fullrepo migration commits that remove agent-only files from `main` do not falsely count as product-code drift.
+
+Commit `6e0e1b9 docs(system): clarify fullrepo sync order` updated `system/AGENTS.md` and `CHANGELOG.md` so the global instruction layer states the fullrepo-managed initialization and finish sequence directly. Root `AGENTS.md` mirrors the finish-order statement as agent-only project context for the `fullrepo` snapshot.
 
 ## CI Model
 

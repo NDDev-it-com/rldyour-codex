@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 018cc6e feat(flow): add fullrepo agent context sync
+Last commit: 6e0e1b9 docs(system): clarify fullrepo sync order
 Scope: system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, plugins/rldyour-explore, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -87,6 +87,8 @@ Apply mode:
 
 `README.md`, root `AGENTS.md`, and `system/AGENTS.md` now document the `fullrepo` branch workflow. Normal product branches keep agent-only files out of branch history through `.git/info/exclude`; `fullrepo` stores the complete agent context snapshot for cross-machine initialization.
 
+After commit `6e0e1b9 docs(system): clarify fullrepo sync order`, `system/AGENTS.md` and root `AGENTS.md` both describe the explicit task sync order for this workflow: restore agent-only context from `fullrepo` at initialization when needed, refresh Serena memories and durable docs from verified code, run matching checks, commit and push normal branch changes, publish `fullrepo` from final `HEAD`, then safely clean merged workflow branches and worktrees.
+
 `scripts/bootstrap_check.sh` defaults to non-mutating dry-run mode. In dry-run mode it runs install preview, JSON validation, shellcheck, repository-only hook smoke, and fullrepo sync smoke. In apply mode it runs install preview, install apply, `scripts/validate_marketplace.sh`, MCP runtime smoke, hook smoke, `scripts/doctor_system_codex.sh`, Serena state, Flow state, and `git status -sb`.
 
 `scripts/doctor_system_codex.sh` verifies:
@@ -120,6 +122,8 @@ The validate workflow writes a success summary to `GITHUB_STEP_SUMMARY`. On fail
 The CI uv setup step uses `enable-cache: false`; the repository does not maintain a uv lock file or dependency manifest that should drive setup-uv cache invalidation.
 
 After commit `018cc6e`, `scripts/install_system_codex.sh --apply` installed the updated global `AGENTS.md`, patched config, and synced plugin cache. `scripts/validate_marketplace.sh` then passed with fullrepo smoke, hook smoke, MCP runtime smoke, MCP capability smoke, LSP health, cache sync, secret scan, and whitespace checks.
+
+After commit `6e0e1b9`, `scripts/install_system_codex.sh --apply` installed the updated global `AGENTS.md`, patched config, and synced plugin cache. `cmp -s system/AGENTS.md /Users/rldyourmnd/.codex/AGENTS.md`, `scripts/validate_marketplace.sh`, `scripts/smoke_mcp_capabilities.sh --server grep --retries 5 --timeout 45`, and `scripts/doctor_system_codex.sh` passed. The first doctor run saw a transient remote Grep MCP `TaskGroup` failure during safe-call smoke; an isolated retry and the next full doctor run passed.
 
 ## Contracts And Data
 

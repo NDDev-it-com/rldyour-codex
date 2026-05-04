@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 018cc6e feat(flow): add fullrepo agent context sync
+Last commit: 6e0e1b9 docs(system): clarify fullrepo sync order
 Scope: plugins/rldyour-rules, plugins/rldyour-flow/scripts/fullrepo_sync.py, .agents/plugins/marketplace.json, README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
 Area: RULES
 -->
@@ -50,6 +50,8 @@ Important architecture, technology, dependency, deployment, security, or irrever
 All seven rules skills keep `policy.allow_implicit_invocation: true`. They are part of the 37 callable rldyour skills and are validated by `scripts/validate_marketplace.sh` for frontmatter, compact bilingual routing descriptions, and OpenAI metadata.
 
 Root `AGENTS.md` and `system/AGENTS.md` currently include release, rollback, dependency freshness, diagnostics, smoke checks, YOLO policy, plugin routing, and memory synchronization guidance. These files are source-of-truth instruction surfaces and must stay synchronized with behavior encoded in scripts and plugin skills.
+
+After commit `6e0e1b9`, `system/AGENTS.md` explicitly requires fullrepo-managed repositories to restore agent-only context from `fullrepo` before relying on agent instructions or `.serena` knowledge. It also defines the finish order as Serena memories and durable instructions from verified code, matching checks, atomic normal-branch commit and push, `fullrepo` publish from final `HEAD`, and safe cleanup of merged workflow branches and worktrees. Root `AGENTS.md` mirrors the same finish-order rule for this repository's local project context.
 
 `plugins/rldyour-rules/.codex-plugin/plugin.json` version is `0.1.2`. The manifest description and capabilities now include agent-only file policy.
 

@@ -14,6 +14,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
+- Global and project instructions now state the explicit fullrepo-managed task sync order: Serena/docs, checks, normal branch push, fullrepo publish, and safe cleanup.
 - `rldyour-flow` now treats `fullrepo` as part of `ry-init` and `flow-post-task-sync`.
 - `rldyour-serena-mcp` memory sync now supports fullrepo-managed `.serena` knowledge without committing AI files to normal branches.
 - `rldyour-rules` now documents the agent-only file policy for `AGENTS.md`, `CLAUDE.md`, `.serena`, and related AI workflow paths.

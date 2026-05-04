@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-03
-Last commit: 614b71e chore(serena): document memory state semantics
+Last updated: 2026-05-04
+Last commit: 6e0e1b9 docs(system): clarify fullrepo sync order
 Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -94,6 +94,8 @@ Enabled plugin set in system config:
 System Codex has `[features] codex_hooks = true`, so hook-capable plugins can run their Codex lifecycle hooks after restart.
 
 `/Users/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`. The global instructions describe `rldyour-flow` scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, post-task synchronization, `openaiDeveloperDocs` routing for OpenAI/Codex documentation, and the owner-requested YOLO execution defaults.
+
+After commit `6e0e1b9 docs(system): clarify fullrepo sync order`, `system/AGENTS.md` explicitly states that fullrepo-managed repositories restore agent-only context from `fullrepo` during initialization before relying on `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, or `.serena` knowledge. It also states the standard finish order: refresh Serena memories and durable project instructions from verified code, run matching checks, create and push atomic normal-branch commits, publish `fullrepo` from final branch `HEAD`, then clean merged workflow branches and worktrees when safe.
 
 The registered marketplace is local:
 
