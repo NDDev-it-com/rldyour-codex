@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 9d7792a chore(system): refresh codex runtime sync
+Last commit: b4038bd fix(lsp): support linuxbrew portability
 Scope: plugins/rldyour-lsps, pyrightconfig.json, .agents/plugins/marketplace.json, README.md
 Area: LSP
 -->
@@ -48,7 +48,7 @@ The current repository has a minimal `pyrightconfig.json` that includes `scripts
 
 `plugins/rldyour-lsps/scripts/check_lsps.sh` exits with failure only for missing required executable commands. Project prerequisite warnings are reported but do not fail the command. On the current repository it reports `missing: 0` and `warnings: 0`.
 
-The LSP health check was rerun after the latest system sync and reports `missing: 0` and `warnings: 0`. The current Linux owner environment uses `/home/rldyourmnd/.local/bin` for Python/Ruff/ShellCheck/uvx tools, `/home/rldyourmnd/.bun/bin` for Bun-based language servers, `/home/linuxbrew/.linuxbrew/bin` for brew-installed Go, HTML/CSS/JSON, Docker, TOML, Markdown, and Qt/QML tools, and `/snap/bin/dart` for Dart. The current repository prerequisite check succeeds because `pyrightconfig.json` is present and defines the Python script scope.
+After commit `b4038bd fix(lsp): support linuxbrew portability`, the LSP health check reports `missing: 0` and `warnings: 0`. The health script resolves tools through `command -v` first, then falls back to common macOS Homebrew and Linuxbrew locations for tools such as `clangd` and `qmlls`. User-local, Bun, SDK, Snap, macOS Homebrew, and Linuxbrew paths are all acceptable runtime projections. The current repository prerequisite check succeeds because `pyrightconfig.json` is present and defines the Python script scope.
 
 ## Contracts And Data
 
@@ -79,13 +79,13 @@ Serena should use its built-in language keys first for supported languages. Exte
 - Update `references/install-profiles.md` and `scripts/install_lsps_brew.sh` together when adding or removing installable system tools.
 - Update `references/serena-lsp-integration.md` when Serena language key behavior changes.
 - Run `shellcheck` for both scripts after shell edits.
-- Re-sync `plugins/rldyour-lsps/` into `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-lsps/local/` after plugin changes.
+- Re-sync `plugins/rldyour-lsps/` into `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-lsps/local/` after plugin changes.
 
 ## Verification
 
 - `jq empty plugins/rldyour-lsps/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates plugin and marketplace JSON.
-- `uv run --with pyyaml python /home/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-lsps/skills/<skill>`: validates each LSP skill.
+- `uv run --with pyyaml python ${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-lsps/skills/<skill>`: validates each LSP skill.
 - `shellcheck plugins/rldyour-lsps/scripts/check_lsps.sh plugins/rldyour-lsps/scripts/install_lsps_brew.sh`: validates shell scripts.
 - `plugins/rldyour-lsps/scripts/check_lsps.sh`: verifies local command availability and project prerequisites.
 - `jq empty pyrightconfig.json`: validates the Python LSP project configuration file.
-- `diff -qr plugins/rldyour-lsps /home/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-lsps/local`: verifies system cache matches the repository plugin.
+- `diff -qr plugins/rldyour-lsps ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-lsps/local`: verifies system cache matches the repository plugin.

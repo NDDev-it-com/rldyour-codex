@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 9d7792a chore(system): refresh codex runtime sync
-Scope: /home/rldyourmnd/.codex/AGENTS.md, /home/rldyourmnd/.codex/config.toml, /home/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
+Last commit: b4038bd fix(lsp): support linuxbrew portability
+Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -13,14 +13,14 @@ This memory records the verified system Codex runtime state for the local `rldyo
 
 ## Source Of Truth
 
-- `/home/rldyourmnd/.codex/config.toml`: active Codex model, trusted projects, enabled plugins, feature flags, marketplace source, and MCP registrations.
-- `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: active cached plugin copies used by system Codex after marketplace installation.
+- `${CODEX_HOME:-$HOME/.codex}/config.toml`: active Codex model, trusted projects, enabled plugins, feature flags, marketplace source, and MCP registrations.
+- `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local`: active cached plugin copies used by system Codex after marketplace installation.
 - `.agents/plugins/marketplace.json`: repository marketplace catalog.
 - `plugins/rldyour-*/.codex-plugin/plugin.json`: repository plugin manifests.
 - `plugins/rldyour-mcps/.mcp.json`: repository MCP server definitions.
 - `AGENTS.md`: project-level Codex instructions for this repository.
 - `system/AGENTS.md`: tracked canonical global Codex instructions template.
-- `/home/rldyourmnd/.codex/AGENTS.md`: installed global Codex instructions on this machine.
+- `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`: installed global Codex instructions on this machine.
 - `scripts/install_system_codex.sh`: installs global AGENTS, patches rldyour-owned config sections, registers marketplace, and syncs plugin cache.
 - `scripts/doctor_system_codex.sh`: verifies installed system state.
 - `scripts/validate_marketplace.sh`: local validation entry point for runtime and repository consistency.
@@ -57,8 +57,8 @@ This memory records the verified system Codex runtime state for the local `rldyo
 - `scripts/smoke_clean_bootstrap.sh`: proves a committed clean clone can install into a temporary `CODEX_HOME` and pass doctor plus MCP registration.
 - `scripts/collect_diagnostics.sh`: writes local sanitized diagnostics under ignored `diagnostics/`.
 - `scripts/rollback_system_codex.sh --list`: lists installer backup timestamps; `--restore <backup>` restores `AGENTS.md` and `config.toml` from a backup after creating a pre-restore backup.
-- `/home/rldyourmnd/.codex/config.toml`: direct runtime configuration file for the current machine.
-- `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex`: installed plugin cache root.
+- `${CODEX_HOME:-$HOME/.codex}/config.toml`: direct runtime configuration file for the current machine.
+- `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex`: installed plugin cache root.
 
 ## Current Behavior
 
@@ -74,7 +74,7 @@ System Codex is intentionally configured for owner-controlled YOLO execution:
 
 Trusted projects in system config:
 
-- `/home/rldyourmnd/Desktop/projects/nddev_projects/rldyour-codex`.
+- `<repo-root>`.
 
 Enabled plugin set in system config:
 
@@ -92,14 +92,14 @@ Enabled plugin set in system config:
 
 System Codex has `[features] codex_hooks = true`, so hook-capable plugins can run their Codex lifecycle hooks after restart.
 
-`/home/rldyourmnd/.codex/AGENTS.md` exists and matches `system/AGENTS.md`. The global instructions describe `rldyour-flow` scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, post-task synchronization, `openaiDeveloperDocs` routing for OpenAI/Codex documentation, and the owner-requested YOLO execution defaults.
+`${CODEX_HOME:-$HOME/.codex}/AGENTS.md` exists and matches `system/AGENTS.md`. The global instructions describe `rldyour-flow` scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, post-task synchronization, `openaiDeveloperDocs` routing for OpenAI/Codex documentation, and the owner-requested YOLO execution defaults.
 
 After commit `6e0e1b9 docs(system): clarify fullrepo sync order`, `system/AGENTS.md` explicitly states that fullrepo-managed repositories restore agent-only context from `fullrepo` during initialization before relying on `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, or `.serena` knowledge. It also states the standard finish order: refresh Serena memories and durable project instructions from verified code, run matching checks, create and push atomic normal-branch commits, publish `fullrepo` from final branch `HEAD`, then clean merged workflow branches and worktrees when safe.
 
 The registered marketplace is local:
 
 - `marketplaces.rldyour-codex.source_type`: `local`.
-- `marketplaces.rldyour-codex.source`: `/home/rldyourmnd/Desktop/projects/nddev_projects/rldyour-codex`.
+- `marketplaces.rldyour-codex.source`: `<repo-root>`.
 
 The active plugin cache contains local copies for all nine rldyour plugins:
 
@@ -117,13 +117,13 @@ The full validation script currently validates 38 skills, compact bilingual rout
 
 The LSP health check reports no missing commands and zero warnings. `pyrightconfig.json` makes the Python script scope explicit for Pyright and removes the previous Python project-config warning.
 
-After commit `718264b`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`, patched YOLO permission defaults, and installed all twelve MCP servers from `plugins/rldyour-mcps/.mcp.json`. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
+After commit `718264b`, `scripts/install_system_codex.sh --apply` synced all repository rldyour plugins into `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local`, patched YOLO permission defaults, and installed all twelve MCP servers from `plugins/rldyour-mcps/.mcp.json`. `scripts/doctor_system_codex.sh` verifies those cache directories match repository plugin sources.
 
 `scripts/bootstrap_check.sh --apply` passed on the current machine after commit `72329c8`. It ran install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, Serena state, Flow state, and `git status -sb`.
 
 `scripts/smoke_clean_bootstrap.sh` passed after commit `27de40d`. It cloned the committed repository into a temporary directory, installed the system runtime into a temporary `CODEX_HOME`, ran `scripts/doctor_system_codex.sh` in list-only capability mode with a temporary `SERENA_HOME`, and verified `codex mcp list`. The temporary `SERENA_HOME` prevents clean-bootstrap Serena probes from registering temporary clone paths in the owner's global Serena config.
 
-After commit `5d0a389 feat(system): add release and observability workflows`, `scripts/install_system_codex.sh --apply` installed the updated `system/AGENTS.md` into `/home/rldyourmnd/.codex/AGENTS.md` and synced the plugin cache. `scripts/doctor_system_codex.sh` then passed on the current machine with zero warnings and zero failures. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
+After commit `5d0a389 feat(system): add release and observability workflows`, `scripts/install_system_codex.sh --apply` installed the updated `system/AGENTS.md` into `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` and synced the plugin cache. `scripts/doctor_system_codex.sh` then passed on the current machine with zero warnings and zero failures. It verifies Context7 through the runtime `codex mcp list` output and reports `context7 runtime environment registered` when `CONTEXT7_API_KEY` is visible as a masked runtime environment variable.
 
 `scripts/smoke_clean_bootstrap.sh` passed after commit `5d0a389`. It installed the committed repository into a temporary `CODEX_HOME`, used a temporary `SERENA_HOME`, ran doctor with list-only MCP capability probes, verified `codex mcp list`, and removed the temporary workspace.
 
@@ -133,11 +133,13 @@ After commit `614b71e chore(serena): document memory state semantics`, the activ
 
 The active restarted Codex session exposed all installed rldyour skills and MCP tools. Context7 was verified through the actual MCP tool path with `resolve_library_id` and `query_docs`, proving that the active Codex runtime can use the Context7 documentation server even when standalone shell smoke skips the safe call because `CONTEXT7_API_KEY` is not exported into the shell environment.
 
-After commit `9d7792a chore(system): refresh codex runtime sync`, the system Codex setup was clean-reinstalled from repository source. Legacy plugin entries (`rldyour-mcp`, `rldyour-serena`, `rldyour-sec`, `rldyour-tools`), old `@latest` MCP package specs, and the old raw Context7 env table are absent from `/home/rldyourmnd/.codex/config.toml`. The active plugin cache uses the new `<plugin>/local` layout for all nine rldyour plugins. `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh` passed with zero doctor warnings and failures after the reinstall.
+After commit `9d7792a chore(system): refresh codex runtime sync`, the system Codex setup was clean-reinstalled from repository source. Legacy plugin entries (`rldyour-mcp`, `rldyour-serena`, `rldyour-sec`, `rldyour-tools`), old `@latest` MCP package specs, and the old raw Context7 env table are absent from `${CODEX_HOME:-$HOME/.codex}/config.toml`. The active plugin cache uses the new `<plugin>/local` layout for all nine rldyour plugins. `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh` passed with zero doctor warnings and failures after the reinstall.
+
+After commit `b4038bd fix(lsp): support linuxbrew portability`, platform-specific executable paths are documented as installed-machine projections. Repository MCP definitions stay portable (`uvx`, `bunx`, `dart`), and the installer resolves them through `PATH` or explicit `UVX_BIN`, `BUNX_BIN`, and `DART_BIN` overrides. LSP checks now accept both macOS Homebrew and Linuxbrew fallback locations where `command -v` is insufficient.
 
 ## Contracts And Data
 
-System MCP registrations are installed in `/home/rldyourmnd/.codex/config.toml`, not only in repository `.mcp.json`.
+System MCP registrations are installed in `${CODEX_HOME:-$HOME/.codex}/config.toml`, not only in repository `.mcp.json`.
 
 `plugins/rldyour-mcps/.mcp.json` is the portable MCP source of truth. The installed config resolves portable command names to local executable paths. `scripts/install_system_codex.sh` reads `.mcp.json` directly and patches installed config from that source instead of maintaining a second hardcoded MCP list. `scripts/validate_marketplace.sh` compares repository and installed MCP definitions, allowing only that command-path resolution difference.
 
@@ -155,11 +157,11 @@ Pinned runtime versions in `config/mcp-runtime-versions.env`:
 
 Local package specs in `.mcp.json` are exact-version pinned. `@latest` is forbidden by `scripts/validate_marketplace.sh`.
 
-Active local command paths:
+Active local command paths are machine projections resolved by the installer:
 
-- `/home/rldyourmnd/.local/bin/uvx`: `serena`, `semgrep`.
-- `/home/rldyourmnd/.bun/bin/bunx`: `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, `shadcn`.
-- `/snap/bin/dart`: `dart-flutter`.
+- `uvx` from `PATH` or `UVX_BIN`: `serena`, `semgrep`.
+- `bunx` from `PATH` or `BUNX_BIN`: `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, `shadcn`.
+- `dart` from `PATH` or `DART_BIN`: `dart-flutter`.
 
 Remote MCP URLs:
 
@@ -180,7 +182,7 @@ Serena runtime is explicitly headless in `.mcp.json` and installed config: `--en
 
 `.github/workflows/validate.yml` runs on push to `main`, pull requests to `main`, and manual dispatch. It installs pinned Codex CLI into CI, applies the marketplace into `CODEX_HOME=/tmp/rldyour-codex-home`, runs marketplace validation, doctor, and clean bootstrap smoke. CI capability smoke uses list-only mode to avoid auth-sensitive or long-running safe tool calls. CI sets `RLDYOUR_SKIP_LSP_HEALTH=1` because full LSP health is an owner-machine check, not a portable GitHub runner check. The uv setup step sets `enable-cache: false` because this repository has no Python dependency lock file for uv cache invalidation. The workflow must not use `runner.*` expressions in job-level `env` because GitHub rejects that context during workflow parsing.
 
-`.github/workflows/validate.yml` now runs as a two-OS matrix on `ubuntu-latest` and `macos-latest`. The active owner runtime was verified on Linux under `/home/rldyourmnd`, while CI should still prove Linux/macOS portability. The workflow writes success details to `GITHUB_STEP_SUMMARY` and uploads a diagnostics artifact on failure.
+`.github/workflows/validate.yml` now runs as a two-OS matrix on `ubuntu-latest` and `macos-latest`. The active owner runtime was verified on Linux after the restart, while CI should still prove Linux/macOS portability. The workflow writes success details to `GITHUB_STEP_SUMMARY` and uploads a diagnostics artifact on failure.
 
 `.github/workflows/dependency-check.yml` checks pinned MCP runtime versions weekly and through `workflow_dispatch`. `.github/dependabot.yml` monitors GitHub Actions references weekly.
 
@@ -193,7 +195,7 @@ Environment variables and auth:
 
 ## Invariants
 
-- Do not commit `/home/rldyourmnd/.codex/config.toml` or cached plugin copies.
+- Do not commit `${CODEX_HOME:-$HOME/.codex}/config.toml` or cached plugin copies.
 - Do not store raw API keys, OAuth tokens, cookies, private keys, or bearer tokens in this repository or in memories.
 - Keep repository plugin sources as the editable source of truth; use the system cache only as installed runtime output.
 - Restart Codex after changing installed plugin manifests, skill descriptions, hook registrations, or MCP runtime definitions.
@@ -230,6 +232,6 @@ Environment variables and auth:
 - `scripts/rollback_system_codex.sh --restore <backup> --dry-run`: previews restore of installer-created backup files.
 - `.github/workflows/validate.yml`: verifies marketplace install and smoke checks in GitHub Actions.
 - `.github/workflows/dependency-check.yml`: verifies scheduled MCP runtime pin freshness.
-- `diff -qr plugins/<plugin> /home/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.
+- `diff -qr plugins/<plugin> ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local`: verifies a cached plugin matches the repository source.
 - `jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json`: validates repository marketplace and plugin manifests.
 - `rg -n 'ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' .serena/memories plugins .agents`: should show only policy text and placeholders, not real credentials.

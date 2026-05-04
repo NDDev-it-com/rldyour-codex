@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 9d7792a chore(system): refresh codex runtime sync
+Last commit: b4038bd fix(lsp): support linuxbrew portability
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->
@@ -86,7 +86,7 @@ Security review should use Serena for semantic code mapping when available and S
 
 ## Verification
 
-- `/home/rldyourmnd/.local/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates each modified skill.
-- `/home/rldyourmnd/.local/bin/uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `allow_implicit_invocation`.
+- `uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates each modified skill.
+- `uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `allow_implicit_invocation`.
 - `jq empty plugins/rldyour-explore/.codex-plugin/plugin.json plugins/rldyour-browser/.codex-plugin/plugin.json plugins/rldyour-security/.codex-plugin/plugin.json`: validates manifests.
 - `git diff --check`: checks whitespace before commit.

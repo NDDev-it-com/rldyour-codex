@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 9d7792a chore(system): refresh codex runtime sync
-Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, /home/rldyourmnd/.codex/AGENTS.md, /home/rldyourmnd/.codex/config.toml
+Last commit: b4038bd fix(lsp): support linuxbrew portability
+Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
 
@@ -41,8 +41,8 @@ The system install workflow turns this repository into a portable source of trut
 - `pyrightconfig.json`: Python script project configuration used by LSP health checks.
 - `README.md`: human install commands.
 - `AGENTS.md`: repository-level instructions for maintaining this marketplace.
-- `/home/rldyourmnd/.codex/AGENTS.md`: installed global Codex instructions on the current machine.
-- `/home/rldyourmnd/.codex/config.toml`: installed Codex config on the current machine.
+- `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`: installed global Codex instructions on the current machine.
+- `${CODEX_HOME:-$HOME/.codex}/config.toml`: installed Codex config on the current machine.
 
 ## Entry Points
 
@@ -131,7 +131,7 @@ After commit `018cc6e`, `scripts/install_system_codex.sh --apply` installed the 
 
 After commit `f285999`, `scripts/install_system_codex.sh --apply` installed the updated global `AGENTS.md`, patched config, and synced plugin cache. `scripts/doctor_system_codex.sh`, `scripts/smoke_fullrepo_sync.sh`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, and a standalone `scripts/validate_marketplace.sh` passed. A parallel validation run failed once because two concurrent MCP capability smoke processes raced around Playwright package linking; the isolated rerun passed.
 
-The latest clean reinstall moved the previous active `/home/rldyourmnd/.codex/config.toml` and `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex` into a dated clean backup before applying the repository installer. The normal installer also created its standard backup for the replaced global `AGENTS.md`. Auth, sessions, and history were left outside the clean replacement scope.
+The latest clean reinstall moved the previous active `${CODEX_HOME:-$HOME/.codex}/config.toml` and `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex` into a dated clean backup before applying the repository installer. The normal installer also created its standard backup for the replaced global `AGENTS.md`. Auth, sessions, and history were left outside the clean replacement scope.
 
 ## Contracts And Data
 
@@ -220,4 +220,4 @@ Serena MCP is installed with `--enable-web-dashboard False --open-web-dashboard 
 - `.github/workflows/validate.yml`: runs marketplace validation and system smoke in GitHub Actions.
 - `.github/workflows/dependency-check.yml`: runs scheduled runtime pin freshness checks.
 - `codex mcp get openaiDeveloperDocs`: verifies the installed OpenAI Docs MCP endpoint.
-- `cmp -s system/AGENTS.md /home/rldyourmnd/.codex/AGENTS.md`: verifies installed global AGENTS matches the template.
+- `cmp -s system/AGENTS.md ${CODEX_HOME:-$HOME/.codex}/AGENTS.md`: verifies installed global AGENTS matches the template.

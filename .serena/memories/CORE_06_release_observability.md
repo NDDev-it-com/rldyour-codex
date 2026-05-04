@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 9d7792a chore(system): refresh codex runtime sync
+Last commit: b4038bd fix(lsp): support linuxbrew portability
 Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
@@ -75,9 +75,9 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 
 `scripts/collect_diagnostics.sh --output diagnostics/local-test` completed and wrote a local diagnostics bundle. `diagnostics/` is ignored by Git.
 
-`scripts/rollback_system_codex.sh --list` lists installer backup timestamps under `/home/rldyourmnd/.codex/backups/rldyour-codex`. `scripts/rollback_system_codex.sh --restore <backup> --dry-run` prints the exact `AGENTS.md` and `config.toml` restore paths without writing.
+`scripts/rollback_system_codex.sh --list` lists installer backup timestamps under `${CODEX_HOME:-$HOME/.codex}/backups/rldyour-codex`. `scripts/rollback_system_codex.sh --restore <backup> --dry-run` prints the exact `AGENTS.md` and `config.toml` restore paths without writing.
 
-`scripts/install_system_codex.sh --apply` was run after adding the new system AGENTS commands. It backed up the previous `/home/rldyourmnd/.codex/AGENTS.md` and `/home/rldyourmnd/.codex/config.toml`, installed the updated global instructions, patched config, and synced plugin cache.
+`scripts/install_system_codex.sh --apply` was run after adding the new system AGENTS commands. It backed up the previous `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` and `${CODEX_HOME:-$HOME/.codex}/config.toml`, installed the updated global instructions, patched config, and synced plugin cache.
 
 `scripts/doctor_system_codex.sh` passed after install with zero warnings and zero failures.
 
@@ -98,6 +98,8 @@ Commit `f285999 feat(flow): sync codex and claude instruction docs` added `$inst
 Commit `3128913 chore(mcp): update chrome devtools runtime pin` updated `chrome-devtools-mcp` from `0.23.0` to `0.24.0` in `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`, then documented the change in `CHANGELOG.md`. After installation, `codex mcp get chrome-devtools` reported the active system args with `chrome-devtools-mcp@0.24.0`, and `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`, `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh` passed.
 
 Commit `9d7792a chore(system): refresh codex runtime sync` updated Context7 to `@upstash/context7-mcp@2.2.4`, made `validate_marketplace.sh` honor `${CODEX_HOME:-$HOME/.codex}` by default, and made clean bootstrap retry with `git clone --no-local` when local hardlink cloning fails across filesystems. The owner-machine reinstall and verification passed with `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh`.
+
+Commit `b4038bd fix(lsp): support linuxbrew portability` removed macOS-first wording from observability docs, changed LSP reference examples to `command -v`-derived paths, and added Linuxbrew fallbacks for `clangd` and `qmlls`. `shellcheck`, LSP health, marketplace validation, system install/apply, doctor, and clean bootstrap were rerun on the Linux owner machine.
 
 ## CI Model
 

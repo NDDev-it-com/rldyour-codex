@@ -22,7 +22,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `.github/workflows/validate.yml`: Ubuntu/macOS push/pull-request validation for marketplace, temporary system install, MCP capability smoke, hook lifecycle smoke, and clean bootstrap.
 - `.github/workflows/dependency-check.yml`: scheduled MCP runtime pin freshness check.
 - `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
-- `/home/rldyourmnd/.codex/config.toml`: active system Codex registration, YOLO permission defaults, and MCP runtime config.
+- `${CODEX_HOME:-$HOME/.codex}/config.toml`: active system Codex registration, YOLO permission defaults, and MCP runtime config.
 - `.claude/CLAUDE.md`: Claude Code-native project memory for this repository, published through `fullrepo`.
 - `.serena/memories/*.md`: high-signal verified project knowledge.
 
@@ -44,7 +44,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - Use Serena-first code inspection where supported; use `rg` and direct reads for docs, JSON, shell scripts, and other text-level work.
 - After meaningful changes, update `.serena/memories` with verified facts only.
 - After meaningful project behavior, workflow, setup, validation, architecture, plugin, hook, or command changes, update `AGENTS.md` for Codex and `.claude/CLAUDE.md` for Claude Code from verified code state.
-- After plugin changes that affect runtime behavior, sync changed plugin directories into `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local` and restart Codex.
+- After plugin changes that affect runtime behavior, sync changed plugin directories into `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local` and restart Codex.
 - `fullrepo` is the standard branch for portable agent-only context. Normal project branches should exclude project-root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files through `.git/info/exclude`; publish them with `scripts/sync_fullrepo_branch.sh --publish` after normal branch sync. This repository may intentionally track selected instruction templates that are product artifacts, such as `system/AGENTS.md`.
 
 ## Validation
@@ -81,7 +81,7 @@ scripts/doctor_system_codex.sh
 For plugin cache verification:
 
 ```bash
-diff -qr plugins/<plugin> /home/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local
+diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local"
 ```
 
 ## Git And Sync

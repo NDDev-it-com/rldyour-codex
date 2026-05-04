@@ -51,15 +51,15 @@ Use `ls_specific_settings` only when the default managed server is insufficient 
 ```yaml
 ls_specific_settings:
   python:
-    ls_path: "/opt/homebrew/bin/pyright-langserver"
+    ls_path: "/absolute/path/from/command -v pyright-langserver"
   cpp:
-    ls_path: "/opt/homebrew/opt/llvm/bin/clangd"
+    ls_path: "/absolute/path/from/command -v clangd"
     compile_commands_dir: "build"
   typescript:
-    ls_path: "/opt/homebrew/bin/typescript-language-server"
+    ls_path: "/absolute/path/from/command -v typescript-language-server"
 ```
 
-Do not add machine-local paths to committed project files unless the repository intentionally depends on that machine layout. Prefer `.serena/project.local.yml` for local overrides.
+Do not add machine-local paths to committed project files unless the repository intentionally depends on that machine layout. macOS Homebrew, Linuxbrew, SDK, Snap, and user-local executable paths are all machine projections; prefer `.serena/project.local.yml` for local overrides.
 
 ## C, C++, And Qt
 

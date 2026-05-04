@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 9d7792a chore(system): refresh codex runtime sync
+Last commit: b4038bd fix(lsp): support linuxbrew portability
 Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: FLOW
 -->
@@ -151,7 +151,7 @@ PostToolUse commit advice output uses:
 ## Verification
 
 - `jq empty plugins/rldyour-flow/.codex-plugin/plugin.json plugins/rldyour-flow/hooks.json .agents/plugins/marketplace.json`: validates plugin and marketplace JSON.
-- `uv run --with pyyaml python /home/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-flow/skills/<skill>`: validates each flow skill.
+- `uv run --with pyyaml python ${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-flow/skills/<skill>`: validates each flow skill.
 - `scripts/validate_marketplace.sh`: validates `agents/openai.yaml` parse, default prompt length, `$skill-name` prompt reference, short description length, MCP dependencies, and reviewer implicit-invocation exceptions.
 - `python3 -m py_compile plugins/rldyour-flow/scripts/flow_post_task_state.py plugins/rldyour-flow/scripts/instruction_docs_state.py plugins/rldyour-flow/scripts/fullrepo_sync.py`: validates Flow Python scripts.
 - `shellcheck plugins/rldyour-flow/hooks/*.sh plugins/rldyour-flow/scripts/*.sh`: validates flow shell hooks and scripts.
@@ -163,4 +163,4 @@ PostToolUse commit advice output uses:
 - `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json | python3 -m json.tool`: verifies fullrepo state payload.
 - `scripts/smoke_hooks.sh`: verifies Flow and Serena hook behavior, including temporary git lifecycle transitions.
 - `scripts/smoke_fullrepo_sync.sh`: verifies fullrepo publish, migrate-main, restore, and `.git/info/exclude` behavior.
-- `diff -qr plugins/rldyour-flow /home/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-flow/local`: verifies system cache matches the repository plugin.
+- `diff -qr plugins/rldyour-flow ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local`: verifies system cache matches the repository plugin.

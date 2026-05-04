@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 9d7792a chore(system): refresh codex runtime sync
-Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, /home/rldyourmnd/.codex/config.toml
+Last commit: b4038bd fix(lsp): support linuxbrew portability
+Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
 
@@ -23,7 +23,7 @@ Area: MCP
 - `scripts/smoke_mcp_runtime.sh`: validates installed MCP runtime definitions through Codex and endpoint/command probes.
 - `scripts/smoke_mcp_capabilities.py`: validates MCP initialize, expected tool discovery, and safe call-tool probes.
 - `scripts/smoke_mcp_capabilities.sh`: wrapper that runs capability smoke with pinned `mcp` Python SDK.
-- `/home/rldyourmnd/.codex/config.toml`: active system MCP registrations after marketplace installation.
+- `${CODEX_HOME:-$HOME/.codex}/config.toml`: active system MCP registrations after marketplace installation.
 
 ## Entry Points
 
@@ -48,15 +48,15 @@ Local MCP servers use explicit runtimes:
 - `bunx`: `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, `shadcn`.
 - `dart`: `dart-flutter`.
 
-Repository `.mcp.json` intentionally stores portable commands (`uvx`, `bunx`, `dart`). Active system Codex config resolves them to absolute local paths:
+Repository `.mcp.json` intentionally stores portable commands (`uvx`, `bunx`, `dart`). Active system Codex config resolves them to absolute local paths for the current machine:
 
-- `/home/rldyourmnd/.local/bin/uvx` for `serena` and `semgrep`.
-- `/home/rldyourmnd/.bun/bin/bunx` for `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, and `shadcn`.
-- `/snap/bin/dart` for `dart-flutter`.
+- the `uvx` found on `PATH` or supplied through `UVX_BIN` for `serena` and `semgrep`.
+- the `bunx` found on `PATH` or supplied through `BUNX_BIN` for `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, and `shadcn`.
+- the `dart` found on `PATH` or supplied through `DART_BIN` for `dart-flutter`.
 
 `scripts/install_system_codex.sh --apply` is the supported way to project portable `.mcp.json` definitions into the active system config. The installer reads `plugins/rldyour-mcps/.mcp.json` directly, then replaces portable commands with local executable paths. This avoids a duplicated hardcoded MCP server list in the installer.
 
-`scripts/validate_marketplace.sh` has an `MCP config sync` step that compares repository `.mcp.json` with `/home/rldyourmnd/.codex/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
+`scripts/validate_marketplace.sh` has an `MCP config sync` step that compares repository `.mcp.json` with `${CODEX_HOME:-$HOME/.codex}/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
 
 `scripts/validate_marketplace.sh` has an `MCP pinning policy` step. It rejects `@latest`, requires exact `uvx --from package==version` package specs, and requires pinned bunx package specs.
 
@@ -72,7 +72,7 @@ Pinned local package specs in `.mcp.json`:
 
 `config/mcp-runtime-versions.env` stores the same pinned runtime package versions plus `CODEX_CLI_VERSION=0.128.0` and `MCP_PYTHON_SDK_VERSION=1.27.0`.
 
-After commit `9d7792a chore(system): refresh codex runtime sync`, `chrome-devtools-mcp` is pinned to `0.24.0` and `@upstash/context7-mcp` is pinned to `2.2.4` in both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`. `scripts/install_system_codex.sh --apply` projected those pins into `/home/rldyourmnd/.codex/config.toml`; `codex mcp get chrome-devtools` reports `chrome-devtools-mcp@0.24.0`, and Context7 is installed through `@upstash/context7-mcp@2.2.4`.
+After commit `9d7792a chore(system): refresh codex runtime sync`, `chrome-devtools-mcp` is pinned to `0.24.0` and `@upstash/context7-mcp` is pinned to `2.2.4` in both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`. `scripts/install_system_codex.sh --apply` projected those pins into `${CODEX_HOME:-$HOME/.codex}/config.toml`; `codex mcp get chrome-devtools` reports `chrome-devtools-mcp@0.24.0`, and Context7 is installed through `@upstash/context7-mcp@2.2.4`.
 
 `scripts/smoke_mcp_runtime.sh` checks that repository `.mcp.json` and installed `CODEX_HOME/config.toml` have the same server names, runs `codex mcp get <server>` for each server, verifies local command executables, and probes remote MCP URLs unless `--skip-url-check` is passed. It accepts remote HTTP responses below 500 as reachable endpoint negotiation responses.
 
@@ -111,7 +111,7 @@ Chrome DevTools starts headless and isolated with `--no-usage-statistics` and `-
 
 `codex mcp list` verified that all twelve rldyour MCP servers are enabled in system Codex. `codex mcp get openaiDeveloperDocs` verifies the official OpenAI Docs MCP as a `streamable_http` remote endpoint. `figma` uses OAuth. `context7` reads `CONTEXT7_API_KEY` through an environment-variable reference. The real Context7 API key is not committed.
 
-On the owner machine, Semgrep CLI is also installed at `/home/rldyourmnd/.local/bin/semgrep` for direct local use. The repository MCP runtime remains pinned to `uvx --from semgrep==1.161.0 semgrep mcp`; do not replace that portable MCP definition with the direct CLI unless the owner explicitly changes the reproducibility policy.
+On the owner machine, a direct Semgrep CLI may also be installed for local use. The repository MCP runtime remains pinned to `uvx --from semgrep==1.161.0 semgrep mcp`; do not replace that portable MCP definition with the direct CLI unless the owner explicitly changes the reproducibility policy.
 
 Semgrep authentication and Pro Engine availability are runtime state, not repository secrets. Verified local behavior: `semgrep show identity` and `uvx --from semgrep==1.161.0 semgrep show deployment` succeed without exposing tokens; `semgrep scan --pro` works for both the direct CLI and the pinned `uvx` Semgrep runtime. The Semgrep MCP daemon may still print that DeepSemgrep/daemon mode is not running when the Semgrep deployment does not expose that capability; this does not by itself mean normal Semgrep MCP tools or `scan --pro` are broken.
 
