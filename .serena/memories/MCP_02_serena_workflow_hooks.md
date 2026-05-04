@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 018cc6e feat(flow): add fullrepo agent context sync
-Scope: plugins/rldyour-serena-mcp, plugins/rldyour-flow/scripts/fullrepo_sync.py, plugins/rldyour-flow/hooks, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
+Last commit: 6abd7b8 fix(serena): classify agent files as knowledge paths
+Scope: plugins/rldyour-serena-mcp, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-flow/scripts/fullrepo_sync.py, plugins/rldyour-flow/hooks, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: MCP
 -->
 
@@ -49,7 +49,7 @@ Hook commands in `hooks.json` first try the repository-local hook path, then the
 
 The current repository has twelve durable memory files in `.serena/memories`. There are no tracked `.serena/plans` or `.serena/research` files at this point. Normal product repositories should keep `.serena` knowledge out of normal branches and publish it through `fullrepo`; this repository still tracks selected memories because the Codex setup repository uses them as project source-of-truth knowledge.
 
-`plugins/rldyour-serena-mcp/.codex-plugin/plugin.json` version is `0.2.0`. The manifest now describes fullrepo-aware project memory sync.
+`plugins/rldyour-serena-mcp/.codex-plugin/plugin.json` version is `0.2.1`. The manifest describes fullrepo-aware project memory sync and agent-only path classification for memory freshness.
 
 `scripts/smoke_hooks.sh` now has two layers for both repository and installed plugin cache paths:
 
@@ -64,6 +64,8 @@ The current repository has twelve durable memory files in `.serena/memories`. Th
 - If those knowledge paths are untracked/ignored in a fullrepo-managed project, it requires `serena_memory_state.py` to report `memory_matches_head: true`, then removes runtime sync markers without committing AI files to the current branch. `rldyour-flow` is responsible for publishing the final `fullrepo` snapshot.
 
 Current verified memory-state behavior reports `memory_count: 12` for this repository and uses semantic current-state matching so a knowledge-only memory commit after the newest synced source commit remains current instead of appearing stale.
+
+After commit `6abd7b8`, `serena_memory_state.py` treats agent-only instruction and workflow files as knowledge paths for freshness calculations. This includes `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.github/copilot-instructions.md`, `.github/instructions/`, `.github/prompts/`, `.agents/commands/`, `.agents/hooks/`, `.agents/skills/`, `.claude/`, `.codex/`, `.cursor/rules/`, `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`.
 
 ## Contracts And Data
 
@@ -95,9 +97,13 @@ After commit `d12a51f`, `serena_memory_state.py` separates literal and semantic 
 
 This avoids reporting a false mismatch after knowledge-only commits while still exposing whether the current `HEAD` is directly referenced by memory metadata.
 
+Agent-only path removals from the normal branch index are treated as knowledge-path changes, not product-code changes. This prevents `git rm --cached` migration to the `fullrepo` workflow from making Serena memories appear stale when no product code changed.
+
 `commit_serena_knowledge.sh` refuses to auto-commit if non-Serena-knowledge changes are present. It commits only existing tracked Serena knowledge directories from `.serena/memories`, `.serena/plans`, and `.serena/research` with message `chore(serena): sync project knowledge after <head>`. Missing optional knowledge directories do not prevent staging existing memory changes. In fullrepo-managed repositories, the script acknowledges current memory sync instead of committing.
 
 `serena_memory_state.py` parses `Last commit:` metadata using a 7-to-40 hex character commit SHA. Missing or unresolvable metadata is ignored rather than treated as authoritative.
+
+`serena_memory_state.py` classifies known agent-only files and directories as knowledge paths when computing `non_knowledge_changed_files_since_sync`.
 
 ## Invariants
 

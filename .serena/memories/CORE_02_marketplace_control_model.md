@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 018cc6e feat(flow): add fullrepo agent context sync
+Last commit: 6abd7b8 fix(serena): classify agent files as knowledge paths
 Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -109,7 +109,7 @@ Current plugin manifest versions:
 
 - `rldyour-mcps`: `0.1.5`.
 - `rldyour-explore`: `0.1.2`.
-- `rldyour-serena-mcp`: `0.2.0`.
+- `rldyour-serena-mcp`: `0.2.1`.
 - `rldyour-security`: `0.1.1`.
 - `rldyour-browser`: `0.1.1`.
 - `rldyour-design`: `0.1.1`.
@@ -118,6 +118,8 @@ Current plugin manifest versions:
 - `rldyour-rules`: `0.1.2`.
 
 `rldyour-flow` `0.2.0` exposes deep `ry-init` context packs, `ry-start` context sufficiency gates, advisory SessionStart context, advisory PostToolUse commit advice, reviewer workflows, deployment workflow, post-task sync, and fullrepo agent-only context synchronization.
+
+`rldyour-serena-mcp` `0.2.1` keeps memory freshness current when agent-only instruction/workflow files are moved out of `main` and into `fullrepo`.
 
 Root `README.md` describes the active catalog, planned architecture, system install workflow, the portable MCP source-of-truth rule for `plugins/rldyour-mcps/.mcp.json`, and the owner-requested YOLO defaults applied by the installer.
 
