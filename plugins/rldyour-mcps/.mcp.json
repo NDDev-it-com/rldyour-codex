@@ -45,7 +45,7 @@
     "chrome-devtools": {
       "command": "bunx",
       "args": [
-        "chrome-devtools-mcp@0.23.0",
+        "chrome-devtools-mcp@0.24.0",
         "--headless",
         "--isolated",
         "--no-usage-statistics",
