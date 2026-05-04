@@ -77,6 +77,12 @@ import json
 import sys
 
 payload = json.load(sys.stdin)
+fullrepo_state = payload.get("fullrepo_state", {})
+if not isinstance(fullrepo_state, dict):
+    fullrepo_state = {}
+tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
+if not isinstance(tracked_agent_paths, list):
+    tracked_agent_paths = []
 print(json.dumps({
     "branch": payload.get("branch"),
     "head": payload.get("head_sha"),
@@ -86,6 +92,12 @@ print(json.dumps({
     "ahead": payload.get("ahead", 0),
     "behind": payload.get("behind", 0),
     "worktree_count": payload.get("worktree_count", 0),
+    "fullrepo": {
+        "branch": fullrepo_state.get("fullrepo_branch", "fullrepo"),
+        "remote_exists": bool(fullrepo_state.get("remote_fullrepo_exists")),
+        "exclude_installed": bool(fullrepo_state.get("exclude_installed", False)),
+        "tracked_agent_paths": len(tracked_agent_paths),
+    },
 }, ensure_ascii=False, indent=2))
 ')
 
@@ -103,8 +115,9 @@ Required order:
 4. Run applicable quality checks or document why a check is unavailable.
 5. Commit atomically with Conventional Commits. Keep Serena knowledge/docs sync commits separate when useful.
 6. Push/synchronize with GitHub using git/gh when an upstream exists.
-7. Clean merged worktrees and merged branches only after confirming they are merged and safe to remove.
-8. Stop again after sync or report the exact blocker."
+7. Restore or install .git/info/exclude for agent-only files, keep normal branch history clean, and publish fullrepo with safe --force-with-lease when agent-only files exist.
+8. Clean merged worktrees and merged branches only after confirming they are merged and safe to remove.
+9. Stop again after sync or report the exact blocker."
 
 echo "$MESSAGE" >&2
 exit 2

@@ -107,6 +107,7 @@ Required actions:
 3. Do not store chat history, generic advice, speculative plans, TODO lists, or secrets in memories. Preserve non-trivial plans in .serena/plans and long source-backed research in .serena/research only when useful for future sessions.
 4. If only .serena/memories, .serena/plans, or .serena/research changed, run:
    ${COMMIT_SCRIPT}
+   In fullrepo-managed projects this acknowledges current memories and leaves publishing to flow-post-task-sync instead of committing AI files to the current branch.
 5. Stop again after the sync or report the exact blocker."
 
 echo "$MESSAGE" >&2

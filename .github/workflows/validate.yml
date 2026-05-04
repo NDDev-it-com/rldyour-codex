@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fullrepo
   pull_request:
     branches:
       - main
@@ -96,7 +97,7 @@ jobs:
             echo "- OS: ${RUNNER_OS}"
             echo "- Ref: ${GITHUB_REF}"
             echo "- SHA: ${GITHUB_SHA}"
-            echo "- Checks: marketplace validation, doctor, clean bootstrap"
+            echo "- Checks: marketplace validation, doctor, clean bootstrap, fullrepo sync smoke"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Collect diagnostics

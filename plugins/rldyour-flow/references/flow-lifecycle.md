@@ -22,13 +22,14 @@ Core order:
 
 1. Git sync audit: dirty state, current branch, upstream ahead/behind, worktrees, local/remote branches.
 2. If uncommitted or unmerged work exists, deeply review it. If correct and consistent, synchronize it into `main`, merge safe branches, push, and remove merged worktrees/branches. If risky, ask the user with concrete options.
-3. Serena readiness: `check_onboarding_performed`, onboarding if needed, `list_memories`, relevant `read_memory`.
-4. Scope detection: project, module, sphere, or feature. For a sphere such as backend, inspect the whole sphere and its integration points.
-5. Semantic map: `get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, `search_for_pattern` only when needed.
-6. Data and contract map: database tables/fields, schemas, migrations, API contracts, generated artifacts, configuration keys, environment variables, and integration boundaries that affect the scope.
-7. Pattern map: established project patterns for naming, layering, validation, errors, tests, state management, and dependency usage.
-8. External enrichment only for unclear architecture, framework behavior, or current best practices.
-9. Synthesis in Russian, with exact source-of-truth paths, symbols, contracts, checks, and known gaps.
+3. Restore agent-only context from `fullrepo` when available and install `.git/info/exclude` rules before treating `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, or similar files as missing.
+4. Serena readiness: `check_onboarding_performed`, onboarding if needed, `list_memories`, relevant `read_memory`.
+5. Scope detection: project, module, sphere, or feature. For a sphere such as backend, inspect the whole sphere and its integration points.
+6. Semantic map: `get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, `search_for_pattern` only when needed.
+7. Data and contract map: database tables/fields, schemas, migrations, API contracts, generated artifacts, configuration keys, environment variables, and integration boundaries that affect the scope.
+8. Pattern map: established project patterns for naming, layering, validation, errors, tests, state management, and dependency usage.
+9. External enrichment only for unclear architecture, framework behavior, or current best practices.
+10. Synthesis in Russian, with exact source-of-truth paths, symbols, contracts, checks, and known gaps.
 
 ## ry-start
 
@@ -48,13 +49,34 @@ Core order:
 10. Run quality gates and fix all issues in touched scope plus integration path.
 11. Run reviewer workflow. Use subagents when the `ry-start` workflow calls for parallel review.
 12. Run browser/security/design/LSP workflows when triggered by the change type.
-13. Synchronize Serena memories, AGENTS.md, CLAUDE.md, git, GitHub, and worktree cleanup through `flow-post-task-sync`.
+13. Synchronize Serena memories, agent-only files, AGENTS.md/CLAUDE.md when present, git, GitHub, `fullrepo`, and worktree cleanup through `flow-post-task-sync`.
 
 ## Session Context
 
 The SessionStart hook is advisory and read-only. It adds compact state at session startup or resume so Codex knows whether repository sync, Serena memory freshness, docs, dirty files, or worktrees need attention. This context informs planning; it is not a blocker.
 
 The PostToolUse commit advice hook is advisory and read-only. It checks recently created commits for conventional commit format, suspicious sensitive paths, runtime markers, browser evidence, and broad commit scope. It informs the next model step without rejecting the command.
+
+## Fullrepo Branch Standard
+
+Normal project branches such as `main` should contain product source, tests, public docs, CI, and deployable configuration. Agent-only files that reveal or preserve AI workflow state should live locally and in the `fullrepo` branch, not in normal branch history.
+
+Agent-only examples:
+
+- root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, and `QWEN.md`;
+- `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`;
+- `.claude/`, `.codex/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
+
+Runtime files, secrets, caches, local env files, browser artifacts, tokens, cookies, and credentials must not be published to either branch.
+
+Use `plugins/rldyour-flow/scripts/fullrepo_sync.py` or `scripts/sync_fullrepo_branch.sh`:
+
+- `--restore`: fetch and restore agent-only files from `origin/fullrepo` into the worktree and install `.git/info/exclude`.
+- `--migrate-main`: remove currently tracked agent-only files from the current branch index through `git rm --cached`, leaving files in the worktree.
+- `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`.
+- `--status-json`: emit machine-readable state for hooks and diagnostics.
+
+Use `--force-with-lease` for `fullrepo` because it protects against overwriting unexpected remote changes. Never force-push `main`.
 
 ## ry-newp
 

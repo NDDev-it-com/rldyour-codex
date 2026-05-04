@@ -9,6 +9,7 @@ Rollback is a first-class workflow because this repository writes global Codex c
 - Before restore, the rollback script creates a pre-restore backup of the current `AGENTS.md` and `config.toml`.
 - The script restores only files that the installer backs up: `AGENTS.md` and `config.toml`.
 - Plugin cache rollback is handled by checking out an older Git revision and rerunning the installer.
+- Agent-only context rollback is handled by restoring or republishing the `fullrepo` branch after the normal branch state is selected.
 
 ## List Backups
 
@@ -53,6 +54,7 @@ Return to active development after validation:
 
 ```bash
 git checkout main
+scripts/sync_fullrepo_branch.sh --restore
 ```
 
 ## Failure Diagnosis Before Rollback
@@ -64,3 +66,12 @@ scripts/collect_diagnostics.sh --include-doctor
 ```
 
 This keeps the failed state available for later analysis without storing secrets.
+
+## Restore Fullrepo Agent Context
+
+Use this when `AGENTS.md`, `.serena` knowledge, or other agent-only files are missing on a new or restored machine:
+
+```bash
+scripts/sync_fullrepo_branch.sh --restore
+scripts/sync_fullrepo_branch.sh --status
+```
