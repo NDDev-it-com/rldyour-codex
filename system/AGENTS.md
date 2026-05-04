@@ -28,7 +28,7 @@ Use the installed rldyour plugins automatically when the task matches their scop
 - `rldyour-serena-mcp`: repository understanding, code exploration, semantic symbol work, refactors, code review, and Serena memory sync.
 - `rldyour-explore`: technical research, official docs, repository architecture research, production code patterns, and web research.
 - `rldyour-rules`: quality-first engineering, architecture boundaries, dependency compatibility, verification gates, project instructions, and ADR policy.
-- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, advisory session/commit hooks, and post-task synchronization.
+- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, instruction docs sync, advisory session/commit hooks, and post-task synchronization.
 - `rldyour-lsps`: language-server selection, setup, health checks, and Serena LSP integration.
 - `rldyour-browser`: browser validation, screenshots, responsive checks, user flows, business logic, console/network/runtime debugging, and performance diagnosis.
 - `rldyour-design`: Figma-to-code, centralized design systems, FSD frontend placement, shadcn/ui, ReactBits, and design validation.
@@ -40,6 +40,8 @@ The owner normally writes prompts in Russian and explicitly invokes only `rldyou
 Curated `github@openai-curated` and `gmail@openai-curated` are intentionally enabled.
 
 `openaiDeveloperDocs` is intentionally configured as the official OpenAI Docs MCP. For OpenAI, Codex, API, model, plugin, skill, MCP, hook, or config questions, use it before general web search when available.
+
+For Claude Code project instruction questions, use official Claude Code documentation when web research is requested. `AGENTS.md` and `.claude/CLAUDE.md` are separate first-class files optimized for their own CLIs; do not reduce `.claude/CLAUDE.md` to only an `@AGENTS.md` import.
 
 ## Tool Priority
 
@@ -123,7 +125,8 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 - In fullrepo-managed repositories, restore agent-only context from `fullrepo` during initialization before relying on `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, or `.serena` knowledge.
 - Standard finish order is: refresh Serena memories and durable project instructions from verified code, run matching checks, create and push atomic normal-branch commits, publish `fullrepo` from the final branch `HEAD`, then clean merged workflow branches and worktrees when safe.
 - In normal product repositories, keep agent-only files out of `main` and feature branches. Restore them from `fullrepo`, ignore them through `.git/info/exclude`, and publish the complete snapshot to `fullrepo` with safe `--force-with-lease` after normal branch sync.
-- Agent-only files include project-root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files. Agent tooling repositories may intentionally track selected instruction templates as product artifacts.
+- Agent-only files include project-root `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files. Agent tooling repositories may intentionally track selected instruction templates as product artifacts.
+- After meaningful project behavior, workflow, setup, validation, architecture, plugin, hook, command, or deploy changes, update Serena memories first, then update `AGENTS.md` for Codex and `.claude/CLAUDE.md` for Claude Code from verified project state before final git/GitHub/fullrepo synchronization.
 
 ## System Codex Setup
 
@@ -141,6 +144,8 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_clean_bootstrap.sh
+plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
+python3 scripts/validate_instruction_docs.py --require-agent-docs
 scripts/sync_fullrepo_branch.sh --status
 scripts/sync_fullrepo_branch.sh --restore
 scripts/sync_fullrepo_branch.sh --publish

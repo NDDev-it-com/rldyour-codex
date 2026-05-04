@@ -26,8 +26,8 @@ The active marketplace currently contains:
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized token-based design system, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
-- `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, project instructions, ADR policy, and `ry-rules-review`.
+- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
+- `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, Codex and Claude Code project instructions, ADR policy, and `ry-rules-review`.
 
 ## Planned Plugin Architecture
 
@@ -38,8 +38,8 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-browser`: created. Browser validation, pixel-perfect checks, functional checks, business-logic verification, and runtime debugging through Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser evidence.
 - `rldyour-lsps`: created. Language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: created. Command-like SDLC skills, deep `ry-init` context packs, `ry-start` context sufficiency gate, reviewer workflows orchestrated by `ry-start`/`ry-review`, advisory SessionStart/PostToolUse hooks, and post-task sync hook for Serena/docs/git/GitHub cleanup.
-- `rldyour-rules`: created. Hard and advisory rules for quality-first engineering, architecture, dependencies, verification, project instructions, and ADRs.
+- `rldyour-flow`: created. Command-like SDLC skills, deep `ry-init` context packs, `ry-start` context sufficiency gate, reviewer workflows orchestrated by `ry-start`/`ry-review`, instruction docs sync, advisory SessionStart/PostToolUse hooks, and post-task sync hook for Serena/docs/git/GitHub cleanup.
+- `rldyour-rules`: created. Hard and advisory rules for quality-first engineering, architecture, dependencies, verification, Codex/Claude project instructions, and ADRs.
 - `rldyour-security`: created. Skills-only security guidance, OWASP Top 10 coverage, and defensive review workflow.
 - `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.
 
@@ -146,6 +146,13 @@ scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 ```
 
+Instruction docs checks:
+
+```bash
+plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
+python3 scripts/validate_instruction_docs.py --require-agent-docs
+```
+
 `scripts/smoke_mcp_capabilities.sh` verifies MCP protocol behavior with `initialize`, `list_tools`, and safe `call_tool` probes where a deterministic read-only tool exists. Figma is skipped by default because it requires OAuth; pass `--include-auth` only after authorizing that runtime.
 
 GitHub Actions runs the same marketplace/system checks on push and pull request with a temporary `CODEX_HOME`, list-only MCP capability probes, and a clean bootstrap clone.
@@ -153,6 +160,8 @@ GitHub Actions runs the same marketplace/system checks on push and pull request 
 ## Fullrepo Branch
 
 `fullrepo` is the portable complete-state branch for agent-only files. Normal project branches should keep product history clean and exclude project-root AI workflow files through `.git/info/exclude`.
+
+In rldyour-managed projects, `AGENTS.md` is the Codex-native project instruction file and `.claude/CLAUDE.md` is the Claude Code-native project memory file. Both are agent-only context: keep them out of normal branch history and publish them through `fullrepo`.
 
 Use:
 

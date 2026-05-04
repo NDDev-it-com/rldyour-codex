@@ -11,7 +11,7 @@ It does not configure MCP servers or hooks. MCP transports come from `rldyour-mc
 - `implementation-discipline`: code synchronization, reuse, error handling, and no-entropy implementation rules.
 - `dependency-compatibility-policy`: latest-compatible dependency and technology selection rules.
 - `verification-quality-gates`: quality gate selection and no-fake-green policy.
-- `project-instructions-policy`: `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, ADR, and durable documentation rules.
+- `project-instructions-policy`: Codex `AGENTS.md`, Claude Code `.claude/CLAUDE.md`, `REVIEW.md`, ADR, and durable documentation rules.
 - `ry-rules-review`: explicit command-style rules audit for a diff, PR, branch, or scope.
 
 ## Behavior
@@ -19,4 +19,3 @@ It does not configure MCP servers or hooks. MCP transports come from `rldyour-mc
 The plugin is advisory-first. It should guide and correct implementation in scope without blocking normal progress. Hard bans still require correction: no hacks, no temporary workarounds, no swallowed errors, no secrets, and no fake checks.
 
 User-facing conversation stays Russian. Repository documentation, memory files, plans, research archives, code comments, and commit messages stay English.
-

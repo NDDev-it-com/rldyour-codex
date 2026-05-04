@@ -11,13 +11,15 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Formal release, rollback, dependency-update, routing-policy, and observability workflows for the rldyour Codex marketplace.
 - `fullrepo` branch workflow for portable agent-only files: restore, migrate, publish, status, smoke validation, and Flow/Serena lifecycle integration.
 - Safe `--force-with-lease` fullrepo publishing after normal branch synchronization.
+- Instruction docs sync workflow for first-class Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` maintenance.
 
 ### Changed
 
 - Global and project instructions now state the explicit fullrepo-managed task sync order: Serena/docs, checks, normal branch push, fullrepo publish, and safe cleanup.
 - `rldyour-flow` now treats `fullrepo` as part of `ry-init` and `flow-post-task-sync`.
+- `rldyour-flow` now detects missing or stale instruction docs and routes post-task sync through `$instruction-docs-sync`.
 - `rldyour-serena-mcp` memory sync now supports fullrepo-managed `.serena` knowledge without committing AI files to normal branches.
-- `rldyour-rules` now documents the agent-only file policy for `AGENTS.md`, `CLAUDE.md`, `.serena`, and related AI workflow paths.
+- `rldyour-rules` now documents the agent-only file policy for `AGENTS.md`, `.claude/CLAUDE.md`, `.serena`, and related AI workflow paths.
 
 ## [0.1.0] - 2026-05-03
 

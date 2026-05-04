@@ -13,8 +13,9 @@ Keep durable project instructions useful for future Codex sessions without turni
 
 - Create or update `AGENTS.md` when durable Codex project rules, setup commands, quality gates, architecture constraints, deploy contracts, or workflow guidance change.
 - Keep `AGENTS.md` concise because Codex loads it at session start and instruction size matters.
-- Update `CLAUDE.md` when it already exists, when the project explicitly uses Claude Code compatibility, or when the owner asks to create it.
-- Do not create generic `CLAUDE.md` in every project by default.
+- Create or update `.claude/CLAUDE.md` for fullrepo-managed projects so Claude Code has first-class project memory.
+- Keep `.claude/CLAUDE.md` optimized for Claude Code, not as a thin `@AGENTS.md` import.
+- Do not create root `CLAUDE.md` by default; `.claude/CLAUDE.md` is the rldyour project memory path.
 - Create or update `REVIEW.md` when review-specific rules are durable and materially help future review agents.
 - Create ADRs for important architecture, technology, dependency, deployment, security, or irreversible design decisions.
 - Repository docs, instructions, ADRs, memories, plans, comments, and commits are English. User-facing conversation with the owner is Russian.

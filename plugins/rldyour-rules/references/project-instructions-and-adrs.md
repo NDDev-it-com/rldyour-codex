@@ -16,17 +16,20 @@ Keep it concise. Codex reads it before work, so it should contain high-signal pr
 
 For normal product repositories, project-root `AGENTS.md` is agent-only context. Keep it local and in the `fullrepo` branch, and add it to `.git/info/exclude` through the rldyour fullrepo workflow instead of tracking it in normal branches. Repositories that are themselves agent tooling may intentionally track instruction templates as product artifacts.
 
-## CLAUDE.md
+## .claude/CLAUDE.md
 
-Update `CLAUDE.md` when:
+Create or update `.claude/CLAUDE.md` in every fullrepo-managed project. This file is Claude Code project memory and must be optimized for Claude Code, not treated as a thin wrapper around `AGENTS.md`.
 
-- It already exists.
-- The project explicitly uses Claude Code compatibility.
-- The owner asks to create or maintain it.
+Include:
 
-Do not create generic `CLAUDE.md` by default in every project.
+- Project commands and checks Claude Code should know every session.
+- Project architecture, source-of-truth paths, naming conventions, and common workflows.
+- Claude-specific diagnostics and controls when relevant: `/memory`, `/context`, `/hooks`, `/mcp`, `/permissions`, `/doctor`, `/status`.
+- Claude-specific file locations when relevant: `.claude/settings.json`, `.claude/skills/`, `.claude/hooks/`, `.claude/agents/`.
 
-For normal product repositories, `CLAUDE.md` is agent-only compatibility context and follows the same `fullrepo` branch policy as project-root `AGENTS.md`.
+Keep it concise and first-class. Do not make the file only `@AGENTS.md`. Do not create root `CLAUDE.md` by default; it is a legacy location in the rldyour workflow.
+
+For normal product repositories, `.claude/CLAUDE.md` is agent-only context and follows the same `fullrepo` branch policy as project-root `AGENTS.md`.
 
 ## REVIEW.md
 
@@ -63,7 +66,7 @@ Agent-only files that reveal or preserve AI workflow state should not be committ
 
 Default agent-only paths include:
 
-- `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, and `QWEN.md`.
+- `AGENTS.md`, `.claude/CLAUDE.md`, root `CLAUDE.md` when migrating legacy projects, `REVIEW.md`, `GEMINI.md`, and `QWEN.md`.
 - `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`.
 - `.claude/`, `.codex/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
 

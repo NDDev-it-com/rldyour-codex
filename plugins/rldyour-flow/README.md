@@ -9,11 +9,12 @@ It provides Russian-first command skills:
 - `ry-newp`: design and optionally scaffold a new project after deep questioning.
 - `ry-review`: review a diff/scope plus affected integration graph.
 - `ry-deploy`: synchronize local, GitHub, and server state, then deploy and verify.
+- `instruction-docs-sync`: synchronize Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` from verified project facts.
 - `flow-post-task-sync`: finish task state by synchronizing Serena memories, agent-only files, git commits, GitHub, `fullrepo`, and branch/worktree cleanup.
 
 ## Fullrepo Branch
 
-Normal branches keep product history clean. Agent-only files such as root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files are restored locally from `fullrepo` and ignored through `.git/info/exclude`.
+Normal branches keep product history clean. Agent-only files such as root `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files are restored locally from `fullrepo` and ignored through `.git/info/exclude`.
 
 `plugins/rldyour-flow/scripts/fullrepo_sync.py` owns the deterministic behavior:
 
@@ -30,7 +31,7 @@ The SessionStart hook is read-only. It adds a compact repository context packet 
 
 The PostToolUse hook watches Bash `git commit` commands and emits non-blocking commit advice for conventional commit format, oversized subjects, suspicious sensitive paths, runtime markers, browser evidence, or very broad commits. It never rejects the command.
 
-The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `flow-post-task-sync` for docs and git synchronization.
+The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `instruction-docs-sync` when needed and `flow-post-task-sync` for docs, git, GitHub, and fullrepo synchronization.
 
 Loop prevention uses `.serena/.flow_sync_marker`, which is ignored by git. If the same state already requested a continuation, the hook allows stop to avoid an infinite loop.
 
@@ -47,4 +48,4 @@ Loop prevention uses `.serena/.flow_sync_marker`, which is ignored by git. If th
 
 ## Sources
 
-The workflow is based on Codex Skills, Hooks, AGENTS.md, and Subagents documentation, plus GitHub Flow, Conventional Commits, Google code review practices, SRE release engineering, C4, arc42, ADR, and OWASP guidance.
+The workflow is based on Codex Skills, Hooks, AGENTS.md, and Subagents documentation; Claude Code memory, hooks, and best-practices documentation; plus GitHub Flow, Conventional Commits, Google code review practices, SRE release engineering, C4, arc42, ADR, and OWASP guidance.

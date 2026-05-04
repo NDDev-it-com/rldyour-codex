@@ -103,6 +103,21 @@
       ]
     },
     {
+      "id": "ru-instruction-docs-sync",
+      "prompt": "обнови AGENTS.md и CLAUDE.md чтобы документация проекта была актуальной",
+      "prompt_terms": ["AGENTS.md", "CLAUDE.md"],
+      "expected": [
+        {
+          "skill": "rldyour-flow:instruction-docs-sync",
+          "description_terms": ["AGENTS.md", "CLAUDE.md", "инструкции проекта"]
+        },
+        {
+          "skill": "rldyour-rules:project-instructions-policy",
+          "description_terms": ["правила проекта", "documentation"]
+        }
+      ]
+    },
+    {
       "id": "en-quality-rules",
       "prompt": "review the implementation against quality rules and architecture boundaries",
       "prompt_terms": ["quality", "architecture"],

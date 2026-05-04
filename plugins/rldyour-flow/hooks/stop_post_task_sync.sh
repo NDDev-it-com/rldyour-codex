@@ -80,6 +80,9 @@ payload = json.load(sys.stdin)
 fullrepo_state = payload.get("fullrepo_state", {})
 if not isinstance(fullrepo_state, dict):
     fullrepo_state = {}
+instruction_docs_state = payload.get("instruction_docs_state", {})
+if not isinstance(instruction_docs_state, dict):
+    instruction_docs_state = {}
 tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
 if not isinstance(tracked_agent_paths, list):
     tracked_agent_paths = []
@@ -92,6 +95,13 @@ print(json.dumps({
     "ahead": payload.get("ahead", 0),
     "behind": payload.get("behind", 0),
     "worktree_count": payload.get("worktree_count", 0),
+    "instruction_docs": {
+        "required": instruction_docs_state.get("required_docs", []),
+        "present": instruction_docs_state.get("present_docs", []),
+        "missing": instruction_docs_state.get("missing_docs", []),
+        "review_needed": bool(instruction_docs_state.get("needs_instruction_docs_review")),
+        "review_reasons": instruction_docs_state.get("review_reasons", []),
+    },
     "fullrepo": {
         "branch": fullrepo_state.get("fullrepo_branch", "fullrepo"),
         "remote_exists": bool(fullrepo_state.get("remote_fullrepo_exists")),
@@ -110,7 +120,7 @@ Continue this turn and run the \$flow-post-task-sync workflow now.
 
 Required order:
 1. Verify Serena memories are current. Do not duplicate Serena memory sync.
-2. Inspect AGENTS.md and CLAUDE.md if present. Update them only with verified project rules, commands, deploy contracts, quality gates, or workflow facts that changed during this task.
+2. Run \$instruction-docs-sync when instruction docs review is needed. Keep AGENTS.md Codex-native and .claude/CLAUDE.md Claude Code-native, using only verified project rules, commands, deploy contracts, quality gates, or workflow facts.
 3. Review all uncommitted changes. Do not commit secrets, runtime markers, browser artifacts, or accidental junk.
 4. Run applicable quality checks or document why a check is unavailable.
 5. Commit atomically with Conventional Commits. Keep Serena knowledge/docs sync commits separate when useful.
