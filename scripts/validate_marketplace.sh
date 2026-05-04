@@ -9,8 +9,8 @@ if [ -z "$UV_BIN" ]; then
   printf 'uv command not found\n' >&2
   exit 1
 fi
-QUICK_VALIDATE=${QUICK_VALIDATE:-/Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py}
-CODEX_HOME_DIR=${CODEX_HOME:-/Users/rldyourmnd/.codex}
+QUICK_VALIDATE=${QUICK_VALIDATE:-"$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py"}
+CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 CACHE_ROOT=${CACHE_ROOT:-"$CODEX_HOME_DIR/plugins/cache/rldyour-codex"}
 
 step() {

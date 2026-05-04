@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-04
-Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
-Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, /Users/rldyourmnd/.codex/config.toml
+Last updated: 2026-05-05
+Last commit: 9d7792a chore(system): refresh codex runtime sync
+Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, /home/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
 
@@ -23,7 +23,7 @@ Area: MCP
 - `scripts/smoke_mcp_runtime.sh`: validates installed MCP runtime definitions through Codex and endpoint/command probes.
 - `scripts/smoke_mcp_capabilities.py`: validates MCP initialize, expected tool discovery, and safe call-tool probes.
 - `scripts/smoke_mcp_capabilities.sh`: wrapper that runs capability smoke with pinned `mcp` Python SDK.
-- `/Users/rldyourmnd/.codex/config.toml`: active system MCP registrations after marketplace installation.
+- `/home/rldyourmnd/.codex/config.toml`: active system MCP registrations after marketplace installation.
 
 ## Entry Points
 
@@ -50,13 +50,13 @@ Local MCP servers use explicit runtimes:
 
 Repository `.mcp.json` intentionally stores portable commands (`uvx`, `bunx`, `dart`). Active system Codex config resolves them to absolute local paths:
 
-- `/opt/homebrew/bin/uvx` for `serena` and `semgrep`.
-- `/Users/rldyourmnd/.local/bin/bunx` for `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, and `shadcn`.
-- `/opt/homebrew/bin/dart` for `dart-flutter`.
+- `/home/rldyourmnd/.local/bin/uvx` for `serena` and `semgrep`.
+- `/home/rldyourmnd/.bun/bin/bunx` for `sequential-thinking`, `playwright`, `chrome-devtools`, `context7`, and `shadcn`.
+- `/snap/bin/dart` for `dart-flutter`.
 
 `scripts/install_system_codex.sh --apply` is the supported way to project portable `.mcp.json` definitions into the active system config. The installer reads `plugins/rldyour-mcps/.mcp.json` directly, then replaces portable commands with local executable paths. This avoids a duplicated hardcoded MCP server list in the installer.
 
-`scripts/validate_marketplace.sh` has an `MCP config sync` step that compares repository `.mcp.json` with `/Users/rldyourmnd/.codex/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
+`scripts/validate_marketplace.sh` has an `MCP config sync` step that compares repository `.mcp.json` with `/home/rldyourmnd/.codex/config.toml`. It requires the same server names, command basenames, URLs, args, `env_vars`, `env`, startup timeouts, and tool timeouts. Absolute command-path resolution is the only expected difference.
 
 `scripts/validate_marketplace.sh` has an `MCP pinning policy` step. It rejects `@latest`, requires exact `uvx --from package==version` package specs, and requires pinned bunx package specs.
 
@@ -66,13 +66,13 @@ Pinned local package specs in `.mcp.json`:
 - `sequential-thinking`: `@modelcontextprotocol/server-sequential-thinking@2025.12.18`.
 - `playwright`: `@playwright/mcp@0.0.73`.
 - `chrome-devtools`: `chrome-devtools-mcp@0.24.0`.
-- `context7`: `@upstash/context7-mcp@2.2.3`.
+- `context7`: `@upstash/context7-mcp@2.2.4`.
 - `semgrep`: `semgrep==1.161.0`.
 - `shadcn`: `shadcn@4.6.0`.
 
 `config/mcp-runtime-versions.env` stores the same pinned runtime package versions plus `CODEX_CLI_VERSION=0.128.0` and `MCP_PYTHON_SDK_VERSION=1.27.0`.
 
-After commit `3128913 chore(mcp): update chrome devtools runtime pin`, `chrome-devtools-mcp` is pinned to `0.24.0` in both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`. `scripts/install_system_codex.sh --apply` projected that pin into `/Users/rldyourmnd/.codex/config.toml`, and `codex mcp get chrome-devtools` reports `chrome-devtools-mcp@0.24.0`.
+After commit `9d7792a chore(system): refresh codex runtime sync`, `chrome-devtools-mcp` is pinned to `0.24.0` and `@upstash/context7-mcp` is pinned to `2.2.4` in both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`. `scripts/install_system_codex.sh --apply` projected those pins into `/home/rldyourmnd/.codex/config.toml`; `codex mcp get chrome-devtools` reports `chrome-devtools-mcp@0.24.0`, and Context7 is installed through `@upstash/context7-mcp@2.2.4`.
 
 `scripts/smoke_mcp_runtime.sh` checks that repository `.mcp.json` and installed `CODEX_HOME/config.toml` have the same server names, runs `codex mcp get <server>` for each server, verifies local command executables, and probes remote MCP URLs unless `--skip-url-check` is passed. It accepts remote HTTP responses below 500 as reachable endpoint negotiation responses.
 
@@ -111,9 +111,9 @@ Chrome DevTools starts headless and isolated with `--no-usage-statistics` and `-
 
 `codex mcp list` verified that all twelve rldyour MCP servers are enabled in system Codex. `codex mcp get openaiDeveloperDocs` verifies the official OpenAI Docs MCP as a `streamable_http` remote endpoint. `figma` uses OAuth. `context7` reads `CONTEXT7_API_KEY` through an environment-variable reference. The real Context7 API key is not committed.
 
-On the owner machine, Semgrep CLI is also installed through Homebrew at `/opt/homebrew/bin/semgrep` for direct local use. The repository MCP runtime remains pinned to `uvx --from semgrep==1.161.0 semgrep mcp`; do not replace that portable MCP definition with the Homebrew CLI unless the owner explicitly changes the reproducibility policy.
+On the owner machine, Semgrep CLI is also installed at `/home/rldyourmnd/.local/bin/semgrep` for direct local use. The repository MCP runtime remains pinned to `uvx --from semgrep==1.161.0 semgrep mcp`; do not replace that portable MCP definition with the direct CLI unless the owner explicitly changes the reproducibility policy.
 
-Semgrep authentication and Pro Engine availability are runtime state, not repository secrets. Verified local behavior: `semgrep show identity` and `uvx --from semgrep==1.161.0 semgrep show deployment` succeed without exposing tokens; `semgrep scan --pro` works for both the Homebrew CLI and the pinned `uvx` Semgrep runtime. The Semgrep MCP daemon may still print that DeepSemgrep/daemon mode is not running when the Semgrep deployment does not expose that capability; this does not by itself mean normal Semgrep MCP tools or `scan --pro` are broken.
+Semgrep authentication and Pro Engine availability are runtime state, not repository secrets. Verified local behavior: `semgrep show identity` and `uvx --from semgrep==1.161.0 semgrep show deployment` succeed without exposing tokens; `semgrep scan --pro` works for both the direct CLI and the pinned `uvx` Semgrep runtime. The Semgrep MCP daemon may still print that DeepSemgrep/daemon mode is not running when the Semgrep deployment does not expose that capability; this does not by itself mean normal Semgrep MCP tools or `scan --pro` are broken.
 
 ## Contracts And Data
 
@@ -129,7 +129,7 @@ Do not store Semgrep auth output, deployment IDs, usernames, tokens, or organiza
 
 `rldyour-mcps` is the runtime dependency layer for automatic workflow plugins such as `rldyour-explore`, `rldyour-browser`, `rldyour-security`, `rldyour-serena-mcp`, and `rldyour-design`.
 
-`scripts/smoke_clean_bootstrap.sh` validates this MCP runtime layer from committed source by installing into a temporary `CODEX_HOME`, running doctor with list-only capability smoke and a temporary `SERENA_HOME`, and verifying `codex mcp list`. The temporary `SERENA_HOME` prevents clean-bootstrap probes from writing temporary clone paths into `/Users/rldyourmnd/.serena/serena_config.yml`.
+`scripts/smoke_clean_bootstrap.sh` validates this MCP runtime layer from committed source by installing into a temporary `CODEX_HOME`, running doctor with list-only capability smoke and a temporary `SERENA_HOME`, and verifying `codex mcp list`. The temporary `SERENA_HOME` prevents clean-bootstrap probes from writing temporary clone paths into the owner's global Serena config. After commit `9d7792a`, the smoke script retries with `git clone --no-local` when a `--local` clone cannot hardlink objects across filesystems.
 
 `.github/workflows/validate.yml` runs MCP registration, pinning, runtime smoke, and list-only capability smoke in CI through `scripts/validate_marketplace.sh` and `scripts/doctor_system_codex.sh`.
 

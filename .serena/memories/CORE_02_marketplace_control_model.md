@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-04
-Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
-Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
+Last updated: 2026-05-05
+Last commit: 9d7792a chore(system): refresh codex runtime sync
+Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, /home/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -48,7 +48,7 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 - `.agents/plugins/marketplace.json`: active installable plugin catalog and plugin order.
 - `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, linked capabilities, and plugin interface metadata.
 - `.gitignore`: repository-level ignored runtime artifacts, browser evidence, env files, and Serena runtime state.
-- `/Users/rldyourmnd/.codex/config.toml`: active local marketplace registration, YOLO permission defaults, enabled plugin list, and MCP runtime config for system Codex.
+- `/home/rldyourmnd/.codex/config.toml`: active local marketplace registration, YOLO permission defaults, enabled plugin list, and MCP runtime config for system Codex.
 
 ## Entry Points
 
@@ -76,14 +76,16 @@ Created plugins are listed in the active catalog. Planned plugins stay documente
 
 Root `AGENTS.md` exists and records durable project instructions for Codex: language policy, source-of-truth paths, plugin boundaries, development rules, validation commands, cache sync, memory sync, and git workflow.
 
-`system/AGENTS.md` exists and is installed into `/Users/rldyourmnd/.codex/AGENTS.md` on the current machine. It is a compact global Codex router/policy file, not a full copy of every plugin workflow.
+`system/AGENTS.md` exists and is installed into `/home/rldyourmnd/.codex/AGENTS.md` on the current machine. It is a compact global Codex router/policy file, not a full copy of every plugin workflow.
 
 System Codex has this marketplace registered as a local source:
 
 - `marketplaces.rldyour-codex.source_type`: `local`.
-- `marketplaces.rldyour-codex.source`: `/Users/rldyourmnd/Desktop/codex_base/rldyour-codex`.
+- `marketplaces.rldyour-codex.source`: `/home/rldyourmnd/Desktop/projects/nddev_projects/rldyour-codex`.
 - Enabled rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules`.
 - External curated plugins also enabled in system Codex: `github@openai-curated` and `gmail@openai-curated`.
+
+The clean system reinstall after commit `9d7792a chore(system): refresh codex runtime sync` removed legacy rldyour plugin names from active config, installed only the nine current marketplace plugins plus the curated GitHub/Gmail plugins, and verified the active plugin cache under `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`.
 
 The GitHub repository is `rldyourmnd/rldyour-codex`, private, with default branch `main`. Commit `018cc6e` added the generated `fullrepo` branch workflow for complete agent-only context snapshots.
 

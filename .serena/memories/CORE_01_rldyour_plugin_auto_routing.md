@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-04
-Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
-Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-serena-mcp, plugins/rldyour-rules, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, /Users/rldyourmnd/.codex/config.toml
+Last updated: 2026-05-05
+Last commit: 9d7792a chore(system): refresh codex runtime sync
+Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-serena-mcp, plugins/rldyour-rules, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, /home/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -21,7 +21,7 @@ The rldyour Codex plugin set is designed around automatic skill routing for the 
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`: fullrepo state used by Flow initialization and post-task sync.
 - `config/skill-routing-policy.json`: deterministic Russian/English prompt-to-skill routing policy cases.
 - `scripts/validate_skill_routing.py`: validates that configured routing prompts map to existing skills and description trigger terms.
-- `/Users/rldyourmnd/.codex/config.toml`: active system Codex plugin enablement and MCP registrations.
+- `/home/rldyourmnd/.codex/config.toml`: active system Codex plugin enablement and MCP registrations.
 
 ## Entry Points
 
@@ -94,7 +94,7 @@ The primary auto-routing contract is the frontmatter `description` in each `SKIL
 
 Every callable workflow skill should keep `policy.allow_implicit_invocation: true` unless it is an orchestrated-only reviewer track. The current orchestrated-only exception list is encoded in `scripts/validate_marketplace.sh`.
 
-System Codex cache must be re-synced after plugin changes so the runtime uses the repository version after restart. Active cache roots are under `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`.
+System Codex cache must be re-synced after plugin changes so the runtime uses the repository version after restart. Active cache roots are under `/home/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local`.
 
 ## Invariants
 
@@ -119,7 +119,7 @@ System Codex cache must be re-synced after plugin changes so the runtime uses th
 ## Verification
 
 - `jq empty plugins/rldyour-*/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates JSON metadata.
-- `/opt/homebrew/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates skill frontmatter.
+- `/home/rldyourmnd/.local/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates skill frontmatter.
 - `scripts/validate_marketplace.sh`: validates compact bilingual skill routing descriptions, OpenAI skill metadata, MCP dependencies, MCP config sync, MCP runtime smoke, cache sync, hook smoke, scripts, LSP health, and secret patterns.
 - `python3 scripts/validate_skill_routing.py`: validates prompt-to-skill routing policy cases from `config/skill-routing-policy.json`.
 - `diff -qr plugins/<plugin> <codex-plugin-cache>/<plugin>/local`: verifies the system cache matches the repository plugin.

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-04
-Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
+Last updated: 2026-05-05
+Last commit: 9d7792a chore(system): refresh codex runtime sync
 Scope: plugins/rldyour-design
 Area: DESIGN
 -->
@@ -69,7 +69,7 @@ Repository `.gitignore` ignores `browser/**` while keeping the `browser/` direct
 ## Verification
 
 - `jq empty plugins/rldyour-design/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates JSON metadata.
-- `/opt/homebrew/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates a skill frontmatter file.
-- `/opt/homebrew/bin/uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `agents/openai.yaml` parse and `allow_implicit_invocation`.
+- `/home/rldyourmnd/.local/bin/uv run --with pyyaml python <skill-creator>/scripts/quick_validate.py <skill-dir>`: validates a skill frontmatter file.
+- `/home/rldyourmnd/.local/bin/uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `agents/openai.yaml` parse and `allow_implicit_invocation`.
 - `diff -qr plugins/rldyour-design <codex-plugin-cache>/rldyour-design/local`: verifies system cache matches the repository plugin.
 - `scripts/validate_marketplace.sh`: validates design skill frontmatter, OpenAI metadata, compact bilingual descriptions, routing policy compatibility, and plugin cache sync with the rest of the marketplace.

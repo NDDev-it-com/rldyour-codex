@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-04
-Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
+Last updated: 2026-05-05
+Last commit: 9d7792a chore(system): refresh codex runtime sync
 Scope: plugins/rldyour-rules, plugins/rldyour-flow/skills/instruction-docs-sync, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: RULES
 -->
@@ -107,11 +107,11 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 ## Verification
 
 - `jq empty plugins/rldyour-rules/.codex-plugin/plugin.json .agents/plugins/marketplace.json`: validates plugin and marketplace JSON.
-- `uv run --with pyyaml python /Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-rules/skills/<skill>`: validates each rules skill.
+- `uv run --with pyyaml python /home/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-rules/skills/<skill>`: validates each rules skill.
 - `scripts/validate_marketplace.sh`: validates the full marketplace and is the preferred root quality gate for this repository.
 - `scripts/doctor_system_codex.sh`: validates installed global Codex state after system-level changes.
 - `python3 scripts/validate_skill_routing.py`: validates deterministic Russian and English prompt routing cases against current skill descriptions.
 - `python3 scripts/release_manifest.py | python3 -m json.tool`: validates release evidence output and current marketplace/plugin metadata.
 - `uv run --with pyyaml python -c '<parse agents/openai.yaml files>'`: validates `agents/openai.yaml` parse and implicit invocation.
 - `rg -n 'TODO|\\[TODO|PLACEHOLDER|FIXME|HACK|ctx7sk|ghp_|github_pat|password|secret|access[_-]?token|private[_-]?key|bearer' plugins/rldyour-rules`: should show only policy text, not real credentials or placeholders.
-- `diff -qr plugins/rldyour-rules /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-rules/local`: verifies system cache matches the repository plugin.
+- `diff -qr plugins/rldyour-rules /home/rldyourmnd/.codex/plugins/cache/rldyour-codex/rldyour-rules/local`: verifies system cache matches the repository plugin.

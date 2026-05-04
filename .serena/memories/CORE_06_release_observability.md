@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-04
-Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
+Last updated: 2026-05-05
+Last commit: 9d7792a chore(system): refresh codex runtime sync
 Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
@@ -61,7 +61,7 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 - Python syntax checks for `validate_plugin_versions.py`, `validate_skill_routing.py`, `release_manifest.py`, `check_mcp_runtime_versions.py`, and `plugins/rldyour-flow/scripts/fullrepo_sync.py`.
 - Fullrepo sync smoke through `scripts/smoke_fullrepo_sync.sh`.
 
-`python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` passed after commit `3128913`; every pin in `config/mcp-runtime-versions.env` matched upstream latest at check time:
+`python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` passed after commit `9d7792a`; every pin in `config/mcp-runtime-versions.env` matched upstream latest at check time:
 
 - `@openai/codex`: `0.128.0`.
 - `mcp`: `1.27.0`.
@@ -70,14 +70,14 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 - `@modelcontextprotocol/server-sequential-thinking`: `2025.12.18`.
 - `@playwright/mcp`: `0.0.73`.
 - `chrome-devtools-mcp`: `0.24.0`.
-- `@upstash/context7-mcp`: `2.2.3`.
+- `@upstash/context7-mcp`: `2.2.4`.
 - `shadcn`: `4.6.0`.
 
 `scripts/collect_diagnostics.sh --output diagnostics/local-test` completed and wrote a local diagnostics bundle. `diagnostics/` is ignored by Git.
 
-`scripts/rollback_system_codex.sh --list` lists installer backup timestamps under `/Users/rldyourmnd/.codex/backups/rldyour-codex`. `scripts/rollback_system_codex.sh --restore <backup> --dry-run` prints the exact `AGENTS.md` and `config.toml` restore paths without writing.
+`scripts/rollback_system_codex.sh --list` lists installer backup timestamps under `/home/rldyourmnd/.codex/backups/rldyour-codex`. `scripts/rollback_system_codex.sh --restore <backup> --dry-run` prints the exact `AGENTS.md` and `config.toml` restore paths without writing.
 
-`scripts/install_system_codex.sh --apply` was run after adding the new system AGENTS commands. It backed up the previous `/Users/rldyourmnd/.codex/AGENTS.md` and `/Users/rldyourmnd/.codex/config.toml`, installed the updated global instructions, patched config, and synced plugin cache.
+`scripts/install_system_codex.sh --apply` was run after adding the new system AGENTS commands. It backed up the previous `/home/rldyourmnd/.codex/AGENTS.md` and `/home/rldyourmnd/.codex/config.toml`, installed the updated global instructions, patched config, and synced plugin cache.
 
 `scripts/doctor_system_codex.sh` passed after install with zero warnings and zero failures.
 
@@ -96,6 +96,8 @@ Commit `6e0e1b9 docs(system): clarify fullrepo sync order` updated `system/AGENT
 Commit `f285999 feat(flow): sync codex and claude instruction docs` added `$instruction-docs-sync`, `instruction_docs_state.py`, and `validate_instruction_docs.py`. It made Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` separate first-class instruction docs for fullrepo-managed projects, added a routing-policy test for Russian AGENTS/CLAUDE prompts, and updated fullrepo smoke to restore `.claude/CLAUDE.md`.
 
 Commit `3128913 chore(mcp): update chrome devtools runtime pin` updated `chrome-devtools-mcp` from `0.23.0` to `0.24.0` in `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`, then documented the change in `CHANGELOG.md`. After installation, `codex mcp get chrome-devtools` reported the active system args with `chrome-devtools-mcp@0.24.0`, and `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`, `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh` passed.
+
+Commit `9d7792a chore(system): refresh codex runtime sync` updated Context7 to `@upstash/context7-mcp@2.2.4`, made `validate_marketplace.sh` honor `${CODEX_HOME:-$HOME/.codex}` by default, and made clean bootstrap retry with `git clone --no-local` when local hardlink cloning fails across filesystems. The owner-machine reinstall and verification passed with `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh`.
 
 ## CI Model
 
