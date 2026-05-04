@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 018cc6e feat(flow): add fullrepo agent context sync
+Last commit: 6abd7b8 fix(serena): classify agent files as knowledge paths
 Scope: VERSION, CHANGELOG.md, docs/release-process.md, docs/rollback-restore.md, docs/dependency-updates.md, docs/observability.md, config/skill-routing-policy.json, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, .gitignore, AGENTS.md, README.md, system/AGENTS.md, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py
 Area: CORE
 -->
@@ -84,6 +84,8 @@ Commit `d12a51f fix(serena): clarify knowledge-only memory sync state` made diag
 Commit `614b71e chore(serena): document memory state semantics` documented the new Serena memory-state semantics in `.serena/memories/CORE_06_release_observability.md` and `.serena/memories/MCP_02_serena_workflow_hooks.md`. After that commit, local verification confirmed `scripts/doctor_system_codex.sh`, `scripts/smoke_clean_bootstrap.sh`, LSP health, and runtime pin freshness checks. GitHub Actions `validate` passed on Ubuntu and macOS, and the manual `dependency-check` workflow passed on `main`.
 
 Commit `018cc6e feat(flow): add fullrepo agent context sync` added `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `scripts/sync_fullrepo_branch.sh`, and `scripts/smoke_fullrepo_sync.sh`. It also updated `scripts/release_manifest.py` to include `fullrepo_sha`, `scripts/collect_diagnostics.sh` to collect `fullrepo-state.json`, `scripts/doctor_system_codex.sh` to report fullrepo state, `scripts/validate_marketplace.sh` to run fullrepo smoke, and docs to include fullrepo release, rollback, and observability procedures.
+
+Commit `6abd7b8 fix(serena): classify agent files as knowledge paths` updated `serena_memory_state.py` so fullrepo migration commits that remove agent-only files from `main` do not falsely count as product-code drift.
 
 ## CI Model
 

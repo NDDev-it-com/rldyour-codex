@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 018cc6e feat(flow): add fullrepo agent context sync
+Last commit: 6abd7b8 fix(serena): classify agent files as knowledge paths
 Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-serena-mcp, plugins/rldyour-rules, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -65,7 +65,7 @@ The same commit added `references/init-context-pack.md` and `references/context-
 
 `rldyour-rules` has no MCP transport definitions and no hooks. It is a skills-only policy layer that coordinates quality, architecture, dependency, verification, project-instruction, and ADR rules with existing workflow plugins.
 
-After commit `018cc6e`, manifest versions changed to `rldyour-flow` `0.2.0`, `rldyour-serena-mcp` `0.2.0`, and `rldyour-rules` `0.1.2`. These versions add fullrepo-aware post-task sync, fullrepo-aware Serena knowledge handling, and agent-only file policy.
+After commit `6abd7b8`, manifest versions are `rldyour-flow` `0.2.0`, `rldyour-serena-mcp` `0.2.1`, and `rldyour-rules` `0.1.2`. These versions add fullrepo-aware post-task sync, fullrepo-aware Serena knowledge handling, agent-only freshness classification, and agent-only file policy.
 
 Commit `018cc6e feat(flow): add fullrepo agent context sync` added `fullrepo_sync.py` and wired fullrepo state into Flow SessionStart, Flow Stop sync, `flow_post_task_state.py`, root `AGENTS.md`, and `system/AGENTS.md`. Russian prompts that imply initialization, task completion, or project sync should route through `ry-init` or `flow-post-task-sync` so fullrepo context is restored or published automatically when needed.
 
