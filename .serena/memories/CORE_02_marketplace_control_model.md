@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-03
-Last commit: 614b71e chore(serena): document memory state semantics
-Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
+Last updated: 2026-05-04
+Last commit: 018cc6e feat(flow): add fullrepo agent context sync
+Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -36,6 +36,9 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 - `scripts/smoke_mcp_capabilities.sh`: MCP initialize, list-tools, and safe call-tool smoke command.
 - `scripts/smoke_hooks.sh`: repository and installed hook smoke plus lifecycle smoke command.
 - `scripts/smoke_clean_bootstrap.sh`: committed clean-clone bootstrap smoke command.
+- `scripts/smoke_fullrepo_sync.sh`: fullrepo branch publish, migrate-main, restore, and exclude-rule smoke command.
+- `scripts/sync_fullrepo_branch.sh`: operational fullrepo status, restore, publish, and migration wrapper.
+- `plugins/rldyour-flow/scripts/fullrepo_sync.py`: canonical fullrepo sync implementation for agent-only files.
 - `config/mcp-runtime-versions.env`: pinned runtime package versions for reproducible MCP startup and CI.
 - `config/skill-routing-policy.json`: prompt-to-skill routing policy test fixture.
 - `.github/workflows/validate.yml`: Ubuntu/macOS CI workflow for validation on push, pull request, and manual dispatch.
@@ -52,6 +55,8 @@ This repository is a personal Codex marketplace named `rldyour-codex`. It is a c
 - `codex plugin marketplace add .`: registers this repository as the local marketplace.
 - `.agents/plugins/marketplace.json`: active plugin list consumed by Codex marketplace tooling.
 - `plugins/<plugin>/.codex-plugin/plugin.json`: manifest used by Codex to discover skills, MCP servers, hooks, and metadata.
+- `scripts/sync_fullrepo_branch.sh --restore`: restores complete agent-only context from `origin/fullrepo` during initialization.
+- `scripts/sync_fullrepo_branch.sh --publish`: publishes complete agent-only context after normal branch sync.
 
 ## Current Behavior
 
@@ -80,7 +85,7 @@ System Codex has this marketplace registered as a local source:
 - Enabled rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, and `rldyour-rules`.
 - External curated plugins also enabled in system Codex: `github@openai-curated` and `gmail@openai-curated`.
 
-The GitHub repository is `rldyourmnd/rldyour-codex`, private, with default branch `main`. The local repository and `origin/main` were synchronized at `614b71e` before this memory-sync edit.
+The GitHub repository is `rldyourmnd/rldyour-codex`, private, with default branch `main`. Commit `018cc6e` added the generated `fullrepo` branch workflow for complete agent-only context snapshots.
 
 ## Contracts And Data
 
@@ -104,23 +109,23 @@ Current plugin manifest versions:
 
 - `rldyour-mcps`: `0.1.5`.
 - `rldyour-explore`: `0.1.2`.
-- `rldyour-serena-mcp`: `0.1.2`.
+- `rldyour-serena-mcp`: `0.2.0`.
 - `rldyour-security`: `0.1.1`.
 - `rldyour-browser`: `0.1.1`.
 - `rldyour-design`: `0.1.1`.
 - `rldyour-lsps`: `0.1.1`.
-- `rldyour-flow`: `0.1.2`.
-- `rldyour-rules`: `0.1.1`.
+- `rldyour-flow`: `0.2.0`.
+- `rldyour-rules`: `0.1.2`.
 
-`rldyour-flow` `0.1.2` exposes deep `ry-init` context packs, `ry-start` context sufficiency gates, advisory SessionStart context, advisory PostToolUse commit advice, reviewer workflows, deployment workflow, and post-task sync.
+`rldyour-flow` `0.2.0` exposes deep `ry-init` context packs, `ry-start` context sufficiency gates, advisory SessionStart context, advisory PostToolUse commit advice, reviewer workflows, deployment workflow, post-task sync, and fullrepo agent-only context synchronization.
 
 Root `README.md` describes the active catalog, planned architecture, system install workflow, the portable MCP source-of-truth rule for `plugins/rldyour-mcps/.mcp.json`, and the owner-requested YOLO defaults applied by the installer.
 
-`README.md`, `AGENTS.md`, and `system/AGENTS.md` now document release, rollback, dependency check, diagnostics, and observability commands. These additions are operational wrappers around the runtime; they do not change the active MCP server set or YOLO policy.
+`README.md`, `AGENTS.md`, and `system/AGENTS.md` now document release, rollback, dependency check, diagnostics, observability, and fullrepo commands. These additions are operational wrappers around the runtime; they do not change the active MCP server set or YOLO policy.
 
 Repository documentation, plugin metadata, code comments, commits, memory files, plans, and research archives are written in English. User-facing conversation with the owner stays Russian unless requested otherwise.
 
-`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, release metadata, generated release manifest syntax, plugin manifests, skill frontmatter, compact bilingual routing descriptions, deterministic routing policy cases, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, MCP config sync, MCP package pinning, MCP runtime smoke, MCP capability smoke, plugin cache sync, hook smoke, hook lifecycle smoke, secret patterns, and whitespace.
+`scripts/validate_marketplace.sh` is the canonical repository validation entry point. It validates marketplace JSON, release metadata, generated release manifest syntax, plugin manifests, skill frontmatter, compact bilingual routing descriptions, deterministic routing policy cases, strict OpenAI skill metadata, MCP dependency names, shell scripts, Python syntax, LSP health, Serena state, Flow state, MCP registration, MCP config sync, MCP package pinning, MCP runtime smoke, MCP capability smoke, plugin cache sync, hook smoke, hook lifecycle smoke, fullrepo sync smoke, secret patterns, and whitespace.
 
 Current active plugin count is nine rldyour plugins plus two curated external plugins in system Codex. Current callable rldyour skill count is 37.
 
@@ -128,9 +133,9 @@ Current active plugin count is nine rldyour plugins plus two curated external pl
 
 `scripts/bootstrap_check.sh --dry-run` is the non-mutating bootstrap preview. `scripts/bootstrap_check.sh --apply` is the end-to-end current-machine bootstrap smoke flow: install preview, install apply, marketplace validation, MCP runtime smoke, hook smoke, system doctor, Serena state, Flow state, and git status.
 
-`scripts/smoke_clean_bootstrap.sh` is the committed-state bootstrap proof. It requires a clean working tree, clones the current repository into a temporary path, installs into a temporary `CODEX_HOME`, runs doctor in list-only MCP capability mode with a temporary `SERENA_HOME`, verifies `codex mcp list`, and removes the temporary workspace by default.
+`scripts/smoke_clean_bootstrap.sh` is the committed-state bootstrap proof. It requires a clean working tree, clones the current repository into a temporary path, installs into a temporary `CODEX_HOME`, runs doctor in list-only MCP capability mode with a temporary `SERENA_HOME`, verifies fullrepo status JSON, runs fullrepo smoke, verifies `codex mcp list`, and removes the temporary workspace by default.
 
-`.github/workflows/validate.yml` runs on push to `main`, pull requests to `main`, and manual dispatch. It uses a matrix for `ubuntu-latest` and `macos-latest`, installs pinned Codex CLI from `config/mcp-runtime-versions.env`, applies the marketplace, runs marketplace validation, runs doctor, and runs clean bootstrap smoke. It writes a job summary on success and uploads `diagnostics/ci` as an artifact on failure.
+`.github/workflows/validate.yml` runs on push to `main` and `fullrepo`, pull requests to `main`, and manual dispatch. It uses a matrix for `ubuntu-latest` and `macos-latest`, installs pinned Codex CLI from `config/mcp-runtime-versions.env`, applies the marketplace, runs marketplace validation, runs doctor, and runs clean bootstrap smoke. It writes a job summary on success and uploads `diagnostics/ci` as an artifact on failure.
 
 `.github/workflows/dependency-check.yml` runs weekly and manually. It runs `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, writes a job summary, and uploads `dependency-check.json`.
 
@@ -144,6 +149,8 @@ CI validation uses portable mode for machine-specific checks: `RLDYOUR_SKIP_LSP_
 - Keep each plugin's responsibility boundary explicit.
 - Keep compact Russian and English trigger phrases in each callable rldyour skill `SKILL.md` description so routing works with the owner's Russian prompts and English technical terms.
 - Do not commit browser evidence or local Serena runtime/cache state.
+- In normal product repositories, do not commit agent-only AI workflow files to normal branches after adopting the fullrepo workflow; restore and publish them through `fullrepo`.
+- Do not publish secrets, local credentials, diagnostics, browser evidence, Serena caches, or runtime hook markers to `main` or `fullrepo`.
 
 ## Change Rules
 
@@ -154,6 +161,8 @@ CI validation uses portable mode for machine-specific checks: `RLDYOUR_SKIP_LSP_
 - Re-sync changed plugin directories into the active Codex plugin cache when applying changes to the system Codex runtime.
 - Use `scripts/bootstrap_check.sh --apply` when validating a full new-machine or resynced-machine setup path.
 - Use `scripts/smoke_clean_bootstrap.sh` when validating that committed source can bootstrap from a clean clone.
+- Use `scripts/smoke_fullrepo_sync.sh` when validating fullrepo pattern, migration, restore, or publish changes.
+- Use `scripts/sync_fullrepo_branch.sh --status` before final sync and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push when agent-only context changed.
 - Keep local MCP package specs pinned. `@latest` is not allowed in `plugins/rldyour-mcps/.mcp.json`.
 - Keep `VERSION`, `CHANGELOG.md`, plugin manifest versions, and `docs/release-process.md` aligned for release changes.
 - Do not commit `diagnostics/` or `dist/`; both are ignored local/runtime output directories.
@@ -175,6 +184,9 @@ CI validation uses portable mode for machine-specific checks: `RLDYOUR_SKIP_LSP_
 - `scripts/smoke_mcp_capabilities.sh`: validates MCP initialize, expected tool discovery, and safe call-tool behavior.
 - `scripts/smoke_hooks.sh`: validates repository and installed hook execution plus temporary git lifecycle transitions.
 - `scripts/smoke_clean_bootstrap.sh`: validates clean clone to temporary system install.
+- `scripts/smoke_fullrepo_sync.sh`: validates fullrepo publish, migrate-main, restore, and exclude behavior.
+- `scripts/sync_fullrepo_branch.sh --status`: reports fullrepo state.
+- `scripts/sync_fullrepo_branch.sh --publish`: publishes complete agent-only context snapshot.
 - `.github/workflows/validate.yml`: validates marketplace and runtime smoke in GitHub Actions on Ubuntu and macOS.
 - `.github/workflows/dependency-check.yml`: monitors pinned MCP runtime package freshness.
 - `jq -r '.plugins[] | [.name,.category,.policy.installation,.policy.authentication,.source.path] | @tsv' .agents/plugins/marketplace.json`: shows active plugin order and policy.

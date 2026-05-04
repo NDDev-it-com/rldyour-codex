@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-03
-Last commit: 614b71e chore(serena): document memory state semantics
-Scope: plugins/rldyour-rules, .agents/plugins/marketplace.json, README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
+Last updated: 2026-05-04
+Last commit: 018cc6e feat(flow): add fullrepo agent context sync
+Scope: plugins/rldyour-rules, plugins/rldyour-flow/scripts/fullrepo_sync.py, .agents/plugins/marketplace.json, README.md, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
 Area: RULES
 -->
 
@@ -9,7 +9,7 @@ Area: RULES
 
 ## Purpose
 
-`plugins/rldyour-rules` defines the owner's quality-first engineering policy layer for Codex. It is a skills-only plugin that guides implementation, architecture, dependency selection, verification, project instructions, and rules audits without adding MCP transports or hooks.
+`plugins/rldyour-rules` defines the owner's quality-first engineering policy layer for Codex. It is a skills-only plugin that guides implementation, architecture, dependency selection, verification, project instructions, agent-only file policy, and rules audits without adding MCP transports or hooks.
 
 ## Source Of Truth
 
@@ -26,7 +26,7 @@ Area: RULES
 - `implementation-discipline`: synchronized implementation rules for affected contracts, generated artifacts, reuse, naming, errors, docs, and tests.
 - `dependency-compatibility-policy`: latest-compatible dependency and technology policy using official docs, release notes, migration guides, compatibility checks, and lockfile discipline.
 - `verification-quality-gates`: no-fake-green quality gate routing for tests, types, lint, build, LSP, browser, security, design, and deploy evidence.
-- `project-instructions-policy`: durable `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, ADR, and repository documentation rules.
+- `project-instructions-policy`: durable `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, ADR, agent-only file, fullrepo, and repository documentation rules.
 - `ry-rules-review`: explicit report-only rules audit for a diff, branch, PR, file scope, or requested implementation scope.
 
 ## Current Behavior
@@ -51,6 +51,10 @@ All seven rules skills keep `policy.allow_implicit_invocation: true`. They are p
 
 Root `AGENTS.md` and `system/AGENTS.md` currently include release, rollback, dependency freshness, diagnostics, smoke checks, YOLO policy, plugin routing, and memory synchronization guidance. These files are source-of-truth instruction surfaces and must stay synchronized with behavior encoded in scripts and plugin skills.
 
+`plugins/rldyour-rules/.codex-plugin/plugin.json` version is `0.1.2`. The manifest description and capabilities now include agent-only file policy.
+
+`plugins/rldyour-rules/references/project-instructions-and-adrs.md` now defines the fullrepo policy for normal product repositories. Project-root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `.claude/`, `.codex/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/` are agent-only paths. They should be restored from and published to `fullrepo`, ignored through `.git/info/exclude`, and kept out of normal branch history unless the repository is itself agent tooling and the file is a product artifact.
+
 ## Contracts And Data
 
 User-facing conversation stays Russian. Repository docs, plugin docs, memories, plans, research archives, code comments, and commit messages stay English.
@@ -73,7 +77,7 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 - `references/architecture-policy.md`: FSD and VSA defaults plus existing-architecture preservation.
 - `references/dependency-policy.md`: latest-compatible dependency selection and compatibility checks.
 - `references/quality-gates.md`: evidence requirements and no-fake-green policy.
-- `references/project-instructions-and-adrs.md`: `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, and ADR rules.
+- `references/project-instructions-and-adrs.md`: `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, fullrepo agent-only file policy, and ADR rules.
 
 ## Invariants
 
@@ -82,6 +86,8 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 - Do not store secrets, tokens, cookies, private keys, or credentials in rules docs or memories.
 - Do not make FSD/VSA a forced rewrite policy for existing coherent projects.
 - Do not let `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, or ADRs become chat logs, generic advice, or speculative backlog.
+- Do not commit agent-only AI workflow files to normal product branches after the project has adopted the fullrepo workflow.
+- Do not publish runtime markers, caches, local env files, browser evidence, secrets, tokens, cookies, or credentials to `main` or `fullrepo`.
 - Keep rules concise in `SKILL.md`; move detailed policy into `references/`.
 
 ## Change Rules
@@ -90,7 +96,7 @@ Every rules skill must keep `policy.allow_implicit_invocation: true`.
 - Update `references/architecture-policy.md` when changing FSD/VSA placement rules.
 - Update `references/dependency-policy.md` when changing dependency or compatibility rules.
 - Update `references/quality-gates.md` when changing verification evidence rules.
-- Update `references/project-instructions-and-adrs.md` when changing `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, or ADR behavior.
+- Update `references/project-instructions-and-adrs.md` when changing `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, fullrepo, agent-only file, or ADR behavior.
 - Keep `README.md`, `plugin.json`, `SKILL.md` descriptions, and `agents/openai.yaml` aligned with automatic routing intent.
 - Re-sync `plugins/rldyour-rules/` into the active Codex plugin cache after changes.
 
