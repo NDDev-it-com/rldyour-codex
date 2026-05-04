@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-03
-Last commit: 614b71e chore(serena): document memory state semantics
+Last updated: 2026-05-04
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, /Users/rldyourmnd/.codex/config.toml
 Area: MCP
 -->
@@ -65,12 +65,14 @@ Pinned local package specs in `.mcp.json`:
 - `serena`: `serena-agent==1.2.0`.
 - `sequential-thinking`: `@modelcontextprotocol/server-sequential-thinking@2025.12.18`.
 - `playwright`: `@playwright/mcp@0.0.73`.
-- `chrome-devtools`: `chrome-devtools-mcp@0.23.0`.
+- `chrome-devtools`: `chrome-devtools-mcp@0.24.0`.
 - `context7`: `@upstash/context7-mcp@2.2.3`.
 - `semgrep`: `semgrep==1.161.0`.
 - `shadcn`: `shadcn@4.6.0`.
 
 `config/mcp-runtime-versions.env` stores the same pinned runtime package versions plus `CODEX_CLI_VERSION=0.128.0` and `MCP_PYTHON_SDK_VERSION=1.27.0`.
+
+After commit `3128913 chore(mcp): update chrome devtools runtime pin`, `chrome-devtools-mcp` is pinned to `0.24.0` in both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`. `scripts/install_system_codex.sh --apply` projected that pin into `/Users/rldyourmnd/.codex/config.toml`, and `codex mcp get chrome-devtools` reports `chrome-devtools-mcp@0.24.0`.
 
 `scripts/smoke_mcp_runtime.sh` checks that repository `.mcp.json` and installed `CODEX_HOME/config.toml` have the same server names, runs `codex mcp get <server>` for each server, verifies local command executables, and probes remote MCP URLs unless `--skip-url-check` is passed. It accepts remote HTTP responses below 500 as reachable endpoint negotiation responses.
 

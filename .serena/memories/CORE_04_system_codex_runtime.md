@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 6e0e1b9 docs(system): clarify fullrepo sync order
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml, /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -114,7 +114,7 @@ The active plugin cache contains local copies for all nine rldyour plugins:
 - `rldyour-security`.
 - `rldyour-serena-mcp`.
 
-The full validation script currently validates 37 skills, compact bilingual routing descriptions for all 37 callable skills, strict metadata for 37 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, MCP package pinning, MCP runtime smoke, MCP capability smoke, plugin cache sync, hook smoke, hook lifecycle smoke, secret patterns, and whitespace.
+The full validation script currently validates 38 skills, compact bilingual routing descriptions for all 38 callable skills, strict metadata for 38 `agents/openai.yaml` files, known MCP dependency names, MCP registration, MCP config sync, MCP package pinning, MCP runtime smoke, MCP capability smoke, plugin cache sync, hook smoke, hook lifecycle smoke, secret patterns, and whitespace.
 
 The LSP health check reports no missing commands and zero warnings. `pyrightconfig.json` makes the Python script scope explicit for Pyright and removes the previous Python project-config warning.
 
@@ -134,6 +134,8 @@ After commit `614b71e chore(serena): document memory state semantics`, the activ
 
 The active restarted Codex session exposed all installed rldyour skills and MCP tools. Context7 was verified through the actual MCP tool path with `resolve_library_id` and `query_docs`, proving that the active Codex runtime can use the Context7 documentation server even when standalone shell smoke skips the safe call because `CONTEXT7_API_KEY` is not exported into the shell environment.
 
+After commit `3128913 chore(mcp): update chrome devtools runtime pin`, `chrome-devtools-mcp` is pinned to `0.24.0`. `scripts/install_system_codex.sh --apply` installed the updated MCP config and synced plugin cache. `codex mcp get chrome-devtools` reports args `chrome-devtools-mcp@0.24.0 --headless --isolated --no-usage-statistics --no-performance-crux`. `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh` passed on the owner machine after the update.
+
 ## Contracts And Data
 
 System MCP registrations are installed in `/Users/rldyourmnd/.codex/config.toml`, not only in repository `.mcp.json`.
@@ -148,7 +150,7 @@ Pinned runtime versions in `config/mcp-runtime-versions.env`:
 - `SEMGREP_VERSION=1.161.0`.
 - `SEQUENTIAL_THINKING_MCP_VERSION=2025.12.18`.
 - `PLAYWRIGHT_MCP_VERSION=0.0.73`.
-- `CHROME_DEVTOOLS_MCP_VERSION=0.23.0`.
+- `CHROME_DEVTOOLS_MCP_VERSION=0.24.0`.
 - `CONTEXT7_MCP_VERSION=2.2.3`.
 - `SHADCN_VERSION=4.6.0`.
 

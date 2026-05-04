@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: f285999 feat(flow): sync codex and claude instruction docs
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
@@ -61,7 +61,7 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 - Python syntax checks for `validate_plugin_versions.py`, `validate_skill_routing.py`, `release_manifest.py`, `check_mcp_runtime_versions.py`, and `plugins/rldyour-flow/scripts/fullrepo_sync.py`.
 - Fullrepo sync smoke through `scripts/smoke_fullrepo_sync.sh`.
 
-`python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` passed after commit `5d0a389`; every pin in `config/mcp-runtime-versions.env` matched upstream latest at check time:
+`python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` passed after commit `3128913`; every pin in `config/mcp-runtime-versions.env` matched upstream latest at check time:
 
 - `@openai/codex`: `0.128.0`.
 - `mcp`: `1.27.0`.
@@ -69,7 +69,7 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 - `semgrep`: `1.161.0`.
 - `@modelcontextprotocol/server-sequential-thinking`: `2025.12.18`.
 - `@playwright/mcp`: `0.0.73`.
-- `chrome-devtools-mcp`: `0.23.0`.
+- `chrome-devtools-mcp`: `0.24.0`.
 - `@upstash/context7-mcp`: `2.2.3`.
 - `shadcn`: `4.6.0`.
 
@@ -94,6 +94,8 @@ Commit `6abd7b8 fix(serena): classify agent files as knowledge paths` updated `s
 Commit `6e0e1b9 docs(system): clarify fullrepo sync order` updated `system/AGENTS.md` and `CHANGELOG.md` so the global instruction layer states the fullrepo-managed initialization and finish sequence directly. Root `AGENTS.md` mirrors the finish-order statement as agent-only project context for the `fullrepo` snapshot.
 
 Commit `f285999 feat(flow): sync codex and claude instruction docs` added `$instruction-docs-sync`, `instruction_docs_state.py`, and `validate_instruction_docs.py`. It made Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` separate first-class instruction docs for fullrepo-managed projects, added a routing-policy test for Russian AGENTS/CLAUDE prompts, and updated fullrepo smoke to restore `.claude/CLAUDE.md`.
+
+Commit `3128913 chore(mcp): update chrome devtools runtime pin` updated `chrome-devtools-mcp` from `0.23.0` to `0.24.0` in `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`, then documented the change in `CHANGELOG.md`. After installation, `codex mcp get chrome-devtools` reported the active system args with `chrome-devtools-mcp@0.24.0`, and `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`, `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh` passed.
 
 ## CI Model
 

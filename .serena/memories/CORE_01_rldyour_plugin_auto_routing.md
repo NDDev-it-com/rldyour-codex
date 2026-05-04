@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 6abd7b8 fix(serena): classify agent files as knowledge paths
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-serena-mcp, plugins/rldyour-rules, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
@@ -44,7 +44,7 @@ The six `rldyour-flow` reviewer track skills set `policy.allow_implicit_invocati
 
 The owner communicates with Codex in Russian. Plugin docs, memory files, code comments, token files, and commit messages remain English. Every callable rldyour skill must include compact Russian and English trigger phrases in `SKILL.md` frontmatter `description`, because Codex uses the description as the primary routing surface.
 
-Commit `6af53aa feat(skills): optimize plugin routing metadata` compacted all 37 callable rldyour skill descriptions. The current maximum description length is 187 characters and the average length is 166.8 characters. `scripts/validate_marketplace.sh` now fails when a callable rldyour skill description is longer than 240 characters, is duplicated, lacks Cyrillic trigger text, or lacks English trigger text.
+Commit `6af53aa feat(skills): optimize plugin routing metadata` compacted rldyour skill descriptions. The current repository has 38 callable rldyour skills; the maximum description length is 187 characters and the average length is 166.6 characters. `scripts/validate_marketplace.sh` now fails when a callable rldyour skill description is longer than 240 characters, is duplicated, lacks Cyrillic trigger text, or lacks English trigger text.
 
 `rldyour-mcps` has no skills and cannot auto-invoke by itself. It is the runtime dependency layer for MCP tools used by automatic workflow plugins.
 
@@ -71,7 +71,7 @@ Commit `018cc6e feat(flow): add fullrepo agent context sync` added `fullrepo_syn
 
 `plugins/rldyour-flow/skills/ry-start/SKILL.md` contains an `Automatic Helper Routing` section. It explicitly routes Russian `ry-start` prompts to helper workflows: Serena/code/LSP/rules for code work, `tech-research` plus optional `web-research` for technical internet research, browser skills for browser-visible work, design skills for Figma/UI/design-system work, security skills for sensitive work, and verification/memory/post-task sync before final delivery.
 
-Commit `5d0a389 feat(system): add release and observability workflows` added `config/skill-routing-policy.json` and `scripts/validate_skill_routing.py`. The policy currently contains nine deterministic routing cases that cover Russian technical research, `ry-start`, `ry-init`, browser validation, security review, Figma/design work, LSP health, Serena memory sync, and English quality/architecture review prompts.
+Commit `5d0a389 feat(system): add release and observability workflows` added `config/skill-routing-policy.json` and `scripts/validate_skill_routing.py`. The policy currently contains ten deterministic routing cases that cover Russian technical research, `ry-start`, `ry-init`, browser validation, security review, Figma/design work, LSP health, Serena memory sync, instruction docs sync, and English quality/architecture review prompts.
 
 Current skill directory counts verified from repository files:
 
@@ -84,7 +84,7 @@ Current skill directory counts verified from repository files:
 - `rldyour-security`: 2 skills.
 - `rldyour-serena-mcp`: 2 skills.
 
-Current `agents/openai.yaml` invocation policy counts verified from repository files: 31 callable/domain skills have `policy.allow_implicit_invocation: true`; the six Flow reviewer track skills have `policy.allow_implicit_invocation: false` and are orchestrated only by `ry-start` or `ry-review`.
+Current `agents/openai.yaml` invocation policy counts verified from repository files: 32 callable/domain skills have `policy.allow_implicit_invocation: true`; the six Flow reviewer track skills have `policy.allow_implicit_invocation: false` and are orchestrated only by `ry-start` or `ry-review`.
 
 The active restarted Codex session lists the same rldyour skill set from the installed cache. This confirms repository plugin sources, installed plugin cache, and runtime skill discovery are aligned after restart.
 
