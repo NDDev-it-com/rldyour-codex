@@ -1,0 +1,13 @@
+interface:
+  display_name: "Instruction Docs Sync"
+  short_description: "Sync AGENTS.md and Claude memory"
+  default_prompt: "Use $instruction-docs-sync to update AGENTS.md and .claude/CLAUDE.md from verified project facts."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "serena"
+      description: "Verified project memories and code facts."
+
+policy:
+  allow_implicit_invocation: true

@@ -5,7 +5,7 @@ Post-task sync is the last phase of meaningful work. It prevents forgotten chang
 ## Order
 
 1. Serena memory freshness first.
-2. Project instruction docs second: `AGENTS.md` and `CLAUDE.md`.
+2. Project instruction docs second: `AGENTS.md` and `.claude/CLAUDE.md`.
 3. Quality checks and manual evidence third.
 4. Atomic commits fourth.
 5. GitHub sync fifth.
@@ -24,15 +24,17 @@ The flow PostToolUse hook emits commit advice after Bash `git commit` commands. 
 
 In fullrepo-managed projects, Serena knowledge is not committed to normal branches. The Serena commit helper may acknowledge current knowledge and clear runtime sync markers without committing when `.serena` knowledge paths are untracked/ignored. Flow then publishes the complete snapshot to `fullrepo`.
 
-## AGENTS.md And CLAUDE.md
+## AGENTS.md And .claude/CLAUDE.md
 
-Codex reads `AGENTS.md` as project instructions. Update it when the task changes durable project rules, setup commands, quality gates, deploy contracts, architecture constraints, or agent workflow guidance.
+Codex reads `AGENTS.md` as project instructions. Update it when the task changes durable project rules, setup commands, quality gates, deploy contracts, architecture constraints, or agent workflow guidance. Keep it Codex-native and practical: repository layout, commands, checks, constraints, tool routing, and done criteria.
 
-`CLAUDE.md` is maintained for compatibility with Claude Code projects. Update it only when present or when a project explicitly uses it. Do not create a large generic `CLAUDE.md` in every project without need.
+Claude Code reads project memory from `.claude/CLAUDE.md` in rldyour fullrepo-managed projects. Create and update it for every such project, optimized for Claude Code rather than as a thin copy of `AGENTS.md`: commands, architecture, workflow, conventions, Claude Code diagnostics, and Claude-specific settings/hooks/skills locations.
 
 Both files must contain verified facts, not chat history or speculative plans.
 
-For normal projects, root `AGENTS.md`, `CLAUDE.md`, and `REVIEW.md` are agent-only files and should be restored from `fullrepo`, ignored through `.git/info/exclude`, and excluded from normal branch history. Repositories that are themselves agent tooling may intentionally track selected instruction templates as product files, such as `system/AGENTS.md` in `rldyour-codex`.
+For normal projects, root `AGENTS.md`, `.claude/CLAUDE.md`, and `REVIEW.md` are agent-only files and should be restored from `fullrepo`, ignored through `.git/info/exclude`, and excluded from normal branch history. Repositories that are themselves agent tooling may intentionally track selected instruction templates as product files, such as `system/AGENTS.md` in `rldyour-codex`.
+
+Use `plugins/rldyour-flow/scripts/instruction_docs_state.py --json` to decide whether review is needed and `python3 scripts/validate_instruction_docs.py --require-agent-docs` when agent-only context is restored.
 
 ## Fullrepo Branch
 
