@@ -12,10 +12,31 @@ from typing import Any
 MEMORY_DIR = Path(".serena/memories")
 SYNC_STATE = Path(".serena/.serena_sync_state.json")
 KNOWLEDGE_PREFIXES = (
+    ".agents/commands/",
+    ".agents/hooks/",
+    ".agents/skills/",
+    ".claude/",
+    ".codex/",
+    ".cursor/rules/",
+    ".github/instructions/",
+    ".github/prompts/",
     ".serena/memories/",
     ".serena/plans/",
     ".serena/research/",
+    ".serena/newproj/",
+    ".serena/deploy/",
 )
+KNOWLEDGE_FILES = {
+    ".cursorrules",
+    ".windsurfrules",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "QWEN.md",
+    "REVIEW.md",
+    ".github/copilot-instructions.md",
+    ".serena/project.yml",
+}
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
     ".serena/.serena_sync_state.json",
@@ -57,7 +78,7 @@ def _newest_synced_commit(candidates: list[tuple[str, str]]) -> tuple[str, str] 
 
 
 def _is_knowledge_path(path: str) -> bool:
-    return any(path.startswith(prefix) for prefix in KNOWLEDGE_PREFIXES)
+    return path in KNOWLEDGE_FILES or any(path.startswith(prefix) for prefix in KNOWLEDGE_PREFIXES)
 
 
 def _non_knowledge_paths(paths: list[str]) -> list[str]:

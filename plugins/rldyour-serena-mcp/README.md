@@ -18,6 +18,7 @@ The plugin is optimized for automatic Serena skill selection. Codex should route
 - Store long source-backed research summaries in `.serena/research`.
 - In normal product repositories, keep Serena knowledge out of normal branches and publish it through `fullrepo` via `rldyour-flow`.
 - Keep generated local Serena runtime markers and cache files out of commits and out of `fullrepo`. `rldyour-flow` owns scoped project initialization.
+- Treat agent-only instruction and workflow files as project knowledge for freshness checks, so moving `AGENTS.md`, `.serena/*`, `.claude/*`, `.codex/*`, `.cursor/rules/*`, or `.agents/*` from `main` to `fullrepo` does not make code memories appear stale.
 
 ## Skills
 
