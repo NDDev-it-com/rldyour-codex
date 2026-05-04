@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-03
-Last commit: 614b71e chore(serena): document memory state semantics
+Last updated: 2026-05-04
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: plugins/rldyour-design
 Area: DESIGN
 -->
@@ -38,7 +38,7 @@ Meaningful visible frontend work is not considered complete without browser evid
 
 `plugins/rldyour-design/README.md` currently documents Figma MCP, shadcn/ui MCP, ReactBits, strict FSD, centralized tokens, browser validation, and the rule that generated Figma output must be adapted into the project's architecture instead of pasted blindly.
 
-All five design skills keep `policy.allow_implicit_invocation: true`. They are part of the 37 callable rldyour skills validated by `scripts/validate_marketplace.sh`.
+All five design skills keep `policy.allow_implicit_invocation: true`. They are part of the 38 callable rldyour skills validated by `scripts/validate_marketplace.sh`.
 
 ## Contracts And Data
 

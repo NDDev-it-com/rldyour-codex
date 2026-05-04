@@ -65,7 +65,7 @@ The same commit added `references/init-context-pack.md` and `references/context-
 
 `rldyour-rules` has no MCP transport definitions and no hooks. It is a skills-only policy layer that coordinates quality, architecture, dependency, verification, project-instruction, and ADR rules with existing workflow plugins.
 
-After commit `6abd7b8`, manifest versions are `rldyour-flow` `0.2.0`, `rldyour-serena-mcp` `0.2.1`, and `rldyour-rules` `0.1.2`. These versions add fullrepo-aware post-task sync, fullrepo-aware Serena knowledge handling, agent-only freshness classification, and agent-only file policy.
+Current manifest versions verified from `plugins/*/.codex-plugin/plugin.json` include `rldyour-flow` `0.2.1`, `rldyour-serena-mcp` `0.2.1`, and `rldyour-rules` `0.1.3`. These versions cover fullrepo-aware post-task sync, instruction docs sync, fullrepo-aware Serena knowledge handling, agent-only freshness classification, and agent-only file policy.
 
 Commit `018cc6e feat(flow): add fullrepo agent context sync` added `fullrepo_sync.py` and wired fullrepo state into Flow SessionStart, Flow Stop sync, `flow_post_task_state.py`, root `AGENTS.md`, and `system/AGENTS.md`. Russian prompts that imply initialization, task completion, or project sync should route through `ry-init` or `flow-post-task-sync` so fullrepo context is restored or published automatically when needed.
 
@@ -78,7 +78,7 @@ Current skill directory counts verified from repository files:
 - `rldyour-browser`: 3 skills.
 - `rldyour-design`: 5 skills.
 - `rldyour-explore`: 2 skills.
-- `rldyour-flow`: 12 skills.
+- `rldyour-flow`: 13 skills.
 - `rldyour-lsps`: 4 skills.
 - `rldyour-rules`: 7 skills.
 - `rldyour-security`: 2 skills.

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-03
-Last commit: 614b71e chore(serena): document memory state semantics
+Last updated: 2026-05-04
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->

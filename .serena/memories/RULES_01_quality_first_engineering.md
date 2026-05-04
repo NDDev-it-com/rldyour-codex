@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: f285999 feat(flow): sync codex and claude instruction docs
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: plugins/rldyour-rules, plugins/rldyour-flow/skills/instruction-docs-sync, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: RULES
 -->
