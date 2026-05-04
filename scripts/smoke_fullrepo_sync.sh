@@ -28,10 +28,10 @@ git clone --quiet "$REMOTE" "$WORK"
   git config user.email "rldyour-codex@example.invalid"
   git config user.name "rldyour Codex Smoke"
   git checkout -b main >/dev/null 2>&1
-  mkdir -p .serena/memories src
+  mkdir -p .claude .serena/memories src
   printf 'product\n' > src/app.txt
-  printf '# Project Agent Instructions\n' > AGENTS.md
-  printf '# Claude Compatibility\n' > CLAUDE.md
+  printf '# Project Agent Instructions\n\nCodex Validation Git\n' > AGENTS.md
+  printf '# Claude Code Project Memory\n\nClaude Code Validation Git\n' > .claude/CLAUDE.md
   printf '# Memory\n' > .serena/memories/CORE_01_project.md
   git add .
   git commit --quiet -m "chore: seed project"
@@ -46,14 +46,17 @@ git clone --quiet "$REMOTE" "$WORK"
   git push --quiet origin main
 
   git ls-files | grep -q '^src/app.txt$'
-  if git ls-files | grep -qE '^(AGENTS.md|CLAUDE.md|\.serena/)'; then
+  if git ls-files | grep -qE '^(AGENTS.md|CLAUDE.md|\.claude/|\.serena/)'; then
     echo "agent-only files remained tracked in main" >&2
     exit 1
   fi
   test -f AGENTS.md
+  test -f .claude/CLAUDE.md
   test -f .serena/memories/CORE_01_project.md
   git check-ignore -q AGENTS.md
+  git check-ignore -q .claude/CLAUDE.md
   git check-ignore -q .serena/memories/CORE_01_project.md
+  python3 "$ROOT/scripts/validate_instruction_docs.py" --root "$WORK" --require-agent-docs >/dev/null
 )
 
 git clone --quiet --branch main "$REMOTE" "$CLONE"
@@ -63,11 +66,13 @@ git clone --quiet --branch main "$REMOTE" "$CLONE"
   test ! -e .serena/memories/CORE_01_project.md
   python3 "$FULLREPO_SCRIPT" --restore
   test -f AGENTS.md
-  test -f CLAUDE.md
+  test -f .claude/CLAUDE.md
   test -f .serena/memories/CORE_01_project.md
   git check-ignore -q AGENTS.md
+  git check-ignore -q .claude/CLAUDE.md
   git check-ignore -q .serena/memories/CORE_01_project.md
   python3 "$FULLREPO_SCRIPT" --status-json | python3 -m json.tool >/dev/null
+  python3 "$ROOT/scripts/validate_instruction_docs.py" --root "$CLONE" --require-agent-docs >/dev/null
 )
 
 printf 'Fullrepo sync smoke passed.\n'

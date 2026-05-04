@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 6e0e1b9 docs(system): clarify fullrepo sync order
-Scope: VERSION, CHANGELOG.md, docs/release-process.md, docs/rollback-restore.md, docs/dependency-updates.md, docs/observability.md, config/skill-routing-policy.json, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, .gitignore, AGENTS.md, README.md, system/AGENTS.md, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py
+Last commit: f285999 feat(flow): sync codex and claude instruction docs
+Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
 
@@ -20,6 +20,7 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 - `docs/dependency-updates.md`: pinned MCP runtime update policy and local/CI check commands.
 - `docs/observability.md`: diagnostics, GitHub Actions summaries/artifacts, failure triage order, fullrepo status checks, and logging rules.
 - `config/skill-routing-policy.json`: deterministic Russian/English prompt-to-skill routing policy fixture.
+- `scripts/validate_instruction_docs.py`: CI-compatible and fullrepo-required validation for `AGENTS.md` and `.claude/CLAUDE.md`.
 - `scripts/validate_plugin_versions.py`: validates SemVer release metadata, release documents, marketplace entries, plugin manifest versions, and meaningful descriptions.
 - `scripts/validate_skill_routing.py`: validates prompt terms, expected skill names, and expected skill description trigger terms.
 - `scripts/release_manifest.py`: prints a JSON release snapshot with repository version/SHA/branch/dirty state, marketplace entries, plugin manifest versions, MCP runtime pins, and MCP server specs.
@@ -27,6 +28,7 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 - `scripts/collect_diagnostics.sh`: writes sanitized diagnostics under ignored `diagnostics/`.
 - `scripts/rollback_system_codex.sh`: lists and restores installer-created backups for `AGENTS.md` and `config.toml`.
 - `scripts/smoke_fullrepo_sync.sh`: validates fullrepo branch publish, migration, restore, and exclude rules.
+- `plugins/rldyour-flow/scripts/instruction_docs_state.py`: reports instruction-doc presence, missing docs, dirty docs, legacy root `CLAUDE.md`, and durable-change candidates.
 - `scripts/sync_fullrepo_branch.sh`: operational wrapper for fullrepo status, restore, publish, and migration.
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`: fullrepo state and sync implementation.
 - `.github/workflows/validate.yml`: Ubuntu/macOS validation matrix with success summary and failure diagnostic artifacts.
@@ -37,6 +39,7 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 
 - `python3 scripts/validate_plugin_versions.py`: validate release metadata, plugin manifest versions, and release document presence.
 - `python3 scripts/validate_skill_routing.py`: validate deterministic Russian and English routing policy cases.
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validate restored local/fullrepo instruction docs.
 - `python3 scripts/release_manifest.py`: print a machine-readable release snapshot.
 - `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`: fail when pinned Codex/MCP runtime packages are stale.
 - `scripts/collect_diagnostics.sh [--include-doctor]`: collect sanitized local diagnostics under ignored `diagnostics/`.
@@ -54,6 +57,7 @@ This area owns formal operational wrappers around the rldyour Codex runtime. It 
 
 - `Release metadata`: runs `python3 scripts/validate_plugin_versions.py` and generates a release manifest.
 - `Skill routing policy`: runs `python3 scripts/validate_skill_routing.py`.
+- `Instruction docs policy`: runs `python3 scripts/validate_instruction_docs.py` in CI-compatible mode.
 - Python syntax checks for `validate_plugin_versions.py`, `validate_skill_routing.py`, `release_manifest.py`, `check_mcp_runtime_versions.py`, and `plugins/rldyour-flow/scripts/fullrepo_sync.py`.
 - Fullrepo sync smoke through `scripts/smoke_fullrepo_sync.sh`.
 
@@ -88,6 +92,8 @@ Commit `018cc6e feat(flow): add fullrepo agent context sync` added `plugins/rldy
 Commit `6abd7b8 fix(serena): classify agent files as knowledge paths` updated `serena_memory_state.py` so fullrepo migration commits that remove agent-only files from `main` do not falsely count as product-code drift.
 
 Commit `6e0e1b9 docs(system): clarify fullrepo sync order` updated `system/AGENTS.md` and `CHANGELOG.md` so the global instruction layer states the fullrepo-managed initialization and finish sequence directly. Root `AGENTS.md` mirrors the finish-order statement as agent-only project context for the `fullrepo` snapshot.
+
+Commit `f285999 feat(flow): sync codex and claude instruction docs` added `$instruction-docs-sync`, `instruction_docs_state.py`, and `validate_instruction_docs.py`. It made Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` separate first-class instruction docs for fullrepo-managed projects, added a routing-policy test for Russian AGENTS/CLAUDE prompts, and updated fullrepo smoke to restore `.claude/CLAUDE.md`.
 
 ## CI Model
 
@@ -131,6 +137,7 @@ GitHub Actions validation is the remote proof layer for committed state. Local `
 - `VERSION` and plugin manifest versions must stay valid SemVer.
 - `CHANGELOG.md` must keep `[Unreleased]` and human-readable release entries.
 - Routing policy cases must target real skills and real description trigger terms.
+- Instruction docs validation must pass in non-required mode on normal CI branches and in `--require-agent-docs` mode after fullrepo context is restored locally.
 
 ## Change Rules
 
@@ -147,6 +154,7 @@ GitHub Actions validation is the remote proof layer for committed state. Local `
 
 - `python3 scripts/validate_plugin_versions.py`: validates release/versioning metadata.
 - `python3 scripts/validate_skill_routing.py`: validates prompt routing policy.
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validates restored instruction docs policy.
 - `python3 scripts/release_manifest.py | python3 -m json.tool`: validates release manifest JSON.
 - `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`: validates pinned package freshness.
 - `scripts/collect_diagnostics.sh --output diagnostics/local-test`: validates diagnostics bundle creation.

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 6e0e1b9 docs(system): clarify fullrepo sync order
-Scope: system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, README.md, AGENTS.md, plugins/rldyour-mcps/.mcp.json, plugins/rldyour-explore, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
+Last commit: f285999 feat(flow): sync codex and claude instruction docs
+Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, /Users/rldyourmnd/.codex/AGENTS.md, /Users/rldyourmnd/.codex/config.toml
 Area: CORE
 -->
 
@@ -24,6 +24,7 @@ The system install workflow turns this repository into a portable source of trut
 - `scripts/smoke_hooks.sh`: repository and installed hook smoke plus temporary git lifecycle verification.
 - `scripts/smoke_clean_bootstrap.sh`: clean clone to temporary `CODEX_HOME` bootstrap smoke.
 - `scripts/smoke_fullrepo_sync.sh`: isolated fullrepo branch, `.git/info/exclude`, migration, and restore smoke.
+- `scripts/validate_instruction_docs.py`: validates Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` policy in optional fullrepo-required mode.
 - `scripts/sync_fullrepo_branch.sh`: repository wrapper for fullrepo status, restore, publish, exclude install, and migration.
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`: canonical fullrepo synchronization implementation.
 - `scripts/validate_plugin_versions.py`: SemVer and release document validation.
@@ -56,6 +57,7 @@ The system install workflow turns this repository into a portable source of trut
 - `scripts/smoke_hooks.sh [--codex-home PATH] [--repo-only] [--installed-only]`: validate Serena and Flow hook execution and real temporary git lifecycle state transitions.
 - `scripts/smoke_clean_bootstrap.sh`: validate committed source in a clean local clone with a temporary system install.
 - `scripts/smoke_fullrepo_sync.sh`: validate fullrepo publish, main-branch index migration, fullrepo restore, and local exclude rules in a temporary repository.
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validate restored local/fullrepo `AGENTS.md` and `.claude/CLAUDE.md`.
 - `scripts/sync_fullrepo_branch.sh --status`: print current fullrepo branch state.
 - `scripts/sync_fullrepo_branch.sh --restore`: restore agent-only context from `origin/fullrepo` and install local exclude rules.
 - `scripts/sync_fullrepo_branch.sh --publish`: publish current `HEAD` plus local agent-only files to `fullrepo`.
@@ -87,6 +89,8 @@ Apply mode:
 
 `README.md`, root `AGENTS.md`, and `system/AGENTS.md` now document the `fullrepo` branch workflow. Normal product branches keep agent-only files out of branch history through `.git/info/exclude`; `fullrepo` stores the complete agent context snapshot for cross-machine initialization.
 
+After commit `f285999`, `system/AGENTS.md` states that `AGENTS.md` and `.claude/CLAUDE.md` are separate first-class files optimized for Codex and Claude Code. Root `AGENTS.md` and local `.claude/CLAUDE.md` mirror the repository-specific behavior as agent-only project context.
+
 After commit `6e0e1b9 docs(system): clarify fullrepo sync order`, `system/AGENTS.md` and root `AGENTS.md` both describe the explicit task sync order for this workflow: restore agent-only context from `fullrepo` at initialization when needed, refresh Serena memories and durable docs from verified code, run matching checks, commit and push normal branch changes, publish `fullrepo` from final `HEAD`, then safely clean merged workflow branches and worktrees.
 
 `scripts/bootstrap_check.sh` defaults to non-mutating dry-run mode. In dry-run mode it runs install preview, JSON validation, shellcheck, repository-only hook smoke, and fullrepo sync smoke. In apply mode it runs install preview, install apply, `scripts/validate_marketplace.sh`, MCP runtime smoke, hook smoke, `scripts/doctor_system_codex.sh`, Serena state, Flow state, and `git status -sb`.
@@ -105,7 +109,7 @@ After commit `6e0e1b9 docs(system): clarify fullrepo sync order`, `system/AGENTS
 
 `scripts/validate_marketplace.sh` has an `MCP pinning policy` step. It rejects `@latest`, requires exact `uvx --from package==version` specs, and requires pinned bunx package specs.
 
-`scripts/validate_marketplace.sh` now validates `pyrightconfig.json`, release metadata, skill routing policy, runs `scripts/smoke_mcp_runtime.sh`, runs `scripts/smoke_mcp_capabilities.sh`, runs `scripts/smoke_hooks.sh`, and runs `scripts/smoke_fullrepo_sync.sh` after plugin cache sync. Capability smoke can be controlled through `RLDYOUR_MCP_CAPABILITY_LIST_ONLY`, `RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV`, `RLDYOUR_MCP_CAPABILITY_INCLUDE_AUTH`, and `RLDYOUR_MCP_CAPABILITY_SKIP_SERVERS`.
+`scripts/validate_marketplace.sh` now validates `pyrightconfig.json`, release metadata, skill routing policy, instruction docs policy, runs `scripts/smoke_mcp_runtime.sh`, runs `scripts/smoke_mcp_capabilities.sh`, runs `scripts/smoke_hooks.sh`, and runs `scripts/smoke_fullrepo_sync.sh` after plugin cache sync. Capability smoke can be controlled through `RLDYOUR_MCP_CAPABILITY_LIST_ONLY`, `RLDYOUR_MCP_CAPABILITY_ALLOW_MISSING_ENV`, `RLDYOUR_MCP_CAPABILITY_INCLUDE_AUTH`, and `RLDYOUR_MCP_CAPABILITY_SKIP_SERVERS`.
 
 `plugins/rldyour-lsps/scripts/check_lsps.sh` reports zero missing commands and zero warnings for this repository because `pyrightconfig.json` defines the Python script scope.
 
@@ -123,7 +127,7 @@ The CI uv setup step uses `enable-cache: false`; the repository does not maintai
 
 After commit `018cc6e`, `scripts/install_system_codex.sh --apply` installed the updated global `AGENTS.md`, patched config, and synced plugin cache. `scripts/validate_marketplace.sh` then passed with fullrepo smoke, hook smoke, MCP runtime smoke, MCP capability smoke, LSP health, cache sync, secret scan, and whitespace checks.
 
-After commit `6e0e1b9`, `scripts/install_system_codex.sh --apply` installed the updated global `AGENTS.md`, patched config, and synced plugin cache. `cmp -s system/AGENTS.md /Users/rldyourmnd/.codex/AGENTS.md`, `scripts/validate_marketplace.sh`, `scripts/smoke_mcp_capabilities.sh --server grep --retries 5 --timeout 45`, and `scripts/doctor_system_codex.sh` passed. The first doctor run saw a transient remote Grep MCP `TaskGroup` failure during safe-call smoke; an isolated retry and the next full doctor run passed.
+After commit `f285999`, `scripts/install_system_codex.sh --apply` installed the updated global `AGENTS.md`, patched config, and synced plugin cache. `scripts/doctor_system_codex.sh`, `scripts/smoke_fullrepo_sync.sh`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, and a standalone `scripts/validate_marketplace.sh` passed. A parallel validation run failed once because two concurrent MCP capability smoke processes raced around Playwright package linking; the isolated rerun passed.
 
 ## Contracts And Data
 
@@ -180,6 +184,7 @@ Serena MCP is installed with `--enable-web-dashboard False --open-web-dashboard 
 - Run `scripts/bootstrap_check.sh --apply` when proving the current machine can install and verify the full system state end-to-end.
 - Run `scripts/smoke_clean_bootstrap.sh` from a clean working tree when proving a committed clean clone can install and pass doctor.
 - Run `scripts/smoke_fullrepo_sync.sh` after changing fullrepo patterns, exclude semantics, publish behavior, or restore behavior.
+- Run `python3 scripts/validate_instruction_docs.py --require-agent-docs` after changing instruction docs sync or local/fullrepo `AGENTS.md` and `.claude/CLAUDE.md` behavior.
 - Run `scripts/sync_fullrepo_branch.sh --status` before and after fullrepo-related changes to inspect current state.
 - After changing `.mcp.json`, run the installer and doctor workflow before final delivery so portable and installed MCP state cannot drift.
 - Run `scripts/validate_marketplace.sh` before committing repository changes.
@@ -198,6 +203,7 @@ Serena MCP is installed with `--enable-web-dashboard False --open-web-dashboard 
 - `scripts/smoke_hooks.sh`: verifies hook scripts execute in repository and installed cache layouts, including temporary git lifecycle paths.
 - `scripts/smoke_clean_bootstrap.sh`: proves clean clone to temporary system install.
 - `scripts/smoke_fullrepo_sync.sh`: proves fullrepo publish, migration, restore, and exclude behavior.
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: proves restored local `AGENTS.md` and `.claude/CLAUDE.md` satisfy rldyour policy.
 - `scripts/sync_fullrepo_branch.sh --status`: prints current fullrepo status.
 - `scripts/sync_fullrepo_branch.sh --restore`: restores agent-only context from `origin/fullrepo`.
 - `scripts/sync_fullrepo_branch.sh --publish`: publishes complete agent-only context to `fullrepo`.

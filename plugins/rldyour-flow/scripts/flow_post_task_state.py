@@ -18,7 +18,7 @@ RUNTIME_IGNORED = {
     ".serena/.flow_post_task_state.json",
 }
 
-DOC_FILES = ("AGENTS.md", "CLAUDE.md")
+DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md")
 
 
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
@@ -103,6 +103,30 @@ def _fullrepo_state() -> dict[str, Any]:
     return {}
 
 
+def _instruction_docs_state() -> dict[str, Any]:
+    candidates = [
+        Path("plugins/rldyour-flow/scripts/instruction_docs_state.py"),
+        Path.home() / ".codex/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/instruction_docs_state.py",
+    ]
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        proc = subprocess.run(
+            ["python3", str(candidate), "--json"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0 or not proc.stdout.strip():
+            continue
+        try:
+            payload = json.loads(proc.stdout)
+        except json.JSONDecodeError:
+            continue
+        return payload if isinstance(payload, dict) else {}
+    return {}
+
+
 def state() -> dict[str, Any]:
     if _git("rev-parse", "--is-inside-work-tree").returncode != 0:
         return {"is_git_repo": False, "needs_flow_sync": False, "serena_current": True}
@@ -117,6 +141,7 @@ def state() -> dict[str, Any]:
     doc_files_changed = [path for path in dirty_files if path in DOC_FILES]
     worktree_count = _worktree_count()
     fullrepo_state = _fullrepo_state()
+    instruction_docs_state = _instruction_docs_state()
 
     worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
     if not isinstance(worktree_agent_paths, list):
@@ -127,7 +152,12 @@ def state() -> dict[str, Any]:
     )
 
     needs_flow_sync = serena_current and bool(
-        dirty_files or ahead or behind or doc_files_changed or fullrepo_needs_attention
+        dirty_files
+        or ahead
+        or behind
+        or doc_files_changed
+        or fullrepo_needs_attention
+        or bool(instruction_docs_state.get("needs_instruction_docs_review"))
     )
 
     fingerprint_payload = {
@@ -156,6 +186,7 @@ def state() -> dict[str, Any]:
         "serena_current": serena_current,
         "serena_state": serena_state,
         "fullrepo_state": fullrepo_state,
+        "instruction_docs_state": instruction_docs_state,
         "fullrepo_needs_attention": fullrepo_needs_attention,
         "needs_flow_sync": needs_flow_sync,
         "fingerprint": fingerprint,

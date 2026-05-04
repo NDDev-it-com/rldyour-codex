@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-04
-Last commit: 018cc6e feat(flow): add fullrepo agent context sync
-Scope: plugins/rldyour-flow, scripts/sync_fullrepo_branch.sh, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh, AGENTS.md, system/AGENTS.md
+Last commit: f285999 feat(flow): sync codex and claude instruction docs
+Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: FLOW
 -->
 
@@ -20,13 +20,15 @@ Area: FLOW
 - `plugins/rldyour-flow/hooks/session_start_context.sh`: read-only SessionStart hook that emits compact repository context through `hookSpecificOutput.additionalContext`.
 - `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: read-only PostToolUse hook that emits non-blocking commit quality advice through `systemMessage` after Bash `git commit`.
 - `plugins/rldyour-flow/hooks/stop_post_task_sync.sh`: post-task Stop hook implementation and loop guard.
-- `plugins/rldyour-flow/scripts/flow_post_task_state.py`: deterministic state payload for dirty files, branch, upstream, worktrees, Serena freshness, and fingerprint.
+- `plugins/rldyour-flow/scripts/flow_post_task_state.py`: deterministic state payload for dirty files, branch, upstream, worktrees, Serena freshness, fullrepo state, instruction docs state, and fingerprint.
+- `plugins/rldyour-flow/scripts/instruction_docs_state.py`: deterministic state payload for Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` presence, dirty state, durable-change candidates, and review reasons.
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`: deterministic fullrepo restore, migrate, publish, and status logic for agent-only files.
 - `plugins/rldyour-flow/references/*.md`: detailed lifecycle, post-task sync, reviewer, deploy, and source-backed design contracts.
 - `plugins/rldyour-flow/references/init-context-pack.md`: `ry-init` context-pack contract for scope, architecture, symbols, data, contracts, integration paths, checks, risks, and ready-for tasks.
 - `plugins/rldyour-flow/references/context-sufficiency-gate.md`: `ry-start` gate that requires evidence for code, data, patterns, research, quality, and risks before edits.
 - `scripts/smoke_hooks.sh`: validates Flow hook behavior from repository sources and installed plugin cache, including temporary git lifecycle checks.
 - `scripts/smoke_fullrepo_sync.sh`: validates fullrepo publish, main-branch index migration, `.git/info/exclude`, and restore in an isolated temporary repository.
+- `scripts/validate_instruction_docs.py`: validates rldyour instruction doc policy in CI-compatible mode or fullrepo-required mode.
 - `scripts/sync_fullrepo_branch.sh`: repository wrapper that calls the Flow fullrepo script from source or installed plugin cache.
 
 ## Entry Points
@@ -37,6 +39,7 @@ Area: FLOW
 - `ry-review`: report-only review of a diff, PR, branch, file scope, or prompt scope plus affected integration graph.
 - `ry-deploy`: local-GitHub-server deployment workflow with server baseline logs, checks, deploy, logs/health verification, and fix-forward failure handling.
 - `flow-post-task-sync`: finalizes Serena/doc/git/GitHub/fullrepo state after meaningful work or Stop hook prompt.
+- `instruction-docs-sync`: synchronizes Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` from verified code, config, git diff, and current Serena memories.
 - `fullrepo_sync.py --restore`: restores agent-only files from `origin/fullrepo` and installs `.git/info/exclude`.
 - `fullrepo_sync.py --migrate-main`: removes tracked agent-only files from the current branch index through `git rm --cached` while keeping them locally.
 - `fullrepo_sync.py --publish`: publishes current `HEAD` plus local agent-only files to `fullrepo` with `--force-with-lease`.
@@ -48,9 +51,9 @@ The plugin is skills-and-hooks only. It does not define MCP servers or app conne
 
 User-facing workflow output stays Russian. Repository docs, plugin docs, memories, plans, research archives, code comments, and commits stay English.
 
-`plugins/rldyour-flow/.codex-plugin/plugin.json` version is `0.2.0`. The manifest describes deep `ry-init` context packs, `ry-start` context sufficiency, fullrepo sync, reviewer skills, deployment, and non-blocking hooks.
+`plugins/rldyour-flow/.codex-plugin/plugin.json` version is `0.2.1`. The manifest describes deep `ry-init` context packs, `ry-start` context sufficiency, instruction docs sync, fullrepo sync, reviewer skills, deployment, and non-blocking hooks.
 
-`plugins/rldyour-flow/skills/ry-init/SKILL.md` restores project agent-only context from `fullrepo` when available before it treats `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, `.cursor/rules/*`, or `.agents/skills/*` as missing. It then requires reading `references/init-context-pack.md` and building a scoped context pack. It must map modules, layers, symbols, DB fields, schemas, APIs, generated artifacts, configs, tests, integration paths, risks, gaps, and what Codex can safely change.
+`plugins/rldyour-flow/skills/ry-init/SKILL.md` restores project agent-only context from `fullrepo` when available before it treats `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, `.cursor/rules/*`, or `.agents/skills/*` as missing. It then requires reading `references/init-context-pack.md` and building a scoped context pack. It must map modules, layers, symbols, DB fields, schemas, APIs, generated artifacts, configs, tests, integration paths, risks, gaps, and what Codex can safely change.
 
 `plugins/rldyour-flow/skills/ry-start/SKILL.md` now requires reading `references/context-sufficiency-gate.md` and passing the gate before edits. The gate is self-correcting, not a hard blocker: if evidence is missing, Codex must gather more code/research/browser/security/design evidence or ask the owner with options.
 
@@ -63,11 +66,11 @@ Current `ry-start` helper routing:
 - Browser-visible prompts route to `browser-tool-routing`, `browser-validation`, and `browser-debug` when debugging evidence is needed.
 - Design/UI/Figma prompts route to `ry-design`, `figma-to-code`, `design-system-implementation`, `fsd-frontend-architecture`, and `design-validation`.
 - Security-sensitive prompts route to `owasp-top-10-implementation` during implementation, `ry-sec-review` for explicit security-review requests, and `flow-security-review` in the orchestrated review phase when the touched scope is sensitive.
-- Verification and finish route to `verification-quality-gates`, `flow-verification-review`, `serena-memory-sync`, and `flow-post-task-sync`.
+- Verification and finish route to `verification-quality-gates`, `flow-verification-review`, `serena-memory-sync`, `instruction-docs-sync`, and `flow-post-task-sync`.
 
-`flow-post-task-sync` runs after Serena memory freshness, not before it. The flow Stop hook exits without blocking when Serena state is stale, allowing the Serena Stop hook to request memory sync first. After Serena is current, the flow hook requests docs/git/GitHub/fullrepo cleanup.
+`flow-post-task-sync` runs after Serena memory freshness, not before it. The flow Stop hook exits without blocking when Serena state is stale, allowing the Serena Stop hook to request memory sync first. After Serena is current, the flow hook embeds `instruction_docs_state` and requests `instruction-docs-sync` when Codex/Claude project instruction docs need review.
 
-`flow-post-task-sync` now includes fullrepo as a standard finalization step. Normal source/test/docs/config changes are committed and pushed to the current upstream first. Then agent-only files are restored/ignored through `.git/info/exclude`, optional `--migrate-main` removes tracked AI files from normal branch history when the project is ready, and `--publish` updates `fullrepo` with safe `--force-with-lease`.
+`flow-post-task-sync` includes instruction docs sync and fullrepo as standard finalization steps. Normal source/test/docs/config changes are committed and pushed to the current upstream first. Then agent-only files are restored/ignored through `.git/info/exclude`, optional `--migrate-main` removes tracked AI files from normal branch history when the project is ready, and `--publish` updates `fullrepo` with safe `--force-with-lease`.
 
 The flow SessionStart hook is advisory and read-only. It emits branch, HEAD, upstream, ahead/behind, dirty files, worktree count, project instruction docs, Serena freshness, fullrepo state, and flow sync state. It explicitly tells Codex to trigger scoped `ry-init` when context is insufficient, restore `fullrepo` agent-only context when needed, and use the context sufficiency gate before edits.
 
@@ -86,7 +89,7 @@ The flow PostToolUse hook is advisory and read-only. It watches Bash `git commit
 
 Repository dirtiness is not stored as a durable memory fact. Use `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool` for current branch, upstream, worktree, dirty-file, ahead/behind, Serena freshness, and fullrepo state.
 
-After commit `018cc6e`, `scripts/validate_marketplace.sh` passed after `scripts/install_system_codex.sh --apply` synchronized the active plugin cache. The validation included fullrepo smoke, hook smoke, MCP runtime smoke, MCP capability smoke, LSP health, skill validation, cache diff, secret scan, and whitespace checks.
+After commit `f285999`, `scripts/install_system_codex.sh --apply` installed the updated global `AGENTS.md`, patched config, and synced plugin cache. `scripts/doctor_system_codex.sh` and a standalone `scripts/validate_marketplace.sh` passed. A parallel validation run failed once because concurrent MCP capability smoke processes raced around Playwright package linking; the isolated rerun passed.
 
 ## Contracts And Data
 
@@ -96,9 +99,11 @@ The Stop hook ignores `.serena/.flow_sync_marker` and `.serena/.flow_post_task_s
 
 `flow_post_task_state.py` also embeds `fullrepo_state` from `fullrepo_sync.py --status-json`. It reports `remote_fullrepo_exists`, `exclude_installed`, tracked agent-only paths, local worktree agent-only paths, and non-agent dirty paths. `fullrepo_needs_attention` is true when the exclude block is missing or agent-only files exist while the remote `fullrepo` branch is absent.
 
-`flow-post-task-sync` may update `AGENTS.md` when durable Codex project instructions changed. It updates `CLAUDE.md` only when that file exists or the project explicitly uses Claude Code compatibility. Both files must contain verified project facts, not conversation history or speculative plans.
+`flow_post_task_state.py` embeds `instruction_docs_state` from `instruction_docs_state.py --json`. That state reports required docs, present docs, missing docs, dirty instruction docs, legacy root `CLAUDE.md` presence, durable-change candidates, review reasons, and `needs_instruction_docs_review`.
 
-For normal product repositories, project-root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, `.agents/commands`, `.agents/hooks`, `.github/instructions`, and `.github/prompts` are agent-only files. They belong locally and in `fullrepo`, not in normal branch history. This repository may intentionally track selected instruction templates such as `system/AGENTS.md` because they are product artifacts.
+`instruction-docs-sync` updates `AGENTS.md` for Codex and `.claude/CLAUDE.md` for Claude Code in fullrepo-managed projects. Both files must be first-class for their own CLI and must contain verified project facts, not conversation history or speculative plans. `.claude/CLAUDE.md` must not be reduced to only an `@AGENTS.md` import.
+
+For normal product repositories, project-root `AGENTS.md`, `.claude/CLAUDE.md`, root `CLAUDE.md` when migrating legacy projects, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, `.agents/commands`, `.agents/hooks`, `.github/instructions`, and `.github/prompts` are agent-only files. They belong locally and in `fullrepo`, not in normal branch history. This repository may intentionally track selected instruction templates such as `system/AGENTS.md` because they are product artifacts.
 
 `fullrepo_sync.py --publish` refuses to run while non-agent files are dirty. It builds a temporary index from current `HEAD`, removes agent-only paths from that temporary index, force-adds local agent-only files, scans them for secret-looking patterns, creates a snapshot commit with `git commit-tree`, updates local `refs/heads/fullrepo`, and pushes to `refs/heads/fullrepo` with `--force-with-lease`.
 
@@ -135,6 +140,7 @@ PostToolUse commit advice output uses:
 - Update `hooks/session_start_context.sh` and `hooks.json` together when changing SessionStart context behavior.
 - Update `hooks/post_tool_use_commit_advice.sh` and `hooks.json` together when changing commit advice behavior.
 - Update `references/post-task-sync.md`, `hooks/stop_post_task_sync.sh`, `scripts/flow_post_task_state.py`, and `scripts/fullrepo_sync.py` together when changing Stop-hook or fullrepo sync semantics.
+- Update `skills/instruction-docs-sync/SKILL.md`, `scripts/instruction_docs_state.py`, `scripts/validate_instruction_docs.py`, and `references/post-task-sync.md` together when changing instruction-doc sync behavior.
 - Update `references/reviewer-protocol.md` when adding, removing, or changing reviewer tracks.
 - Update `references/deploy-contract.md` when changing deploy contract fields or safety policy.
 - Keep `README.md`, `plugin.json`, `SKILL.md` descriptions, and `agents/openai.yaml` aligned with automatic routing intent.
@@ -147,11 +153,13 @@ PostToolUse commit advice output uses:
 - `jq empty plugins/rldyour-flow/.codex-plugin/plugin.json plugins/rldyour-flow/hooks.json .agents/plugins/marketplace.json`: validates plugin and marketplace JSON.
 - `uv run --with pyyaml python /Users/rldyourmnd/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/rldyour-flow/skills/<skill>`: validates each flow skill.
 - `scripts/validate_marketplace.sh`: validates `agents/openai.yaml` parse, default prompt length, `$skill-name` prompt reference, short description length, MCP dependencies, and reviewer implicit-invocation exceptions.
-- `python3 -m py_compile plugins/rldyour-flow/scripts/flow_post_task_state.py plugins/rldyour-flow/scripts/fullrepo_sync.py`: validates Flow Python scripts.
+- `python3 -m py_compile plugins/rldyour-flow/scripts/flow_post_task_state.py plugins/rldyour-flow/scripts/instruction_docs_state.py plugins/rldyour-flow/scripts/fullrepo_sync.py`: validates Flow Python scripts.
 - `shellcheck plugins/rldyour-flow/hooks/*.sh plugins/rldyour-flow/scripts/*.sh`: validates flow shell hooks and scripts.
 - `printf '{"source":"startup"}' | plugins/rldyour-flow/hooks/session_start_context.sh`: verifies SessionStart JSON output.
 - `printf '{"tool_name":"Bash","tool_input":{"command":"git commit -m test"}}' | plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: verifies commit-advice hook exits cleanly against the current HEAD.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`: verifies state payload and dirty-path handling.
+- `plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool`: verifies instruction docs state and durable-change detection.
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: verifies local/fullrepo `AGENTS.md` and `.claude/CLAUDE.md` policy.
 - `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json | python3 -m json.tool`: verifies fullrepo state payload.
 - `scripts/smoke_hooks.sh`: verifies Flow and Serena hook behavior, including temporary git lifecycle transitions.
 - `scripts/smoke_fullrepo_sync.sh`: verifies fullrepo publish, migrate-main, restore, and `.git/info/exclude` behavior.

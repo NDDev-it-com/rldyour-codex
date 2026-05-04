@@ -23,14 +23,15 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `.github/workflows/dependency-check.yml`: scheduled MCP runtime pin freshness check.
 - `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
 - `/Users/rldyourmnd/.codex/config.toml`: active system Codex registration, YOLO permission defaults, and MCP runtime config.
+- `.claude/CLAUDE.md`: Claude Code-native project memory for this repository, published through `fullrepo`.
 - `.serena/memories/*.md`: high-signal verified project knowledge.
 
 ## Plugin Boundaries
 
 - `rldyour-mcps` owns MCP transport definitions only. It must not contain behavior policy or skills.
 - `rldyour-serena-mcp` owns Serena-first code workflow, memory sync, and Serena lifecycle hooks.
-- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, advisory session/commit hooks, and post-task synchronization hooks.
-- `rldyour-rules` owns quality, architecture, dependency, verification, project-instruction, and ADR policy.
+- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, advisory session/commit hooks, and post-task synchronization hooks.
+- `rldyour-rules` owns quality, architecture, dependency, verification, Codex/Claude project-instruction, and ADR policy.
 - `rldyour-explore`, `rldyour-browser`, `rldyour-design`, `rldyour-security`, and `rldyour-lsps` own their domain workflows and must not duplicate MCP transports.
 - Curated `github@openai-curated` and `gmail@openai-curated` are intentionally enabled in system Codex.
 
@@ -42,8 +43,9 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - Use `skill-creator` guidance for skill changes. Every callable rldyour skill must include compact Russian and English trigger phrases in `SKILL.md` frontmatter `description`; details belong in the skill body or references. Reviewer track skills may set `allow_implicit_invocation: false` when orchestrated by `ry-start` or `ry-review`.
 - Use Serena-first code inspection where supported; use `rg` and direct reads for docs, JSON, shell scripts, and other text-level work.
 - After meaningful changes, update `.serena/memories` with verified facts only.
+- After meaningful project behavior, workflow, setup, validation, architecture, plugin, hook, or command changes, update `AGENTS.md` for Codex and `.claude/CLAUDE.md` for Claude Code from verified code state.
 - After plugin changes that affect runtime behavior, sync changed plugin directories into `/Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<plugin>/local` and restart Codex.
-- `fullrepo` is the standard branch for portable agent-only context. Normal project branches should exclude project-root `AGENTS.md`, `CLAUDE.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files through `.git/info/exclude`; publish them with `scripts/sync_fullrepo_branch.sh --publish` after normal branch sync. This repository may intentionally track selected instruction templates that are product artifacts, such as `system/AGENTS.md`.
+- `fullrepo` is the standard branch for portable agent-only context. Normal project branches should exclude project-root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files through `.git/info/exclude`; publish them with `scripts/sync_fullrepo_branch.sh --publish` after normal branch sync. This repository may intentionally track selected instruction templates that are product artifacts, such as `system/AGENTS.md`.
 
 ## Validation
 
@@ -66,6 +68,8 @@ scripts/bootstrap_check.sh --apply
 scripts/sync_fullrepo_branch.sh --status
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool
+plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
+python3 scripts/validate_instruction_docs.py --require-agent-docs
 plugins/rldyour-lsps/scripts/check_lsps.sh
 python3 scripts/validate_plugin_versions.py
 python3 scripts/validate_skill_routing.py
@@ -85,6 +89,7 @@ diff -qr plugins/<plugin> /Users/rldyourmnd/.codex/plugins/cache/rldyour-codex/<
 - Keep `main` synchronized with `origin/main` unless working on an explicit branch or worktree workflow.
 - Prefer atomic commits with Conventional Commits.
 - Use `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` for knowledge-only Serena updates.
+- Use `$instruction-docs-sync` after Serena memory sync when durable project instruction facts changed.
 - Use `scripts/sync_fullrepo_branch.sh --restore` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push.
 - Standard finish order is Serena memories and durable docs from verified code, matching checks, atomic normal-branch commit and push, `fullrepo` publish from final `HEAD`, then safe cleanup of merged workflow branches and worktrees.
 - Before final delivery, ensure `git status -sb` is clean and pushed when the task produced commits.

@@ -106,6 +106,9 @@ PY
 step "Skill routing policy"
 python3 scripts/validate_skill_routing.py
 
+step "Instruction docs policy"
+python3 scripts/validate_instruction_docs.py
+
 step "OpenAI skill metadata"
 "$UV_BIN" run --with pyyaml python - <<'PY'
 from pathlib import Path
@@ -228,8 +231,10 @@ import ast
 paths = [
     Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
     Path("plugins/rldyour-flow/scripts/flow_post_task_state.py"),
+    Path("plugins/rldyour-flow/scripts/instruction_docs_state.py"),
     Path("plugins/rldyour-flow/scripts/fullrepo_sync.py"),
     Path("scripts/smoke_mcp_capabilities.py"),
+    Path("scripts/validate_instruction_docs.py"),
     Path("scripts/validate_plugin_versions.py"),
     Path("scripts/validate_skill_routing.py"),
     Path("scripts/release_manifest.py"),

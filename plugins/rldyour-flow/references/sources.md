@@ -7,6 +7,10 @@ Primary sources used for this workflow:
 - OpenAI Codex Hooks: https://developers.openai.com/codex/hooks
 - OpenAI Codex best practices: https://developers.openai.com/codex/learn/best-practices
 - OpenAI Codex Subagents: https://developers.openai.com/codex/subagents
+- Claude Code memory and CLAUDE.md: https://code.claude.com/docs/en/memory
+- Claude Code best practices: https://code.claude.com/docs/en/best-practices
+- Claude Code extension model: https://code.claude.com/docs/en/features-overview
+- Claude Code hooks: https://code.claude.com/docs/en/hooks
 - Git ignore rules: https://git-scm.com/docs/gitignore
 - Git push force-with-lease: https://git-scm.com/docs/git-push
 - GitHub protected branches: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
@@ -27,6 +31,6 @@ Engineering conclusions:
 - Hooks should be deterministic and non-destructive; they should ask Codex to continue rather than silently mutating code.
 - Multiple Stop hooks run independently, so post-task sync must coordinate with Serena using state checks and loop markers.
 - Subagents are useful for parallel reviews, but prompts must be self-contained and bounded.
-- `AGENTS.md` is Codex-native; `CLAUDE.md` is compatibility documentation and should not be treated as the primary Codex source when both exist.
+- `AGENTS.md` is Codex-native and `.claude/CLAUDE.md` is Claude Code-native in rldyour projects. Keep both optimized for their own CLI instead of reducing one to a thin import of the other.
 - `.git/info/exclude` is local exclude state, so it is appropriate for per-repository agent-only files that should exist locally but not in normal branch history.
 - Use `--force-with-lease` for generated `fullrepo` snapshots so unexpected remote updates are not overwritten silently.
