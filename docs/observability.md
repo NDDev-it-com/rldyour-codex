@@ -37,7 +37,7 @@ GitHub Actions writes:
 - failure diagnostic artifacts under `diagnostics/ci`;
 - standard workflow logs for validation, doctor, bootstrap, and dependency checks.
 
-The `validate` workflow runs on Ubuntu and macOS because this setup is macOS-first but must remain portable enough for a clean CI runner.
+The `validate` workflow runs on Ubuntu and macOS because this setup must remain portable across the owner's Linux and macOS machines plus clean CI runners.
 
 ## Failure Triage Order
 
