@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
+Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
 Scope: plugins/rldyour-design
 Area: DESIGN
 -->

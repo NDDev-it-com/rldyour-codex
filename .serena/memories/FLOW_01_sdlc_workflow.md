@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
-Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
+Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: FLOW
 -->
 
@@ -18,6 +18,7 @@ Area: FLOW
 - `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`
 - `plugins/rldyour-flow/hooks/stop_post_task_sync.sh`
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`
+- `plugins/rldyour-flow/scripts/git_sync_audit.sh`
 - `plugins/rldyour-flow/scripts/instruction_docs_state.py`
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`
 - `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`
@@ -55,8 +56,9 @@ Area: FLOW
 - Reads repository state via `flow_post_task_state.py`.
 - Emits `hookSpecificOutput.hookEventName = SessionStart` with advisory context including:
   - branch, HEAD, upstream, ahead/behind
-  - worktree count
-  - dirty file list (trimmed in output)
+- worktree count
+- branch cleanup counts: merged local branches, merged remote branches, and merged workflow worktree candidates
+- dirty file list (trimmed in output)
   - Serena sync status
   - fullrepo status and branch/remote/exclude information
   - instruction-doc presence and flow sync signal
@@ -91,10 +93,21 @@ Area: FLOW
 - `doc_files_present`, `doc_files_changed`
 - `fullrepo_state`, `fullrepo_needs_attention`
 - `instruction_docs_state`
+- `branch_cleanup_state` with cleanup base, protected branches, merged local branches, merged remote branches, merged workflow branches, merged worktree cleanup candidates, and `needs_cleanup`
 - `needs_flow_sync`
 - `fingerprint`
 
-`needs_flow_sync` is true when Serena is current and any of the following is present: dirty files, ahead/behind, changed instruction docs, fullrepo attention needed, or instruction-docs review required.
+`needs_flow_sync` is true when Serena is current and any of the following is present: dirty files, ahead/behind, changed instruction docs, fullrepo attention needed, branch cleanup needed, or instruction-docs review required.
+
+## Branch Cleanup Contract
+
+Flow treats branch hygiene as part of final synchronization.
+
+- Cleanup base prefers `origin/main`, then `main`, `origin/master`, `master`, then `HEAD`.
+- Protected branch names are excluded: `main`, `master`, `develop`, `development`, `staging`, `production`, `prod`, `fullrepo`.
+- Merged local branches, merged remote branches, and merged worktree candidates are reported in `branch_cleanup_state`.
+- Branches with workflow prefixes (`ai/`, `codex/`, `ry-`, `rldyour/`) are highlighted as workflow cleanup candidates.
+- Stop hook summary includes branch cleanup state; cleanup must be completed or reported as blocked before final delivery.
 
 ## Instruction Docs Contract
 
@@ -142,6 +155,7 @@ Flow stop guidance is: Serena sync → instruction-docs sync if needed → check
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --root . --json`
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`
 - `scripts/smoke_local_git_guard.sh`
+- `scripts/smoke_flow_branch_cleanup.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_hooks.sh`
 - `scripts/smoke_fullrepo_sync.sh`

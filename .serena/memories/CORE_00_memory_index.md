@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
+Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
 Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
@@ -15,14 +15,14 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `14f70e03fab9e4f109e1a528ea5db700859bb629`
+- Current source HEAD: `8b7c89708081c13c8cf84162f3b5cff5bf27aaa7`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
 - Callable rldyour skills: `38`
 - Configured MCP servers: `12`
 - Runtime Codex CLI pin: `0.128.0`
-- `rldyour-flow` plugin version: `0.2.2`
+- `rldyour-flow` plugin version: `0.2.3`
 
 ## Source Priority
 
@@ -33,7 +33,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - Skill routing: `plugins/<plugin>/skills/*/SKILL.md`, `plugins/<plugin>/skills/*/agents/openai.yaml`, `config/skill-routing-policy.json`
 - MCP runtime: `plugins/rldyour-mcps/.mcp.json`, `config/mcp-runtime-versions.env`
 - System install/runtime: `scripts/install_system_codex.sh`, `scripts/doctor_system_codex.sh`, `${CODEX_HOME:-$HOME/.codex}/config.toml`
-- Fullrepo and flow sync: `scripts/sync_fullrepo_branch.sh`, `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `plugins/rldyour-flow/scripts/flow_post_task_state.py`
+- Fullrepo and flow sync: `scripts/sync_fullrepo_branch.sh`, `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `plugins/rldyour-flow/scripts/flow_post_task_state.py`, `plugins/rldyour-flow/scripts/git_sync_audit.sh`
 - Local Git guard: `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`, `scripts/install_local_git_hooks.sh`, `scripts/smoke_local_git_guard.sh`
 - Serena knowledge freshness: `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`
 
@@ -60,6 +60,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - Agent-only project context lives in fullrepo-managed files such as root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/`, `.claude/`, `.codex/`, `.cursor/rules`, and `.agents/skills`.
 - Normal branches keep agent-only context ignored; fullrepo publishes it with `scripts/sync_fullrepo_branch.sh --publish`.
 - Product repositories can install `scripts/install_local_git_hooks.sh --repo <project> --apply`; the local pre-push guard keeps product refs strict and treats `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` as the AI-context ref while still blocking definite secrets and runtime/local-only files.
+- `branch_cleanup_state` is a finish gate: merged local branches, merged remote branches, and merged workflow worktrees keep Flow sync pending until cleaned or explicitly reported as blockers. Protected branches such as `main` and `fullrepo` are excluded.
 - MCP package specs must stay pinned; `@latest` is invalid in runtime definitions.
 - Do not store secrets, tokens, cookies, private keys, raw credentials, or browser evidence in memories.
 
@@ -70,5 +71,6 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --root . --json | python3 -m json.tool`
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`
 - `scripts/smoke_local_git_guard.sh`
+- `scripts/smoke_flow_branch_cleanup.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/sync_fullrepo_branch.sh --publish`

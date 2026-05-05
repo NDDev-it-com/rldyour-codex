@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
+Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
 Scope: plugins/rldyour-serena-mcp, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-flow/scripts/fullrepo_sync.py, plugins/rldyour-flow/hooks, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: MCP
 -->

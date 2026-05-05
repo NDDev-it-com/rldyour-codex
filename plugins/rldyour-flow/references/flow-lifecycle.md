@@ -21,7 +21,7 @@ Purpose: build a reliable model of a project, module, backend/frontend/mobile ar
 Core order:
 
 1. Git sync audit: dirty state, current branch, upstream ahead/behind, worktrees, local/remote branches.
-2. If uncommitted or unmerged work exists, deeply review it. If correct and consistent, synchronize it into `main`, merge safe branches, push, and remove merged worktrees/branches. If risky, ask the user with concrete options.
+2. If uncommitted, unmerged, or stale merged branch/worktree state exists, deeply review it. If correct and consistent, synchronize it into `main`, merge safe branches, push, and remove merged worktrees/branches. If risky, ask the user with concrete options.
 3. Restore agent-only context from `fullrepo` when available and install `.git/info/exclude` rules before treating `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, or similar files as missing.
 4. Serena readiness: `check_onboarding_performed`, onboarding if needed, `list_memories`, relevant `read_memory`.
 5. Scope detection: project, module, sphere, or feature. For a sphere such as backend, inspect the whole sphere and its integration points.

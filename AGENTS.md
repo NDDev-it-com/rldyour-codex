@@ -63,6 +63,7 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_local_git_guard.sh
+scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 scripts/bootstrap_check.sh --apply
@@ -93,6 +94,7 @@ diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-cod
 - Use `$instruction-docs-sync` after Serena memory sync when durable project instruction facts changed.
 - Use `scripts/sync_fullrepo_branch.sh --restore` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push.
 - Use `scripts/install_local_git_hooks.sh --repo <project> --apply` to install the branch-aware local pre-push guard in product repositories; it keeps product branches strict and allows AI context only on the configured `fullrepo` branch while still blocking secrets/runtime files.
+- Treat `branch_cleanup_state` from `plugins/rldyour-flow/scripts/flow_post_task_state.py` as a finish gate: merged local/remote workflow branches and merged workflow worktrees must be cleaned or explicitly reported as blockers before final delivery.
 - Standard finish order is Serena memories and durable docs from verified code, matching checks, atomic normal-branch commit and push, `fullrepo` publish from final `HEAD`, then safe cleanup of merged workflow branches and worktrees.
 - Before final delivery, ensure `git status -sb` is clean and pushed when the task produced commits.
 

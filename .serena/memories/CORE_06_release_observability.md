@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
+Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
 Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
@@ -24,6 +24,7 @@ Operational layer for release readiness, observability, runtime checks, and roll
 - `scripts/release_manifest.py`
 - `scripts/collect_diagnostics.sh`
 - `scripts/smoke_local_git_guard.sh`
+- `scripts/smoke_flow_branch_cleanup.sh`
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `plugins/rldyour-flow/scripts/instruction_docs_state.py`
 - `.github/workflows/validate.yml`
@@ -91,6 +92,7 @@ Use for release evidence and operational tagging flow.
 - `python3 scripts/release_manifest.py`
 - `scripts/smoke_fullrepo_sync.sh`
 - `scripts/smoke_local_git_guard.sh`
+- `scripts/smoke_flow_branch_cleanup.sh`
 - `scripts/smoke_clean_bootstrap.sh`
 - `scripts/collect_diagnostics.sh`
 - `python3 scripts/release_manifest.py > diagnostics/release-manifest.json` (when running local release checks)

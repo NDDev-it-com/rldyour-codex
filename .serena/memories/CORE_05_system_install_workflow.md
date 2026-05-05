@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
+Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
 Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->

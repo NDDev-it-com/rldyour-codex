@@ -32,3 +32,21 @@ git worktree list
 echo
 echo "Branches:"
 git branch --format='%(refname:short) %(upstream:short) %(committerdate:relative)'
+
+BASE_REF=origin/main
+if ! git rev-parse --verify --quiet "$BASE_REF" >/dev/null; then
+  BASE_REF=main
+fi
+
+echo
+echo "Merged local branches cleanup candidates (base: $BASE_REF):"
+git branch --format='%(refname:short)' --merged "$BASE_REF" \
+  | grep -Ev '^(main|master|develop|development|staging|production|prod|fullrepo)$' \
+  | grep -Fvx "$(git branch --show-current 2>/dev/null || true)" \
+  || true
+
+echo
+echo "Merged remote branches cleanup candidates (base: $BASE_REF):"
+git branch -r --format='%(refname:short)' --merged "$BASE_REF" \
+  | grep -Ev '(/HEAD| -> |^(origin/)?(main|master|develop|development|staging|production|prod|fullrepo)$)' \
+  || true

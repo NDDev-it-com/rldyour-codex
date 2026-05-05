@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
+Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
 Scope: plugins/rldyour-rules, plugins/rldyour-flow/skills/instruction-docs-sync, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: RULES
 -->
