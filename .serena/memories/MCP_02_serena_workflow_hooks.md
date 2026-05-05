@@ -9,124 +9,108 @@ Area: MCP
 
 ## Purpose
 
-`plugins/rldyour-serena-mcp` defines the Serena-specific workflow layer for Codex. It depends on the `serena` MCP server from `rldyour-mcps` and adds skills plus lifecycle hooks for semantic code work and fact-only project knowledge synchronization.
+`plugins/rldyour-serena-mcp` owns the Serena lifecycle hooks and memory freshness contract used by flow stop logic and task completion.
 
 ## Source Of Truth
 
-- `plugins/rldyour-serena-mcp/.codex-plugin/plugin.json`: manifest with `skills: "./skills/"` and `hooks: "./hooks.json"`.
-- `plugins/rldyour-serena-mcp/README.md`: plugin scope, automatic invocation, trigger map, hook summary, and memory quality target.
-- `plugins/rldyour-serena-mcp/skills/serena-code-workflow/SKILL.md`: Serena-first semantic code workflow.
-- `plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md`: fact-only `.serena` knowledge maintenance rules.
-- `plugins/rldyour-serena-mcp/hooks.json`: Codex hook registrations.
-- `plugins/rldyour-serena-mcp/hooks/*.sh`: UserPromptSubmit, PreToolUse, PostToolUse, and Stop hook behavior.
-- `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: computes whether Serena knowledge is current.
-- `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`: commits tracked knowledge-only `.serena` updates or acknowledges fullrepo-managed knowledge without committing AI files to the current branch.
-- `scripts/smoke_hooks.sh`: validates repository and installed Serena/Flow hooks with synthetic payloads and a real temporary git lifecycle.
+- `plugins/rldyour-serena-mcp/hooks.json`
+- `plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh`
+- `plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh`
+- `plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh`
+- `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh`
+- `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`
+- `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`
+- `scripts/smoke_hooks.sh`
 
-## Entry Points
+## Hook Contracts
 
-- `serena-code-workflow`: auto-routes repository inspection, indexing, symbol-aware exploration, reference tracing, refactors, implementation planning, and non-trivial edits.
-- `serena-memory-sync`: auto-routes project memory maintenance after meaningful changes, commits, Stop hook prompts, durable plans, and reusable research.
-- `UserPromptSubmit` hook: injects a Serena-first reminder for code/repository prompts.
-- `PreToolUse` hook: records `.serena/.auto_sync_head` before git commit-like Bash commands.
-- `PostToolUse` hook: writes `.serena/.serena_sync_state.json` after git commit-like changes touch non-Serena-knowledge files.
-- `Stop` hook: blocks final stop with a sync prompt when project knowledge is stale.
-- `scripts/smoke_hooks.sh`: validates Serena hook behavior in both repository source layout and installed plugin-cache layout.
+`hooks.json` resolves local plugin script first, then installed cache path:
 
-## Current Behavior
+- `UserPromptSubmit` -> `user_prompt_submit.sh`
+- `PreToolUse` -> `prepare_auto_sync.sh`
+- `PostToolUse` -> `mark_sync_required.sh`
+- `Stop` -> `stop_memory_sync.sh`
 
-Hook commands in `hooks.json` first try the repository-local hook path, then the active Codex plugin cache path. This lets hooks work both inside this repository and after plugin installation.
+All hooks are lightweight and shell-based.
 
-`user_prompt_submit.sh` parses hook JSON, extracts `prompt`, and only emits Serena context for prompts matching code/project/file/repo/refactor/bug/architecture/implementation/index keywords in English or Russian.
+### UserPromptSubmit
 
-`prepare_auto_sync.sh` only reacts to Bash commands that include git commit-like operations: `commit`, `merge`, `cherry-pick`, `rebase`, or `am`.
+- Input: prompt from hook payload.
+- Activates Serena context when prompt contains project/code/symbol/refactor/implementation keywords in Russian or English.
+- Adds `hookSpecificOutput.additionalContext` with ordered tool suggestions:
+  `check_onboarding_performed` → `list_memories` → `read_memory` → `get_symbols_overview` → `find_symbol` → `find_referencing_symbols` → `search_for_pattern`.
+- No side effects, advisory only.
 
-`mark_sync_required.sh` compares the pre-commit and post-commit HEAD. If the new commit changed non-Serena-knowledge files, it writes `.serena/.serena_sync_state.json` with the changed file list and emits a system message that Stop will require `serena-memory-sync`.
+### PreToolUse
 
-`stop_memory_sync.sh` exits when `RLDYOUR_SKIP_STOP_GATES=1` or `RLDYOUR_SKIP_SERENA_SYNC=1`. Otherwise it runs `serena_memory_state.py`, removes stale sync markers when knowledge is current, and exits with code `2` plus a sync prompt when knowledge is stale.
+- Watches Bash commands containing:
+  `git commit|merge|cherry-pick|rebase|am`.
+- Writes `.serena/.auto_sync_head` with pre-command HEAD only.
+- No exit blocking.
 
-`stop_memory_sync.sh` uses `.serena/.sync_marker` to avoid a Stop-hook loop for the same HEAD during a continuation.
+### PostToolUse
 
-The current repository has twelve durable memory files in `.serena/memories`. There are no tracked `.serena/plans` or `.serena/research` files at this point. Normal product repositories should keep `.serena` knowledge out of normal branches and publish it through `fullrepo`; this repository still tracks selected memories because the Codex setup repository uses them as project source-of-truth knowledge.
+- Handles only Bash commands in the same commit-like command set.
+- If a real HEAD change occurred and commit touched non-serena knowledge paths, writes `.serena/.serena_sync_state.json` with changed files.
+- Emits a single advisory `systemMessage` requiring Serena knowledge sync before task stop.
+- Uses `.serena/.serena_sync_state.json` as a machine-readable marker.
 
-`plugins/rldyour-serena-mcp/.codex-plugin/plugin.json` version is `0.2.1`. The manifest describes fullrepo-aware project memory sync and agent-only path classification for memory freshness.
+### Stop
 
-`scripts/smoke_hooks.sh` now has two layers for both repository and installed plugin cache paths:
+- If Serena is current, runtime markers are removed and hook exits.
+- If stale, writes `stop` marker and exits code `2` with required sync reason and changed file list.
+- If already requested for same HEAD (`.serena/.sync_marker` present), exits code `0` with a loop-block message to avoid repeated Stop prompts.
+- No direct commit or install actions.
 
-- Synthetic non-mutating payload checks for Serena `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, Stop skip gate, Flow `SessionStart`, Flow `PostToolUse`, and Flow Stop skip gate.
-- Temporary git lifecycle checks that create a disposable repository, run Flow `SessionStart`, Serena `UserPromptSubmit`, Serena `PreToolUse` before a real git commit, Serena `PostToolUse` after the commit, Serena Stop sync prompt, Flow Stop sync prompt, Flow Stop loop guard, and Flow commit advice for a non-conventional commit.
+## Memory Freshness
 
-`scripts/validate_marketplace.sh` and `scripts/doctor_system_codex.sh` run `scripts/smoke_hooks.sh`, so hook lifecycle regressions fail local validation and system doctor.
+`serena_memory_state.py` is the state source for stop/post-tool logic:
 
-`commit_serena_knowledge.sh` now has two paths:
+- scans memory count from `.serena/memories/*.md`
+- parses `Last commit:` metadata (`7..40` hex chars)
+- detects newest synced commit among memory metadata
+- compares changed files since newest synced commit
+- returns:
+  - `is_current`
+  - `memory_matches_head`
+  - `memory_directly_mentions_head`
+  - `memory_match_reason` (`direct-head-reference`, `newest-synced-head`, `knowledge-only-commits-since-sync`, `stale-or-missing`, `sync-marker-requires-refresh`)
+- carries `sync_state` for forced sync markers.
 
-- If `.serena/memories`, `.serena/plans`, or `.serena/research` are tracked in the current branch, it preserves the previous knowledge-only commit behavior and removes Serena runtime sync markers after the commit.
-- If those knowledge paths are untracked/ignored in a fullrepo-managed project, it requires `serena_memory_state.py` to report `memory_matches_head: true`, then removes runtime sync markers without committing AI files to the current branch. `rldyour-flow` is responsible for publishing the final `fullrepo` snapshot.
+`commit_serena_knowledge.sh` behavior:
 
-Current verified memory-state behavior reports `memory_count: 12` for this repository and uses semantic current-state matching so a knowledge-only memory commit after the newest synced source commit remains current instead of appearing stale.
+- no-op when no in-repo changes
+- refuses non-knowledge changes
+- commits only `.serena/memories`, `.serena/plans`, `.serena/research` when tracked and changed
+- commit message format: `chore(serena): sync project knowledge after <head>`
+- in fullrepo-managed mode (knowledge in worktree but untracked/ignored in current index), acknowledges current memory state and clears markers without committing AI files to current branch.
 
-After commit `6abd7b8`, `serena_memory_state.py` treats agent-only instruction and workflow files as knowledge paths for freshness calculations. This includes `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.github/copilot-instructions.md`, `.github/instructions/`, `.github/prompts/`, `.agents/commands/`, `.agents/hooks/`, `.agents/skills/`, `.claude/`, `.codex/`, `.cursor/rules/`, `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`.
+## Knowledge Path and Runtime Path Rules
 
-## Contracts And Data
+- Knowledge directories:
+  - `.serena/memories/`
+  - `.serena/plans/`
+  - `.serena/research/`
+- Runtime-only ignores:
+  - `.serena/.sync_marker`
+  - `.serena/.serena_sync_state.json`
+  - `.serena/.auto_sync_head`
+  - `.serena/.active_workflow_intent.json`
+  - `.serena/.dirty_stop_ack`
 
-Trackable knowledge locations:
-
-- `.serena/memories/`: durable project facts.
-- `.serena/plans/`: non-trivial implementation plans worth preserving.
-- `.serena/research/`: complex or long source-backed research summaries.
-
-Ignored runtime state:
-
-- `.serena/cache/`
-- `.serena/.gitignore`
-- `.serena/project.yml`
-- `.serena/project.local.yml`
-- `.serena/.sync_marker`
-- `.serena/.serena_sync_state.json`
-- `.serena/.auto_sync_head`
-- `.serena/.active_workflow_intent.json`
-- `.serena/.dirty_stop_ack`
-
-`serena_memory_state.py` treats knowledge as current when a memory references the current HEAD, when newest synced metadata equals current HEAD, or when changes since the newest synced metadata are knowledge-only.
-
-After commit `d12a51f`, `serena_memory_state.py` separates literal and semantic memory matching:
-
-- `memory_directly_mentions_head`: true only when a memory metadata `Last commit:` directly references current `HEAD`.
-- `memory_matches_head`: semantic current-state match used by hooks and Flow; this is true for direct matches, newest-synced-is-head, or knowledge-only commits since the newest synced code commit.
-- `memory_match_reason`: explains why the state is current or stale. Current values include `direct-head-reference`, `newest-synced-head`, `knowledge-only-commits-since-sync`, `stale-or-missing`, and `sync-marker-requires-refresh`.
-
-This avoids reporting a false mismatch after knowledge-only commits while still exposing whether the current `HEAD` is directly referenced by memory metadata.
-
-Agent-only path removals from the normal branch index are treated as knowledge-path changes, not product-code changes. This prevents `git rm --cached` migration to the `fullrepo` workflow from making Serena memories appear stale when no product code changed.
-
-`commit_serena_knowledge.sh` refuses to auto-commit if non-Serena-knowledge changes are present. It commits only existing tracked Serena knowledge directories from `.serena/memories`, `.serena/plans`, and `.serena/research` with message `chore(serena): sync project knowledge after <head>`. Missing optional knowledge directories do not prevent staging existing memory changes. In fullrepo-managed repositories, the script acknowledges current memory sync instead of committing.
-
-`serena_memory_state.py` parses `Last commit:` metadata using a 7-to-40 hex character commit SHA. Missing or unresolvable metadata is ignored rather than treated as authoritative.
-
-`serena_memory_state.py` classifies known agent-only files and directories as knowledge paths when computing `non_knowledge_changed_files_since_sync`.
-
-## Invariants
-
-- Memory files are fact-only English implementation maps, not chat logs or speculative plans.
-- Code, git diff, and tests are the source of truth for memory content.
-- Do not store secrets, credentials, private cookies, raw tokens, local-only sensitive paths, or generic advice in memories.
-- Do not spawn a separate memory-sync agent; the Stop hook asks the current Codex session to sync.
-- Do not commit ignored Serena runtime files.
-- Do not commit `.serena` knowledge to normal branches in fullrepo-managed product repositories.
-
-## Change Rules
-
-- When changing hook behavior, update `hooks.json`, relevant hook scripts, and this memory.
-- When changing memory format or sync semantics, update `serena-memory-sync/SKILL.md`, `serena_memory_state.py`, `commit_serena_knowledge.sh`, hook prompts, and this memory together.
-- Use Serena tools first for code inspection when supported; use raw `rg` and file reads as fallback for unsupported file types such as JSON and Markdown.
-- After changing this plugin, re-sync `plugins/rldyour-serena-mcp/` into the active Codex plugin cache.
-- After changing Serena or Flow hooks, run `scripts/smoke_hooks.sh --repo-only`, `scripts/install_system_codex.sh --apply`, `scripts/smoke_hooks.sh --installed-only`, and `scripts/doctor_system_codex.sh`.
+Flow stop sync requires Serena freshness first; flow stop exits without forcing sync if Serena sync is still required.
 
 ## Verification
 
-- `jq empty plugins/rldyour-serena-mcp/.codex-plugin/plugin.json plugins/rldyour-serena-mcp/hooks.json`: validates manifest and hooks.
-- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool`: shows current memory freshness status.
-- `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`: commits tracked knowledge-only `.serena` changes, acknowledges fullrepo-managed current knowledge, and refuses mixed changes.
-- `scripts/smoke_hooks.sh`: verifies repository and installed hook behavior, including temporary git lifecycle transitions.
-- `scripts/smoke_fullrepo_sync.sh`: verifies the fullrepo path used for agent-only Serena knowledge in normal repositories.
-- `git status -sb --ignored`: confirms only expected ignored Serena runtime files remain ignored/untracked.
+- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool`
+- `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`
+- `scripts/smoke_hooks.sh`
+- `scripts/validate_marketplace.sh`
+- `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`
+
+## Invariants
+
+- Do not block execution in advisory Serena hooks.
+- Do not commit runtime marker files or runtime secrets.
+- No fullrepo-managed knowledge mutation in current normal branch index.
+- Stop-hook loop prevention must stay in place.
