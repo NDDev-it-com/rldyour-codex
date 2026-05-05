@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-05
-Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Last updated: 2026-05-06
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: FLOW
 -->
@@ -27,6 +27,7 @@ Area: FLOW
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_hooks.sh`
 - `scripts/smoke_fullrepo_sync.sh`
+- `scripts/smoke_fullrepo_bootstrap_init.sh`
 - `AGENTS.md`
 - `.claude/CLAUDE.md`
 - `system/AGENTS.md`
@@ -138,6 +139,25 @@ Flow stop flow uses this state to decide whether `$instruction-docs-sync` is req
 
 Flow stop guidance is: Serena sync → instruction-docs sync if needed → checks → commit → push → `fullrepo` publish when repo has agent-only context.
 
+## ry-init Memory Contract
+
+`ry-init` is read-only for Serena knowledge by default:
+
+- it may bootstrap or restore agent-only context from `fullrepo`;
+- it must not create, edit, or delete `.serena` memories unless the user explicitly asked to update/synchronize memories or an active Stop/stale-memory hook requires it;
+- durable facts found during init are reported as `Memory candidates (not written)` with exact source paths;
+- runtime snapshots, server log summaries, health-check timestamps, container status, and one-off audit observations are report material, not memory material, unless they reveal a stable code/config contract.
+
+## Fullrepo Bootstrap Init
+
+`fullrepo_sync.py --bootstrap-init` is the initialization command used before relying on agent-only context:
+
+- installs the rldyour `.git/info/exclude` block;
+- restores existing `origin/fullrepo` agent-only files when the branch exists;
+- publishes local agent-only files to a new `fullrepo` when no remote branch exists;
+- runs the same index cleanup as `--migrate-main` when the current branch still tracks agent-only files;
+- prints final status with `bootstrap_actions`.
+
 ## Local Git Pre-Push Guard
 
 `local_git_ai_guard.sh` is the canonical branch-aware local Git pre-push guard for rldyour-managed product repositories.
@@ -156,6 +176,7 @@ Flow stop guidance is: Serena sync → instruction-docs sync if needed → check
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`
 - `scripts/smoke_local_git_guard.sh`
 - `scripts/smoke_flow_branch_cleanup.sh`
+- `scripts/smoke_fullrepo_bootstrap_init.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_hooks.sh`
 - `scripts/smoke_fullrepo_sync.sh`

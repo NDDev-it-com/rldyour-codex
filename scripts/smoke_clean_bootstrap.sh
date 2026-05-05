@@ -83,5 +83,6 @@ SERENA_HOME="$SERENA_HOME_DIR" \
 CODEX_HOME="$CODEX_HOME_DIR" codex mcp list >/dev/null
 python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json | python3 -m json.tool >/dev/null
 scripts/smoke_fullrepo_sync.sh
+scripts/smoke_fullrepo_bootstrap_init.sh
 
 printf '\nClean bootstrap smoke passed.\n'

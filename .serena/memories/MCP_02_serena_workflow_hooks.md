@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-05
-Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Last updated: 2026-05-06
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: plugins/rldyour-serena-mcp, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-flow/scripts/fullrepo_sync.py, plugins/rldyour-flow/hooks, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, scripts/doctor_system_codex.sh
 Area: MCP
 -->
@@ -85,6 +85,16 @@ All hooks are lightweight and shell-based.
 - commit message format: `chore(serena): sync project knowledge after <head>`
 - in fullrepo-managed mode (knowledge in worktree but untracked/ignored in current index), acknowledges current memory state and clears markers without committing AI files to current branch.
 
+## Memory Write Discipline
+
+`serena-memory-sync` is for verified durable project knowledge, not session snapshots:
+
+- auto-invocation is valid after meaningful code/config/workflow/docs changes, commit-like actions, stale-memory markers, Stop hook prompts, explicit memory-sync requests, or fact-only audits;
+- read-only `ry-init`, context discovery, log/server audits, report-only reviews, exploratory debugging, and current-status snapshots do not auto-write memories;
+- those read-only workflows should report useful candidates and wait for explicit permission;
+- memory names use `AREA_NN_slug.md`; timestamped snapshot names such as `SYNC_YYYYMMDD_*` are invalid;
+- one-off server logs, current health statuses, container/process lists, incident timestamps, and temporary audit observations stay in the user report unless they reveal stable code/config contracts.
+
 ## Knowledge Path and Runtime Path Rules
 
 - Knowledge directories:
@@ -113,4 +123,5 @@ Flow stop sync requires Serena freshness first; flow stop exits without forcing 
 - Do not block execution in advisory Serena hooks.
 - Do not commit runtime marker files or runtime secrets.
 - No fullrepo-managed knowledge mutation in current normal branch index.
+- Do not create Serena memories from read-only init/log/status snapshots without explicit user permission.
 - Stop-hook loop prevention must stay in place.

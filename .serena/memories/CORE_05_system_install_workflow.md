@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-05
-Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Last updated: 2026-05-06
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -66,10 +66,10 @@ Validates:
 ## Fullrepo + Runtime Contract
 
 - Fullrepo/agent-only context restore path uses:
-  - `scripts/sync_fullrepo_branch.sh --restore`
+  - `scripts/sync_fullrepo_branch.sh --bootstrap-init`
   - `scripts/sync_fullrepo_branch.sh --status`
   - `scripts/sync_fullrepo_branch.sh --publish`
-- This is required in normal tasks before relying on agent-only files and before publish.
+- Bootstrap is required before relying on agent-only files. It restores existing `origin/fullrepo`, publishes local agent-only files when no remote branch exists, installs `.git/info/exclude`, and removes tracked agent-only files from the current branch index when migration is needed.
 - `install_system_codex.sh` does not mutate installed fullrepo branch; it only ensures local cache and runtime config.
 
 ## Rollback Contract
@@ -90,8 +90,10 @@ Validates:
 - `scripts/smoke_mcp_capabilities.sh`
 - `scripts/smoke_hooks.sh`
 - `scripts/smoke_clean_bootstrap.sh`
+- `scripts/smoke_fullrepo_bootstrap_init.sh`
 - `scripts/bootstrap_check.sh --apply`
 - `scripts/sync_fullrepo_branch.sh --status`
+- `scripts/sync_fullrepo_branch.sh --bootstrap-init`
 - `scripts/rollback_system_codex.sh --list`
 
 ## Invariants

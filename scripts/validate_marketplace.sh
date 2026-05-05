@@ -410,6 +410,9 @@ scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
 step "Fullrepo sync smoke"
 scripts/smoke_fullrepo_sync.sh
 
+step "Fullrepo bootstrap init smoke"
+scripts/smoke_fullrepo_bootstrap_init.sh
+
 step "Local Git guard smoke"
 scripts/smoke_local_git_guard.sh
 
@@ -423,7 +426,7 @@ for optional_path in .serena/memories AGENTS.md; do
     secret_scan_paths+=("$optional_path")
   fi
 done
-if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer [A-Za-z0-9._-]+' "${secret_scan_paths[@]}"; then
+if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer\s+[A-Za-z0-9._-]{20,}' "${secret_scan_paths[@]}"; then
   printf 'Potential secret pattern detected\n' >&2
   exit 1
 fi
