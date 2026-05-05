@@ -71,6 +71,18 @@ if not isinstance(fullrepo_state, dict):
 tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
 if not isinstance(tracked_agent_paths, list):
     tracked_agent_paths = []
+branch_cleanup_state = state.get("branch_cleanup_state", {})
+if not isinstance(branch_cleanup_state, dict):
+    branch_cleanup_state = {}
+local_merged = branch_cleanup_state.get("local_merged_branches", [])
+if not isinstance(local_merged, list):
+    local_merged = []
+remote_merged = branch_cleanup_state.get("remote_merged_branches", [])
+if not isinstance(remote_merged, list):
+    remote_merged = []
+worktree_cleanup = branch_cleanup_state.get("worktree_cleanup_candidates", [])
+if not isinstance(worktree_cleanup, list):
+    worktree_cleanup = []
 
 lines = [
     "rldyour-flow session context (non-blocking, read-only):",
@@ -95,6 +107,13 @@ lines = [
         f"remote exists {bool(fullrepo_state.get('remote_fullrepo_exists'))}, "
         f"exclude installed {bool(fullrepo_state.get('exclude_installed', False))}, "
         f"tracked agent-only paths {len(tracked_agent_paths)}."
+    ),
+    (
+        "- Branch cleanup: "
+        f"base {branch_cleanup_state.get('base') or 'unknown'}, "
+        f"local merged {len(local_merged)}, "
+        f"remote merged {len(remote_merged)}, "
+        f"worktree candidates {len(worktree_cleanup)}."
     ),
 ]
 

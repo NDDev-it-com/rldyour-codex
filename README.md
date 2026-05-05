@@ -143,6 +143,7 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_local_git_guard.sh
+scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 ```

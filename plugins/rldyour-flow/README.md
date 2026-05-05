@@ -31,6 +31,8 @@ The plugin includes advisory SessionStart and PostToolUse hooks plus a Stop hook
 
 The SessionStart hook is read-only. It adds a compact repository context packet to the session: branch, HEAD, upstream drift, dirty files, worktree count, Serena memory freshness, fullrepo state, and whether flow sync is pending. It tells Codex to run scoped `ry-init` when context is insufficient, but it does not mutate files or block execution.
 
+`flow_post_task_state.py` includes branch-cleanup state. Merged local branches, merged remote branches, and merged workflow worktrees keep `needs_flow_sync` true until they are removed or reported as blockers. Protected branches such as `main` and `fullrepo` are excluded from cleanup candidates.
+
 The PostToolUse hook watches Bash `git commit` commands and emits non-blocking commit advice for conventional commit format, oversized subjects, suspicious sensitive paths, runtime markers, browser evidence, or very broad commits. It never rejects the command.
 
 The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `instruction-docs-sync` when needed and `flow-post-task-sync` for docs, git, GitHub, and fullrepo synchronization.

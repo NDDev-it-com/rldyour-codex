@@ -13,10 +13,11 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Safe `--force-with-lease` fullrepo publishing after normal branch synchronization.
 - Instruction docs sync workflow for first-class Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` maintenance.
 - Branch-aware local Git pre-push guard for rldyour-managed repositories, with strict product-branch protection and fullrepo-aware AI context publishing.
+- Flow branch-cleanup state and smoke coverage so merged workflow branches, remote branches, and merged worktree candidates keep post-task sync pending until cleanup is done or explicitly reported.
 
 ### Changed
 
-- `rldyour-flow` plugin version updated to `0.2.2` for branch-aware local Git guard behavior.
+- `rldyour-flow` plugin version updated to `0.2.3` for branch-aware local Git guard behavior and branch-cleanup flow gating.
 - Global and project instructions now state the explicit fullrepo-managed task sync order: Serena/docs, checks, normal branch push, fullrepo publish, and safe cleanup.
 - `chrome-devtools-mcp` runtime pin updated from `0.23.0` to `0.24.0`.
 - `@upstash/context7-mcp` runtime pin updated from `2.2.3` to `2.2.4`.
