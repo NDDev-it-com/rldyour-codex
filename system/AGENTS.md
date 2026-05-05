@@ -143,7 +143,9 @@ scripts/doctor_system_codex.sh
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
+scripts/smoke_local_git_guard.sh
 scripts/smoke_clean_bootstrap.sh
+scripts/install_local_git_hooks.sh --dry-run
 plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
 python3 scripts/validate_instruction_docs.py --require-agent-docs
 scripts/sync_fullrepo_branch.sh --status

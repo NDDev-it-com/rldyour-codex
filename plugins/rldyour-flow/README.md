@@ -23,6 +23,8 @@ Normal branches keep product history clean. Agent-only files such as root `AGENT
 - `--publish`: publish current `HEAD` plus agent-only files to `fullrepo` with safe `--force-with-lease`.
 - `--status-json`: expose state to hooks, diagnostics, and validation.
 
+`plugins/rldyour-flow/scripts/local_git_ai_guard.sh` is the canonical local Git pre-push guard for rldyour-managed product repositories. Install it with `scripts/install_local_git_hooks.sh --apply`. It applies strict product-branch protection while treating `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` as the generated agent-context branch: agent-only paths and AI markers are allowed there, but definite secrets, runtime markers, browser artifacts, and local env files still block the push.
+
 ## Hook Strategy
 
 The plugin includes advisory SessionStart and PostToolUse hooks plus a Stop hook.
