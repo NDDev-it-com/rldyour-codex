@@ -78,6 +78,12 @@ Use `plugins/rldyour-flow/scripts/fullrepo_sync.py` or `scripts/sync_fullrepo_br
 
 Use `--force-with-lease` for `fullrepo` because it protects against overwriting unexpected remote changes. Never force-push `main`.
 
+## Local Git Pre-Push Guard
+
+Use `scripts/install_local_git_hooks.sh --apply` in product repositories that need local protection before pushes. The installer writes a managed `.git/hooks/pre-push` wrapper and delegates policy to `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`.
+
+The guard reads Git pre-push stdin per ref. For normal product refs it blocks agent-only paths, runtime/local-only paths, definite secrets, and AI-marker additions. For `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` it allows durable AI context and emits advisory warnings for AI markers or suspicious security wording, but still blocks definite secrets, runtime markers, browser artifacts, and local env files. Mixed pushes are evaluated per ref.
+
 ## ry-newp
 
 Purpose: design a new project before or alongside initial scaffold.

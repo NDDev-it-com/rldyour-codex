@@ -66,6 +66,7 @@ codex mcp list
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
+scripts/smoke_local_git_guard.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 scripts/bootstrap_check.sh --apply
@@ -85,6 +86,7 @@ scripts/doctor_system_codex.sh
 - Normal branches should not track agent-only files such as `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena`, `.codex`, `.cursor/rules`, or `.agents/skills`.
 - Restore agent-only files from `fullrepo` at initialization with `scripts/sync_fullrepo_branch.sh --restore`.
 - Publish agent-only files after normal branch sync with `scripts/sync_fullrepo_branch.sh --publish`.
+- Install the local branch-aware pre-push guard in product repositories with `scripts/install_local_git_hooks.sh --repo <project> --apply`; it blocks agent-only files on product branches and permits them only on the configured fullrepo branch while keeping secret/runtime protection active.
 - Standard finish order: Serena memories, `AGENTS.md` and `.claude/CLAUDE.md`, checks, atomic normal-branch commits, push, `fullrepo` publish, safe cleanup.
 
 ## System Install

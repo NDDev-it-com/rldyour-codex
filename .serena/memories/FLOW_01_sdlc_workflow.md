@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: b4038bd fix(lsp): support linuxbrew portability
-Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
+Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
+Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: FLOW
 -->
 
@@ -20,6 +20,8 @@ Area: FLOW
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `plugins/rldyour-flow/scripts/instruction_docs_state.py`
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`
+- `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`
+- `scripts/install_local_git_hooks.sh`
 - `scripts/sync_fullrepo_branch.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_hooks.sh`
@@ -123,11 +125,23 @@ Flow stop flow uses this state to decide whether `$instruction-docs-sync` is req
 
 Flow stop guidance is: Serena sync → instruction-docs sync if needed → checks → commit → push → `fullrepo` publish when repo has agent-only context.
 
+## Local Git Pre-Push Guard
+
+`local_git_ai_guard.sh` is the canonical branch-aware local Git pre-push guard for rldyour-managed product repositories.
+
+- Install into a target repository with `scripts/install_local_git_hooks.sh --repo <project> --apply`.
+- The installer writes managed `.git/hooks/pre-push` and `.git/hooks/_local_guard_ai.sh` wrappers.
+- If a target repository already has `pre-push`, the installer preserves it as `.git/hooks/pre-push.rldyour-previous` and replays the same pre-push stdin after the rldyour guard passes.
+- Product refs use strict mode: agent-only paths, runtime/local-only paths, definite secrets, and AI-marker additions block the push.
+- `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` uses fullrepo mode: durable AI context and AI markers are allowed, suspicious security wording is advisory, and definite secrets/runtime/local-only files still block.
+- Mixed pushes are evaluated per pushed remote ref.
+
 ## Verification
 
 - `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json`
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --root . --json`
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`
+- `scripts/smoke_local_git_guard.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_hooks.sh`
 - `scripts/smoke_fullrepo_sync.sh`

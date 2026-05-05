@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: b4038bd fix(lsp): support linuxbrew portability
+Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->

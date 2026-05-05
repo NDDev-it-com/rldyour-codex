@@ -410,6 +410,9 @@ scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
 step "Fullrepo sync smoke"
 scripts/smoke_fullrepo_sync.sh
 
+step "Local Git guard smoke"
+scripts/smoke_local_git_guard.sh
+
 step "Secret pattern scan"
 secret_scan_paths=(plugins .agents README.md scripts system)
 for optional_path in .serena/memories AGENTS.md; do

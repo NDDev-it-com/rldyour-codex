@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-05
-Last commit: b4038bd fix(lsp): support linuxbrew portability
+Last commit: 14f70e0 fix(flow): make local git guard fullrepo-aware
 Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
@@ -15,13 +15,14 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `b4038bd1167d7d063687e53c83c4aa3a2353e501`
+- Current source HEAD: `14f70e03fab9e4f109e1a528ea5db700859bb629`
 - Current fullrepo snapshot before this memory refresh: `46d7386dc29d31a523105d704d7463a4a3c4d18d`
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
 - Callable rldyour skills: `38`
 - Configured MCP servers: `12`
 - Runtime Codex CLI pin: `0.128.0`
+- `rldyour-flow` plugin version: `0.2.2`
 
 ## Source Priority
 
@@ -33,6 +34,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - MCP runtime: `plugins/rldyour-mcps/.mcp.json`, `config/mcp-runtime-versions.env`
 - System install/runtime: `scripts/install_system_codex.sh`, `scripts/doctor_system_codex.sh`, `${CODEX_HOME:-$HOME/.codex}/config.toml`
 - Fullrepo and flow sync: `scripts/sync_fullrepo_branch.sh`, `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `plugins/rldyour-flow/scripts/flow_post_task_state.py`
+- Local Git guard: `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`, `scripts/install_local_git_hooks.sh`, `scripts/smoke_local_git_guard.sh`
 - Serena knowledge freshness: `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`
 
 ## Memory Map
@@ -57,6 +59,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `rldyour-flow` and `rldyour-serena-mcp` are the only rldyour plugins with hooks.
 - Agent-only project context lives in fullrepo-managed files such as root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/`, `.claude/`, `.codex/`, `.cursor/rules`, and `.agents/skills`.
 - Normal branches keep agent-only context ignored; fullrepo publishes it with `scripts/sync_fullrepo_branch.sh --publish`.
+- Product repositories can install `scripts/install_local_git_hooks.sh --repo <project> --apply`; the local pre-push guard keeps product refs strict and treats `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` as the AI-context ref while still blocking definite secrets and runtime/local-only files.
 - MCP package specs must stay pinned; `@latest` is invalid in runtime definitions.
 - Do not store secrets, tokens, cookies, private keys, raw credentials, or browser evidence in memories.
 
@@ -66,5 +69,6 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --root . --json | python3 -m json.tool`
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`
+- `scripts/smoke_local_git_guard.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/sync_fullrepo_branch.sh --publish`
