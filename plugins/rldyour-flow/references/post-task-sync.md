@@ -70,5 +70,6 @@ Runtime markers are ignored by git:
 ## Cleanup Rules
 
 - Remove merged worktrees and branches only after verifying they are merged into `main` and pushed if needed.
-- Delete remote branches after merge when the branch was created for this workflow and no open PR depends on it.
+- `flow_post_task_state.py` exposes `branch_cleanup_state`; merged local branches, merged remote branches, and merged workflow worktree candidates keep `needs_flow_sync` true until cleaned or reported as blockers.
+- Delete remote branches after merge when the branch was created for this workflow and no open PR depends on it. Protected branches such as `main` and `fullrepo` are never cleanup candidates.
 - Ask the user if branch ownership, merge status, or remote state is unclear.

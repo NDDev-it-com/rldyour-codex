@@ -413,6 +413,9 @@ scripts/smoke_fullrepo_sync.sh
 step "Local Git guard smoke"
 scripts/smoke_local_git_guard.sh
 
+step "Flow branch cleanup smoke"
+scripts/smoke_flow_branch_cleanup.sh
+
 step "Secret pattern scan"
 secret_scan_paths=(plugins .agents README.md scripts system)
 for optional_path in .serena/memories AGENTS.md; do
