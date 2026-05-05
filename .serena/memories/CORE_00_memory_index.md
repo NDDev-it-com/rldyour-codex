@@ -16,7 +16,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
 - Current source HEAD: `14f70e03fab9e4f109e1a528ea5db700859bb629`
-- Current fullrepo snapshot before this memory refresh: `46d7386dc29d31a523105d704d7463a4a3c4d18d`
+- Current fullrepo snapshot before final memory-index update: `f38bfd75b61e`
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
 - Callable rldyour skills: `38`
