@@ -6,7 +6,9 @@ It does not start or configure the Serena MCP server directly. The MCP transport
 
 ## Auto Invocation
 
-The plugin is optimized for automatic Serena skill selection. Codex should route code work to these skills when a task asks to inspect, index, explore, understand, map, edit, refactor, review, or trace repository code, directories, files, symbols, call sites, dependencies, architecture, or implementation scope. Codex should route knowledge maintenance to `serena-memory-sync` after meaningful changes, commits, Stop hook prompts, or durable decisions that future sessions need.
+The plugin is optimized for automatic Serena skill selection. Codex should route code work to these skills when a task asks to inspect, index, explore, understand, map, edit, refactor, review, or trace repository code, directories, files, symbols, call sites, dependencies, architecture, or implementation scope. Codex should route knowledge maintenance to `serena-memory-sync` after meaningful changes, commits, Stop hook prompts, stale-memory markers, or explicit memory-sync requests.
+
+Read-only init, context discovery, report-only review, exploratory debugging, log audit, and current-status snapshot workflows must not write Serena memories by default. They may report memory candidates and wait for explicit permission.
 
 `policy.allow_implicit_invocation` is enabled for every skill. The primary trigger surface is each `SKILL.md` frontmatter `description`; plugin manifest descriptions and `agents/openai.yaml` metadata mirror the same intent for marketplace and UI discovery.
 
@@ -28,7 +30,7 @@ The plugin is optimized for automatic Serena skill selection. Codex should route
 ## Trigger Map
 
 - Code inspection, indexing, exploration, symbol search, reference tracing, refactors, implementation planning, or non-trivial code edits: use `serena-code-workflow`.
-- Meaningful verified changes, plugin workflow changes, commit-like changes, Stop hook sync prompts, stale memories, durable plans, or reusable research archives: use `serena-memory-sync`.
+- Meaningful verified changes, plugin workflow changes, commit-like changes, Stop hook sync prompts, stale memories, explicit memory-sync requests, durable plans, or reusable research archives: use `serena-memory-sync`.
 
 ## Hooks
 

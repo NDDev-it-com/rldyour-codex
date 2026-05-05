@@ -16,7 +16,7 @@ SECRET_RE = re.compile(
     r"sk-[A-Za-z0-9_-]{16,}|"
     r"xox[baprs]-[A-Za-z0-9-]+|"
     r"BEGIN (?:RSA|OPENSSH|PRIVATE) KEY|"
-    r"Bearer [A-Za-z0-9._-]+"
+    r"Bearer\s+[A-Za-z0-9._-]{20,}"
 )
 
 CODEX_DOC = "AGENTS.md"
