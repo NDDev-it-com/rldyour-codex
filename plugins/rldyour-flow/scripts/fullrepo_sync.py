@@ -68,7 +68,7 @@ SECRET_RE = re.compile(
     r"sk-[A-Za-z0-9_-]{16,}|"
     r"xox[baprs]-[A-Za-z0-9-]+|"
     r"BEGIN (?:RSA|OPENSSH|PRIVATE) KEY|"
-    r"Bearer [A-Za-z0-9._-]+"
+    r"Bearer\s+[A-Za-z0-9._-]{20,}"
 )
 
 
@@ -359,6 +359,32 @@ def migrate_main(dry_run: bool = False) -> None:
     print(f"removed {len(paths)} agent-only files from current branch index; files remain in the working tree")
 
 
+def bootstrap_init(remote: str, branch: str, dry_run: bool = False) -> None:
+    root = repo_root()
+    local_agent_paths = iter_worktree_agent_files(root)
+    remote_exists = fetch_fullrepo(remote, branch)
+    actions: list[str] = []
+
+    install_exclude(dry_run=dry_run)
+
+    if remote_exists:
+        actions.append("restore")
+        restore(remote, branch, dry_run=dry_run)
+    elif local_agent_paths:
+        actions.append("publish")
+        publish(remote, branch, dry_run=dry_run)
+    else:
+        print(f"fullrepo branch {remote}/{branch} does not exist and no local agent-only files were found")
+
+    if tracked_agent_paths_in_index():
+        actions.append("migrate-main")
+        migrate_main(dry_run=dry_run)
+
+    payload = status(remote, branch)
+    payload["bootstrap_actions"] = actions
+    print_status(payload, as_json=False)
+
+
 def status(remote: str, branch: str) -> dict[str, object]:
     root = repo_root()
     remote_sha = remote_branch_sha(remote, branch)
@@ -399,6 +425,7 @@ def parse_args() -> argparse.Namespace:
     actions.add_argument("--restore", action="store_true")
     actions.add_argument("--publish", action="store_true")
     actions.add_argument("--migrate-main", action="store_true")
+    actions.add_argument("--bootstrap-init", action="store_true")
     return parser.parse_args()
 
 
@@ -416,6 +443,8 @@ def main() -> int:
             publish(args.remote, args.branch, dry_run=args.dry_run)
         elif args.migrate_main:
             migrate_main(dry_run=args.dry_run)
+        elif args.bootstrap_init:
+            bootstrap_init(args.remote, args.branch, dry_run=args.dry_run)
     except FullrepoError as exc:
         print(str(exc), file=sys.stderr)
         return 1

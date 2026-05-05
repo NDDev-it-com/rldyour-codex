@@ -48,6 +48,13 @@ Post-task flow:
 4. Run `fullrepo_sync.py --publish` after the normal branch is at its final `HEAD`.
 5. Verify `fullrepo_sync.py --status-json` and branch refs before final delivery.
 
+Initialization flow:
+
+1. Run `fullrepo_sync.py --bootstrap-init` before relying on missing agent-only context.
+2. If `origin/fullrepo` exists, restore its agent-only files and install excludes.
+3. If `origin/fullrepo` does not exist but local agent-only files exist, publish the initial generated `fullrepo` snapshot.
+4. If the current branch tracks agent-only files, remove them from the index and commit that cleanup on the normal branch before final delivery.
+
 `fullrepo` uses safe force updates because it is a generated snapshot branch. Use `--force-with-lease`, not a blind `--force`, so an unexpected remote update cannot be silently overwritten.
 
 ## Loop Prevention

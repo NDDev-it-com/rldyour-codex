@@ -43,6 +43,7 @@ The final `ry-init` report must include these sections when relevant:
 - Tests and quality gates: test files, coverage areas, detected commands, LSP diagnostics, linters, type checks, browser/security checks when relevant.
 - Existing patterns: naming, error handling, logging, validation, API shape, state management, UI placement, dependency style, and commit/doc conventions.
 - Risks and gaps: unknowns that must be resolved before implementation.
+- Memory candidates (not written): durable facts missing from `.serena` that would help future sessions, only when memory sync was not explicitly requested.
 - Ready-for: concrete tasks the model can now safely perform with this context.
 
 ## Deep Coverage Rules
@@ -55,4 +56,4 @@ The final `ry-init` report must include these sections when relevant:
 
 ## Output Discipline
 
-Keep the report dense and useful. Prefer exact paths and symbol names over prose. Separate verified facts from inferences. Do not store secrets, raw credentials, cookies, private tokens, or speculative notes.
+Keep the report dense and useful. Prefer exact paths and symbol names over prose. Separate verified facts from inferences. Do not store secrets, raw credentials, cookies, private tokens, speculative notes, one-off log snapshots, current health statuses, or server audit timestamps in memories.
