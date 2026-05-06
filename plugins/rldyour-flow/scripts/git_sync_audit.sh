@@ -47,6 +47,7 @@ git branch --format='%(refname:short)' --merged "$BASE_REF" \
 
 echo
 echo "Merged remote branches cleanup candidates (base: $BASE_REF):"
-git branch -r --format='%(refname:short)' --merged "$BASE_REF" \
+git branch -r --format='%(refname:short) %(symref)' --merged "$BASE_REF" \
+  | awk '$2 == "" { print $1 }' \
   | grep -Ev '(/HEAD| -> |^(origin/)?(main|master|develop|development|staging|production|prod|fullrepo)$)' \
   || true

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-06
-Last commit: 33ab01c fix(flow): keep ry-init memory-safe
+Last commit: d675a30 fix(flow): ignore remote head in git sync audit
 Scope: plugins/rldyour-rules, plugins/rldyour-flow/skills/instruction-docs-sync, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: RULES
 -->

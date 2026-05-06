@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-06
-Last commit: 33ab01c fix(flow): keep ry-init memory-safe
+Last commit: d675a30 fix(flow): ignore remote head in git sync audit
 Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: FLOW
 -->
@@ -107,6 +107,7 @@ Flow treats branch hygiene as part of final synchronization.
 - Cleanup base prefers `origin/main`, then `main`, `origin/master`, `master`, then `HEAD`.
 - Protected branch names are excluded: `main`, `master`, `develop`, `development`, `staging`, `production`, `prod`, `fullrepo`.
 - Merged local branches, merged remote branches, and merged worktree candidates are reported in `branch_cleanup_state`.
+- `git_sync_audit.sh` filters remote HEAD symrefs via `%(symref)` so `origin/HEAD -> origin/main` does not appear as a cleanup candidate.
 - Branches with workflow prefixes (`ai/`, `codex/`, `ry-`, `rldyour/`) are highlighted as workflow cleanup candidates.
 - Stop hook summary includes branch cleanup state; cleanup must be completed or reported as blocked before final delivery.
 

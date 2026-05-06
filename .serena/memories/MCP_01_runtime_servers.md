@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-06
-Last commit: 33ab01c fix(flow): keep ry-init memory-safe
+Last commit: d675a30 fix(flow): ignore remote head in git sync audit
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->

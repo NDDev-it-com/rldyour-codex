@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-06
-Last commit: 33ab01c fix(flow): keep ry-init memory-safe
+Last commit: d675a30 fix(flow): ignore remote head in git sync audit
 Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-serena-mcp, plugins/rldyour-rules, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->

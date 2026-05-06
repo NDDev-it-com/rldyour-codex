@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-06
-Last commit: 33ab01c fix(flow): keep ry-init memory-safe
+Last commit: d675a30 fix(flow): ignore remote head in git sync audit
 Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -103,7 +103,7 @@ Installed cache layout is `plugins/cache/rldyour-codex/<plugin>/local` for each 
 - `scripts/doctor_system_codex.sh`: verify installed config and plugin cache.
 - `scripts/bootstrap_check.sh --apply`: preview/apply install + smoke route.
 - `scripts/smoke_mcp_runtime.sh`, `scripts/smoke_mcp_capabilities.sh`, `scripts/smoke_hooks.sh`, `scripts/smoke_clean_bootstrap.sh`: runtime and lifecycle smoke checks.
-- `scripts/smoke_local_git_guard.sh`: local Git pre-push guard smoke for product refs, fullrepo refs, mixed pushes, suspicious wording, definite secrets, runtime paths, and previous-hook chaining.
+- `scripts/smoke_local_git_guard.sh`: local Git pre-push guard smoke for product refs, fullrepo refs, mixed pushes, suspicious wording, definite secrets generated at runtime without storing secret-looking literals, runtime paths, and previous-hook chaining.
 - `scripts/smoke_flow_branch_cleanup.sh`: verifies merged local/remote workflow branches keep Flow sync pending until branch cleanup is complete.
 - `scripts/sync_fullrepo_branch.sh --publish`: publish agent-only context after meaningful instruction/runtime changes.
 - `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`: verify pinned package versions.
