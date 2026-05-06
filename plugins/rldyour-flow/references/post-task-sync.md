@@ -48,13 +48,6 @@ Post-task flow:
 4. Run `fullrepo_sync.py --publish` after the normal branch is at its final `HEAD`.
 5. Verify `fullrepo_sync.py --status-json` and branch refs before final delivery.
 
-Initialization flow:
-
-1. Run `fullrepo_sync.py --bootstrap-init` before relying on missing agent-only context.
-2. If `origin/fullrepo` exists, restore its agent-only files and install excludes.
-3. If `origin/fullrepo` does not exist but local agent-only files exist, publish the initial generated `fullrepo` snapshot.
-4. If the current branch tracks agent-only files, remove them from the index and commit that cleanup on the normal branch before final delivery.
-
 `fullrepo` uses safe force updates because it is a generated snapshot branch. Use `--force-with-lease`, not a blind `--force`, so an unexpected remote update cannot be silently overwritten.
 
 ## Loop Prevention
@@ -77,6 +70,5 @@ Runtime markers are ignored by git:
 ## Cleanup Rules
 
 - Remove merged worktrees and branches only after verifying they are merged into `main` and pushed if needed.
-- `flow_post_task_state.py` exposes `branch_cleanup_state`; merged local branches, merged remote branches, and merged workflow worktree candidates keep `needs_flow_sync` true until cleaned or reported as blockers.
-- Delete remote branches after merge when the branch was created for this workflow and no open PR depends on it. Protected branches such as `main` and `fullrepo` are never cleanup candidates.
+- Delete remote branches after merge when the branch was created for this workflow and no open PR depends on it.
 - Ask the user if branch ownership, merge status, or remote state is unclear.

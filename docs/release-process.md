@@ -25,8 +25,6 @@ This repository has two versioning layers:
 ```bash
 scripts/validate_marketplace.sh
 scripts/doctor_system_codex.sh
-scripts/smoke_local_git_guard.sh
-scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 scripts/sync_fullrepo_branch.sh --status

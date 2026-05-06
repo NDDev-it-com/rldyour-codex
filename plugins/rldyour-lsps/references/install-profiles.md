@@ -4,7 +4,7 @@ The default setup policy is brew-first, explicit, and non-silent.
 
 ## Brew-First Packages
 
-Install these through Homebrew when missing. This applies to macOS Homebrew and Linuxbrew when `brew` is available on Linux:
+Install these through Homebrew when missing:
 
 ```bash
 brew install go gopls shellcheck vscode-langservers-extracted docker-language-server taplo marksman qtdeclarative qtlanguageserver
@@ -35,8 +35,6 @@ If these already exist as stable local commands, do not reinstall them just to c
 
 The health check should report the actual executable path. A future cleanup can standardize paths if needed.
 
-Platform-specific command paths are runtime projections, not committed project contracts. Prefer `command -v <tool>` in checks and use explicit fallback paths only for common Homebrew and Linuxbrew locations.
-
 ## Toolchain-Specific Exceptions
 
 - Rust: if `rustup` is present, run `rustup component add rust-src rust-analyzer` because it matches the active Rust toolchain.
@@ -50,3 +48,4 @@ Platform-specific command paths are runtime projections, not committed project c
 - Do not install global tools silently without an explicit user request.
 - Do not store user tokens, credentials, or private paths in committed plugin files.
 - Do not modify `.serena/project.yml` automatically during normal code inspection.
+

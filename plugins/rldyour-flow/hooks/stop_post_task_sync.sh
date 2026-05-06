@@ -86,9 +86,6 @@ if not isinstance(instruction_docs_state, dict):
 tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
 if not isinstance(tracked_agent_paths, list):
     tracked_agent_paths = []
-branch_cleanup_state = payload.get("branch_cleanup_state", {})
-if not isinstance(branch_cleanup_state, dict):
-    branch_cleanup_state = {}
 print(json.dumps({
     "branch": payload.get("branch"),
     "head": payload.get("head_sha"),
@@ -111,13 +108,6 @@ print(json.dumps({
         "exclude_installed": bool(fullrepo_state.get("exclude_installed", False)),
         "tracked_agent_paths": len(tracked_agent_paths),
     },
-    "branch_cleanup": {
-        "base": branch_cleanup_state.get("base"),
-        "local_merged_branches": branch_cleanup_state.get("local_merged_branches", []),
-        "remote_merged_branches": branch_cleanup_state.get("remote_merged_branches", []),
-        "worktree_cleanup_candidates": branch_cleanup_state.get("worktree_cleanup_candidates", []),
-        "needs_cleanup": bool(branch_cleanup_state.get("needs_cleanup")),
-    },
 }, ensure_ascii=False, indent=2))
 ')
 
@@ -136,7 +126,7 @@ Required order:
 5. Commit atomically with Conventional Commits. Keep Serena knowledge/docs sync commits separate when useful.
 6. Push/synchronize with GitHub using git/gh when an upstream exists.
 7. Restore or install .git/info/exclude for agent-only files, keep normal branch history clean, and publish fullrepo with safe --force-with-lease when agent-only files exist.
-8. Clean merged worktrees and merged local/remote workflow branches only after confirming they are merged and safe to remove. Leave protected branches such as main and fullrepo.
+8. Clean merged worktrees and merged branches only after confirming they are merged and safe to remove.
 9. Stop again after sync or report the exact blocker."
 
 echo "$MESSAGE" >&2

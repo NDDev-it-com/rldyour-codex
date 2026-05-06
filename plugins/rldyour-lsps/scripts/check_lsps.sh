@@ -76,21 +76,6 @@ print_project_hint() {
 printf 'rldyour-lsps health check\n'
 printf 'project: %s\n\n' "$PROJECT_ROOT"
 
-CLANGD_FALLBACKS=(
-  "/opt/homebrew/opt/llvm/bin/clangd"
-  "/usr/local/opt/llvm/bin/clangd"
-  "/home/linuxbrew/.linuxbrew/opt/llvm/bin/clangd"
-  "/home/linuxbrew/.linuxbrew/bin/clangd"
-)
-QMLLS_FALLBACKS=(
-  "/opt/homebrew/opt/qtdeclarative/bin/qmlls"
-  "/opt/homebrew/opt/qtdeclarative/libexec/bin/qmlls"
-  "/usr/local/opt/qtdeclarative/bin/qmlls"
-  "/home/linuxbrew/.linuxbrew/opt/qtdeclarative/bin/qmlls"
-  "/home/linuxbrew/.linuxbrew/opt/qtdeclarative/libexec/bin/qmlls"
-  "/home/linuxbrew/.linuxbrew/bin/qmlls"
-)
-
 printf 'Commands\n'
 require_command "Python Pyright" "pyright-langserver"
 require_command "Python Ruff" "ruff"
@@ -98,7 +83,7 @@ require_command "TypeScript/JS" "typescript-language-server"
 require_command "Rust" "rust-analyzer"
 require_command "Dart/Flutter" "dart"
 require_command "Go" "gopls"
-require_command "C/C++ clangd" "clangd" "${CLANGD_FALLBACKS[@]}"
+require_command "C/C++ clangd" "clangd" "/opt/homebrew/opt/llvm/bin/clangd" "/usr/local/opt/llvm/bin/clangd"
 require_command "YAML" "yaml-language-server"
 require_command "Bash LSP" "bash-language-server"
 require_command "ShellCheck" "shellcheck"
@@ -110,9 +95,9 @@ require_command "TOML" "taplo"
 require_command "Markdown" "marksman"
 
 if has_files "*.qml"; then
-  require_command "Qt QML" "qmlls" "${QMLLS_FALLBACKS[@]}"
+  require_command "Qt QML" "qmlls" "/opt/homebrew/opt/qtdeclarative/bin/qmlls" "/opt/homebrew/opt/qtdeclarative/libexec/bin/qmlls" "/usr/local/opt/qtdeclarative/bin/qmlls"
 else
-  warn_command "Qt QML" "qmlls" "${QMLLS_FALLBACKS[@]}"
+  warn_command "Qt QML" "qmlls" "/opt/homebrew/opt/qtdeclarative/bin/qmlls" "/opt/homebrew/opt/qtdeclarative/libexec/bin/qmlls" "/usr/local/opt/qtdeclarative/bin/qmlls"
 fi
 
 printf '\nProject prerequisites\n'
@@ -171,3 +156,4 @@ if [ "$MISSING" -gt 0 ]; then
 fi
 
 exit 0
+

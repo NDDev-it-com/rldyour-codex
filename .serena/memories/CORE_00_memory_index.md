@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-06
-Last commit: 33ab01c fix(flow): keep ry-init memory-safe
+Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
 Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
@@ -15,7 +15,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `33ab01c0b4266ab67c7591a66fad50220fc8ad0c`
+- Current source HEAD: `3128913bd75607eebe4d1ed06c92b08f50692199`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`

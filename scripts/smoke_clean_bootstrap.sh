@@ -63,11 +63,7 @@ CODEX_HOME_DIR="$TMP_ROOT/codex-home"
 SERENA_HOME_DIR="$TMP_ROOT/serena-home"
 
 printf 'Clean bootstrap workspace: %s\n' "$TMP_ROOT"
-if ! git clone --quiet --local "$ROOT" "$CLONE_DIR"; then
-  printf 'Local clone failed; retrying with --no-local for cross-device filesystems.\n' >&2
-  rm -rf "$CLONE_DIR"
-  git clone --quiet --no-local "$ROOT" "$CLONE_DIR"
-fi
+git clone --quiet --local "$ROOT" "$CLONE_DIR"
 
 cd "$CLONE_DIR"
 
@@ -83,6 +79,5 @@ SERENA_HOME="$SERENA_HOME_DIR" \
 CODEX_HOME="$CODEX_HOME_DIR" codex mcp list >/dev/null
 python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json | python3 -m json.tool >/dev/null
 scripts/smoke_fullrepo_sync.sh
-scripts/smoke_fullrepo_bootstrap_init.sh
 
 printf '\nClean bootstrap smoke passed.\n'

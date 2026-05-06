@@ -142,8 +142,6 @@ Runtime smoke checks:
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
-scripts/smoke_local_git_guard.sh
-scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 ```
@@ -175,15 +173,6 @@ scripts/sync_fullrepo_branch.sh --status
 ```
 
 `--restore` initializes local agent context from `origin/fullrepo`. `--migrate-main` removes tracked agent-only files from the current branch index while keeping them locally. `--publish` builds a snapshot from current `HEAD` plus local agent-only files and pushes it to `fullrepo` with safe `--force-with-lease`.
-
-Local product repositories can install the rldyour Git pre-push guard:
-
-```bash
-scripts/install_local_git_hooks.sh --dry-run
-scripts/install_local_git_hooks.sh --apply
-```
-
-The guard is branch-aware. Product branches keep strict protection against agent-only paths and AI-marker additions. The configured fullrepo branch, `fullrepo` by default or `RLDYOUR_FULLREPO_BRANCH`, allows durable AI context while still blocking definite secrets, runtime markers, browser artifacts, and local env files.
 
 ## Release, Rollback, And Observability
 

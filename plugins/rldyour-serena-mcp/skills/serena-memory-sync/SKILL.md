@@ -17,13 +17,11 @@ Use this skill without waiting for an explicit `$serena-memory-sync` call when:
 
 - Meaningful code, plugin, workflow, architecture, design-system, security, integration, or configuration behavior changed.
 - A Stop hook, commit-like action, or stale-memory marker indicates project knowledge should be synchronized.
-- Durable facts were discovered while making or verifying project changes, and those facts are now encoded in code, configuration, workflow files, committed docs, or stable tests.
+- Durable facts were discovered during implementation, research, review, migration, debugging, or browser/security/design work.
 - `.serena/memories`, `.serena/plans`, or `.serena/research` may be stale or need a fact-only audit.
 - A future Codex session would need verified source-of-truth paths, invariants, contracts, entry points, or verification commands to implement confidently.
 
-Do not auto-invoke this skill for read-only `ry-init`, context discovery, log/server audits, report-only reviews, exploratory debugging, or current-status snapshots unless the user explicitly asked to update/synchronize memories or a Stop/stale-memory hook requires it. In those read-only workflows, list useful candidates in the user report and wait for permission before writing `.serena`.
-
-Do not create memory noise for trivial formatting, purely mechanical edits, current runtime status, timestamped snapshots, server log summaries, health-check output, or unverified assumptions.
+Do not create memory noise for trivial formatting, purely mechanical edits, or unverified assumptions.
 
 ## Stored Locations
 
@@ -42,8 +40,6 @@ Name memory files as `AREA_NN_slug.md`.
 Default areas: `CORE`, `BACKEND`, `FRONTEND`, `MOBILE`, `INFRA`, `API`, `AUTH`, `DATA`, `SEC`, `TEST`, `DESIGN`, `CLI`, `MCP`.
 
 Create custom area prefixes only when the project needs a clearer domain boundary. Keep files narrow and split large memories instead of creating broad catch-all files.
-
-Do not create timestamped snapshot memories such as `SYNC_YYYYMMDD_*`. If a runtime observation reveals a durable contract, update the relevant area memory with the stable contract and source paths instead of storing the observation as a snapshot.
 
 Every memory starts with exactly this metadata block:
 
@@ -128,7 +124,6 @@ Do not write:
 - Conversation history, user preferences that are not project rules, or motivational text.
 - Backlog items, speculative plans, TODO lists, or desired future architecture. Use `.serena/plans` for current non-trivial plans.
 - Facts copied from old memories, README files, or comments unless verified against code.
-- One-off init snapshots, server log excerpts, current health statuses, container/process lists, incident timestamps, or temporary audit observations.
 - Obvious generic advice such as "write clean code" or "run tests" without project-specific commands or scope.
 - Secrets, credentials, private cookies, raw tokens, local machine-only paths unless the project explicitly depends on that path.
 - Large pasted code blocks. Reference exact paths and symbols instead.

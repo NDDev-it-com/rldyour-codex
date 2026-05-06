@@ -21,10 +21,7 @@ Normal branches keep product history clean. Agent-only files such as root `AGENT
 - `--restore`: restore agent-only context from `origin/fullrepo`.
 - `--migrate-main`: remove tracked agent-only files from the current branch index while keeping them locally.
 - `--publish`: publish current `HEAD` plus agent-only files to `fullrepo` with safe `--force-with-lease`.
-- `--bootstrap-init`: initialize a repository for `ry-init` by installing excludes, restoring existing `fullrepo` context, publishing local agent-only files when no `fullrepo` exists, and removing tracked agent-only files from the current branch index when migration is needed.
 - `--status-json`: expose state to hooks, diagnostics, and validation.
-
-`plugins/rldyour-flow/scripts/local_git_ai_guard.sh` is the canonical local Git pre-push guard for rldyour-managed product repositories. Install it with `scripts/install_local_git_hooks.sh --apply`. It applies strict product-branch protection while treating `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` as the generated agent-context branch: agent-only paths and AI markers are allowed there, but definite secrets, runtime markers, browser artifacts, and local env files still block the push.
 
 ## Hook Strategy
 
@@ -32,13 +29,9 @@ The plugin includes advisory SessionStart and PostToolUse hooks plus a Stop hook
 
 The SessionStart hook is read-only. It adds a compact repository context packet to the session: branch, HEAD, upstream drift, dirty files, worktree count, Serena memory freshness, fullrepo state, and whether flow sync is pending. It tells Codex to run scoped `ry-init` when context is insufficient, but it does not mutate files or block execution.
 
-`flow_post_task_state.py` includes branch-cleanup state. Merged local branches, merged remote branches, and merged workflow worktrees keep `needs_flow_sync` true until they are removed or reported as blockers. Protected branches such as `main` and `fullrepo` are excluded from cleanup candidates.
-
 The PostToolUse hook watches Bash `git commit` commands and emits non-blocking commit advice for conventional commit format, oversized subjects, suspicious sensitive paths, runtime markers, browser evidence, or very broad commits. It never rejects the command.
 
 The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `instruction-docs-sync` when needed and `flow-post-task-sync` for docs, git, GitHub, and fullrepo synchronization.
-
-`ry-init` is read-only for Serena knowledge by default. It may bootstrap `fullrepo` context, but it reports memory candidates instead of writing `.serena` unless the user explicitly requested memory sync or a stale-memory hook requires it.
 
 Loop prevention uses `.serena/.flow_sync_marker`, which is ignored by git. If the same state already requested a continuation, the hook allows stop to avoid an infinite loop.
 

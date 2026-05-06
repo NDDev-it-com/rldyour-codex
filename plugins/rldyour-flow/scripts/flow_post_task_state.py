@@ -19,8 +19,6 @@ RUNTIME_IGNORED = {
 }
 
 DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md")
-PROTECTED_BRANCHES = {"main", "master", "develop", "development", "staging", "production", "prod", "fullrepo"}
-WORKFLOW_BRANCH_PREFIXES = ("ai/", "codex/", "ry-", "rldyour/")
 
 
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
@@ -60,94 +58,6 @@ def _ahead_behind() -> tuple[int, int, str]:
 def _worktree_count() -> int:
     raw = _stdout("worktree", "list", "--porcelain")
     return sum(1 for line in raw.splitlines() if line.startswith("worktree "))
-
-
-def _ref_exists(ref: str) -> bool:
-    return _git("rev-parse", "--verify", "--quiet", ref).returncode == 0
-
-
-def _default_cleanup_base() -> str:
-    for candidate in ("origin/main", "main", "origin/master", "master"):
-        if _ref_exists(candidate):
-            return candidate
-    return "HEAD"
-
-
-def _local_merged_branches(base: str, current_branch: str) -> list[str]:
-    raw = _stdout("branch", "--format=%(refname:short)", "--merged", base)
-    branches: list[str] = []
-    for branch in raw.splitlines():
-        branch = branch.strip()
-        if not branch or branch == current_branch or branch in PROTECTED_BRANCHES:
-            continue
-        branches.append(branch)
-    return sorted(set(branches))
-
-
-def _remote_merged_branches(base: str) -> list[str]:
-    raw = _stdout("branch", "-r", "--format=%(refname:short)", "--merged", base)
-    branches: list[str] = []
-    for ref in raw.splitlines():
-        ref = ref.strip()
-        if not ref or ref.endswith("/HEAD") or " -> " in ref or "/" not in ref:
-            continue
-        branch = ref.split("/", 1)[1] if "/" in ref else ref
-        if branch in PROTECTED_BRANCHES:
-            continue
-        branches.append(ref)
-    return sorted(set(branches))
-
-
-def _workflow_branch(branch: str) -> bool:
-    normalized = branch.split("/", 1)[1] if branch.startswith("origin/") else branch
-    return normalized.startswith(WORKFLOW_BRANCH_PREFIXES)
-
-
-def _worktree_cleanup_candidates(base: str) -> list[dict[str, str]]:
-    raw = _stdout("worktree", "list", "--porcelain")
-    candidates: list[dict[str, str]] = []
-    current_root = _stdout("rev-parse", "--show-toplevel")
-    item: dict[str, str] = {}
-
-    def flush() -> None:
-        if not item:
-            return
-        path = item.get("worktree", "")
-        branch_ref = item.get("branch", "")
-        branch = branch_ref.removeprefix("refs/heads/")
-        if not path or path == current_root or not branch or branch in PROTECTED_BRANCHES:
-            return
-        if _git("merge-base", "--is-ancestor", branch, base).returncode == 0:
-            candidates.append({"path": path, "branch": branch})
-
-    for line in raw.splitlines():
-        if not line:
-            flush()
-            item = {}
-            continue
-        key, _, value = line.partition(" ")
-        item[key] = value
-    flush()
-    return candidates
-
-
-def _branch_cleanup_state(current_branch: str) -> dict[str, Any]:
-    base = _default_cleanup_base()
-    local_merged = _local_merged_branches(base, current_branch)
-    remote_merged = _remote_merged_branches(base)
-    worktree_candidates = _worktree_cleanup_candidates(base)
-    workflow_local = [branch for branch in local_merged if _workflow_branch(branch)]
-    workflow_remote = [branch for branch in remote_merged if _workflow_branch(branch)]
-    needs_cleanup = bool(local_merged or remote_merged or worktree_candidates)
-    return {
-        "base": base,
-        "protected_branches": sorted(PROTECTED_BRANCHES),
-        "local_merged_branches": local_merged,
-        "remote_merged_branches": remote_merged,
-        "merged_workflow_branches": sorted(set(workflow_local + workflow_remote)),
-        "worktree_cleanup_candidates": worktree_candidates,
-        "needs_cleanup": needs_cleanup,
-    }
 
 
 def _serena_current() -> tuple[bool, dict[str, Any]]:
@@ -232,7 +142,6 @@ def state() -> dict[str, Any]:
     worktree_count = _worktree_count()
     fullrepo_state = _fullrepo_state()
     instruction_docs_state = _instruction_docs_state()
-    branch_cleanup_state = _branch_cleanup_state(branch)
 
     worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
     if not isinstance(worktree_agent_paths, list):
@@ -248,7 +157,6 @@ def state() -> dict[str, Any]:
         or behind
         or doc_files_changed
         or fullrepo_needs_attention
-        or bool(branch_cleanup_state.get("needs_cleanup"))
         or bool(instruction_docs_state.get("needs_instruction_docs_review"))
     )
 
@@ -258,7 +166,6 @@ def state() -> dict[str, Any]:
         "dirty": dirty_files,
         "ahead": ahead,
         "behind": behind,
-        "branch_cleanup": branch_cleanup_state,
         "serena_current": serena_current,
     }
     fingerprint = hashlib.sha256(json.dumps(fingerprint_payload, sort_keys=True).encode()).hexdigest()[:16]
@@ -280,7 +187,6 @@ def state() -> dict[str, Any]:
         "serena_state": serena_state,
         "fullrepo_state": fullrepo_state,
         "instruction_docs_state": instruction_docs_state,
-        "branch_cleanup_state": branch_cleanup_state,
         "fullrepo_needs_attention": fullrepo_needs_attention,
         "needs_flow_sync": needs_flow_sync,
         "fingerprint": fingerprint,
