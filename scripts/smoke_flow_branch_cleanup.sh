@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 ROOT=$(git -C "$SCRIPT_DIR/.." rev-parse --show-toplevel)
 STATE_SCRIPT="$ROOT/plugins/rldyour-flow/scripts/flow_post_task_state.py"
+AUDIT_SCRIPT="$ROOT/plugins/rldyour-flow/scripts/git_sync_audit.sh"
 TMP_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-flow-branch-cleanup.XXXXXX")
 
 cleanup() {
@@ -49,6 +50,12 @@ git -C "$TMP_ROOT/work" add README.md
 git -C "$TMP_ROOT/work" commit -q -m "chore: initial fixture"
 git -C "$TMP_ROOT/work" branch -M main
 git -C "$TMP_ROOT/work" push -q -u origin main
+
+audit_output=$(cd "$TMP_ROOT/work" && "$AUDIT_SCRIPT")
+if printf '%s\n' "$audit_output" | grep -Fx "origin" >/dev/null; then
+  fail "git sync audit reported remote HEAD symref as cleanup candidate"
+fi
+ok "git sync audit ignores remote HEAD symref"
 
 git -C "$TMP_ROOT/work" checkout -q -b ai/ry-start-cleanup-fixture
 printf 'workflow branch\n' > "$TMP_ROOT/work/feature.txt"
