@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-06
-Last commit: 3128913 chore(mcp): update chrome devtools runtime pin
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -45,7 +45,7 @@ Local command/runtime contracts from `.mcp.json`:
 - `sequential-thinking`: `bunx @modelcontextprotocol/server-sequential-thinking@2025.12.18`
 - `playwright`: `bunx @playwright/mcp@0.0.73 --headless --caps=network,storage,testing,devtools`
 - `chrome-devtools`: `bunx chrome-devtools-mcp@0.24.0 --headless --isolated --no-usage-statistics --no-performance-crux`
-- `context7`: `bunx @upstash/context7-mcp@2.2.3` (reads `CONTEXT7_API_KEY` via `env_vars`)
+- `context7`: `bunx @upstash/context7-mcp@2.2.4` (reads `CONTEXT7_API_KEY` via `env_vars`)
 - `semgrep`: `uvx --from semgrep==1.161.0 semgrep mcp`
 - `shadcn`: `bunx shadcn@4.6.0 mcp`
 - `dart-flutter`: `dart mcp-server --force-roots-fallback`
@@ -81,7 +81,7 @@ Timeouts:
   - `@modelcontextprotocol/server-sequential-thinking@2025.12.18`
   - `@playwright/mcp@0.0.73`
   - `chrome-devtools-mcp@0.24.0`
-  - `@upstash/context7-mcp@2.2.3`
+  - `@upstash/context7-mcp@2.2.4`
   - `semgrep==1.161.0`
   - `shadcn@4.6.0`
 - `config/mcp-runtime-versions.env` is expected to mirror MCP launcher pins and includes `CODEX_CLI_VERSION`/`MCP_PYTHON_SDK_VERSION`.

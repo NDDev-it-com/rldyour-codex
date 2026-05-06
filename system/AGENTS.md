@@ -122,7 +122,8 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 - Before final delivery, run the checks that match the touched scope and report exact commands.
 - If changes are committed, push when the task requires synchronization or when the workflow has reached a stable final state.
 - Keep `AGENTS.md`, Serena memories, and durable docs synchronized with changed behavior.
-- In fullrepo-managed repositories, restore agent-only context from `fullrepo` during initialization before relying on `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, or `.serena` knowledge.
+- In fullrepo-managed repositories, bootstrap agent-only context from `fullrepo` during initialization before relying on `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, or `.serena` knowledge. Use `scripts/sync_fullrepo_branch.sh --bootstrap-init` so existing `fullrepo` context is restored, local agent-only files are published when no `fullrepo` exists, excludes are installed, and tracked agent-only files are removed from the current branch index when migration is needed.
+- `ry-init` is read-only for Serena memories by default. It may report `Memory candidates (not written)`, but it must not write `.serena` unless the owner explicitly requested memory synchronization or a Stop/stale-memory hook requires it. Runtime snapshots, server log summaries, health statuses, and one-off audit observations are report material, not memory material, unless they reveal stable code/config contracts.
 - Standard finish order is: refresh Serena memories and durable project instructions from verified code, run matching checks, create and push atomic normal-branch commits, publish `fullrepo` from the final branch `HEAD`, then clean merged workflow branches and worktrees when safe.
 - In normal product repositories, keep agent-only files out of `main` and feature branches. Restore them from `fullrepo`, ignore them through `.git/info/exclude`, and publish the complete snapshot to `fullrepo` with safe `--force-with-lease` after normal branch sync.
 - Agent-only files include project-root `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files. Agent tooling repositories may intentionally track selected instruction templates as product artifacts.
@@ -143,11 +144,15 @@ scripts/doctor_system_codex.sh
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
+scripts/smoke_local_git_guard.sh
+scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
+scripts/smoke_fullrepo_bootstrap_init.sh
+scripts/install_local_git_hooks.sh --dry-run
 plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
 python3 scripts/validate_instruction_docs.py --require-agent-docs
 scripts/sync_fullrepo_branch.sh --status
-scripts/sync_fullrepo_branch.sh --restore
+scripts/sync_fullrepo_branch.sh --bootstrap-init
 scripts/sync_fullrepo_branch.sh --publish
 scripts/rollback_system_codex.sh --list
 scripts/collect_diagnostics.sh

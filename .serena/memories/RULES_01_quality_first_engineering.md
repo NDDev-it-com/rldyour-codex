@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-05
-Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Last updated: 2026-05-06
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: plugins/rldyour-rules, plugins/rldyour-flow/skills/instruction-docs-sync, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: RULES
 -->
@@ -58,4 +58,3 @@ Keep the enforced rule layer for this marketplace: quality defaults, architectur
 - `jq empty plugins/rldyour-rules/.codex-plugin/plugin.json`
 - `python3 -m py_compile scripts/validate_instruction_docs.py` (or run equivalent static parse checks as needed)
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool`
-

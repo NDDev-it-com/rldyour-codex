@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-05
-Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Last updated: 2026-05-06
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: plugins/rldyour-lsps, pyrightconfig.json, .agents/plugins/marketplace.json, README.md
 Area: LSP
 -->

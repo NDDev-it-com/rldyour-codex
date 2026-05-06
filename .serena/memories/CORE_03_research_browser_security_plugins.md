@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-05
-Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Last updated: 2026-05-06
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->
@@ -49,4 +49,3 @@ Security (`rldyour-security`):
 - `scripts/validate_marketplace.sh`
 - `jq empty plugins/rldyour-explore/.codex-plugin/plugin.json plugins/rldyour-browser/.codex-plugin/plugin.json plugins/rldyour-security/.codex-plugin/plugin.json`
 - `diff -qr plugins/<plugin> ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local`
-

@@ -21,15 +21,17 @@ Purpose: build a reliable model of a project, module, backend/frontend/mobile ar
 Core order:
 
 1. Git sync audit: dirty state, current branch, upstream ahead/behind, worktrees, local/remote branches.
-2. If uncommitted or unmerged work exists, deeply review it. If correct and consistent, synchronize it into `main`, merge safe branches, push, and remove merged worktrees/branches. If risky, ask the user with concrete options.
-3. Restore agent-only context from `fullrepo` when available and install `.git/info/exclude` rules before treating `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, or similar files as missing.
+2. If uncommitted, unmerged, or stale merged branch/worktree state exists, deeply review it. If correct and consistent, synchronize it into `main`, merge safe branches, push, and remove merged worktrees/branches. If risky, ask the user with concrete options.
+3. Bootstrap agent-only context with `fullrepo_sync.py --bootstrap-init` before treating `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, or similar files as missing. This restores an existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs `.git/info/exclude`, and removes tracked agent-only files from the current branch index when migration is needed.
 4. Serena readiness: `check_onboarding_performed`, onboarding if needed, `list_memories`, relevant `read_memory`.
 5. Scope detection: project, module, sphere, or feature. For a sphere such as backend, inspect the whole sphere and its integration points.
 6. Semantic map: `get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, `search_for_pattern` only when needed.
 7. Data and contract map: database tables/fields, schemas, migrations, API contracts, generated artifacts, configuration keys, environment variables, and integration boundaries that affect the scope.
 8. Pattern map: established project patterns for naming, layering, validation, errors, tests, state management, and dependency usage.
 9. External enrichment only for unclear architecture, framework behavior, or current best practices.
-10. Synthesis in Russian, with exact source-of-truth paths, symbols, contracts, checks, and known gaps.
+10. Synthesis in Russian, with exact source-of-truth paths, symbols, contracts, checks, known gaps, and `Memory candidates (not written)` when useful durable facts were found.
+
+`ry-init` must not write Serena memories by default. It may report candidate memory updates, but it runs `serena-memory-sync` only when the user explicitly requested memory synchronization or a Stop/stale-memory hook requires it.
 
 ## ry-start
 
@@ -74,9 +76,16 @@ Use `plugins/rldyour-flow/scripts/fullrepo_sync.py` or `scripts/sync_fullrepo_br
 - `--restore`: fetch and restore agent-only files from `origin/fullrepo` into the worktree and install `.git/info/exclude`.
 - `--migrate-main`: remove currently tracked agent-only files from the current branch index through `git rm --cached`, leaving files in the worktree.
 - `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`.
+- `--bootstrap-init`: install excludes, restore existing remote `fullrepo` context, publish local agent-only files when no remote `fullrepo` exists, and run `--migrate-main` when the current branch still tracks agent-only files.
 - `--status-json`: emit machine-readable state for hooks and diagnostics.
 
 Use `--force-with-lease` for `fullrepo` because it protects against overwriting unexpected remote changes. Never force-push `main`.
+
+## Local Git Pre-Push Guard
+
+Use `scripts/install_local_git_hooks.sh --apply` in product repositories that need local protection before pushes. The installer writes a managed `.git/hooks/pre-push` wrapper and delegates policy to `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`.
+
+The guard reads Git pre-push stdin per ref. For normal product refs it blocks agent-only paths, runtime/local-only paths, definite secrets, and AI-marker additions. For `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` it allows durable AI context and emits advisory warnings for AI markers or suspicious security wording, but still blocks definite secrets, runtime markers, browser artifacts, and local env files. Mixed pushes are evaluated per ref.
 
 ## ry-newp
 

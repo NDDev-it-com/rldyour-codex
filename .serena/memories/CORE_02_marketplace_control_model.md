@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-05
-Last commit: 8b7c897 fix(flow): gate sync on merged branch cleanup
+Last updated: 2026-05-06
+Last commit: 33ab01c fix(flow): keep ry-init memory-safe
 Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -42,7 +42,7 @@ The active catalog has nine rldyour plugins, loaded in repository order from `.a
 - `rldyour-browser` (version `0.1.1`)
 - `rldyour-design` (version `0.1.1`)
 - `rldyour-lsps` (version `0.1.1`)
-- `rldyour-flow` (version `0.2.3`)
+- `rldyour-flow` (version `0.2.4`)
 - `rldyour-rules` (version `0.1.3`)
 
 Each plugin entry keeps `policy.installation: AVAILABLE` and `policy.authentication: ON_USE`.
