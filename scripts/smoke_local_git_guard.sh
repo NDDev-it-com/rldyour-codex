@@ -83,7 +83,7 @@ run_guard_expect \
   "refs/heads/fullrepo ${wording_commit} refs/heads/fullrepo ${agent_commit}" \
   "warning: suspicious security wording"
 
-printf 'Bearer abcdefghijklmnopqrstuvwxyz123456\n' > "$TMP_ROOT/repo/.serena/memories/SECRET.md"
+printf '%s%s\n' 'Bearer ' 'abcdefghijklmnopqrstuvwxyz123456' > "$TMP_ROOT/repo/.serena/memories/SECRET.md"
 git -C "$TMP_ROOT/repo" add .serena/memories/SECRET.md
 git -C "$TMP_ROOT/repo" commit -q -m "docs: add unsafe token fixture"
 secret_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
