@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
-Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
+Last updated: 2026-05-08
+Last commit: a330e0e test(mcp): retry remote runtime url checks
+Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
 
@@ -25,6 +25,9 @@ Operational layer for release readiness, observability, runtime checks, and roll
 - `scripts/collect_diagnostics.sh`
 - `scripts/smoke_local_git_guard.sh`
 - `scripts/smoke_flow_branch_cleanup.sh`
+- `scripts/smoke_codex_hooks_migration.sh`
+- `scripts/smoke_mcp_runtime.sh`
+- `scripts/smoke_mcp_capabilities.py/.sh`
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `plugins/rldyour-flow/scripts/instruction_docs_state.py`
 - `.github/workflows/validate.yml`
@@ -87,6 +90,9 @@ Use for release evidence and operational tagging flow.
 
 - `scripts/validate_marketplace.sh`
 - `scripts/doctor_system_codex.sh`
+- `scripts/smoke_codex_hooks_migration.sh`
+- `scripts/smoke_mcp_runtime.sh`
+- `scripts/smoke_mcp_capabilities.sh`
 - `python3 scripts/validate_plugin_versions.py`
 - `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated`
 - `python3 scripts/release_manifest.py`

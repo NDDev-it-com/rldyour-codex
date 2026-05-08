@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: 5b62559 fix(system): migrate codex hooks feature flag
-Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/sync_fullrepo_branch.sh
+Last commit: a330e0e test(mcp): retry remote runtime url checks
+Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
 
@@ -15,7 +15,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `5b62559d28b2731a7ed17f2d508eaad01a8c2fd4`
+- Current source HEAD: `a330e0e4198b28409469b2130f124896a9152059`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
@@ -32,7 +32,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - Plugin capabilities: `plugins/<plugin>/.codex-plugin/plugin.json`
 - Skill routing: `plugins/<plugin>/skills/*/SKILL.md`, `plugins/<plugin>/skills/*/agents/openai.yaml`, `config/skill-routing-policy.json`
 - MCP runtime: `plugins/rldyour-mcps/.mcp.json`, `config/mcp-runtime-versions.env`
-- System install/runtime: `scripts/install_system_codex.sh`, `scripts/doctor_system_codex.sh`, `${CODEX_HOME:-$HOME/.codex}/config.toml`
+- System install/runtime: `scripts/install_system_codex.sh`, `scripts/smoke_codex_hooks_migration.sh`, `scripts/doctor_system_codex.sh`, `${CODEX_HOME:-$HOME/.codex}/config.toml`
 - Fullrepo and flow sync: `scripts/sync_fullrepo_branch.sh`, `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `plugins/rldyour-flow/scripts/flow_post_task_state.py`, `plugins/rldyour-flow/scripts/git_sync_audit.sh`
 - Local Git guard: `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`, `scripts/install_local_git_hooks.sh`, `scripts/smoke_local_git_guard.sh`
 - Serena knowledge freshness: `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`
@@ -74,5 +74,6 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`
 - `scripts/smoke_local_git_guard.sh`
 - `scripts/smoke_flow_branch_cleanup.sh`
+- `scripts/smoke_codex_hooks_migration.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/sync_fullrepo_branch.sh --publish`

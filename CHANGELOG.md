@@ -19,6 +19,9 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ### Changed
 
 - System Codex install now writes `[features].hooks = true` and removes the deprecated `codex_hooks` feature key from managed config.
+- System Codex install migration now normalizes dotted, quoted, and inline-table legacy hooks feature keys, with dedicated smoke coverage in `scripts/smoke_codex_hooks_migration.sh`.
+- MCP runtime smoke now retries remote URL reachability checks and exposes `--url-retries`/`--url-timeout` for unstable networks.
+- MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls a third retry.
 - Runtime Codex CLI pin updated from `0.128.0` to `0.129.0`.
 - `rldyour-flow` plugin version updated to `0.2.4` for read-only `ry-init` memory discipline and fullrepo bootstrap init behavior.
 - `ry-init` is now explicitly read-only for Serena memories by default; it reports memory candidates instead of writing `.serena` unless the user requested memory sync or a stale-memory hook requires it.

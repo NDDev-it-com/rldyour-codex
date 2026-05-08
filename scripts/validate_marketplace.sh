@@ -246,6 +246,9 @@ for path in paths:
     print(f"syntax ok {path}")
 PY
 
+step "Codex hooks migration"
+scripts/smoke_codex_hooks_migration.sh
+
 step "LSP health"
 if [ "${RLDYOUR_SKIP_LSP_HEALTH:-0}" = "1" ]; then
   printf 'skip    LSP health disabled by RLDYOUR_SKIP_LSP_HEALTH\n'

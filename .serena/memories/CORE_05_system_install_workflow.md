@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: 5b62559 fix(system): migrate codex hooks feature flag
-Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
+Last commit: a330e0e test(mcp): retry remote runtime url checks
+Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
 
@@ -20,6 +20,7 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 
 - `system/AGENTS.md` (template source)
 - `scripts/install_system_codex.sh`
+- `scripts/smoke_codex_hooks_migration.sh`
 - `scripts/doctor_system_codex.sh`
 - `scripts/rollback_system_codex.sh`
 - `scripts/bootstrap_check.sh`
@@ -37,7 +38,8 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
   - `CODEX_HOME/AGENTS.md` from `system/AGENTS.md`
   - patched `CODEX_HOME/config.toml`
   - `[features].hooks = true`
-  - legacy `[features].codex_hooks` removal
+  - legacy `codex_hooks` removal from `[features]`, quoted keys, dotted root keys, and inline root feature tables
+  - unrelated feature flags preserved when legacy hooks keys are normalized
   - plugin cache for every `plugins/rldyour-*` into `CODEX_HOME/plugins/cache/rldyour-codex/<plugin>/local`
 - optional:
   - `--codex-home PATH`
@@ -87,6 +89,7 @@ Validates:
 
 - `scripts/install_system_codex.sh --dry-run`
 - `scripts/install_system_codex.sh --apply`
+- `scripts/smoke_codex_hooks_migration.sh`
 - `scripts/doctor_system_codex.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_mcp_runtime.sh`
@@ -98,6 +101,8 @@ Validates:
 - `scripts/sync_fullrepo_branch.sh --status`
 - `scripts/sync_fullrepo_branch.sh --bootstrap-init`
 - `scripts/rollback_system_codex.sh --list`
+
+`scripts/smoke_mcp_runtime.sh` retries remote URL reachability checks by default; use `--skip-url-check` only for intentionally offline validation.
 
 ## Invariants
 

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: 5b62559 fix(system): migrate codex hooks feature flag
-Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
+Last commit: a330e0e test(mcp): retry remote runtime url checks
+Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -18,6 +18,7 @@ This memory records the installed system Codex runtime state for this repository
 - `plugins/rldyour-mcps/.mcp.json`: MCP transport source-of-truth.
 - `system/AGENTS.md`: tracked canonical global instruction template.
 - `scripts/install_system_codex.sh`: installer for config, marketplace, plugins, MCP, and cache.
+- `scripts/smoke_codex_hooks_migration.sh`: focused installer smoke for legacy Codex hooks feature migration forms.
 - `scripts/doctor_system_codex.sh`: installed-state verification.
 - `scripts/validate_marketplace.sh`: repository/runtime consistency check.
 - `scripts/smoke_mcp_runtime.sh`: installed MCP runtime smoke.
@@ -52,7 +53,7 @@ This memory records the installed system Codex runtime state for this repository
   - `default_permissions = ":danger-no-sandbox"`.
   - `[profiles.rldyour-yolo]` repeats the same values.
 - `[features] hooks = true`.
-- The legacy `[features] codex_hooks` key is removed when the installer rewrites managed config.
+- The installer removes legacy `codex_hooks` feature keys from table, dotted, quoted, and inline-table forms, rewrites any existing `hooks = false` to `hooks = true`, and preserves unrelated feature flags such as `shell_snapshot = false`.
 - Trusted project includes repo root via `[projects."<repo-root>"]` with `trust_level = "trusted"`.
 
 ### Enabled plugins in installed config
@@ -90,6 +91,8 @@ This memory records the installed system Codex runtime state for this repository
 
 ### Current runtime facts to retain
 
+- `scripts/smoke_mcp_runtime.sh` defaults remote URL reachability checks to three attempts with an 8 second timeout per attempt; override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
+- `scripts/smoke_mcp_capabilities.py` defaults to three per-server attempts; the Grep safe call uses the current `searchGitHub` code-pattern contract with `query = "useState("`, `useRegexp = false`, and `language = ["TSX"]`.
 - `config/mcp-runtime-versions.env` currently pins:
   - `CODEX_CLI_VERSION=0.129.0`
   - `MCP_PYTHON_SDK_VERSION=1.27.0`
@@ -123,6 +126,7 @@ This memory records the installed system Codex runtime state for this repository
 ## Verification
 
 - `scripts/install_system_codex.sh --dry-run` → `scripts/install_system_codex.sh --apply`.
+- `scripts/smoke_codex_hooks_migration.sh`.
 - `scripts/doctor_system_codex.sh`.
 - `scripts/bootstrap_check.sh --apply`.
 - `scripts/smoke_mcp_runtime.sh`.

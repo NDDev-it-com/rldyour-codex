@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
+Last updated: 2026-05-08
+Last commit: a330e0e test(mcp): retry remote runtime url checks
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -95,7 +95,7 @@ Timeouts:
 - `playwright`: `browser_navigate` + `browser_close`
 - `chrome-devtools`: `new_page`
 - `deepwiki`: `read_wiki_structure`
-- `grep`: `searchGitHub`
+- `grep`: `searchGitHub` with the code-pattern query `useState(` and `language = ["TSX"]`
 - `semgrep`: `get_supported_languages`
 - `shadcn`: `get_project_registries`
 - `openaiDeveloperDocs`: `search_openai_docs`
@@ -106,10 +106,14 @@ Skip rules in capability smoke:
 - `figma` is skipped unless `--include-auth`.
 - `dart-flutter` is list-only.
 
+Default per-server retry count is `3`; this gives remote HTTP MCPs enough headroom for transient 5xx/504 failures while still failing the smoke when all attempts fail.
+
 `scripts/smoke_mcp_runtime.sh` requires installed config/server name parity and checks:
 - every `codex mcp get <server>`
 - command executable presence (or `PATH` resolution)
 - remote endpoint reachability (unless `--skip-url-check`).
+
+Remote endpoint reachability defaults to `3` attempts and an `8` second timeout per attempt. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
 
 ## Invariants
 
