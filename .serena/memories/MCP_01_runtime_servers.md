@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: a330e0e test(mcp): retry remote runtime url checks
+Last commit: 260345a docs: record runtime consistency fixes
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -43,11 +43,11 @@ Local command/runtime contracts from `.mcp.json`:
 
 - `serena`: `uvx --from serena-agent==1.2.0 ... serena start-mcp-server ... --enable-web-dashboard False --open-web-dashboard False`
 - `sequential-thinking`: `bunx @modelcontextprotocol/server-sequential-thinking@2025.12.18`
-- `playwright`: `bunx @playwright/mcp@0.0.73 --headless --caps=network,storage,testing,devtools`
-- `chrome-devtools`: `bunx chrome-devtools-mcp@0.24.0 --headless --isolated --no-usage-statistics --no-performance-crux`
+- `playwright`: `bunx @playwright/mcp@0.0.75 --headless --caps=network,storage,testing,devtools`
+- `chrome-devtools`: `bunx chrome-devtools-mcp@0.25.0 --headless --isolated --no-usage-statistics --no-performance-crux`
 - `context7`: `bunx @upstash/context7-mcp@2.2.4` (reads `CONTEXT7_API_KEY` via `env_vars`)
-- `semgrep`: `uvx --from semgrep==1.161.0 semgrep mcp`
-- `shadcn`: `bunx shadcn@4.6.0 mcp`
+- `semgrep`: `uvx --from semgrep==1.162.0 semgrep mcp`
+- `shadcn`: `bunx shadcn@4.7.0 mcp`
 - `dart-flutter`: `dart mcp-server --force-roots-fallback`
 
 Remote URL MCPs:
@@ -79,11 +79,11 @@ Timeouts:
 - Pinned package specs in `.mcp.json` must be exact:
   - `serena-agent==1.2.0`
   - `@modelcontextprotocol/server-sequential-thinking@2025.12.18`
-  - `@playwright/mcp@0.0.73`
-  - `chrome-devtools-mcp@0.24.0`
+  - `@playwright/mcp@0.0.75`
+  - `chrome-devtools-mcp@0.25.0`
   - `@upstash/context7-mcp@2.2.4`
-  - `semgrep==1.161.0`
-  - `shadcn@4.6.0`
+  - `semgrep==1.162.0`
+  - `shadcn@4.7.0`
 - `config/mcp-runtime-versions.env` is expected to mirror MCP launcher pins and includes `CODEX_CLI_VERSION`/`MCP_PYTHON_SDK_VERSION`.
 
 ## Capability Smoke Contract
@@ -102,7 +102,8 @@ Timeouts:
 
 Skip rules in capability smoke:
 
-- `context7` call is skipped if `CONTEXT7_API_KEY` is absent.
+- Missing required env vars fail capability smoke by default; pass `--allow-missing-env` only for list-only CI/offline paths that intentionally skip env-gated calls.
+- `context7` reads `CONTEXT7_API_KEY` and skips only when missing env is explicitly allowed.
 - `figma` is skipped unless `--include-auth`.
 - `dart-flutter` is list-only.
 
@@ -113,7 +114,7 @@ Default per-server retry count is `3`; this gives remote HTTP MCPs enough headro
 - command executable presence (or `PATH` resolution)
 - remote endpoint reachability (unless `--skip-url-check`).
 
-Remote endpoint reachability defaults to `3` attempts and an `8` second timeout per attempt. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
+Remote endpoint response checks default to `3` attempts and an `8` second timeout per attempt. HTTP success plus `401`, `403`, and `405` are accepted for URL MCPs; unexpected client/server statuses fail. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
 
 ## Invariants
 

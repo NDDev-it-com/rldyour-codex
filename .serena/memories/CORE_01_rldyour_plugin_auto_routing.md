@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
+Last updated: 2026-05-08
+Last commit: 260345a docs: record runtime consistency fixes
 Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-serena-mcp, plugins/rldyour-rules, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->

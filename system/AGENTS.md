@@ -133,7 +133,7 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 
 The canonical source for this global setup is the `rldyour-codex` repository.
 
-System Codex is intentionally configured for owner-controlled YOLO execution with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, and `[features].hooks = true`. The legacy `[features].codex_hooks` key must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
+System Codex is intentionally configured for owner-controlled YOLO execution with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, and `[features].hooks = true`. Deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
 
 Use:
 

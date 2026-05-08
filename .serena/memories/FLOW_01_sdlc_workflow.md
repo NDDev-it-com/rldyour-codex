@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
+Last updated: 2026-05-08
+Last commit: 260345a docs: record runtime consistency fixes
 Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: FLOW
 -->
@@ -98,7 +98,7 @@ Area: FLOW
 - `needs_flow_sync`
 - `fingerprint`
 
-`needs_flow_sync` is true when Serena is current and any of the following is present: dirty files, ahead/behind, changed instruction docs, fullrepo attention needed, branch cleanup needed, or instruction-docs review required.
+`needs_flow_sync` is true when Serena memories are stale or any of the following is present: dirty files, ahead/behind, changed instruction docs, fullrepo attention needed, branch cleanup needed, or instruction-docs review required. The Flow Stop hook still exits silently while Serena is stale so the Serena Stop hook can request memory refresh first.
 
 ## Branch Cleanup Contract
 
@@ -135,6 +135,7 @@ Flow stop flow uses this state to decide whether `$instruction-docs-sync` is req
   - added local agent-only paths
   - excludes non-agent dirty files
 - refuses publish when non-agent dirty files exist.
+- `status` reports expected/local/remote fullrepo tree hashes and `fullrepo_matches_worktree`; remote `fullrepo` must match current `HEAD` plus agent-only files to clear final sync.
 - excludes and metadata are managed through repo `.git/info/exclude`, plus explicit runtime ignores.
 - publish uses snapshot commit + `git push --force-with-lease`.
 

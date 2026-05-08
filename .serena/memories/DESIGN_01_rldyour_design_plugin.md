@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
+Last updated: 2026-05-08
+Last commit: 260345a docs: record runtime consistency fixes
 Scope: plugins/rldyour-design
 Area: DESIGN
 -->

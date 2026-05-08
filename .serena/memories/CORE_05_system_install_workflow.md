@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: a330e0e test(mcp): retry remote runtime url checks
+Last commit: 260345a docs: record runtime consistency fixes
 Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -38,8 +38,8 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
   - `CODEX_HOME/AGENTS.md` from `system/AGENTS.md`
   - patched `CODEX_HOME/config.toml`
   - `[features].hooks = true`
-  - legacy `codex_hooks` removal from `[features]`, quoted keys, dotted root keys, and inline root feature tables
-  - unrelated feature flags preserved when legacy hooks keys are normalized
+  - deprecated/unstable hook key removal for `codex_hooks` and `plugin_hooks` from `[features]`, quoted keys, dotted root keys, and inline root feature tables
+  - unrelated feature flags preserved when hook keys are normalized
   - plugin cache for every `plugins/rldyour-*` into `CODEX_HOME/plugins/cache/rldyour-codex/<plugin>/local`
 - optional:
   - `--codex-home PATH`
@@ -55,11 +55,13 @@ Validates:
 - config contains:
   - profile and permissions (`rldyour-yolo`, `never`, `danger-full-access`, `:danger-no-sandbox`)
   - `[features].hooks = true`
-  - no legacy `codex_hooks` key under `[features]`
+  - no legacy `codex_hooks` key and no unstable `plugin_hooks` key under `[features]`
 - required marketplace plugin registrations
 - required MCP server configuration
 - plugin cache parity against repository plugins
 - fullrepo status script availability
+- no dirty non-agent files during doctor checks
+- on `main`, remote fullrepo tree matches current `HEAD` plus agent-only files when agent-only files exist
 - `scripts/validate_marketplace.sh` pass
 
 ### `scripts/bootstrap_check.sh`
@@ -102,13 +104,13 @@ Validates:
 - `scripts/sync_fullrepo_branch.sh --bootstrap-init`
 - `scripts/rollback_system_codex.sh --list`
 
-`scripts/smoke_mcp_runtime.sh` retries remote URL reachability checks by default; use `--skip-url-check` only for intentionally offline validation.
+`scripts/smoke_mcp_runtime.sh` retries remote URL response checks by default and accepts only success plus expected auth/method statuses for URL MCPs; use `--skip-url-check` only for intentionally offline validation.
 
 ## Invariants
 
 - Keep global configuration write scope explicit and reversible.
 - Do not install secrets or tokens.
 - Do not run destructive fullrepo mutations from install script.
-- Use the stable Codex `hooks` feature flag; do not reintroduce the deprecated `codex_hooks` key.
+- Use the stable Codex `hooks` feature flag; do not reintroduce deprecated `codex_hooks` or under-development `plugin_hooks`.
 - Restart Codex after template/config/cache changes so runtime reloads plugin and hook state.
 - Run required checks before considering installation or rollback complete.

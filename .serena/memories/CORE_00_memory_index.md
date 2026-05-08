@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: a330e0e test(mcp): retry remote runtime url checks
+Last commit: 260345a docs: record runtime consistency fixes
 Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
@@ -15,7 +15,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `a330e0e4198b28409469b2130f124896a9152059`
+- Current source HEAD: `260345a491991b7b7100962604c1e5c9526a60f7`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
@@ -63,6 +63,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `ry-init` is read-only for Serena memories by default. It reports `Memory candidates (not written)` instead of writing `.serena` unless the user explicitly requested memory sync or a Stop/stale-memory hook requires it.
 - Product repositories can install `scripts/install_local_git_hooks.sh --repo <project> --apply`; the local pre-push guard keeps product refs strict and treats `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` as the AI-context ref while still blocking definite secrets and runtime/local-only files.
 - `branch_cleanup_state` is a finish gate: merged local branches, merged remote branches, and merged workflow worktrees keep Flow sync pending until cleaned or explicitly reported as blockers. Protected branches such as `main` and `fullrepo` are excluded.
+- Fullrepo status compares the expected tree from current `HEAD` plus agent-only files against local/remote `fullrepo`; stale snapshots keep Flow sync pending.
 - MCP package specs must stay pinned; `@latest` is invalid in runtime definitions.
 - Do not store secrets, tokens, cookies, private keys, raw credentials, or browser evidence in memories.
 

@@ -22,11 +22,19 @@ codex_hooks = true
 shell_snapshot = false
 EOF
       ;;
+    table_plugin_only)
+      cat >"$config_path" <<'EOF'
+[features]
+plugin_hooks = true
+shell_snapshot = false
+EOF
+      ;;
     table_existing_hooks)
       cat >"$config_path" <<'EOF'
 [features]
 hooks = false
 codex_hooks = true
+plugin_hooks = true
 shell_snapshot = false
 EOF
       ;;
@@ -35,9 +43,16 @@ EOF
 features.codex_hooks = true
 EOF
       ;;
+    dotted_plugin_only)
+      cat >"$config_path" <<'EOF'
+features.plugin_hooks = true
+features.shell_snapshot = false
+EOF
+      ;;
     dotted_existing_hooks)
       cat >"$config_path" <<'EOF'
 features.hooks = false
+features.plugin_hooks = true
 features.shell_snapshot = false
 EOF
       ;;
@@ -45,12 +60,14 @@ EOF
       cat >"$config_path" <<'EOF'
 [features]
 "codex_hooks" = true
+'plugin_hooks' = true
 'hooks' = false
 EOF
       ;;
     quoted_dotted)
       cat >"$config_path" <<'EOF'
 features."codex_hooks" = true
+features."plugin_hooks" = true
 features."shell_snapshot" = false
 EOF
       ;;
@@ -59,9 +76,14 @@ EOF
 features = { codex_hooks = true, shell_snapshot = false }
 EOF
       ;;
+    inline_plugin_only)
+      cat >"$config_path" <<'EOF'
+features = { plugin_hooks = true, shell_snapshot = false }
+EOF
+      ;;
     inline_existing_hooks)
       cat >"$config_path" <<'EOF'
-features = { hooks = false, codex_hooks = true, shell_snapshot = false }
+features = { hooks = false, codex_hooks = true, plugin_hooks = true, shell_snapshot = false }
 EOF
       ;;
     *)
@@ -95,12 +117,17 @@ if features.get("hooks") is not True:
     raise SystemExit(f"{case_name}: expected [features].hooks = true, got {features!r}")
 if "codex_hooks" in features:
     raise SystemExit(f"{case_name}: legacy codex_hooks key was not removed: {features!r}")
+if "plugin_hooks" in features:
+    raise SystemExit(f"{case_name}: legacy plugin_hooks key was not removed: {features!r}")
 if case_name in {
     "table_legacy",
+    "table_plugin_only",
     "table_existing_hooks",
+    "dotted_plugin_only",
     "dotted_existing_hooks",
     "quoted_dotted",
     "inline_legacy",
+    "inline_plugin_only",
     "inline_existing_hooks",
 }:
     if features.get("shell_snapshot") is not False:
@@ -113,12 +140,15 @@ PY
 cases=(
   no_features
   table_legacy
+  table_plugin_only
   table_existing_hooks
   dotted_legacy
+  dotted_plugin_only
   dotted_existing_hooks
   quoted_legacy
   quoted_dotted
   inline_legacy
+  inline_plugin_only
   inline_existing_hooks
 )
 
@@ -140,6 +170,8 @@ from pathlib import Path
 features = tomllib.loads(Path(os.environ["CONFIG_PATH"]).read_text(encoding="utf-8")).get("features") or {}
 if features.get("hooks") is not True or "codex_hooks" in features:
     raise SystemExit(f"codex runtime generated unexpected hooks features: {features!r}")
+if "plugin_hooks" in features:
+    raise SystemExit(f"codex runtime generated unexpected plugin_hooks feature: {features!r}")
 PY
   printf 'ok      codex runtime hooks flag\n'
 else

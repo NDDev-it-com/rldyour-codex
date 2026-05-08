@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: a330e0e test(mcp): retry remote runtime url checks
+Last commit: 260345a docs: record runtime consistency fixes
 Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -53,7 +53,7 @@ This memory records the installed system Codex runtime state for this repository
   - `default_permissions = ":danger-no-sandbox"`.
   - `[profiles.rldyour-yolo]` repeats the same values.
 - `[features] hooks = true`.
-- The installer removes legacy `codex_hooks` feature keys from table, dotted, quoted, and inline-table forms, rewrites any existing `hooks = false` to `hooks = true`, and preserves unrelated feature flags such as `shell_snapshot = false`.
+- The installer removes deprecated/unstable hook feature keys `codex_hooks` and `plugin_hooks` from table, dotted, quoted, and inline-table forms, rewrites any existing `hooks = false` to `hooks = true`, and preserves unrelated feature flags such as `shell_snapshot = false`.
 - Trusted project includes repo root via `[projects."<repo-root>"]` with `trust_level = "trusted"`.
 
 ### Enabled plugins in installed config
@@ -91,18 +91,18 @@ This memory records the installed system Codex runtime state for this repository
 
 ### Current runtime facts to retain
 
-- `scripts/smoke_mcp_runtime.sh` defaults remote URL reachability checks to three attempts with an 8 second timeout per attempt; override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
-- `scripts/smoke_mcp_capabilities.py` defaults to three per-server attempts; the Grep safe call uses the current `searchGitHub` code-pattern contract with `query = "useState("`, `useRegexp = false`, and `language = ["TSX"]`.
+- `scripts/smoke_mcp_runtime.sh` defaults remote URL response checks to three attempts with an 8 second timeout per attempt; only HTTP success plus expected auth/method statuses (`401`, `403`, `405`) are accepted for URL MCPs. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
+- `scripts/smoke_mcp_capabilities.py` defaults to three per-server attempts and fails on missing required env vars unless `--allow-missing-env` is passed. The Grep safe call uses the current `searchGitHub` code-pattern contract with `query = "useState("`, `useRegexp = false`, and `language = ["TSX"]`.
 - `config/mcp-runtime-versions.env` currently pins:
   - `CODEX_CLI_VERSION=0.129.0`
   - `MCP_PYTHON_SDK_VERSION=1.27.0`
   - `SERENA_AGENT_VERSION=1.2.0`
-  - `SEMGREP_VERSION=1.161.0`
+  - `SEMGREP_VERSION=1.162.0`
   - `SEQUENTIAL_THINKING_MCP_VERSION=2025.12.18`
-  - `PLAYWRIGHT_MCP_VERSION=0.0.73`
-  - `CHROME_DEVTOOLS_MCP_VERSION=0.24.0`
+  - `PLAYWRIGHT_MCP_VERSION=0.0.75`
+  - `CHROME_DEVTOOLS_MCP_VERSION=0.25.0`
   - `CONTEXT7_MCP_VERSION=2.2.4`
-  - `SHADCN_VERSION=4.6.0`
+  - `SHADCN_VERSION=4.7.0`
 
 ## Invariants
 
@@ -110,7 +110,7 @@ This memory records the installed system Codex runtime state for this repository
 - Do not store raw credentials or tokens in repo files or memories.
 - Installed state is derived from repository sources; do not hand-edit config as the source of truth.
 - Use `scripts/install_system_codex.sh --apply` after any change to manifests, `system/AGENTS.md`, `.mcp.json`, marketplace list, or installer config.
-- Codex hooks must use the stable `hooks` feature key, not the deprecated `codex_hooks` key.
+- Codex hooks must use the stable `hooks` feature key, not deprecated `codex_hooks` or under-development `plugin_hooks`.
 - Restart Codex when system state changes.
 - Keep `system/AGENTS.md` and `AGENTS.md` aligned as template/source relationship.
 - Keep diagnostics under ignored `diagnostics/`.
