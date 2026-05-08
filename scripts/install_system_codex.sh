@@ -144,6 +144,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import tomllib
 from pathlib import Path
 
 config_path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
@@ -200,7 +201,8 @@ for server, spec in mcp_servers.items():
         managed_headers.add(f"mcp_servers.{server}.env")
 
 header_re = re.compile(r"^\s*\[([^\]]+)\]\s*$")
-root_key_re = re.compile(r"^\s*([A-Za-z0-9_-]+)\s*=")
+assignment_re = re.compile(r"^\s*((?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+')(?:\s*\.\s*(?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+'))*)\s*=(.*)$")
+bare_key_re = re.compile(r"^[A-Za-z0-9_-]+$")
 existing = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
 managed_root_keys = {"profile", "approval_policy", "sandbox_mode", "default_permissions"}
 out: list[str] = [
@@ -212,9 +214,78 @@ out: list[str] = [
 ]
 skip_managed = False
 in_features = False
-features_seen = False
+features_table_seen = False
+feature_dotted_lines: list[str] = []
 hooks_written = False
 current_header: str | None = None
+
+
+def unquote_toml_key(segment: str) -> str:
+    segment = segment.strip()
+    if (segment.startswith('"') and segment.endswith('"')) or (segment.startswith("'") and segment.endswith("'")):
+        return segment[1:-1]
+    return segment
+
+
+def split_toml_key(key: str) -> list[str]:
+    segments: list[str] = []
+    current: list[str] = []
+    quote: str | None = None
+    escape = False
+    for char in key:
+        if quote:
+            current.append(char)
+            if quote == '"' and char == "\\" and not escape:
+                escape = True
+                continue
+            if char == quote and not escape:
+                quote = None
+            escape = False
+            continue
+        if char in ("'", '"'):
+            quote = char
+            current.append(char)
+            continue
+        if char == ".":
+            segments.append(unquote_toml_key("".join(current)))
+            current = []
+            continue
+        current.append(char)
+    if current or key.endswith("."):
+        segments.append(unquote_toml_key("".join(current)))
+    return [segment.strip() for segment in segments]
+
+
+def assignment_key_path(raw_line: str) -> tuple[list[str], str] | None:
+    match = assignment_re.match(raw_line)
+    if not match:
+        return None
+    return split_toml_key(match.group(1)), match.group(2).strip()
+
+
+def toml_key(key: str) -> str:
+    return key if bare_key_re.match(key) else json.dumps(key)
+
+
+def toml_value(value: object) -> str:
+    if isinstance(value, str):
+        return json.dumps(value)
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, list):
+        return json.dumps(value)
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{toml_key(str(key))} = {toml_value(item)}" for key, item in value.items()) + " }"
+    raise TypeError(f"Unsupported TOML value: {value!r}")
+
+
+def append_features_block() -> None:
+    add_blank()
+    out.append("[features]")
+    out.extend(feature_dotted_lines)
+    out.append("hooks = true")
 
 for raw_line in existing.splitlines():
     match = header_re.match(raw_line)
@@ -223,14 +294,15 @@ for raw_line in existing.splitlines():
             out.append("hooks = true")
             hooks_written = True
         header = match.group(1)
+        header_path = split_toml_key(header)
         if header in managed_headers:
             skip_managed = True
             in_features = False
             continue
         skip_managed = False
-        in_features = header == "features"
+        in_features = header_path == ["features"]
         if in_features:
-            features_seen = True
+            features_table_seen = True
         current_header = header
         out.append(raw_line)
         continue
@@ -239,13 +311,33 @@ for raw_line in existing.splitlines():
         continue
 
     if current_header is None:
-        key_match = root_key_re.match(raw_line)
-        if key_match and key_match.group(1) in managed_root_keys:
+        key_info = assignment_key_path(raw_line)
+        key_path = key_info[0] if key_info else []
+        if len(key_path) == 1 and key_path[0] in managed_root_keys:
+            continue
+        if len(key_path) == 1 and key_path[0] == "features":
+            try:
+                inline_features = tomllib.loads(raw_line).get("features") or {}
+            except Exception:
+                inline_features = {}
+            if not isinstance(inline_features, dict):
+                continue
+            for feature_key, feature_value in inline_features.items():
+                if feature_key in {"codex_hooks", "hooks"}:
+                    continue
+                feature_dotted_lines.append(f"{toml_key(str(feature_key))} = {toml_value(feature_value)}")
+            continue
+        if len(key_path) == 2 and key_path[0] == "features":
+            feature_key = key_path[1]
+            if feature_key in {"codex_hooks", "hooks"}:
+                continue
+            feature_dotted_lines.append(f"{toml_key(feature_key)} = {key_info[1]}")
             continue
 
     if in_features:
-        key_match = root_key_re.match(raw_line)
-        feature_key = key_match.group(1) if key_match else ""
+        key_info = assignment_key_path(raw_line)
+        key_path = key_info[0] if key_info else []
+        feature_key = key_path[0] if len(key_path) == 1 else ""
         if feature_key == "codex_hooks":
             continue
         if feature_key == "hooks":
@@ -267,9 +359,8 @@ def add_blank() -> None:
     if out and out[-1] != "":
         out.append("")
 
-if not features_seen:
-    add_blank()
-    out.extend(["[features]", "hooks = true"])
+if not features_table_seen:
+    append_features_block()
 
 add_blank()
 out.extend([
@@ -299,17 +390,6 @@ for plugin in curated_plugins:
 for plugin in rldyour_plugins:
     add_blank()
     out.extend([f'[plugins."{plugin}@rldyour-codex"]', "enabled = true"])
-
-def toml_value(value: object) -> str:
-    if isinstance(value, str):
-        return json.dumps(value)
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    if isinstance(value, int):
-        return str(value)
-    if isinstance(value, list):
-        return json.dumps(value)
-    raise TypeError(f"Unsupported TOML value: {value!r}")
 
 for server, spec in mcp_servers.items():
     add_blank()
