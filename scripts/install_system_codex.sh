@@ -17,7 +17,7 @@ Managed state:
 - CODEX_HOME/AGENTS.md from system/AGENTS.md
 - rldyour-codex marketplace registration
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
-- codex_hooks feature flag
+- hooks feature flag
 - owner-requested YOLO permission defaults
 - rldyour MCP server definitions
 - active rldyour plugin cache copies
@@ -213,15 +213,15 @@ out: list[str] = [
 skip_managed = False
 in_features = False
 features_seen = False
-codex_hooks_written = False
+hooks_written = False
 current_header: str | None = None
 
 for raw_line in existing.splitlines():
     match = header_re.match(raw_line)
     if match:
-        if in_features and not codex_hooks_written:
-            out.append("codex_hooks = true")
-            codex_hooks_written = True
+        if in_features and not hooks_written:
+            out.append("hooks = true")
+            hooks_written = True
         header = match.group(1)
         if header in managed_headers:
             skip_managed = True
@@ -243,17 +243,22 @@ for raw_line in existing.splitlines():
         if key_match and key_match.group(1) in managed_root_keys:
             continue
 
-    if in_features and raw_line.strip().startswith("codex_hooks"):
-        if not codex_hooks_written:
-            out.append("codex_hooks = true")
-            codex_hooks_written = True
-        continue
+    if in_features:
+        key_match = root_key_re.match(raw_line)
+        feature_key = key_match.group(1) if key_match else ""
+        if feature_key == "codex_hooks":
+            continue
+        if feature_key == "hooks":
+            if not hooks_written:
+                out.append("hooks = true")
+                hooks_written = True
+            continue
 
     out.append(raw_line)
 
-if in_features and not codex_hooks_written:
-    out.append("codex_hooks = true")
-    codex_hooks_written = True
+if in_features and not hooks_written:
+    out.append("hooks = true")
+    hooks_written = True
 
 while out and out[-1] == "":
     out.pop()
@@ -264,7 +269,7 @@ def add_blank() -> None:
 
 if not features_seen:
     add_blank()
-    out.extend(["[features]", "codex_hooks = true"])
+    out.extend(["[features]", "hooks = true"])
 
 add_blank()
 out.extend([
