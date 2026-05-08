@@ -94,6 +94,7 @@ Expected state:
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
 - `semgrep` starts through the current official `semgrep mcp`, not the archived `semgrep-mcp`.
 - `openaiDeveloperDocs` uses the official OpenAI Docs MCP endpoint for OpenAI and Codex product documentation.
+- Runtime smoke checks remote URL servers with a Streamable HTTP `initialize` POST preflight. Auth-gated endpoints may return `401`/`403`; `405` is treated as a GET/SSE compatibility signal, not a passing POST result.
 - Local MCP servers do not use `npx`, `npm`, or direct `node` commands.
 
 ## Local Dependencies
@@ -144,3 +145,5 @@ If the dashboard is needed manually, change this runtime policy intentionally an
 - Dart/Flutter MCP: https://docs.flutter.dev/ai/mcp-server
 - Figma MCP: https://help.figma.com/hc/en-us/articles/39888629089175-Codex-and-Figma-Set-up-the-MCP-server
 - OpenAI Docs MCP: https://developers.openai.com/learn/docs-mcp
+- MCP Streamable HTTP transport: https://modelcontextprotocol.io/specification/2025-11-25/basic/transports
+- MCP lifecycle initialization: https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle
