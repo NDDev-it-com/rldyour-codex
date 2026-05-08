@@ -14,7 +14,7 @@ Verifies the installed MCP runtime beyond static JSON:
 - repository .mcp.json and installed config.toml contain the same servers;
 - `codex mcp get <server>` works for every server;
 - local MCP command binaries exist;
-- remote MCP URLs are reachable unless --skip-url-check is used.
+- remote MCP URLs respond with expected HTTP status unless --skip-url-check is used.
 EOF
 }
 
@@ -118,7 +118,7 @@ def probe_url(name: str, url: str) -> str:
             with urllib.request.urlopen(request, timeout=url_timeout) as response:
                 return f"HTTP {response.status}"
         except urllib.error.HTTPError as exc:
-            if exc.code < 500:
+            if exc.code in {401, 403, 405}:
                 return f"HTTP {exc.code}"
             last_error = f"returned HTTP {exc.code}"
         except Exception as exc:
