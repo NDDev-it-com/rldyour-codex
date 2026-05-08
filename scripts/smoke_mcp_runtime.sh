@@ -14,7 +14,7 @@ Verifies the installed MCP runtime beyond static JSON:
 - repository .mcp.json and installed config.toml contain the same servers;
 - `codex mcp get <server>` works for every server;
 - local MCP command binaries exist;
-- remote MCP URLs respond with expected HTTP status unless --skip-url-check is used.
+- remote MCP URLs accept a Streamable HTTP initialize preflight unless --skip-url-check is used.
 EOF
 }
 
@@ -105,24 +105,111 @@ print(f"codex_home: {codex_home}")
 print(f"servers: {len(repo_servers)}")
 
 
-def probe_url(name: str, url: str) -> str:
-    request = urllib.request.Request(
-        url,
-        method="GET",
-        headers={"Accept": "application/json, text/event-stream, */*"},
-    )
+MCP_PROTOCOL_VERSION = "2025-11-25"
+
+
+def json_rpc_initialize() -> bytes:
+    return json.dumps(
+        {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "initialize",
+            "params": {
+                "protocolVersion": MCP_PROTOCOL_VERSION,
+                "capabilities": {},
+                "clientInfo": {
+                    "name": "rldyour-mcp-runtime-smoke",
+                    "version": "0.1.0",
+                },
+            },
+        }
+    ).encode("utf-8")
+
+
+def configured_headers(config: dict[str, object]) -> dict[str, str]:
+    headers = {
+        "Accept": "application/json, text/event-stream",
+        "Content-Type": "application/json",
+    }
+    for key, value in (config.get("http_headers") or {}).items():
+        headers[str(key)] = str(value)
+    bearer_env_var = config.get("bearer_token_env_var")
+    if bearer_env_var:
+        token = os.environ.get(str(bearer_env_var))
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+    for key, value in (config.get("env_http_headers") or {}).items():
+        env_value = os.environ.get(str(value))
+        if env_value:
+            headers[str(key)] = env_value
+    return headers
+
+
+def format_initialize_result(payload: object) -> str:
+    if not isinstance(payload, dict):
+        raise RuntimeError("initialize response was not a JSON object")
+    if payload.get("id") != 1:
+        raise RuntimeError(f"initialize response id mismatch: {payload.get('id')!r}")
+    if payload.get("error"):
+        raise RuntimeError(f"initialize returned JSON-RPC error: {payload.get('error')!r}")
+    result = payload.get("result")
+    if not isinstance(result, dict):
+        raise RuntimeError(f"initialize response missing result object: {payload!r}")
+    protocol_version = str(result.get("protocolVersion") or "unknown")
+    server_info = result.get("serverInfo") if isinstance(result.get("serverInfo"), dict) else {}
+    server_name = str(server_info.get("name") or "remote")
+    return f"initialize {server_name} protocol {protocol_version}"
+
+
+def read_sse_initialize(response: object) -> str:
+    data_lines: list[str] = []
+    for _ in range(200):
+        raw_line = response.readline()
+        if not raw_line:
+            break
+        line = raw_line.decode("utf-8", errors="replace").rstrip("\r\n")
+        if not line:
+            if not data_lines:
+                continue
+            data = "\n".join(data_lines)
+            data_lines = []
+            if not data.strip():
+                continue
+            return format_initialize_result(json.loads(data))
+        if line.startswith(":"):
+            continue
+        if line.startswith("data:"):
+            data_lines.append(line[5:].lstrip(" "))
+    if data_lines:
+        return format_initialize_result(json.loads("\n".join(data_lines)))
+    raise RuntimeError("initialize SSE stream did not include a JSON-RPC response")
+
+
+def probe_remote_mcp(name: str, config: dict[str, object]) -> str:
+    url = str(config.get("url") or "")
     last_error = ""
     attempts = max(1, url_retries)
     for attempt in range(1, attempts + 1):
+        request = urllib.request.Request(
+            url,
+            data=json_rpc_initialize(),
+            method="POST",
+            headers=configured_headers(config),
+        )
         try:
             with urllib.request.urlopen(request, timeout=url_timeout) as response:
-                return f"HTTP {response.status}"
+                content_type = str(response.headers.get("Content-Type") or "").split(";", 1)[0].strip().lower()
+                if content_type == "application/json":
+                    return f"HTTP {response.status} {format_initialize_result(json.loads(response.read()))}"
+                if content_type == "text/event-stream":
+                    return f"HTTP {response.status} {read_sse_initialize(response)}"
+                raise RuntimeError(f"unexpected initialize content type {content_type or 'unknown'}")
         except urllib.error.HTTPError as exc:
-            if exc.code in {401, 403, 405}:
-                return f"HTTP {exc.code}"
+            if exc.code in {401, 403}:
+                return f"HTTP {exc.code} auth required"
             last_error = f"returned HTTP {exc.code}"
         except Exception as exc:
-            last_error = f"unreachable: {exc}"
+            last_error = f"initialize failed: {exc}"
         if attempt < attempts:
             print(f"retry   url {name} attempt {attempt} failed: {last_error}", file=sys.stderr)
             time.sleep(min(attempt, 3))
@@ -161,8 +248,8 @@ for name in sorted(repo_servers):
     url = config.get("url")
     if url and url_check:
         try:
-            status = probe_url(name, str(url))
-            print(f"ok      url {name}: {status}")
+            status = probe_remote_mcp(name, config)
+            print(f"ok      remote mcp {name}: {status}")
         except Exception as exc:
             errors.append(f"{name}: remote endpoint {exc}")
 
