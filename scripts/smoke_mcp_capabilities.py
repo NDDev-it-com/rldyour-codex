@@ -341,8 +341,8 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--allow-missing-env",
         action="store_true",
-        default=True,
-        help="Allow capability probes when env vars are absent. Enabled by default.",
+        default=False,
+        help="Allow capability probes when env vars are absent.",
     )
     parser.add_argument("--require-env", dest="allow_missing_env", action="store_false", help="Fail when env_vars are absent.")
     parser.add_argument("--include-auth", action="store_true", help="Probe auth-required MCP servers such as figma.")
