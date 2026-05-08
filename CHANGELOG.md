@@ -18,16 +18,18 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
-- System Codex install now writes `[features].hooks = true` and removes the deprecated `codex_hooks` feature key from managed config.
-- System Codex install migration now normalizes dotted, quoted, and inline-table legacy hooks feature keys, with dedicated smoke coverage in `scripts/smoke_codex_hooks_migration.sh`.
-- MCP runtime smoke now retries remote URL reachability checks and exposes `--url-retries`/`--url-timeout` for unstable networks.
-- MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls a third retry.
+- System Codex install now writes `[features].hooks = true` and removes deprecated hook feature keys from managed config.
+- System Codex install migration now normalizes dotted, quoted, and inline-table legacy hook feature keys, with dedicated smoke coverage in `scripts/smoke_codex_hooks_migration.sh`.
+- Flow post-task state now treats stale Serena memories and stale fullrepo snapshots as pending sync instead of false green states.
+- Doctor and validation now use stricter parsed-config/current-state checks for system config, Serena memory freshness, and fullrepo sync.
+- MCP runtime smoke now retries remote URL response checks, exposes `--url-retries`/`--url-timeout`, and treats unexpected client/server status codes as failures.
+- MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls a third attempt.
 - Runtime Codex CLI pin updated from `0.128.0` to `0.129.0`.
+- MCP runtime pins updated for Semgrep `1.162.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.25.0`, and shadcn `4.7.0`.
 - `rldyour-flow` plugin version updated to `0.2.4` for read-only `ry-init` memory discipline and fullrepo bootstrap init behavior.
 - `ry-init` is now explicitly read-only for Serena memories by default; it reports memory candidates instead of writing `.serena` unless the user requested memory sync or a stale-memory hook requires it.
 - `serena-memory-sync` no longer auto-runs for read-only init, log audits, server snapshots, report-only reviews, or exploratory debugging without an explicit memory-sync request.
 - Global and project instructions now state the explicit fullrepo-managed task sync order: Serena/docs, checks, normal branch push, fullrepo publish, and safe cleanup.
-- `chrome-devtools-mcp` runtime pin updated from `0.23.0` to `0.24.0`.
 - `@upstash/context7-mcp` runtime pin updated from `2.2.3` to `2.2.4`.
 - `rldyour-flow` now treats `fullrepo` as part of `ry-init` and `flow-post-task-sync`.
 - `rldyour-flow` now detects missing or stale instruction docs and routes post-task sync through `$instruction-docs-sync`.
