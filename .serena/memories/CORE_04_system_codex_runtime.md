@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
+Last updated: 2026-05-08
+Last commit: 5b62559 fix(system): migrate codex hooks feature flag
 Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -51,7 +51,8 @@ This memory records the installed system Codex runtime state for this repository
   - `sandbox_mode = "danger-full-access"`.
   - `default_permissions = ":danger-no-sandbox"`.
   - `[profiles.rldyour-yolo]` repeats the same values.
-- `[features] codex_hooks = true`.
+- `[features] hooks = true`.
+- The legacy `[features] codex_hooks` key is removed when the installer rewrites managed config.
 - Trusted project includes repo root via `[projects."<repo-root>"]` with `trust_level = "trusted"`.
 
 ### Enabled plugins in installed config
@@ -90,7 +91,7 @@ This memory records the installed system Codex runtime state for this repository
 ### Current runtime facts to retain
 
 - `config/mcp-runtime-versions.env` currently pins:
-  - `CODEX_CLI_VERSION=0.128.0`
+  - `CODEX_CLI_VERSION=0.129.0`
   - `MCP_PYTHON_SDK_VERSION=1.27.0`
   - `SERENA_AGENT_VERSION=1.2.0`
   - `SEMGREP_VERSION=1.161.0`
@@ -106,6 +107,7 @@ This memory records the installed system Codex runtime state for this repository
 - Do not store raw credentials or tokens in repo files or memories.
 - Installed state is derived from repository sources; do not hand-edit config as the source of truth.
 - Use `scripts/install_system_codex.sh --apply` after any change to manifests, `system/AGENTS.md`, `.mcp.json`, marketplace list, or installer config.
+- Codex hooks must use the stable `hooks` feature key, not the deprecated `codex_hooks` key.
 - Restart Codex when system state changes.
 - Keep `system/AGENTS.md` and `AGENTS.md` aligned as template/source relationship.
 - Keep diagnostics under ignored `diagnostics/`.

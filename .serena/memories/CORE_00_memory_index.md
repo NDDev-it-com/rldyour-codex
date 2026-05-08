@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
+Last updated: 2026-05-08
+Last commit: 5b62559 fix(system): migrate codex hooks feature flag
 Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
@@ -15,13 +15,13 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `d675a309604d93a4d994918c3332821c49093f2b`
+- Current source HEAD: `5b62559d28b2731a7ed17f2d508eaad01a8c2fd4`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
 - Callable rldyour skills: `38`
 - Configured MCP servers: `12`
-- Runtime Codex CLI pin: `0.128.0`
+- Runtime Codex CLI pin: `0.129.0`
 - `rldyour-flow` plugin version: `0.2.4`
 
 ## Source Priority

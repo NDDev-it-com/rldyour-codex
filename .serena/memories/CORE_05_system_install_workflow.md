@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-06
-Last commit: d675a30 fix(flow): ignore remote head in git sync audit
-Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
+Last updated: 2026-05-08
+Last commit: 5b62559 fix(system): migrate codex hooks feature flag
+Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
 
@@ -36,6 +36,8 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 - `--apply` writes:
   - `CODEX_HOME/AGENTS.md` from `system/AGENTS.md`
   - patched `CODEX_HOME/config.toml`
+  - `[features].hooks = true`
+  - legacy `[features].codex_hooks` removal
   - plugin cache for every `plugins/rldyour-*` into `CODEX_HOME/plugins/cache/rldyour-codex/<plugin>/local`
 - optional:
   - `--codex-home PATH`
@@ -50,7 +52,8 @@ Validates:
 - installed `AGENTS.md` equals repository `system/AGENTS.md`
 - config contains:
   - profile and permissions (`rldyour-yolo`, `never`, `danger-full-access`, `:danger-no-sandbox`)
-  - codex hooks enabled
+  - `[features].hooks = true`
+  - no legacy `codex_hooks` key under `[features]`
 - required marketplace plugin registrations
 - required MCP server configuration
 - plugin cache parity against repository plugins
@@ -101,5 +104,6 @@ Validates:
 - Keep global configuration write scope explicit and reversible.
 - Do not install secrets or tokens.
 - Do not run destructive fullrepo mutations from install script.
+- Use the stable Codex `hooks` feature flag; do not reintroduce the deprecated `codex_hooks` key.
 - Restart Codex after template/config/cache changes so runtime reloads plugin and hook state.
 - Run required checks before considering installation or rollback complete.

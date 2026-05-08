@@ -96,7 +96,7 @@ scripts/doctor_system_codex.sh
 ## System Install
 
 - `scripts/install_system_codex.sh --dry-run` previews the system Codex install.
-- `scripts/install_system_codex.sh --apply` installs global Codex instructions, config sections, YOLO defaults, marketplace registration, and plugin cache.
-- `scripts/doctor_system_codex.sh` verifies installed state.
+- `scripts/install_system_codex.sh --apply` installs global Codex instructions, config sections, `[features].hooks = true`, legacy `codex_hooks` removal, YOLO defaults, marketplace registration, and plugin cache.
+- `scripts/doctor_system_codex.sh` verifies installed state, including the active `hooks` feature and absence of legacy `codex_hooks`.
 - `scripts/rollback_system_codex.sh --list` and `--restore <backup>` manage installer backups.
 - `scripts/collect_diagnostics.sh` writes ignored diagnostics bundles for failure triage.
