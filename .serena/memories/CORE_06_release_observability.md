@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last commit: 622c421 fix(mcp): validate remote streamable http preflight
 Scope: CHANGELOG.md, README.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
@@ -59,7 +59,7 @@ Use for release evidence and operational tagging flow.
 - `scripts/check_mcp_runtime_versions.py` compares pins against upstream.
 - `--fail-on-outdated` is CI-grade mode.
 - `docs/dependency-updates.md` defines the manual update flow and validation gate order.
-- `scripts/smoke_mcp_runtime.sh` treats unexpected URL MCP HTTP statuses as failures.
+- `scripts/smoke_mcp_runtime.sh` treats unexpected URL MCP HTTP statuses and malformed initialize responses as failures. Remote URL servers are validated with a Streamable HTTP JSON-RPC `initialize` POST preflight; auth-gated `401`/`403` endpoints may pass, but POST `405` does not.
 - `scripts/smoke_mcp_capabilities.py` requires env vars by default; CI/offline list-only paths pass `--allow-missing-env` explicitly.
 
 ## Rollback and Recovery

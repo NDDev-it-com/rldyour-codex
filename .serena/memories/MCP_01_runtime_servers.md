@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last commit: 622c421 fix(mcp): validate remote streamable http preflight
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -20,7 +20,7 @@ Area: MCP
 - `config/mcp-runtime-versions.env`: pinned package versions used by installer and checks.
 - `scripts/install_system_codex.sh`: maps portable `.mcp.json` commands to installed executable paths.
 - `scripts/validate_marketplace.sh`: MCP pinning, config sync, and runtime smoke checks.
-- `scripts/smoke_mcp_runtime.sh`: installed-config + endpoint/command smoke.
+- `scripts/smoke_mcp_runtime.sh`: installed-config, command, and Streamable HTTP endpoint smoke.
 - `scripts/smoke_mcp_capabilities.py/.sh`: MCP initialize/list_tools/safe probe smoke.
 - `${CODEX_HOME:-$HOME/.codex}/config.toml`: installed MCP runtime.
 
@@ -112,9 +112,16 @@ Default per-server retry count is `3`; this gives remote HTTP MCPs enough headro
 `scripts/smoke_mcp_runtime.sh` requires installed config/server name parity and checks:
 - every `codex mcp get <server>`
 - command executable presence (or `PATH` resolution)
-- remote endpoint reachability (unless `--skip-url-check`).
+- remote Streamable HTTP `initialize` POST preflight (unless `--skip-url-check`).
 
-Remote endpoint response checks default to `3` attempts and an `8` second timeout per attempt. HTTP success plus `401`, `403`, and `405` are accepted for URL MCPs; unexpected client/server statuses fail. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
+Remote endpoint preflight checks default to `3` attempts and an `8` second timeout per attempt. The script sends JSON-RPC `initialize` with protocol `2025-11-25`, `Accept: application/json, text/event-stream`, and `Content-Type: application/json`; it parses both JSON and SSE initialize responses. `401` and `403` pass for auth-gated endpoints such as Figma. `405` is not accepted for POST initialize because the MCP spec allows `405` only for optional GET SSE compatibility. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
+
+Live runtime smoke on 2026-05-08 verified:
+
+- `deepwiki`: HTTP 200 initialize `DeepWiki`, protocol `2025-11-25`
+- `grep`: HTTP 200 initialize `mcp-typescript server on vercel`, protocol `2025-06-18`
+- `openaiDeveloperDocs`: HTTP 200 initialize `openai-docs-mcp`, protocol `2025-11-25`
+- `figma`: HTTP 401 auth required
 
 ## Invariants
 

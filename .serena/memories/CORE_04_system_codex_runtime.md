@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last commit: 622c421 fix(mcp): validate remote streamable http preflight
 Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -91,7 +91,7 @@ This memory records the installed system Codex runtime state for this repository
 
 ### Current runtime facts to retain
 
-- `scripts/smoke_mcp_runtime.sh` defaults remote URL response checks to three attempts with an 8 second timeout per attempt; only HTTP success plus expected auth/method statuses (`401`, `403`, `405`) are accepted for URL MCPs. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
+- `scripts/smoke_mcp_runtime.sh` defaults remote URL checks to three attempts with an 8 second timeout per attempt and uses a Streamable HTTP JSON-RPC `initialize` POST preflight. It accepts `application/json` and `text/event-stream` initialize responses, accepts `401`/`403` for auth-gated endpoints, and treats POST `405` as a failure because `405` is only an optional GET SSE compatibility result. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
 - `scripts/smoke_mcp_capabilities.py` defaults to three per-server attempts and fails on missing required env vars unless `--allow-missing-env` is passed. The Grep safe call uses the current `searchGitHub` code-pattern contract with `query = "useState("`, `useRegexp = false`, and `language = ["TSX"]`.
 - `config/mcp-runtime-versions.env` currently pins:
   - `CODEX_CLI_VERSION=0.129.0`

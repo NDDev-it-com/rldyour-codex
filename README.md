@@ -134,7 +134,7 @@ The installer writes `~/.codex/AGENTS.md`, registers this marketplace, enables t
 
 Local MCP launcher packages are pinned in `.mcp.json` and documented in `config/mcp-runtime-versions.env`. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke.
 
-System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and `default_permissions = ":danger-no-sandbox"`. This mirrors the current Codex full-access behavior and should be used only on the owner's trusted machines.
+System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and `default_permissions = ":danger-no-sandbox"`. This is an owner-required operating mode for trusted machines, not a temporary risk exception.
 
 Runtime smoke checks:
 
@@ -147,6 +147,8 @@ scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 ```
+
+`scripts/smoke_mcp_runtime.sh` validates remote MCP endpoints with a Streamable HTTP `initialize` POST preflight. OAuth-gated endpoints may pass with `401`/`403`; a `405` is valid only for optional GET SSE and is not accepted as a POST initialize result.
 
 Instruction docs checks:
 

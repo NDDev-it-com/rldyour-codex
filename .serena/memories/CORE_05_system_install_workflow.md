@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last commit: 622c421 fix(mcp): validate remote streamable http preflight
 Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -104,7 +104,7 @@ Validates:
 - `scripts/sync_fullrepo_branch.sh --bootstrap-init`
 - `scripts/rollback_system_codex.sh --list`
 
-`scripts/smoke_mcp_runtime.sh` retries remote URL response checks by default and accepts only success plus expected auth/method statuses for URL MCPs; use `--skip-url-check` only for intentionally offline validation.
+`scripts/smoke_mcp_runtime.sh` retries remote URL checks by default and validates URL MCPs with a Streamable HTTP JSON-RPC `initialize` POST preflight. `401`/`403` are accepted for auth-gated endpoints; POST `405` is a failure, because `405` is only valid for optional GET SSE. Use `--skip-url-check` only for intentionally offline validation.
 
 ## Invariants
 

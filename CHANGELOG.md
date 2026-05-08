@@ -22,7 +22,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - System Codex install migration now normalizes dotted, quoted, and inline-table legacy hook feature keys, with dedicated smoke coverage in `scripts/smoke_codex_hooks_migration.sh`.
 - Flow post-task state now treats stale Serena memories and stale fullrepo snapshots as pending sync instead of false green states.
 - Doctor and validation now use stricter parsed-config/current-state checks for system config, Serena memory freshness, and fullrepo sync.
-- MCP runtime smoke now retries remote URL response checks, exposes `--url-retries`/`--url-timeout`, and treats unexpected client/server status codes as failures.
+- MCP runtime smoke now checks remote URL servers with a Streamable HTTP `initialize` POST preflight, parses JSON and SSE initialize responses, accepts auth-gated `401`/`403` endpoints, and keeps retry/timeout controls.
 - MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls a third attempt.
 - Runtime Codex CLI pin updated from `0.128.0` to `0.129.0`.
 - MCP runtime pins updated for Semgrep `1.162.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.25.0`, and shadcn `4.7.0`.
