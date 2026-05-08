@@ -140,7 +140,7 @@ async def _safe_call(name: str, session: ClientSession, missing_env: list[str]) 
     if name == "grep":
         result = await session.call_tool(
             "searchGitHub",
-            {"query": "ClientSession", "useRegexp": False, "language": ["Python"]},
+            {"query": "useState(", "useRegexp": False, "language": ["TSX"]},
         )
         if result.isError or _content_len(result) == 0:
             raise ProbeFailure("searchGitHub returned an empty or error result")
@@ -347,7 +347,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--require-env", dest="allow_missing_env", action="store_false", help="Fail when env_vars are absent.")
     parser.add_argument("--include-auth", action="store_true", help="Probe auth-required MCP servers such as figma.")
     parser.add_argument("--timeout", type=float, default=90.0, help="Per-server timeout in seconds.")
-    parser.add_argument("--retries", type=int, default=2, help="Per-server retry count.")
+    parser.add_argument("--retries", type=int, default=3, help="Per-server retry count.")
     return parser.parse_args()
 
 
