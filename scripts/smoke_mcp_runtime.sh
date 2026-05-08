@@ -3,10 +3,12 @@ set -euo pipefail
 
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 URL_CHECK=1
+URL_RETRIES=${RLDYOUR_MCP_URL_RETRIES:-3}
+URL_TIMEOUT=${RLDYOUR_MCP_URL_TIMEOUT:-8}
 
 usage() {
   cat <<'EOF'
-Usage: scripts/smoke_mcp_runtime.sh [--codex-home PATH] [--skip-url-check]
+Usage: scripts/smoke_mcp_runtime.sh [--codex-home PATH] [--skip-url-check] [--url-retries N] [--url-timeout SEC]
 
 Verifies the installed MCP runtime beyond static JSON:
 - repository .mcp.json and installed config.toml contain the same servers;
@@ -24,6 +26,14 @@ while [ "$#" -gt 0 ]; do
       ;;
     --skip-url-check)
       URL_CHECK=0
+      ;;
+    --url-retries)
+      shift
+      URL_RETRIES=${1:?--url-retries requires a value}
+      ;;
+    --url-timeout)
+      shift
+      URL_TIMEOUT=${1:?--url-timeout requires a value}
       ;;
     -h|--help)
       usage
@@ -45,7 +55,7 @@ else
   ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
 fi
 
-python3 - "$ROOT" "$CODEX_HOME_DIR" "$URL_CHECK" <<'PY'
+python3 - "$ROOT" "$CODEX_HOME_DIR" "$URL_CHECK" "$URL_RETRIES" "$URL_TIMEOUT" <<'PY'
 from __future__ import annotations
 
 import json
@@ -53,6 +63,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 import tomllib
 import urllib.error
 import urllib.request
@@ -61,6 +72,8 @@ from pathlib import Path
 root = Path(sys.argv[1])
 codex_home = Path(sys.argv[2])
 url_check = sys.argv[3] == "1"
+url_retries = int(sys.argv[4])
+url_timeout = float(sys.argv[5])
 repo_mcp = root / "plugins/rldyour-mcps/.mcp.json"
 config_path = codex_home / "config.toml"
 codex = shutil.which(os.environ.get("CODEX_BIN", "codex"))
@@ -90,6 +103,30 @@ env["CODEX_HOME"] = str(codex_home)
 print("rldyour MCP runtime smoke")
 print(f"codex_home: {codex_home}")
 print(f"servers: {len(repo_servers)}")
+
+
+def probe_url(name: str, url: str) -> str:
+    request = urllib.request.Request(
+        url,
+        method="GET",
+        headers={"Accept": "application/json, text/event-stream, */*"},
+    )
+    last_error = ""
+    attempts = max(1, url_retries)
+    for attempt in range(1, attempts + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=url_timeout) as response:
+                return f"HTTP {response.status}"
+        except urllib.error.HTTPError as exc:
+            if exc.code < 500:
+                return f"HTTP {exc.code}"
+            last_error = f"returned HTTP {exc.code}"
+        except Exception as exc:
+            last_error = f"unreachable: {exc}"
+        if attempt < attempts:
+            print(f"retry   url {name} attempt {attempt} failed: {last_error}", file=sys.stderr)
+            time.sleep(min(attempt, 3))
+    raise RuntimeError(last_error)
 
 for name in sorted(repo_servers):
     config = config_servers.get(name, {})
@@ -123,21 +160,11 @@ for name in sorted(repo_servers):
 
     url = config.get("url")
     if url and url_check:
-        request = urllib.request.Request(
-            str(url),
-            method="GET",
-            headers={"Accept": "application/json, text/event-stream, */*"},
-        )
         try:
-            with urllib.request.urlopen(request, timeout=8) as response:
-                print(f"ok      url {name}: HTTP {response.status}")
-        except urllib.error.HTTPError as exc:
-            if exc.code < 500:
-                print(f"ok      url {name}: HTTP {exc.code}")
-            else:
-                errors.append(f"{name}: remote endpoint returned HTTP {exc.code}")
+            status = probe_url(name, str(url))
+            print(f"ok      url {name}: {status}")
         except Exception as exc:
-            errors.append(f"{name}: remote endpoint unreachable: {exc}")
+            errors.append(f"{name}: remote endpoint {exc}")
 
 if errors:
     raise SystemExit("\n".join(errors))
