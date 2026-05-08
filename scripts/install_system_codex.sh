@@ -218,6 +218,8 @@ features_table_seen = False
 feature_dotted_lines: list[str] = []
 hooks_written = False
 current_header: str | None = None
+hook_feature_keys = {"codex_hooks", "hooks", "plugin_hooks"}
+legacy_hook_feature_keys = {"codex_hooks", "plugin_hooks"}
 
 
 def unquote_toml_key(segment: str) -> str:
@@ -323,13 +325,13 @@ for raw_line in existing.splitlines():
             if not isinstance(inline_features, dict):
                 continue
             for feature_key, feature_value in inline_features.items():
-                if feature_key in {"codex_hooks", "hooks"}:
+                if feature_key in hook_feature_keys:
                     continue
                 feature_dotted_lines.append(f"{toml_key(str(feature_key))} = {toml_value(feature_value)}")
             continue
         if len(key_path) == 2 and key_path[0] == "features":
             feature_key = key_path[1]
-            if feature_key in {"codex_hooks", "hooks"}:
+            if feature_key in hook_feature_keys:
                 continue
             feature_dotted_lines.append(f"{toml_key(feature_key)} = {key_info[1]}")
             continue
@@ -338,7 +340,7 @@ for raw_line in existing.splitlines():
         key_info = assignment_key_path(raw_line)
         key_path = key_info[0] if key_info else []
         feature_key = key_path[0] if len(key_path) == 1 else ""
-        if feature_key == "codex_hooks":
+        if feature_key in legacy_hook_feature_keys:
             continue
         if feature_key == "hooks":
             if not hooks_written:
