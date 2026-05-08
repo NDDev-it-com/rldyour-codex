@@ -18,6 +18,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
+- System Codex install now writes `[features].hooks = true` and removes the deprecated `codex_hooks` feature key from managed config.
+- Runtime Codex CLI pin updated from `0.128.0` to `0.129.0`.
 - `rldyour-flow` plugin version updated to `0.2.4` for read-only `ry-init` memory discipline and fullrepo bootstrap init behavior.
 - `ry-init` is now explicitly read-only for Serena memories by default; it reports memory candidates instead of writing `.serena` unless the user requested memory sync or a stale-memory hook requires it.
 - `serena-memory-sync` no longer auto-runs for read-only init, log audits, server snapshots, report-only reviews, or exploratory debugging without an explicit memory-sync request.

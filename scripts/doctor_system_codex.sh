@@ -104,7 +104,6 @@ repo_root = os.environ["RLDYOUR_REPO_ROOT"]
 text = path.read_text(encoding="utf-8")
 
 checks = []
-checks.append(("codex_hooks enabled", re.search(r"(?ms)^\[features\]\s*(?:\n(?!\[).*)*^\s*codex_hooks\s*=\s*true\s*$", text) is not None))
 checks.append(("marketplace source", f'source = "{repo_root}"' in text))
 checks.append(("repo trusted", f'[projects."{repo_root}"]' in text and 'trust_level = "trusted"' in text))
 
@@ -113,6 +112,10 @@ try:
     config_data = tomllib.loads(text)
 except Exception:
     config_data = {}
+
+features = config_data.get("features") or {}
+checks.append(("hooks feature enabled", features.get("hooks") is True))
+checks.append(("legacy codex_hooks absent", "codex_hooks" not in features))
 
 checks.append(("yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
 checks.append(("approval policy never", config_data.get("approval_policy") == "never"))
