@@ -257,7 +257,25 @@ else
 fi
 
 step "Serena memory state"
-python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool >/dev/null
+python3 - <<'PY'
+from __future__ import annotations
+
+import json
+import subprocess
+
+proc = subprocess.run(
+    ["python3", "plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"],
+    check=False,
+    capture_output=True,
+    text=True,
+)
+if proc.returncode != 0:
+    raise SystemExit(proc.stderr.strip() or proc.stdout.strip() or "serena memory state failed")
+payload = json.loads(proc.stdout)
+if payload.get("is_current") is not True:
+    raise SystemExit(f"Serena memories are stale for HEAD: {payload!r}")
+print(f"Serena memories current for {payload.get('head_sha', 'unknown')}")
+PY
 
 step "Flow post-task state"
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool >/dev/null

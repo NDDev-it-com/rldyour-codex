@@ -209,6 +209,10 @@ def local_ref_sha(ref: str) -> str:
     return _stdout("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}", check=False)
 
 
+def ref_tree_sha(ref: str) -> str:
+    return _stdout("rev-parse", "--verify", "--quiet", f"{ref}^{{tree}}", check=False)
+
+
 def fetch_fullrepo(remote: str, branch: str) -> bool:
     spec = f"+refs/heads/{branch}:refs/remotes/{remote}/{branch}"
     proc = _git("fetch", "--quiet", remote, spec, check=False)
@@ -389,6 +393,11 @@ def status(remote: str, branch: str) -> dict[str, object]:
     root = repo_root()
     remote_sha = remote_branch_sha(remote, branch)
     local_sha = local_ref_sha(f"refs/heads/{branch}")
+    remote_tree = ""
+    if remote_sha and fetch_fullrepo(remote, branch):
+        remote_tree = ref_tree_sha(f"refs/remotes/{remote}/{branch}")
+    local_tree = ref_tree_sha(f"refs/heads/{branch}") if local_sha else ""
+    expected_tree, agent_paths = build_fullrepo_tree(root)
     return {
         "is_git_repo": True,
         "root": str(root),
@@ -399,9 +408,14 @@ def status(remote: str, branch: str) -> dict[str, object]:
         "remote_fullrepo_exists": bool(remote_sha),
         "remote_fullrepo_sha": remote_sha[:12] if remote_sha else "",
         "local_fullrepo_sha": local_sha[:12] if local_sha else "",
+        "expected_fullrepo_tree": expected_tree,
+        "remote_fullrepo_tree": remote_tree,
+        "local_fullrepo_tree": local_tree,
+        "fullrepo_matches_worktree": bool(remote_tree and remote_tree == expected_tree),
+        "local_fullrepo_matches_worktree": bool(local_tree and local_tree == expected_tree),
         "exclude_installed": exclude_installed(),
         "tracked_agent_paths": tracked_agent_paths_in_index(),
-        "worktree_agent_paths": iter_worktree_agent_files(root),
+        "worktree_agent_paths": agent_paths,
         "dirty_non_agent_paths": dirty_non_agent_paths(),
     }
 

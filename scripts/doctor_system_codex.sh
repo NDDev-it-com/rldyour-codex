@@ -95,27 +95,24 @@ if [ -f "$CONFIG_PATH" ]; then
 from __future__ import annotations
 
 import os
-import re
-import sys
+import tomllib
 from pathlib import Path
 
 path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
 repo_root = os.environ["RLDYOUR_REPO_ROOT"]
 text = path.read_text(encoding="utf-8")
+config_data = tomllib.loads(text)
 
 checks = []
-checks.append(("marketplace source", f'source = "{repo_root}"' in text))
-checks.append(("repo trusted", f'[projects."{repo_root}"]' in text and 'trust_level = "trusted"' in text))
-
-try:
-    import tomllib
-    config_data = tomllib.loads(text)
-except Exception:
-    config_data = {}
+marketplace = (config_data.get("marketplaces") or {}).get("rldyour-codex") or {}
+checks.append(("marketplace source", marketplace.get("source") == repo_root and marketplace.get("source_type") == "local"))
+project = (config_data.get("projects") or {}).get(repo_root) or {}
+checks.append(("repo trusted", project.get("trust_level") == "trusted"))
 
 features = config_data.get("features") or {}
 checks.append(("hooks feature enabled", features.get("hooks") is True))
 checks.append(("legacy codex_hooks absent", "codex_hooks" not in features))
+checks.append(("legacy plugin_hooks absent", "plugin_hooks" not in features))
 
 checks.append(("yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
 checks.append(("approval policy never", config_data.get("approval_policy") == "never"))
@@ -139,9 +136,10 @@ plugins = [
     "rldyour-flow@rldyour-codex",
     "rldyour-rules@rldyour-codex",
 ]
+configured_plugins = config_data.get("plugins") or {}
 for plugin in plugins:
-    pattern = rf'(?ms)^\[plugins\."{re.escape(plugin)}"\]\s*(?:\n(?!\[).*)*^\s*enabled\s*=\s*true\s*$'
-    checks.append((f"plugin enabled {plugin}", re.search(pattern, text) is not None))
+    plugin_config = configured_plugins.get(plugin) or {}
+    checks.append((f"plugin enabled {plugin}", plugin_config.get("enabled") is True))
 
 mcp_servers = [
     "serena",
@@ -157,8 +155,9 @@ mcp_servers = [
     "figma",
     "openaiDeveloperDocs",
 ]
+configured_mcp_servers = config_data.get("mcp_servers") or {}
 for server in mcp_servers:
-    checks.append((f"mcp configured {server}", f"[mcp_servers.{server}]" in text))
+    checks.append((f"mcp configured {server}", server in configured_mcp_servers))
 
 failed = False
 for label, ok in checks:
@@ -187,6 +186,25 @@ if python3 "$ROOT/plugins/rldyour-flow/scripts/fullrepo_sync.py" --status-json >
   pass "fullrepo state script"
   if python3 -m json.tool /tmp/rldyour-codex-fullrepo-state.json >/dev/null 2>&1; then
     pass "fullrepo state JSON"
+    if python3 - /tmp/rldyour-codex-fullrepo-state.json <<'PY'
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+payload = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+dirty = payload.get("dirty_non_agent_paths") or []
+if dirty:
+    raise SystemExit(f"non-agent files are dirty: {dirty}")
+if payload.get("branch") == "main" and payload.get("worktree_agent_paths") and payload.get("fullrepo_matches_worktree") is not True:
+    raise SystemExit("fullrepo does not match current HEAD plus agent-only files")
+PY
+    then
+      pass "fullrepo current-state gate"
+    else
+      fail "fullrepo current-state gate"
+    fi
   else
     fail "fullrepo state JSON invalid"
   fi

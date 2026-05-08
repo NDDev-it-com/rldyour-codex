@@ -240,10 +240,12 @@ def state() -> dict[str, Any]:
     fullrepo_needs_attention = bool(fullrepo_state) and (
         not bool(fullrepo_state.get("exclude_installed", True))
         or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("remote_fullrepo_exists", False)))
+        or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("fullrepo_matches_worktree", True)))
     )
 
-    needs_flow_sync = serena_current and bool(
-        dirty_files
+    needs_flow_sync = bool(
+        not serena_current
+        or dirty_files
         or ahead
         or behind
         or doc_files_changed
