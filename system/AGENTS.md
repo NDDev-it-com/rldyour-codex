@@ -113,6 +113,9 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 - Use subagents only when explicitly allowed by the user, by an active workflow such as `ry-start` or `ry-review`, or by current system instructions.
 - Every subagent prompt must be self-contained: task, context, files, constraints, expected output, read-only/write scope, and known risks.
 - Do not delegate the immediate blocking task if the parent workflow cannot progress without the answer.
+- Managed subagent role files live in `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` and are installed from repository `system/agents/*.toml`.
+- Managed subagent roles must use `model = "gpt-5.5"` and `model_reasoning_effort = "medium"` unless the owner explicitly changes the system default.
+- When spawning an ad hoc subagent role that is not backed by a managed agent TOML file, set the spawn override to `model = "gpt-5.5"` and `reasoning_effort = "medium"`.
 
 ## Git And Delivery
 
@@ -133,7 +136,7 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 
 The canonical source for this global setup is the `rldyour-codex` repository.
 
-System Codex is intentionally configured for owner-controlled YOLO execution with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, and `[features].hooks = true`. Deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
+System Codex is intentionally configured for owner-controlled YOLO execution with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, managed subagents on `gpt-5.5`/`medium`, and `[features].hooks = true` plus `[features].multi_agent = true`. Deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
 
 Use:
 

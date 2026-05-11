@@ -12,7 +12,7 @@ Usage:
   scripts/rollback_system_codex.sh [--codex-home DIR] --list
   scripts/rollback_system_codex.sh [--codex-home DIR] --restore BACKUP_NAME [--dry-run]
 
-Restore AGENTS.md and config.toml from installer-created rldyour-codex backups.
+Restore AGENTS.md, config.toml, and managed agents/*.toml from installer-created rldyour-codex backups.
 EOF
 }
 
@@ -106,11 +106,29 @@ else
       cp "$CODEX_HOME_DIR/$file" "$PRE_RESTORE_DIR/$file"
     fi
   done
+  if [ -d "$CODEX_HOME_DIR/agents" ]; then
+    mkdir -p "$PRE_RESTORE_DIR/agents"
+    find "$CODEX_HOME_DIR/agents" -maxdepth 1 -type f -name '*.toml' -print | sort | while IFS= read -r agent_file; do
+      cp "$agent_file" "$PRE_RESTORE_DIR/agents/"
+    done
+  fi
   printf 'current state backed up to %s\n' "$PRE_RESTORE_DIR"
 fi
 
 restore_file AGENTS.md
 restore_file config.toml
+if [ -d "$SOURCE_DIR/agents" ]; then
+  find "$SOURCE_DIR/agents" -maxdepth 1 -type f -name '*.toml' -print | sort | while IFS= read -r source; do
+    target="$CODEX_HOME_DIR/agents/$(basename "$source")"
+    if [ "$DRY_RUN" = "1" ]; then
+      printf 'would restore %s -> %s\n' "$source" "$target"
+    else
+      mkdir -p "$(dirname "$target")"
+      cp "$source" "$target"
+      printf 'restored %s\n' "$target"
+    fi
+  done
+fi
 
 if [ "$DRY_RUN" = "0" ]; then
   printf 'Restore complete. Restart Codex and run scripts/doctor_system_codex.sh.\n'
