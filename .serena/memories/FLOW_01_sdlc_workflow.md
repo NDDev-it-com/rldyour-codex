@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
-Scope: plugins/rldyour-flow, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
+Scope: plugins/rldyour-flow, plugins/rldyour-flow/references/reviewer-protocol.md, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md, system/agents/*.toml
 Area: FLOW
 -->
 
@@ -31,6 +31,8 @@ Area: FLOW
 - `AGENTS.md`
 - `.claude/CLAUDE.md`
 - `system/AGENTS.md`
+- `system/agents/*.toml`
+- `plugins/rldyour-flow/references/reviewer-protocol.md`
 - `docs/release-process.md`, `docs/rollback-restore.md`, `docs/observability.md`
 
 ## Entry Points
@@ -123,6 +125,13 @@ Flow treats branch hygiene as part of final synchronization.
 - `needs_instruction_docs_review` flag
 
 Flow stop flow uses this state to decide whether `$instruction-docs-sync` is required.
+
+## Managed Reviewer Subagents
+
+- `ry-start` and `ry-review` reviewer phases may use managed Codex custom agents installed from `system/agents/*.toml`.
+- Managed reviewer roles are registered in system Codex through `[agents.<name>]` config entries and installed under `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`.
+- Managed rldyour reviewer subagents use `model = "gpt-5.5"` and `model_reasoning_effort = "medium"`.
+- `plugins/rldyour-flow/references/reviewer-protocol.md` records the parent workflow rule: ad hoc reviewer subagents that are not backed by managed TOML must explicitly override spawn model to `gpt-5.5` and reasoning effort to `medium`.
 
 ## Fullrepo Contract
 

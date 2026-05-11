@@ -6,8 +6,8 @@ Rollback is a first-class workflow because this repository writes global Codex c
 
 - Default commands are read-only.
 - Restore requires an explicit backup timestamp.
-- Before restore, the rollback script creates a pre-restore backup of the current `AGENTS.md` and `config.toml`.
-- The script restores only files that the installer backs up: `AGENTS.md` and `config.toml`.
+- Before restore, the rollback script creates a pre-restore backup of the current `AGENTS.md`, `config.toml`, and managed `agents/*.toml`.
+- The script restores only files that the installer backs up: `AGENTS.md`, `config.toml`, and managed `agents/*.toml`.
 - Plugin cache rollback is handled by checking out an older Git revision and rerunning the installer.
 - Agent-only context rollback is handled by restoring or republishing the `fullrepo` branch after the normal branch state is selected.
 

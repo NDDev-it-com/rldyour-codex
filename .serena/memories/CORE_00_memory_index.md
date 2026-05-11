@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-11
-Last commit: 7825a59 chore(codex): reproduce managed system defaults
-Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
+Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, system/agents, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
 
@@ -15,7 +15,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `7825a597d920fa88938a9e6c89c2045d3cdddcb2`
+- Current source HEAD: `6d70b159bec8b3a6ddb33f58051239c57a5647ac`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
@@ -32,7 +32,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - Plugin capabilities: `plugins/<plugin>/.codex-plugin/plugin.json`
 - Skill routing: `plugins/<plugin>/skills/*/SKILL.md`, `plugins/<plugin>/skills/*/agents/openai.yaml`, `config/skill-routing-policy.json`
 - MCP runtime: `plugins/rldyour-mcps/.mcp.json`, `config/mcp-runtime-versions.env`
-- System install/runtime: `scripts/install_system_codex.sh`, `scripts/smoke_codex_hooks_migration.sh`, `scripts/doctor_system_codex.sh`, `${CODEX_HOME:-$HOME/.codex}/config.toml`
+- System install/runtime: `scripts/install_system_codex.sh`, `scripts/smoke_codex_hooks_migration.sh`, `scripts/doctor_system_codex.sh`, `scripts/rollback_system_codex.sh`, `system/agents/*.toml`, `${CODEX_HOME:-$HOME/.codex}/config.toml`, `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`
 - Release and plugin metadata validation: `scripts/validate_plugin_versions.py`
 - Fullrepo and flow sync: `scripts/sync_fullrepo_branch.sh`, `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `plugins/rldyour-flow/scripts/flow_post_task_state.py`, `plugins/rldyour-flow/scripts/git_sync_audit.sh`
 - Local Git guard: `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`, `scripts/install_local_git_hooks.sh`, `scripts/smoke_local_git_guard.sh`
@@ -66,7 +66,8 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `branch_cleanup_state` is a finish gate: merged local branches, merged remote branches, and merged workflow worktrees keep Flow sync pending until cleaned or explicitly reported as blockers. Protected branches such as `main` and `fullrepo` are excluded.
 - Fullrepo status compares the expected tree from current `HEAD` plus agent-only files against local/remote `fullrepo`; stale snapshots keep Flow sync pending.
 - MCP package specs must stay pinned; `@latest` is invalid in runtime definitions.
-- Generated system Codex config starts with `#:schema https://developers.openai.com/codex/config-schema.json`, keeps `[features].hooks = true`, excludes legacy hook feature keys, writes `model = "gpt-5.5"` plus `model_reasoning_effort = "xhigh"`, and reproduces approved MCP tool overrides for sequential-thinking, DeepWiki, and Grep.
+- Generated system Codex config starts with `#:schema https://developers.openai.com/codex/config-schema.json`, keeps `[features].hooks = true` and `[features].multi_agent = true`, excludes legacy hook feature keys, writes parent `model = "gpt-5.5"` plus `model_reasoning_effort = "xhigh"`, registers managed `[agents]`, installs `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` from `system/agents/*.toml`, and requires managed subagents to use `gpt-5.5` with `medium` reasoning.
+- Managed subagent roles currently tracked in `system/agents` are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Remote URL MCP runtime smoke uses Streamable HTTP JSON-RPC `initialize` POST preflight, not raw GET reachability; auth-gated `401`/`403` can pass, but POST `405` fails.
 - Do not store secrets, tokens, cookies, private keys, raw credentials, or browser evidence in memories.
 

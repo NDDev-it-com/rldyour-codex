@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-11
-Last commit: 7825a59 chore(codex): reproduce managed system defaults
-Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
+Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -17,7 +17,8 @@ This memory records the installed system Codex runtime state for this repository
 - `plugins/*/.codex-plugin/plugin.json`: plugin metadata and boundaries.
 - `plugins/rldyour-mcps/.mcp.json`: MCP transport source-of-truth.
 - `system/AGENTS.md`: tracked canonical global instruction template.
-- `scripts/install_system_codex.sh`: installer for config, marketplace, plugins, MCP, and cache.
+- `system/agents/*.toml`: tracked canonical Codex custom subagent role configs.
+- `scripts/install_system_codex.sh`: installer for config, managed subagent roles, marketplace, plugins, MCP, and cache.
 - `scripts/smoke_codex_hooks_migration.sh`: focused installer smoke for legacy Codex hooks feature migration forms.
 - `scripts/doctor_system_codex.sh`: installed-state verification.
 - `scripts/validate_marketplace.sh`: repository/runtime consistency check.
@@ -27,6 +28,7 @@ This memory records the installed system Codex runtime state for this repository
 - `scripts/smoke_hooks.sh`: hook smoke and temporary lifecycle verification.
 - `scripts/check_mcp_runtime_versions.py`: pinned package freshness policy.
 - `${CODEX_HOME:-$HOME/.codex}/config.toml`: active machine config.
+- `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`: active managed subagent role configs.
 - `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex`: plugin cache used by Codex.
 - `.github/workflows/validate.yml`: portable CI validation matrix.
 - `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`: installed global instruction output.
@@ -55,9 +57,25 @@ This memory records the installed system Codex runtime state for this repository
   - `model = "gpt-5.5"`.
   - `model_reasoning_effort = "xhigh"`.
   - `[profiles.rldyour-yolo]` repeats the same values.
-- `[features] hooks = true`.
-- The installer removes deprecated/unstable hook feature keys `codex_hooks` and `plugin_hooks` from table, dotted, quoted, and inline-table forms, rewrites any existing `hooks = false` to `hooks = true`, and preserves unrelated feature flags such as `shell_snapshot = false`.
+- `[features] hooks = true` and `multi_agent = true`.
+- `[agents] max_threads = 6` and `max_depth = 1`.
+- `[agents.<name>]` registers each managed role with its description and `config_file` pointing at `${CODEX_HOME:-$HOME/.codex}/agents/<name>.toml`.
+- The installer removes deprecated/unstable hook feature keys `codex_hooks` and `plugin_hooks` from table, dotted, quoted, and inline-table forms, rewrites any existing `hooks = false` to `hooks = true`, rewrites any existing managed `multi_agent` value to `true`, and preserves unrelated feature flags such as `shell_snapshot = false`.
 - Trusted project includes repo root via `[projects."<repo-root>"]` with `trust_level = "trusted"`.
+
+### Managed subagent roles
+
+- Source files live in `system/agents/*.toml`.
+- Installed files live in `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` and must match source exactly.
+- All managed roles use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`:
+  - `architecture-reviewer`
+  - `browser-tester`
+  - `consistency-reviewer`
+  - `quality-reviewer`
+  - `research-explorer`
+  - `security-audit`
+  - `serena-sync`
+  - `test-reviewer`
 
 ### Enabled plugins in installed config
 
@@ -83,7 +101,7 @@ This memory records the installed system Codex runtime state for this repository
   - plugin manifests
   - `plugins/rldyour-mcps/.mcp.json`
   - environment overrides `UVX_BIN`, `BUNX_BIN`, `DART_BIN`, and `CODEX_HOME`.
-  - managed owner defaults in `scripts/install_system_codex.sh`, including `gpt-5.5`, `xhigh`, and MCP tool approval overrides.
+  - managed owner defaults in `scripts/install_system_codex.sh`, including parent `gpt-5.5`, parent `xhigh`, subagent `gpt-5.5`, subagent `medium`, and MCP tool approval overrides.
 
 ### Runtime values and portability
 
@@ -114,10 +132,11 @@ This memory records the installed system Codex runtime state for this repository
 - Do not commit `${CODEX_HOME:-$HOME/.codex}/config.toml` or plugin cache as repository content.
 - Do not store raw credentials or tokens in repo files or memories.
 - Installed state is derived from repository sources; do not hand-edit config as the source of truth.
-- Use `scripts/install_system_codex.sh --apply` after any change to manifests, `system/AGENTS.md`, `.mcp.json`, marketplace list, or installer config.
+- Use `scripts/install_system_codex.sh --apply` after any change to manifests, `system/AGENTS.md`, `system/agents/*.toml`, `.mcp.json`, marketplace list, or installer config.
 - Codex hooks must use the stable `hooks` feature key, not deprecated `codex_hooks` or under-development `plugin_hooks`.
 - Live `codex features list` on Codex CLI `0.130.0` reports `hooks` as stable and enabled, `plugin_hooks` as under development and disabled, and no `codex_hooks` entry; keep repository config on `[features].hooks = true`.
 - Generated system config must keep the official schema comment first; `scripts/doctor_system_codex.sh` and `scripts/smoke_codex_hooks_migration.sh` verify it.
+- Managed subagent configs must stay source-backed and installed from `system/agents/*.toml`; do not hand-edit `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` as source of truth.
 - Clean `CODEX_HOME` installs must reproduce managed system defaults and MCP tool approvals; transient runtime/UI state such as `[tui.model_availability_nux]` is intentionally not source-of-truth.
 - Restart Codex when system state changes.
 - Keep `system/AGENTS.md` and `AGENTS.md` aligned as template/source relationship.

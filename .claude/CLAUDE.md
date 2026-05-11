@@ -20,6 +20,7 @@ This repository is the owner's personal Codex marketplace and system setup sourc
 - `plugins/rldyour-flow/hooks.json`: Codex flow lifecycle hooks.
 - `plugins/rldyour-serena-mcp/hooks.json`: Serena lifecycle hooks.
 - `system/AGENTS.md`: canonical global Codex instructions installed to `~/.codex/AGENTS.md`.
+- `system/agents/*.toml`: managed Codex custom subagent role configs installed to `~/.codex/agents/*.toml`.
 - `AGENTS.md`: Codex-native project instructions, restored from and published to `fullrepo`.
 - `.claude/CLAUDE.md`: Claude Code-native project memory, restored from and published to `fullrepo`.
 - `.serena/memories/*.md`: verified project facts.
@@ -97,7 +98,7 @@ scripts/doctor_system_codex.sh
 ## System Install
 
 - `scripts/install_system_codex.sh --dry-run` previews the system Codex install.
-- `scripts/install_system_codex.sh --apply` installs global Codex instructions, config sections, the official Codex config schema hint, `[features].hooks = true`, deprecated or unstable hook feature key removal, YOLO/model defaults, approved MCP tool overrides, marketplace registration, and plugin cache.
-- `scripts/doctor_system_codex.sh` verifies installed state, including the config schema hint, active `hooks` feature, and absence of deprecated or unstable hook feature keys.
-- `scripts/rollback_system_codex.sh --list` and `--restore <backup>` manage installer backups.
+- `scripts/install_system_codex.sh --apply` installs global Codex instructions, managed `~/.codex/agents/*.toml`, config sections, the official Codex config schema hint, `[features].hooks = true`, `[features].multi_agent = true`, deprecated or unstable hook feature key removal, YOLO/model defaults, approved MCP tool overrides, marketplace registration, and plugin cache.
+- `scripts/doctor_system_codex.sh` verifies installed state, including the config schema hint, active `hooks` and `multi_agent` features, managed subagent config parity, managed subagent `gpt-5.5`/`medium` settings, and absence of deprecated or unstable hook feature keys.
+- `scripts/rollback_system_codex.sh --list` and `--restore <backup>` manage installer backups for `AGENTS.md`, `config.toml`, and managed `agents/*.toml`.
 - `scripts/collect_diagnostics.sh` writes ignored diagnostics bundles for failure triage.

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-11
-Last commit: 7825a59 chore(codex): reproduce managed system defaults
-Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
+Scope: system/AGENTS.md, system/agents/*.toml, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml
 Area: CORE
 -->
 
@@ -13,6 +13,7 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 
 - global `~/.codex/AGENTS.md`
 - `~/.codex/config.toml` managed sections
+- managed `~/.codex/agents/*.toml` Codex custom subagent role configs
 - owner-selected model defaults and MCP tool approval overrides
 - plugin cache from `plugins/rldyour-*`
 - `plugins` + MCP runtime config synchronization
@@ -20,6 +21,7 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 ## Source Of Truth
 
 - `system/AGENTS.md` (template source)
+- `system/agents/*.toml` (managed subagent role source)
 - `scripts/install_system_codex.sh`
 - `scripts/smoke_codex_hooks_migration.sh`
 - `scripts/doctor_system_codex.sh`
@@ -37,10 +39,16 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 - Default mode: dry-run.
 - `--apply` writes:
   - `CODEX_HOME/AGENTS.md` from `system/AGENTS.md`
+  - `CODEX_HOME/agents/*.toml` from `system/agents/*.toml`
   - patched `CODEX_HOME/config.toml`
   - `[features].hooks = true`
+  - `[features].multi_agent = true`
+  - `[agents] max_threads = 6`
+  - `[agents] max_depth = 1`
+  - `[agents.<name>] config_file` for each managed subagent role
   - `model = "gpt-5.5"`
   - `model_reasoning_effort = "xhigh"`
+  - managed subagent `model = "gpt-5.5"` and `model_reasoning_effort = "medium"`
   - approved MCP tool overrides for sequential-thinking, DeepWiki, and Grep
   - deprecated/unstable hook key removal for `codex_hooks` and `plugin_hooks` from `[features]`, quoted keys, dotted root keys, and inline root feature tables
   - unrelated feature flags preserved when hook keys are normalized
@@ -48,7 +56,7 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 - optional:
   - `--codex-home PATH`
   - `--trust-home` (explicit opt-in only; default false)
-- backs up existing `AGENTS.md` and `config.toml` into:
+- backs up existing `AGENTS.md`, `config.toml`, and managed `agents/*.toml` into:
   - `$CODEX_HOME/backups/rldyour-codex/<timestamp>/`
 
 ### `scripts/doctor_system_codex.sh`
@@ -60,6 +68,11 @@ Validates:
   - profile and permissions (`rldyour-yolo`, `never`, `danger-full-access`, `:danger-no-sandbox`)
   - owner-selected model defaults (`gpt-5.5`, `xhigh`)
   - `[features].hooks = true`
+  - `[features].multi_agent = true`
+  - `[agents] max_threads = 6` and `max_depth = 1`
+  - managed subagent registrations point to `CODEX_HOME/agents/*.toml`
+  - installed managed subagent files match `system/agents/*.toml`
+  - installed managed subagents use `gpt-5.5` with `medium` reasoning
   - no legacy `codex_hooks` key and no unstable `plugin_hooks` key under `[features]`
   - approved MCP tool overrides
 - required marketplace plugin registrations
@@ -89,7 +102,7 @@ Validates:
 
 - `scripts/rollback_system_codex.sh --list`: list available install backups.
 - `scripts/rollback_system_codex.sh --restore <backup> [--dry-run]`:
-  - restore `AGENTS.md` and `config.toml` from backup
+  - restore `AGENTS.md`, `config.toml`, and managed `agents/*.toml` from backup
   - prints `Dry-run` plan without filesystem writes when requested.
 - Pre-restore of current state is created automatically during real restore.
 

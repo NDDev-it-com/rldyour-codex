@@ -128,13 +128,13 @@ Run the full bootstrap smoke flow on a new or resynced machine:
 scripts/bootstrap_check.sh --apply
 ```
 
-The installer writes `~/.codex/AGENTS.md`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks, writes the official Codex config schema hint, applies the owner-requested YOLO permission defaults, sets the owner-selected model defaults, writes approved MCP tool overrides, and synchronizes the local plugin cache. Existing `~/.codex/AGENTS.md` and `~/.codex/config.toml` are backed up before write operations. Secrets and OAuth tokens are never written by this repository.
+The installer writes `~/.codex/AGENTS.md`, writes managed `~/.codex/agents/*.toml` subagent role configs, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies the owner-requested YOLO permission defaults, sets the owner-selected parent and subagent model defaults, writes approved MCP tool overrides, and synchronizes the local plugin cache. Existing `~/.codex/AGENTS.md`, managed subagent configs, and `~/.codex/config.toml` are backed up before write operations. Secrets and OAuth tokens are never written by this repository.
 
 `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
 
 Local MCP launcher packages are pinned in `.mcp.json` and documented in `config/mcp-runtime-versions.env`. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke.
 
-System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. This is an owner-required operating mode for trusted machines, not a temporary risk exception.
+System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. Managed subagent roles in `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"` so orchestration uses the owner's selected subagent default instead of stale local role files. This is an owner-required operating mode for trusted machines, not a temporary risk exception.
 
 Runtime smoke checks:
 
