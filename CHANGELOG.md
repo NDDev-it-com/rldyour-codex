@@ -27,6 +27,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - System Codex install now writes the official Codex config schema hint at the top of generated `config.toml`, and doctor/migration smoke verify it.
 - System Codex install now reproduces the owner-selected `gpt-5.5`/`xhigh` model defaults and approved MCP tool overrides from a clean `CODEX_HOME`.
 - Plugin release validation now enforces Codex marketplace policy fields, plugin interface metadata, relative bundled capability paths, default prompt limits, and brand color format.
+- System Codex install now manages `~/.codex/agents/*.toml` subagent role configs from `system/agents/*.toml`, enables `features.multi_agent`, and verifies managed subagents use `gpt-5.5` with medium reasoning.
 - Runtime Codex CLI pin updated from `0.128.0` to `0.130.0`.
 - MCP Python SDK pin updated from `1.27.0` to `1.27.1` for the latest compatibility fixes.
 - MCP runtime pins updated for Semgrep `1.162.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.25.0`, and shadcn `4.7.0`.

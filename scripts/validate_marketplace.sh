@@ -220,6 +220,65 @@ if errors:
 print(f"validated OpenAI metadata files: {count}")
 PY
 
+step "System subagent configs"
+python3 - "$CODEX_HOME_DIR" <<'PY'
+from __future__ import annotations
+
+import sys
+import tomllib
+from pathlib import Path
+
+CODEX_HOME = Path(sys.argv[1])
+SYSTEM_AGENT_DIR = Path("system/agents")
+INSTALLED_AGENT_DIR = CODEX_HOME / "agents"
+EXPECTED_MODEL = "gpt-5.5"
+EXPECTED_REASONING = "medium"
+REQUIRED_FIELDS = ("name", "description", "developer_instructions")
+
+errors: list[str] = []
+source_files = sorted(SYSTEM_AGENT_DIR.glob("*.toml"))
+if not source_files:
+    errors.append("system/agents: expected managed subagent TOML files")
+
+for path in source_files:
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        errors.append(f"{path}: TOML parse failed: {exc}")
+        continue
+
+    name = data.get("name")
+    if name != path.stem:
+        errors.append(f"{path}: name must match filename stem")
+    for field in REQUIRED_FIELDS:
+        value = data.get(field)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{path}: missing non-empty {field}")
+    if data.get("model") != EXPECTED_MODEL:
+        errors.append(f"{path}: model must be {EXPECTED_MODEL}")
+    if data.get("model_reasoning_effort") != EXPECTED_REASONING:
+        errors.append(f"{path}: model_reasoning_effort must be {EXPECTED_REASONING}")
+    nicknames = data.get("nickname_candidates")
+    if nicknames is not None:
+        if not isinstance(nicknames, list) or not all(isinstance(item, str) and item for item in nicknames):
+            errors.append(f"{path}: nickname_candidates must be a non-empty string list when present")
+        elif len(set(nicknames)) != len(nicknames):
+            errors.append(f"{path}: nickname_candidates must be unique")
+
+    installed = INSTALLED_AGENT_DIR / path.name
+    if INSTALLED_AGENT_DIR.exists():
+        if not installed.is_file():
+            errors.append(f"{installed}: missing installed managed subagent config")
+        elif installed.read_text(encoding="utf-8") != path.read_text(encoding="utf-8"):
+            errors.append(f"{installed}: differs from {path}")
+
+if errors:
+    print("\n".join(errors), file=sys.stderr)
+    raise SystemExit(1)
+
+print(f"validated managed subagent configs: {len(source_files)}")
+PY
+
 step "Shell scripts"
 shellcheck plugins/rldyour-serena-mcp/hooks/*.sh plugins/rldyour-serena-mcp/scripts/*.sh plugins/rldyour-flow/hooks/*.sh plugins/rldyour-flow/scripts/*.sh plugins/rldyour-lsps/scripts/*.sh scripts/*.sh
 

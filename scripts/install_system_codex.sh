@@ -15,11 +15,14 @@ Default mode is --dry-run. Use --apply to write files.
 
 Managed state:
 - CODEX_HOME/AGENTS.md from system/AGENTS.md
+- CODEX_HOME/agents/*.toml from system/agents/*.toml
 - rldyour-codex marketplace registration
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
 - hooks feature flag
+- multi-agent feature flag
 - owner-requested YOLO permission defaults
 - owner-selected model defaults
+- owner-selected subagent model defaults
 - rldyour MCP server definitions
 - rldyour MCP tool approval overrides
 - active rldyour plugin cache copies
@@ -63,7 +66,9 @@ else
   ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
 fi
 SYSTEM_AGENTS="$ROOT/system/AGENTS.md"
+SYSTEM_AGENT_DIR="$ROOT/system/agents"
 CONFIG_PATH="$CODEX_HOME_DIR/config.toml"
+CODEX_AGENT_DIR="$CODEX_HOME_DIR/agents"
 CACHE_ROOT="$CODEX_HOME_DIR/plugins/cache/rldyour-codex"
 BACKUP_ROOT="$CODEX_HOME_DIR/backups/rldyour-codex"
 TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
@@ -91,6 +96,10 @@ if [ ! -f "$SYSTEM_AGENTS" ]; then
   printf 'Missing system AGENTS template: %s\n' "$SYSTEM_AGENTS" >&2
   exit 1
 fi
+if [ ! -d "$SYSTEM_AGENT_DIR" ]; then
+  printf 'Missing system agent directory: %s\n' "$SYSTEM_AGENT_DIR" >&2
+  exit 1
+fi
 
 run_or_print() {
   if [ "$APPLY" -eq 1 ]; then
@@ -112,6 +121,16 @@ backup_file() {
   printf 'backed up %s -> %s/\n' "$path" "$BACKUP_DIR"
 }
 
+backup_agent_file() {
+  local path=$1
+  if [ "$APPLY" -ne 1 ] || [ ! -e "$path" ]; then
+    return 0
+  fi
+  mkdir -p "$BACKUP_DIR/agents"
+  cp -p "$path" "$BACKUP_DIR/agents/"
+  printf 'backed up %s -> %s/agents/\n' "$path" "$BACKUP_DIR"
+}
+
 print_plan() {
   cat <<EOF
 rldyour Codex system install
@@ -119,6 +138,7 @@ mode: $([ "$APPLY" -eq 1 ] && printf 'apply' || printf 'dry-run')
 repo: $ROOT
 codex home: $CODEX_HOME_DIR
 system AGENTS: $CODEX_HOME_DIR/AGENTS.md
+system agents: $CODEX_AGENT_DIR
 config: $CONFIG_PATH
 cache root: $CACHE_ROOT
 uvx: $UVX_CMD
@@ -139,6 +159,8 @@ patch_config() {
   export RLDYOUR_TRUST_HOME="$TRUST_HOME"
   export RLDYOUR_DRY_RUN=$((1 - APPLY))
   export RLDYOUR_MCP_CONFIG="$ROOT/plugins/rldyour-mcps/.mcp.json"
+  export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
+  export RLDYOUR_CODEX_AGENT_DIR="$CODEX_AGENT_DIR"
 
   python3 <<'PY'
 from __future__ import annotations
@@ -160,6 +182,8 @@ dart_cmd = os.environ["RLDYOUR_DART_CMD"]
 trust_home = os.environ.get("RLDYOUR_TRUST_HOME") == "1"
 dry_run = os.environ.get("RLDYOUR_DRY_RUN") == "1"
 mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
+system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
+codex_agent_dir = Path(os.environ["RLDYOUR_CODEX_AGENT_DIR"])
 
 rldyour_plugins = [
     "rldyour-mcps",
@@ -175,6 +199,8 @@ rldyour_plugins = [
 curated_plugins = ["gmail@openai-curated", "github@openai-curated"]
 managed_model = "gpt-5.5"
 managed_reasoning_effort = "xhigh"
+managed_subagent_model = "gpt-5.5"
+managed_subagent_reasoning_effort = "medium"
 mcp_tool_approvals = {
     "sequential-thinking": {"sequentialthinking": "approve"},
     "deepwiki": {
@@ -183,6 +209,29 @@ mcp_tool_approvals = {
     },
     "grep": {"searchGitHub": "approve"},
 }
+
+managed_agents = []
+for agent_path in sorted(system_agent_dir.glob("*.toml")):
+    agent_data = tomllib.loads(agent_path.read_text(encoding="utf-8"))
+    name = agent_data.get("name")
+    description = agent_data.get("description")
+    if not isinstance(name, str) or not name:
+        raise SystemExit(f"{agent_path}: missing name")
+    if not isinstance(description, str) or not description:
+        raise SystemExit(f"{agent_path}: missing description")
+    if agent_data.get("model") != managed_subagent_model:
+        raise SystemExit(f"{agent_path}: model must be {managed_subagent_model}")
+    if agent_data.get("model_reasoning_effort") != managed_subagent_reasoning_effort:
+        raise SystemExit(f"{agent_path}: model_reasoning_effort must be {managed_subagent_reasoning_effort}")
+    managed_agents.append(
+        {
+            "name": name,
+            "description": description,
+            "config_file": str(codex_agent_dir / agent_path.name),
+        }
+    )
+if not managed_agents:
+    raise SystemExit(f"{system_agent_dir}: no managed subagent configs found")
 
 mcp_source = json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"]
 command_overrides = {
@@ -199,10 +248,13 @@ for name, raw_spec in mcp_source.items():
     mcp_servers[name] = spec
 
 managed_headers = {
+    "agents",
     "marketplaces.rldyour-codex",
     "profiles.rldyour-yolo",
     f'projects."{repo_root}"',
 }
+for agent in managed_agents:
+    managed_headers.add(f"agents.{agent['name']}")
 if trust_home:
     managed_headers.add(f'projects."{home}"')
 for plugin in curated_plugins:
@@ -245,8 +297,9 @@ in_features = False
 features_table_seen = False
 feature_dotted_lines: list[str] = []
 hooks_written = False
+multi_agent_written = False
 current_header: str | None = None
-hook_feature_keys = {"codex_hooks", "hooks", "plugin_hooks"}
+managed_feature_keys = {"codex_hooks", "hooks", "plugin_hooks", "multi_agent"}
 legacy_hook_feature_keys = {"codex_hooks", "plugin_hooks"}
 
 
@@ -311,11 +364,21 @@ def toml_value(value: object) -> str:
     raise TypeError(f"Unsupported TOML value: {value!r}")
 
 
+def append_managed_features() -> None:
+    global hooks_written, multi_agent_written
+    if not hooks_written:
+        out.append("hooks = true")
+        hooks_written = True
+    if not multi_agent_written:
+        out.append("multi_agent = true")
+        multi_agent_written = True
+
+
 def append_features_block() -> None:
     add_blank()
     out.append("[features]")
     out.extend(feature_dotted_lines)
-    out.append("hooks = true")
+    append_managed_features()
 
 for raw_line in existing.splitlines():
     if raw_line.strip() == SCHEMA_COMMENT:
@@ -323,9 +386,8 @@ for raw_line in existing.splitlines():
 
     match = header_re.match(raw_line)
     if match:
-        if in_features and not hooks_written:
-            out.append("hooks = true")
-            hooks_written = True
+        if in_features:
+            append_managed_features()
         header = match.group(1)
         header_path = split_toml_key(header)
         if header in managed_headers:
@@ -356,13 +418,13 @@ for raw_line in existing.splitlines():
             if not isinstance(inline_features, dict):
                 continue
             for feature_key, feature_value in inline_features.items():
-                if feature_key in hook_feature_keys:
+                if feature_key in managed_feature_keys:
                     continue
                 feature_dotted_lines.append(f"{toml_key(str(feature_key))} = {toml_value(feature_value)}")
             continue
         if len(key_path) == 2 and key_path[0] == "features":
             feature_key = key_path[1]
-            if feature_key in hook_feature_keys:
+            if feature_key in managed_feature_keys:
                 continue
             feature_dotted_lines.append(f"{toml_key(feature_key)} = {key_info[1]}")
             continue
@@ -378,12 +440,16 @@ for raw_line in existing.splitlines():
                 out.append("hooks = true")
                 hooks_written = True
             continue
+        if feature_key == "multi_agent":
+            if not multi_agent_written:
+                out.append("multi_agent = true")
+                multi_agent_written = True
+            continue
 
     out.append(raw_line)
 
-if in_features and not hooks_written:
-    out.append("hooks = true")
-    hooks_written = True
+if in_features:
+    append_managed_features()
 
 while out and out[-1] == "":
     out.pop()
@@ -409,6 +475,20 @@ out.extend([
     'sandbox_mode = "danger-full-access"',
     'default_permissions = ":danger-no-sandbox"',
 ])
+
+add_blank()
+out.extend([
+    "[agents]",
+    "max_threads = 6",
+    "max_depth = 1",
+])
+for agent in managed_agents:
+    add_blank()
+    out.extend([
+        f"[agents.{agent['name']}]",
+        f"description = {toml_value(agent['description'])}",
+        f"config_file = {toml_value(agent['config_file'])}",
+    ])
 
 add_blank()
 out.extend([f'[projects."{repo_root}"]', 'trust_level = "trusted"'])
@@ -448,6 +528,7 @@ new_text = "\n".join(out).rstrip() + "\n"
 if dry_run:
     print(f"dry-run: would patch {config_path}")
     print(f"dry-run: managed plugins: {len(rldyour_plugins) + len(curated_plugins)}")
+    print(f"dry-run: managed subagents: {len(managed_agents)}")
     print(f"dry-run: managed MCP servers: {len(mcp_servers)}")
 else:
     config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -472,6 +553,22 @@ sync_plugin_cache() {
   done
 }
 
+sync_agent_configs() {
+  local agent_file agent_name target
+  for agent_file in "$SYSTEM_AGENT_DIR"/*.toml; do
+    [ -f "$agent_file" ] || continue
+    agent_name=$(basename "$agent_file")
+    target="$CODEX_AGENT_DIR/$agent_name"
+    if [ "$APPLY" -eq 1 ]; then
+      mkdir -p "$CODEX_AGENT_DIR"
+      install -m 0644 "$agent_file" "$target"
+      printf 'installed subagent config %s\n' "$target"
+    else
+      printf 'dry-run: install %s -> %s\n' "$agent_file" "$target"
+    fi
+  done
+}
+
 print_plan
 
 if [ "$APPLY" -eq 1 ]; then
@@ -480,6 +577,10 @@ fi
 
 backup_file "$CODEX_HOME_DIR/AGENTS.md"
 backup_file "$CONFIG_PATH"
+for agent_file in "$SYSTEM_AGENT_DIR"/*.toml; do
+  [ -f "$agent_file" ] || continue
+  backup_agent_file "$CODEX_AGENT_DIR/$(basename "$agent_file")"
+done
 
 if [ "$APPLY" -eq 1 ]; then
   install -m 0644 "$SYSTEM_AGENTS" "$CODEX_HOME_DIR/AGENTS.md"
@@ -495,6 +596,7 @@ else
 fi
 
 patch_config
+sync_agent_configs
 sync_plugin_cache
 
 cat <<EOF
@@ -502,5 +604,5 @@ cat <<EOF
 Next checks:
   scripts/doctor_system_codex.sh --codex-home "$CODEX_HOME_DIR"
 
-Restart Codex after install so global AGENTS.md, plugins, hooks, and MCP settings are reloaded.
+Restart Codex after install so global AGENTS.md, subagent configs, plugins, hooks, and MCP settings are reloaded.
 EOF

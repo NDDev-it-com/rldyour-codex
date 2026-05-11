@@ -37,7 +37,9 @@ else
   ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
 fi
 SYSTEM_AGENTS="$ROOT/system/AGENTS.md"
+SYSTEM_AGENT_DIR="$ROOT/system/agents"
 INSTALLED_AGENTS="$CODEX_HOME_DIR/AGENTS.md"
+INSTALLED_AGENT_DIR="$CODEX_HOME_DIR/agents"
 CONFIG_PATH="$CODEX_HOME_DIR/config.toml"
 CACHE_ROOT="$CODEX_HOME_DIR/plugins/cache/rldyour-codex"
 CODEX_CMD=${CODEX_BIN:-$(command -v codex 2>/dev/null || true)}
@@ -91,6 +93,7 @@ section "Config"
 if [ -f "$CONFIG_PATH" ]; then
   export RLDYOUR_CODEX_CONFIG="$CONFIG_PATH"
   export RLDYOUR_REPO_ROOT="$ROOT"
+  export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
   python3 <<'PY' || exit_code=$?
 from __future__ import annotations
 
@@ -101,6 +104,8 @@ from pathlib import Path
 
 path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
 repo_root = os.environ["RLDYOUR_REPO_ROOT"]
+codex_home = path.parent
+system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
 text = path.read_text(encoding="utf-8")
 config_data = tomllib.loads(text)
 schema_comment = "#:schema https://developers.openai.com/codex/config-schema.json"
@@ -114,6 +119,7 @@ checks.append(("repo trusted", project.get("trust_level") == "trusted"))
 
 features = config_data.get("features") or {}
 checks.append(("hooks feature enabled", features.get("hooks") is True))
+checks.append(("multi-agent feature enabled", features.get("multi_agent") is True))
 checks.append(("legacy codex_hooks absent", "codex_hooks" not in features))
 checks.append(("legacy plugin_hooks absent", "plugin_hooks" not in features))
 
@@ -127,6 +133,21 @@ yolo_profile = (config_data.get("profiles") or {}).get("rldyour-yolo") or {}
 checks.append(("profile rldyour-yolo approval policy", yolo_profile.get("approval_policy") == "never"))
 checks.append(("profile rldyour-yolo sandbox", yolo_profile.get("sandbox_mode") == "danger-full-access"))
 checks.append(("profile rldyour-yolo permissions", yolo_profile.get("default_permissions") == ":danger-no-sandbox"))
+
+agents_config = config_data.get("agents") or {}
+checks.append(("agents max_threads", agents_config.get("max_threads") == 6))
+checks.append(("agents max_depth", agents_config.get("max_depth") == 1))
+configured_agents = agents_config
+for agent_path in sorted(system_agent_dir.glob("*.toml")):
+    agent_data = tomllib.loads(agent_path.read_text(encoding="utf-8"))
+    name = agent_data.get("name")
+    if not isinstance(name, str):
+        checks.append((f"agent {agent_path.name} name", False))
+        continue
+    agent_config = configured_agents.get(name) or {}
+    expected_path = str(codex_home / "agents" / agent_path.name)
+    checks.append((f"agent configured {name}", agent_config.get("config_file") == expected_path))
+    checks.append((f"agent description {name}", agent_config.get("description") == agent_data.get("description")))
 
 plugins = [
     "gmail@openai-curated",
@@ -193,6 +214,58 @@ PY
     FAILURES=$((FAILURES + 1))
   fi
 fi
+
+section "Subagents"
+export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
+export RLDYOUR_INSTALLED_AGENT_DIR="$INSTALLED_AGENT_DIR"
+python3 <<'PY' || FAILURES=$((FAILURES + 1))
+from __future__ import annotations
+
+import os
+import sys
+import tomllib
+from pathlib import Path
+
+system_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
+installed_dir = Path(os.environ["RLDYOUR_INSTALLED_AGENT_DIR"])
+errors = False
+
+for source in sorted(system_dir.glob("*.toml")):
+    target = installed_dir / source.name
+    label = source.stem
+    if not target.is_file():
+        print(f"fail    subagent installed {label}", file=sys.stderr)
+        errors = True
+        continue
+    source_text = source.read_text(encoding="utf-8")
+    target_text = target.read_text(encoding="utf-8")
+    if source_text == target_text:
+        print(f"ok      subagent file in sync {label}")
+    else:
+        print(f"fail    subagent file differs {label}", file=sys.stderr)
+        errors = True
+    try:
+        data = tomllib.loads(source_text)
+    except Exception as exc:
+        print(f"fail    subagent TOML parses {label}: {exc}", file=sys.stderr)
+        errors = True
+        continue
+    checks = {
+        "name": data.get("name") == label,
+        "model gpt-5.5": data.get("model") == "gpt-5.5",
+        "reasoning medium": data.get("model_reasoning_effort") == "medium",
+        "description": isinstance(data.get("description"), str) and bool(data.get("description", "").strip()),
+        "developer instructions": isinstance(data.get("developer_instructions"), str) and bool(data.get("developer_instructions", "").strip()),
+    }
+    for check, ok in checks.items():
+        if ok:
+            print(f"ok      subagent {label} {check}")
+        else:
+            print(f"fail    subagent {label} {check}", file=sys.stderr)
+            errors = True
+
+raise SystemExit(1 if errors else 0)
+PY
 
 section "Repository validation"
 if "$ROOT/scripts/validate_marketplace.sh"; then
