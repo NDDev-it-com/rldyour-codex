@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-11
-Last commit: 981c3b1 chore(deps): update Codex and MCP SDK pins
+Last commit: d034a86 chore(codex): harden runtime validation
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -107,7 +107,7 @@ Skip rules in capability smoke:
 - `figma` is skipped unless `--include-auth`.
 - `dart-flutter` is list-only.
 
-Default per-server retry count is `3`; this gives remote HTTP MCPs enough headroom for transient 5xx/504 failures while still failing the smoke when all attempts fail.
+Default per-server retry count is `5`; this gives remote HTTP MCPs enough headroom for transient 5xx/504 failures while still failing the smoke when all attempts fail.
 
 `scripts/smoke_mcp_runtime.sh` requires installed config/server name parity and checks:
 - every `codex mcp get <server>`

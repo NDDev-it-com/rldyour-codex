@@ -110,7 +110,11 @@ from pathlib import Path
 
 case_name = os.environ["CASE_NAME"]
 config_path = Path(os.environ["CONFIG_PATH"])
-data = tomllib.loads(config_path.read_text(encoding="utf-8"))
+text = config_path.read_text(encoding="utf-8")
+schema_comment = "#:schema https://developers.openai.com/codex/config-schema.json"
+if not text.startswith(f"{schema_comment}\n"):
+    raise SystemExit(f"{case_name}: missing Codex config schema comment")
+data = tomllib.loads(text)
 features = data.get("features") or {}
 
 if features.get("hooks") is not True:

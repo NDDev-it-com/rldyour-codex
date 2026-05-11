@@ -147,6 +147,8 @@ import re
 import tomllib
 from pathlib import Path
 
+SCHEMA_COMMENT = "#:schema https://developers.openai.com/codex/config-schema.json"
+
 config_path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
 repo_root = os.environ["RLDYOUR_REPO_ROOT"]
 home = os.environ["RLDYOUR_HOME"]
@@ -206,6 +208,8 @@ bare_key_re = re.compile(r"^[A-Za-z0-9_-]+$")
 existing = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
 managed_root_keys = {"profile", "approval_policy", "sandbox_mode", "default_permissions"}
 out: list[str] = [
+    SCHEMA_COMMENT,
+    "",
     'profile = "rldyour-yolo"',
     'approval_policy = "never"',
     'sandbox_mode = "danger-full-access"',
@@ -290,6 +294,9 @@ def append_features_block() -> None:
     out.append("hooks = true")
 
 for raw_line in existing.splitlines():
+    if raw_line.strip() == SCHEMA_COMMENT:
+        continue
+
     match = header_re.match(raw_line)
     if match:
         if in_features and not hooks_written:

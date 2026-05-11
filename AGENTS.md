@@ -105,7 +105,7 @@ diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-cod
 
 - `system/AGENTS.md` is the canonical template for the owner's global `~/.codex/AGENTS.md`.
 - `scripts/install_system_codex.sh --dry-run` shows what would be installed.
-- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, writes `[features].hooks = true`, removes deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks`, applies owner-requested YOLO defaults, registers the marketplace, and syncs plugin cache.
-- `scripts/doctor_system_codex.sh` verifies the installed system Codex state, including the active `hooks` feature and absence of deprecated or unstable hook feature keys.
+- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true`, removes deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks`, applies owner-requested YOLO defaults, registers the marketplace, and syncs plugin cache.
+- `scripts/doctor_system_codex.sh` verifies the installed system Codex state, including the config schema hint, active `hooks` feature, and absence of deprecated or unstable hook feature keys.
 - `scripts/rollback_system_codex.sh --list` lists installer backups; `--restore <backup>` restores backed up `AGENTS.md` and `config.toml`.
 - `scripts/collect_diagnostics.sh` writes a local ignored diagnostics bundle for failure triage.
