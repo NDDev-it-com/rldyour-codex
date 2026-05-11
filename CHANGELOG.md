@@ -25,6 +25,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - MCP runtime smoke now checks remote URL servers with a Streamable HTTP `initialize` POST preflight, parses JSON and SSE initialize responses, accepts auth-gated `401`/`403` endpoints, and keeps retry/timeout controls.
 - MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls five attempts by default.
 - System Codex install now writes the official Codex config schema hint at the top of generated `config.toml`, and doctor/migration smoke verify it.
+- System Codex install now reproduces the owner-selected `gpt-5.5`/`xhigh` model defaults and approved MCP tool overrides from a clean `CODEX_HOME`.
 - Plugin release validation now enforces Codex marketplace policy fields, plugin interface metadata, relative bundled capability paths, default prompt limits, and brand color format.
 - Runtime Codex CLI pin updated from `0.128.0` to `0.130.0`.
 - MCP Python SDK pin updated from `1.27.0` to `1.27.1` for the latest compatibility fixes.

@@ -121,6 +121,8 @@ checks.append(("yolo profile selected", config_data.get("profile") == "rldyour-y
 checks.append(("approval policy never", config_data.get("approval_policy") == "never"))
 checks.append(("sandbox danger full access", config_data.get("sandbox_mode") == "danger-full-access"))
 checks.append(("default permissions danger no sandbox", config_data.get("default_permissions") == ":danger-no-sandbox"))
+checks.append(("default model gpt-5.5", config_data.get("model") == "gpt-5.5"))
+checks.append(("default reasoning effort xhigh", config_data.get("model_reasoning_effort") == "xhigh"))
 yolo_profile = (config_data.get("profiles") or {}).get("rldyour-yolo") or {}
 checks.append(("profile rldyour-yolo approval policy", yolo_profile.get("approval_policy") == "never"))
 checks.append(("profile rldyour-yolo sandbox", yolo_profile.get("sandbox_mode") == "danger-full-access"))
@@ -161,6 +163,21 @@ mcp_servers = [
 configured_mcp_servers = config_data.get("mcp_servers") or {}
 for server in mcp_servers:
     checks.append((f"mcp configured {server}", server in configured_mcp_servers))
+
+tool_approvals = {
+    "sequential-thinking": {"sequentialthinking": "approve"},
+    "deepwiki": {
+        "ask_question": "approve",
+        "read_wiki_structure": "approve",
+    },
+    "grep": {"searchGitHub": "approve"},
+}
+for server, tools in tool_approvals.items():
+    server_config = configured_mcp_servers.get(server) or {}
+    configured_tools = server_config.get("tools") or {}
+    for tool, expected_mode in tools.items():
+        tool_config = configured_tools.get(tool) or {}
+        checks.append((f"mcp tool approval {server}.{tool}", tool_config.get("approval_mode") == expected_mode))
 
 failed = False
 for label, ok in checks:
