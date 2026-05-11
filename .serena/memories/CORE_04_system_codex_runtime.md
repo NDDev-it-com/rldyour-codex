@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 622c421 fix(mcp): validate remote streamable http preflight
+Last updated: 2026-05-11
+Last commit: 981c3b1 chore(deps): update Codex and MCP SDK pins
 Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -94,8 +94,8 @@ This memory records the installed system Codex runtime state for this repository
 - `scripts/smoke_mcp_runtime.sh` defaults remote URL checks to three attempts with an 8 second timeout per attempt and uses a Streamable HTTP JSON-RPC `initialize` POST preflight. It accepts `application/json` and `text/event-stream` initialize responses, accepts `401`/`403` for auth-gated endpoints, and treats POST `405` as a failure because `405` is only an optional GET SSE compatibility result. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
 - `scripts/smoke_mcp_capabilities.py` defaults to three per-server attempts and fails on missing required env vars unless `--allow-missing-env` is passed. The Grep safe call uses the current `searchGitHub` code-pattern contract with `query = "useState("`, `useRegexp = false`, and `language = ["TSX"]`.
 - `config/mcp-runtime-versions.env` currently pins:
-  - `CODEX_CLI_VERSION=0.129.0`
-  - `MCP_PYTHON_SDK_VERSION=1.27.0`
+  - `CODEX_CLI_VERSION=0.130.0`
+  - `MCP_PYTHON_SDK_VERSION=1.27.1`
   - `SERENA_AGENT_VERSION=1.2.0`
   - `SEMGREP_VERSION=1.162.0`
   - `SEQUENTIAL_THINKING_MCP_VERSION=2025.12.18`
@@ -111,6 +111,7 @@ This memory records the installed system Codex runtime state for this repository
 - Installed state is derived from repository sources; do not hand-edit config as the source of truth.
 - Use `scripts/install_system_codex.sh --apply` after any change to manifests, `system/AGENTS.md`, `.mcp.json`, marketplace list, or installer config.
 - Codex hooks must use the stable `hooks` feature key, not deprecated `codex_hooks` or under-development `plugin_hooks`.
+- Live `codex features list` on Codex CLI `0.130.0` reports `hooks` as stable and enabled, `plugin_hooks` as under development and disabled, and no `codex_hooks` entry; keep repository config on `[features].hooks = true`.
 - Restart Codex when system state changes.
 - Keep `system/AGENTS.md` and `AGENTS.md` aligned as template/source relationship.
 - Keep diagnostics under ignored `diagnostics/`.

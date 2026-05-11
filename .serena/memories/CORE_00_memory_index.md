@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 622c421 fix(mcp): validate remote streamable http preflight
+Last updated: 2026-05-11
+Last commit: 981c3b1 chore(deps): update Codex and MCP SDK pins
 Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
@@ -15,13 +15,13 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `622c421e79beadb24bf16dcd0ade3e6cda107fcd`
+- Current source HEAD: `981c3b14734f2854c507994247bb97a9ec671835`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
 - Callable rldyour skills: `38`
 - Configured MCP servers: `12`
-- Runtime Codex CLI pin: `0.129.0`
+- Runtime Codex CLI pin: `0.130.0`
 - `rldyour-flow` plugin version: `0.2.4`
 
 ## Source Priority

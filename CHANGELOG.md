@@ -24,7 +24,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Doctor and validation now use stricter parsed-config/current-state checks for system config, Serena memory freshness, and fullrepo sync.
 - MCP runtime smoke now checks remote URL servers with a Streamable HTTP `initialize` POST preflight, parses JSON and SSE initialize responses, accepts auth-gated `401`/`403` endpoints, and keeps retry/timeout controls.
 - MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls a third attempt.
-- Runtime Codex CLI pin updated from `0.128.0` to `0.129.0`.
+- Runtime Codex CLI pin updated from `0.128.0` to `0.130.0`.
+- MCP Python SDK pin updated from `1.27.0` to `1.27.1` for the latest compatibility fixes.
 - MCP runtime pins updated for Semgrep `1.162.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.25.0`, and shadcn `4.7.0`.
 - `rldyour-flow` plugin version updated to `0.2.4` for read-only `ry-init` memory discipline and fullrepo bootstrap init behavior.
 - `ry-init` is now explicitly read-only for Serena memories by default; it reports memory candidates instead of writing `.serena` unless the user requested memory sync or a stale-memory hook requires it.

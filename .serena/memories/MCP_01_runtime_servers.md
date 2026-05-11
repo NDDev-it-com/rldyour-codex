@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 622c421 fix(mcp): validate remote streamable http preflight
+Last updated: 2026-05-11
+Last commit: 981c3b1 chore(deps): update Codex and MCP SDK pins
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -84,7 +84,7 @@ Timeouts:
   - `@upstash/context7-mcp@2.2.4`
   - `semgrep==1.162.0`
   - `shadcn@4.7.0`
-- `config/mcp-runtime-versions.env` is expected to mirror MCP launcher pins and includes `CODEX_CLI_VERSION`/`MCP_PYTHON_SDK_VERSION`.
+- `config/mcp-runtime-versions.env` is expected to mirror MCP launcher pins and includes `CODEX_CLI_VERSION=0.130.0` and `MCP_PYTHON_SDK_VERSION=1.27.1`.
 
 ## Capability Smoke Contract
 
