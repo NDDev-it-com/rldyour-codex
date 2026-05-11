@@ -95,6 +95,7 @@ if [ -f "$CONFIG_PATH" ]; then
 from __future__ import annotations
 
 import os
+import sys
 import tomllib
 from pathlib import Path
 
@@ -102,8 +103,10 @@ path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
 repo_root = os.environ["RLDYOUR_REPO_ROOT"]
 text = path.read_text(encoding="utf-8")
 config_data = tomllib.loads(text)
+schema_comment = "#:schema https://developers.openai.com/codex/config-schema.json"
 
 checks = []
+checks.append(("config schema comment", text.startswith(f"{schema_comment}\n")))
 marketplace = (config_data.get("marketplaces") or {}).get("rldyour-codex") or {}
 checks.append(("marketplace source", marketplace.get("source") == repo_root and marketplace.get("source_type") == "local"))
 project = (config_data.get("projects") or {}).get(repo_root) or {}
