@@ -19,7 +19,9 @@ Managed state:
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
 - hooks feature flag
 - owner-requested YOLO permission defaults
+- owner-selected model defaults
 - rldyour MCP server definitions
+- rldyour MCP tool approval overrides
 - active rldyour plugin cache copies
 
 Secrets are not installed. Keep Context7, Figma, GitHub, Gmail, and other auth outside this repository.
@@ -171,6 +173,16 @@ rldyour_plugins = [
     "rldyour-rules",
 ]
 curated_plugins = ["gmail@openai-curated", "github@openai-curated"]
+managed_model = "gpt-5.5"
+managed_reasoning_effort = "xhigh"
+mcp_tool_approvals = {
+    "sequential-thinking": {"sequentialthinking": "approve"},
+    "deepwiki": {
+        "ask_question": "approve",
+        "read_wiki_structure": "approve",
+    },
+    "grep": {"searchGitHub": "approve"},
+}
 
 mcp_source = json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"]
 command_overrides = {
@@ -201,12 +213,22 @@ for server, spec in mcp_servers.items():
     managed_headers.add(f"mcp_servers.{server}")
     if "env" in spec:
         managed_headers.add(f"mcp_servers.{server}.env")
+for server, tools in mcp_tool_approvals.items():
+    for tool in tools:
+        managed_headers.add(f"mcp_servers.{server}.tools.{tool}")
 
 header_re = re.compile(r"^\s*\[([^\]]+)\]\s*$")
 assignment_re = re.compile(r"^\s*((?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+')(?:\s*\.\s*(?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+'))*)\s*=(.*)$")
 bare_key_re = re.compile(r"^[A-Za-z0-9_-]+$")
 existing = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
-managed_root_keys = {"profile", "approval_policy", "sandbox_mode", "default_permissions"}
+managed_root_keys = {
+    "profile",
+    "approval_policy",
+    "sandbox_mode",
+    "default_permissions",
+    "model",
+    "model_reasoning_effort",
+}
 out: list[str] = [
     SCHEMA_COMMENT,
     "",
@@ -214,6 +236,8 @@ out: list[str] = [
     'approval_policy = "never"',
     'sandbox_mode = "danger-full-access"',
     'default_permissions = ":danger-no-sandbox"',
+    f"model = {json.dumps(managed_model)}",
+    f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
     "",
 ]
 skip_managed = False
@@ -412,6 +436,12 @@ for server, spec in mcp_servers.items():
         out.append(f"[mcp_servers.{server}.env]")
         for key, value in env.items():
             out.append(f"{key} = {toml_value(value)}")
+
+for server, tools in mcp_tool_approvals.items():
+    for tool, approval_mode in tools.items():
+        add_blank()
+        out.append(f"[mcp_servers.{server}.tools.{tool}]")
+        out.append(f"approval_mode = {toml_value(approval_mode)}")
 
 new_text = "\n".join(out).rstrip() + "\n"
 

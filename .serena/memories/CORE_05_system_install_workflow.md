@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 622c421 fix(mcp): validate remote streamable http preflight
+Last updated: 2026-05-11
+Last commit: 7825a59 chore(codex): reproduce managed system defaults
 Scope: system/AGENTS.md, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -13,6 +13,7 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 
 - global `~/.codex/AGENTS.md`
 - `~/.codex/config.toml` managed sections
+- owner-selected model defaults and MCP tool approval overrides
 - plugin cache from `plugins/rldyour-*`
 - `plugins` + MCP runtime config synchronization
 
@@ -38,6 +39,9 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
   - `CODEX_HOME/AGENTS.md` from `system/AGENTS.md`
   - patched `CODEX_HOME/config.toml`
   - `[features].hooks = true`
+  - `model = "gpt-5.5"`
+  - `model_reasoning_effort = "xhigh"`
+  - approved MCP tool overrides for sequential-thinking, DeepWiki, and Grep
   - deprecated/unstable hook key removal for `codex_hooks` and `plugin_hooks` from `[features]`, quoted keys, dotted root keys, and inline root feature tables
   - unrelated feature flags preserved when hook keys are normalized
   - plugin cache for every `plugins/rldyour-*` into `CODEX_HOME/plugins/cache/rldyour-codex/<plugin>/local`
@@ -54,8 +58,10 @@ Validates:
 - installed `AGENTS.md` equals repository `system/AGENTS.md`
 - config contains:
   - profile and permissions (`rldyour-yolo`, `never`, `danger-full-access`, `:danger-no-sandbox`)
+  - owner-selected model defaults (`gpt-5.5`, `xhigh`)
   - `[features].hooks = true`
   - no legacy `codex_hooks` key and no unstable `plugin_hooks` key under `[features]`
+  - approved MCP tool overrides
 - required marketplace plugin registrations
 - required MCP server configuration
 - plugin cache parity against repository plugins
@@ -110,6 +116,7 @@ Validates:
 
 - Keep global configuration write scope explicit and reversible.
 - Do not install secrets or tokens.
+- Do not treat transient runtime/UI state such as `[tui.model_availability_nux]` as source-of-truth.
 - Do not run destructive fullrepo mutations from install script.
 - Use the stable Codex `hooks` feature flag; do not reintroduce deprecated `codex_hooks` or under-development `plugin_hooks`.
 - Restart Codex after template/config/cache changes so runtime reloads plugin and hook state.

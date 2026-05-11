@@ -22,7 +22,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `.github/workflows/validate.yml`: Ubuntu/macOS push/pull-request validation for marketplace, temporary system install, MCP capability smoke, hook lifecycle smoke, and clean bootstrap.
 - `.github/workflows/dependency-check.yml`: scheduled MCP runtime pin freshness check.
 - `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
-- `${CODEX_HOME:-$HOME/.codex}/config.toml`: active system Codex registration, `[features].hooks`, YOLO permission defaults, and MCP runtime config.
+- `${CODEX_HOME:-$HOME/.codex}/config.toml`: active system Codex registration, `[features].hooks`, YOLO permission defaults, owner-selected model defaults, approved MCP tool overrides, and MCP runtime config.
 - `.claude/CLAUDE.md`: Claude Code-native project memory for this repository, published through `fullrepo`.
 - `.serena/memories/*.md`: high-signal verified project knowledge.
 
@@ -105,7 +105,7 @@ diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-cod
 
 - `system/AGENTS.md` is the canonical template for the owner's global `~/.codex/AGENTS.md`.
 - `scripts/install_system_codex.sh --dry-run` shows what would be installed.
-- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true`, removes deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks`, applies owner-requested YOLO defaults, registers the marketplace, and syncs plugin cache.
+- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true`, removes deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks`, applies owner-requested YOLO/model defaults, writes approved MCP tool overrides, registers the marketplace, and syncs plugin cache.
 - `scripts/doctor_system_codex.sh` verifies the installed system Codex state, including the config schema hint, active `hooks` feature, and absence of deprecated or unstable hook feature keys.
 - `scripts/rollback_system_codex.sh --list` lists installer backups; `--restore <backup>` restores backed up `AGENTS.md` and `config.toml`.
 - `scripts/collect_diagnostics.sh` writes a local ignored diagnostics bundle for failure triage.

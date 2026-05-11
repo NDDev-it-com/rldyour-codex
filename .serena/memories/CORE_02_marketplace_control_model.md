@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-11
-Last commit: d034a86 chore(codex): harden runtime validation
+Last commit: 7825a59 chore(codex): reproduce managed system defaults
 Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -80,6 +80,7 @@ Installed cache layout is `plugins/cache/rldyour-codex/<plugin>/local` for each 
   - MCP registrations,
   - plugin cache sync,
   - official Codex config schema hint,
+  - owner-selected model defaults and approved MCP tool overrides,
   - YOLO/system permission profile.
 - `scripts/doctor_system_codex.sh` validates installed AGENTS/config alignment, the Codex config schema hint, enabled plugins, MCP registrations, cache parity, and repository validation status.
 - `scripts/validate_plugin_versions.py` enforces marketplace policy fields, manifest metadata (`author`, `homepage`, `repository`, `license`, `keywords`), interface metadata, bundled capability paths, default prompt limits, and `brandColor` format.

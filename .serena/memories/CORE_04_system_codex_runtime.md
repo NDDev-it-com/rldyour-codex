@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-11
-Last commit: d034a86 chore(codex): harden runtime validation
+Last commit: 7825a59 chore(codex): reproduce managed system defaults
 Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -52,6 +52,8 @@ This memory records the installed system Codex runtime state for this repository
   - `approval_policy = "never"`.
   - `sandbox_mode = "danger-full-access"`.
   - `default_permissions = ":danger-no-sandbox"`.
+  - `model = "gpt-5.5"`.
+  - `model_reasoning_effort = "xhigh"`.
   - `[profiles.rldyour-yolo]` repeats the same values.
 - `[features] hooks = true`.
 - The installer removes deprecated/unstable hook feature keys `codex_hooks` and `plugin_hooks` from table, dotted, quoted, and inline-table forms, rewrites any existing `hooks = false` to `hooks = true`, and preserves unrelated feature flags such as `shell_snapshot = false`.
@@ -81,6 +83,7 @@ This memory records the installed system Codex runtime state for this repository
   - plugin manifests
   - `plugins/rldyour-mcps/.mcp.json`
   - environment overrides `UVX_BIN`, `BUNX_BIN`, `DART_BIN`, and `CODEX_HOME`.
+  - managed owner defaults in `scripts/install_system_codex.sh`, including `gpt-5.5`, `xhigh`, and MCP tool approval overrides.
 
 ### Runtime values and portability
 
@@ -94,6 +97,7 @@ This memory records the installed system Codex runtime state for this repository
 
 - `scripts/smoke_mcp_runtime.sh` defaults remote URL checks to three attempts with an 8 second timeout per attempt and uses a Streamable HTTP JSON-RPC `initialize` POST preflight. It accepts `application/json` and `text/event-stream` initialize responses, accepts `401`/`403` for auth-gated endpoints, and treats POST `405` as a failure because `405` is only an optional GET SSE compatibility result. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
 - `scripts/smoke_mcp_capabilities.py` defaults to five per-server attempts and fails on missing required env vars unless `--allow-missing-env` is passed. The Grep safe call uses the current `searchGitHub` code-pattern contract with `query = "useState("`, `useRegexp = false`, and `language = ["TSX"]`.
+- Managed MCP tool approvals are installed and checked for `sequential-thinking.sequentialthinking`, `deepwiki.ask_question`, `deepwiki.read_wiki_structure`, and `grep.searchGitHub`, each with `approval_mode = "approve"`.
 - `config/mcp-runtime-versions.env` currently pins:
   - `CODEX_CLI_VERSION=0.130.0`
   - `MCP_PYTHON_SDK_VERSION=1.27.1`
@@ -114,6 +118,7 @@ This memory records the installed system Codex runtime state for this repository
 - Codex hooks must use the stable `hooks` feature key, not deprecated `codex_hooks` or under-development `plugin_hooks`.
 - Live `codex features list` on Codex CLI `0.130.0` reports `hooks` as stable and enabled, `plugin_hooks` as under development and disabled, and no `codex_hooks` entry; keep repository config on `[features].hooks = true`.
 - Generated system config must keep the official schema comment first; `scripts/doctor_system_codex.sh` and `scripts/smoke_codex_hooks_migration.sh` verify it.
+- Clean `CODEX_HOME` installs must reproduce managed system defaults and MCP tool approvals; transient runtime/UI state such as `[tui.model_availability_nux]` is intentionally not source-of-truth.
 - Restart Codex when system state changes.
 - Keep `system/AGENTS.md` and `AGENTS.md` aligned as template/source relationship.
 - Keep diagnostics under ignored `diagnostics/`.
