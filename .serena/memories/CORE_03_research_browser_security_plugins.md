@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security
 Area: CORE
 -->
@@ -11,7 +11,7 @@ Area: CORE
 
 Capture routing and validation facts for research, browser, and security domains, avoiding stale process assumptions and unverified behavior claims.
 
-## Source-of-Truth
+## Source Of Truth
 
 - `plugins/rldyour-explore/.codex-plugin/plugin.json`, `skills/*/SKILL.md`, `skills/*/agents/openai.yaml`
 - `plugins/rldyour-browser/.codex-plugin/plugin.json`, `skills/*/SKILL.md`, `skills/*/agents/openai.yaml`
@@ -34,10 +34,13 @@ Security (`rldyour-security`):
 - `owasp-top-10-implementation`: secure implementation guidance during coding.
 - `ry-sec-review`: evidence-based security review with severity ordering and remediation recommendations.
 
-## Facts and Invariants
+## Current Behavior
 
 - Active explorer/browser/security plugin count: 7 skills total.
 - All skills in these three plugins currently keep `allow_implicit_invocation: true`.
+
+## Invariants
+
 - Research and review outputs remain source-backed and should separate fact from inference.
 - Browser evidence belongs under `browser/`; by default it is non-committable working output.
 - Security outputs must avoid exploit payloads, credentials, and destructive guidance.

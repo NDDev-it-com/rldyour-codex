@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
 Scope: plugins/rldyour-flow, plugins/rldyour-explore, plugins/rldyour-serena-mcp, plugins/rldyour-rules, plugins/rldyour-*, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_skill_routing.py, config/skill-routing-policy.json, scripts/smoke_mcp_runtime.sh, scripts/smoke_hooks.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: CORE
 -->
@@ -11,7 +11,7 @@ Area: CORE
 
 Keep the current routing contract for the rldyour marketplace: active plugins, automatic skill selection inputs, and validation gates that keep runtime behavior aligned with repository state.
 
-## Source-of-Truth
+## Source Of Truth
 
 - `.agents/plugins/marketplace.json`
 - `config/skill-routing-policy.json`
@@ -58,7 +58,14 @@ Keep the current routing contract for the rldyour marketplace: active plugins, a
 - `rldyour-rules` is advisory policy and has no hooks.
 - `rldyour-lsps` is the LSP workflow boundary and includes explicit health-check/setup/Serena-mapping skills.
 
-## Verification Commands
+## Invariants
+
+- Keep skill routing compact enough for automatic invocation: trigger phrases belong in `SKILL.md` frontmatter descriptions, while workflow detail belongs in skill bodies or references.
+- Keep orchestrator-only review skills behind explicit `ry-start`/`ry-review` orchestration.
+- Do not move MCP transport ownership out of `rldyour-mcps`.
+- Keep repository skill metadata and installed plugin cache synchronized through `scripts/install_system_codex.sh --apply`.
+
+## Verification
 
 - `python3 scripts/validate_skill_routing.py`
 - `scripts/validate_marketplace.sh` (primary gate; includes JSON, skill routing, market metadata, OpenAI metadata, scripts, LSP health, and plugin cache checks)

@@ -106,7 +106,7 @@ Validates:
   - prints `Dry-run` plan without filesystem writes when requested.
 - Pre-restore of current state is created automatically during real restore.
 
-## Verification Commands
+## Verification
 
 - `scripts/install_system_codex.sh --dry-run`
 - `scripts/install_system_codex.sh --apply`

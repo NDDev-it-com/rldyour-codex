@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
 Scope: plugins/rldyour-lsps, pyrightconfig.json, .agents/plugins/marketplace.json, README.md
 Area: LSP
 -->
@@ -11,7 +11,7 @@ Area: LSP
 
 Keep a concise, verified record of language-server workflow behavior and Serena integration limits for future sessions.
 
-## Source-of-Truth
+## Source Of Truth
 
 - `plugins/rldyour-lsps/.codex-plugin/plugin.json`
 - `plugins/rldyour-lsps/references/lsp-server-matrix.md`
@@ -39,7 +39,14 @@ Keep a concise, verified record of language-server workflow behavior and Serena 
 - For the current HEAD repository state, the check reports `missing: 0` and `warnings: 0` after the `b4038bd` Linuxbrew portability fix.
 - The setup rule is explicit install-only on request; long-lived LSP stdio sessions should use stable local executables, not `bunx/uvx` setup calls.
 
-## Verification Commands
+## Invariants
+
+- Do not install or update language servers unless the owner explicitly requests setup/repair.
+- Use `lsp-health-check` for diagnostics before changing LSP setup policy.
+- Keep Serena language-key mapping aligned with `plugins/rldyour-lsps/references/serena-lsp-integration.md`.
+- Treat unsupported languages as external tooling paths rather than pretending Serena can index them semantically.
+
+## Verification
 
 - `plugins/rldyour-lsps/scripts/check_lsps.sh`
 - `plugins/rldyour-lsps/scripts/install_lsps_brew.sh` (only after explicit user request)

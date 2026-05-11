@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
 Scope: plugins/rldyour-rules, plugins/rldyour-flow/skills/instruction-docs-sync, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: RULES
 -->
@@ -11,7 +11,7 @@ Area: RULES
 
 Keep the enforced rule layer for this marketplace: quality defaults, architecture boundaries, dependency/verification policy, and agent instruction governance.
 
-## Source-of-Truth
+## Source Of Truth
 
 - `plugins/rldyour-rules/.codex-plugin/plugin.json`
 - `plugins/rldyour-rules/skills/*/SKILL.md`

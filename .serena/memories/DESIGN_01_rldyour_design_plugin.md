@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-08
-Last commit: 260345a docs: record runtime consistency fixes
+Last updated: 2026-05-12
+Last commit: 6d70b15 chore(codex): manage subagent model configs
 Scope: plugins/rldyour-design
 Area: DESIGN
 -->
@@ -11,7 +11,7 @@ Area: DESIGN
 
 Keep the operational routing contract for design work: when to use each design skill, what tools are in scope, and what source-of-truth files drive behavior.
 
-## Source-of-Truth
+## Source Of Truth
 
 - `plugins/rldyour-design/.codex-plugin/plugin.json`
 - `plugins/rldyour-design/README.md`

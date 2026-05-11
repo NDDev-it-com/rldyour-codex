@@ -24,7 +24,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 - Runtime Codex CLI pin: `0.130.0`
 - `rldyour-flow` plugin version: `0.2.4`
 
-## Source Priority
+## Source Of Truth
 
 Use code and configuration as the source of truth. Memories are compact indexes of verified facts, not independent authority.
 
@@ -53,7 +53,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `MCP_02_serena_workflow_hooks.md`: Serena hooks, stop-sync freshness, knowledge/runtime path split.
 - `RULES_01_quality_first_engineering.md`: engineering policy, verification gates, architecture/dependency/security rules.
 
-## Cross-Cutting Invariants
+## Invariants
 
 - User-facing chat is Russian unless explicitly requested otherwise; repository artifacts stay English.
 - `rldyour-mcps` is transport-only and must not own behavior policy or skills.
@@ -71,7 +71,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - Remote URL MCP runtime smoke uses Streamable HTTP JSON-RPC `initialize` POST preflight, not raw GET reachability; auth-gated `401`/`403` can pass, but POST `405` fails.
 - Do not store secrets, tokens, cookies, private keys, raw credentials, or browser evidence in memories.
 
-## Minimum Verification After Memory Changes
+## Verification
 
 - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool`
 - `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`

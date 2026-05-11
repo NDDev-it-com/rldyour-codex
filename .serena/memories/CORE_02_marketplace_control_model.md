@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-11
-Last commit: 7825a59 chore(codex): reproduce managed system defaults
-Scope: README.md, AGENTS.md, system/AGENTS.md, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, ${CODEX_HOME:-$HOME/.codex}/config.toml
+Last commit: 6d70b15 chore(codex): manage subagent model configs
+Scope: README.md, AGENTS.md, system/AGENTS.md, system/agents/*.toml, VERSION, CHANGELOG.md, docs, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, scripts/sync_fullrepo_branch.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, pyrightconfig.json, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, .gitignore, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml
 Area: CORE
 -->
 
@@ -19,6 +19,7 @@ This marketplace memory records the verified catalog and control model for `rldy
 - `plugins/<plugin>/.codex-plugin/plugin.json`: plugin manifests and boundaries.
 - `plugins/rldyour-mcps/.mcp.json`: MCP source-of-truth transport list for system runtime.
 - `system/AGENTS.md`: canonical global instruction template for installed `~/.codex/AGENTS.md`.
+- `system/agents/*.toml`: canonical managed Codex custom subagent role configs for installed `~/.codex/agents/*.toml`.
 - `config/mcp-runtime-versions.env`: pinned MCP/Codex package versions.
 - `scripts/install_system_codex.sh`: dry-run/apply installer.
 - `scripts/doctor_system_codex.sh`: installed-system verification.
@@ -29,6 +30,7 @@ This marketplace memory records the verified catalog and control model for `rldy
 - `scripts/sync_fullrepo_branch.sh`, `plugins/rldyour-flow/scripts/fullrepo_sync.py`: agent-only workflow-file synchronization.
 - `scripts/check_mcp_runtime_versions.py`: pinned runtime freshness check.
 - `${CODEX_HOME:-$HOME/.codex}/config.toml`: installed runtime config.
+- `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`: installed managed subagent configs.
 - `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex`: installed plugin cache.
 
 ## Current Catalog
@@ -86,6 +88,13 @@ Installed cache layout is `plugins/cache/rldyour-codex/<plugin>/local` for each 
 - `scripts/validate_plugin_versions.py` enforces marketplace policy fields, manifest metadata (`author`, `homepage`, `repository`, `license`, `keywords`), interface metadata, bundled capability paths, default prompt limits, and `brandColor` format.
 - Legacy plugin names and old aliases are not present in the active catalog or runtime config.
 - `@latest` MCP package specs are disallowed by marketplace validation.
+
+## Invariants
+
+- Marketplace catalog changes must be backed by real plugin files and valid manifests.
+- Runtime config, managed subagent configs, and plugin cache are generated from repository sources; installed files are not the source of truth.
+- Keep normal branches free of agent-only context; publish `AGENTS.md`, `.claude/CLAUDE.md`, and `.serena` knowledge through `fullrepo`.
+- Keep curated `github@openai-curated` and `gmail@openai-curated` enabled unless the owner explicitly changes the system runtime.
 
 ## Change Rules
 
