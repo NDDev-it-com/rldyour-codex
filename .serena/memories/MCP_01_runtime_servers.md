@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Last commit: b3dc114 test(codex): strengthen integration smoke gates
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -86,6 +86,7 @@ Timeouts:
   - `shadcn@4.7.0`
 - `config/mcp-runtime-versions.env` is expected to mirror MCP launcher pins and includes `CODEX_CLI_VERSION=0.130.0` and `MCP_PYTHON_SDK_VERSION=1.27.1`.
 - `scripts/validate_marketplace.sh` fails if `config/mcp-runtime-versions.env` drifts from the local launcher package specs in `.mcp.json`.
+- `scripts/validate_marketplace.sh` derives accepted `agents/openai.yaml` MCP dependency names from `.mcp.json`; adding or removing an MCP server must update `.mcp.json` instead of a parallel validator list.
 
 ## Capability Smoke Contract
 
@@ -109,6 +110,8 @@ Skip rules in capability smoke:
 - `dart-flutter` is list-only.
 
 Default per-server retry count is `5`; this gives remote HTTP MCPs enough headroom for transient 5xx/504 failures while still failing the smoke when all attempts fail.
+
+`.github/workflows/validate.yml` keeps push/PR marketplace validation in list-only mode for portability, and adds a scheduled/manual Ubuntu `mcp-safe-calls` job that installs Codex into a temporary `CODEX_HOME` and runs `scripts/smoke_mcp_capabilities.sh --allow-missing-env --skip-server figma` to exercise deterministic unauthenticated `call_tool` paths.
 
 `scripts/smoke_mcp_runtime.sh` requires installed config/server name parity and checks:
 - every `codex mcp get <server>`

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: 1911e5b fix(ci): make main fullrepo gate advisory
+Last commit: b3dc114 test(codex): strengthen integration smoke gates
 Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -80,6 +80,8 @@ This memory records the installed system Codex runtime state for this repository
 
 ### Enabled plugins in installed config
 
+Installed rldyour plugin enablement is derived from `.agents/plugins/marketplace.json` by `scripts/install_system_codex.sh`; `scripts/doctor_system_codex.sh` verifies every marketplace rldyour plugin is enabled and fails stale `rldyour-*@rldyour-codex` plugin entries.
+
 - `gmail@openai-curated`
 - `github@openai-curated`
 - `rldyour-mcps@rldyour-codex`
@@ -103,6 +105,7 @@ This memory records the installed system Codex runtime state for this repository
   - `plugins/rldyour-mcps/.mcp.json`
   - environment overrides `UVX_BIN`, `BUNX_BIN`, `DART_BIN`, and `CODEX_HOME`.
   - managed owner defaults in `scripts/install_system_codex.sh`, including parent `gpt-5.5`, parent `xhigh`, subagent `gpt-5.5`, subagent `medium`, and MCP tool approval overrides.
+- Installer config migration removes stale rldyour marketplace plugin sections by managing any `[plugins."rldyour-*@rldyour-codex"]` header, then rewrites the current marketplace-derived set.
 
 ### Runtime values and portability
 
@@ -128,7 +131,9 @@ This memory records the installed system Codex runtime state for this repository
   - `CONTEXT7_MCP_VERSION=2.2.5`
   - `SHADCN_VERSION=4.7.0`
 - `scripts/validate_marketplace.sh` statically verifies that local MCP launcher pins in `config/mcp-runtime-versions.env` match the package specs in `plugins/rldyour-mcps/.mcp.json`.
+- `scripts/validate_marketplace.sh` validates OpenAI skill MCP dependencies against server names loaded from `plugins/rldyour-mcps/.mcp.json`.
 - `scripts/doctor_system_codex.sh` treats fullrepo current-state mismatches as failures locally, but as warnings on GitHub Actions `main` runs; the separate `fullrepo` workflow validates published agent-only snapshots.
+- `scripts/doctor_system_codex.sh` derives MCP registration checks from `plugins/rldyour-mcps/.mcp.json` and uses the same derived server list for `codex mcp list` verification.
 
 ## Invariants
 
@@ -136,6 +141,7 @@ This memory records the installed system Codex runtime state for this repository
 - Do not store raw credentials or tokens in repo files or memories.
 - Installed state is derived from repository sources; do not hand-edit config as the source of truth.
 - Use `scripts/install_system_codex.sh --apply` after any change to manifests, `system/AGENTS.md`, `system/agents/*.toml`, `.mcp.json`, marketplace list, or installer config.
+- Do not add parallel hardcoded rldyour plugin or MCP server lists to installer/doctor validation; derive them from marketplace and `.mcp.json`.
 - Codex hooks must use the stable `hooks` feature key, not deprecated `codex_hooks` or under-development `plugin_hooks`.
 - Live `codex features list` on Codex CLI `0.130.0` reports `hooks` as stable and enabled, `plugin_hooks` as under development and disabled, and no `codex_hooks` entry; keep repository config on `[features].hooks = true`.
 - Generated system config must keep the official schema comment first; `scripts/doctor_system_codex.sh` and `scripts/smoke_codex_hooks_migration.sh` verify it.

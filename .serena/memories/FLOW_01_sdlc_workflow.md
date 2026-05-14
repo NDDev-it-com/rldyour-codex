@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Last commit: b3dc114 test(codex): strengthen integration smoke gates
 Scope: plugins/rldyour-flow, plugins/rldyour-flow/references/reviewer-protocol.md, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md, system/agents/*.toml
 Area: FLOW
 -->
@@ -55,6 +55,8 @@ Area: FLOW
 - `SessionStart`: executes `session_start_context.sh` from repo plugin first, then from installed plugin cache.
 - `PostToolUse` (Bash only): executes `post_tool_use_commit_advice.sh`.
 - `Stop`: executes `stop_post_task_sync.sh`.
+
+`scripts/smoke_hooks.sh` validates both levels of this contract: it parses the plugin `hooks.json` event/matcher/command wiring and executes the configured command wrappers for repo and installed-cache layouts, then separately runs direct hook lifecycle checks in temporary repositories.
 
 ### SessionStart
 
@@ -178,6 +180,8 @@ Flow stop guidance is: Serena sync → instruction-docs sync if needed → check
 - publishes local agent-only files to a new `fullrepo` when no remote branch exists;
 - runs the same index cleanup as `--migrate-main` when the current branch still tracks agent-only files;
 - prints final status with `bootstrap_actions`.
+
+`scripts/smoke_fullrepo_bootstrap_init.sh` covers bootstrap publish, restore, ignore, and tracked-index cleanup for `AGENTS.md`, `.claude/CLAUDE.md`, and Serena memories.
 
 ## Local Git Pre-Push Guard
 
