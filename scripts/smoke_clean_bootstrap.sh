@@ -9,9 +9,10 @@ Usage: scripts/smoke_clean_bootstrap.sh [--keep]
 
 Proves a clean-machine style path with temporary state:
 1. clone the current repository;
-2. install into a temporary CODEX_HOME;
-3. run doctor/validation against that temporary install;
-4. verify MCP registration and plugin routing from the cloned repo.
+2. restore/publish agent-only context through fullrepo bootstrap init;
+3. install into a temporary CODEX_HOME;
+4. run doctor/validation against that temporary install;
+5. verify MCP registration and plugin routing from the cloned repo.
 
 The repository must be clean so the cloned copy matches committed source of truth.
 EOF
@@ -71,6 +72,7 @@ fi
 
 cd "$CLONE_DIR"
 
+scripts/sync_fullrepo_branch.sh --bootstrap-init
 scripts/install_system_codex.sh --dry-run --codex-home "$CODEX_HOME_DIR"
 scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME_DIR"
 

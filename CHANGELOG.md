@@ -28,6 +28,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Hook smoke validation now parses plugin `hooks.json` wiring and executes the configured command wrappers in addition to direct hook script lifecycle checks.
 - GitHub validation now includes scheduled and manual MCP safe-call smoke coverage for deterministic unauthenticated MCP tool invocations.
 - Fullrepo bootstrap-init smoke now covers `.claude/CLAUDE.md` restore, ignore, and current-branch index cleanup alongside `AGENTS.md` and Serena memories.
+- Clean bootstrap smoke now restores agent-only context with `scripts/sync_fullrepo_branch.sh --bootstrap-init` before running strict system doctor checks.
 - MCP runtime smoke now checks remote URL servers with a Streamable HTTP `initialize` POST preflight, parses JSON and SSE initialize responses, accepts auth-gated `401`/`403` endpoints, and keeps retry/timeout controls.
 - MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls five attempts by default.
 - Marketplace validation now enforces parity between `config/mcp-runtime-versions.env` and local MCP launcher package specs in `plugins/rldyour-mcps/.mcp.json`.
