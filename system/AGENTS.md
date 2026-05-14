@@ -148,6 +148,7 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_codex_hooks_migration.sh
+scripts/smoke_serena_memory_freshness.sh
 scripts/smoke_local_git_guard.sh
 scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
@@ -155,6 +156,7 @@ scripts/smoke_fullrepo_bootstrap_init.sh
 scripts/install_local_git_hooks.sh --dry-run
 plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
 python3 scripts/validate_instruction_docs.py --require-agent-docs
+python3 scripts/check_serena_memory_freshness.py
 scripts/sync_fullrepo_branch.sh --status
 scripts/sync_fullrepo_branch.sh --bootstrap-init
 scripts/sync_fullrepo_branch.sh --publish
