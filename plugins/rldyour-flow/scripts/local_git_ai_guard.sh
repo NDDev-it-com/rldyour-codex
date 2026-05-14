@@ -87,7 +87,10 @@ guard_product_ref() {
   local paths=()
   local path
 
-  mapfile -t paths < <(changed_paths "$local_sha" "$remote_sha")
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    paths+=("$path")
+  done < <(changed_paths "$local_sha" "$remote_sha")
   range=$(range_for_push "$local_sha" "$remote_sha")
 
   for path in "${paths[@]}"; do
@@ -113,7 +116,10 @@ guard_fullrepo_ref() {
   local paths=()
   local path
 
-  mapfile -t paths < <(changed_paths "$local_sha" "$remote_sha")
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    paths+=("$path")
+  done < <(changed_paths "$local_sha" "$remote_sha")
   range=$(range_for_push "$local_sha" "$remote_sha")
 
   for path in "${paths[@]}"; do

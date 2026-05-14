@@ -132,7 +132,7 @@ The installer writes `~/.codex/AGENTS.md`, writes managed `~/.codex/agents/*.tom
 
 `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
 
-Local MCP launcher packages are pinned in `.mcp.json` and documented in `config/mcp-runtime-versions.env`. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke.
+Local MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runtime-versions.env`; marketplace validation fails if these sources drift. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke.
 
 System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. Managed subagent roles in `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"` so orchestration uses the owner's selected subagent default instead of stale local role files. This is an owner-required operating mode for trusted machines, not a temporary risk exception.
 
@@ -142,6 +142,7 @@ Runtime smoke checks:
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
+scripts/smoke_serena_memory_freshness.sh
 scripts/smoke_local_git_guard.sh
 scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
