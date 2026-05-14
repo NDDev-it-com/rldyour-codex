@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: b3dc114 test(codex): strengthen integration smoke gates
+Last commit: be77b6f test(codex): restore fullrepo in clean bootstrap
 Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
@@ -134,6 +134,7 @@ Installed rldyour plugin enablement is derived from `.agents/plugins/marketplace
 - `scripts/validate_marketplace.sh` validates OpenAI skill MCP dependencies against server names loaded from `plugins/rldyour-mcps/.mcp.json`.
 - `scripts/doctor_system_codex.sh` treats fullrepo current-state mismatches as failures locally, but as warnings on GitHub Actions `main` runs; the separate `fullrepo` workflow validates published agent-only snapshots.
 - `scripts/doctor_system_codex.sh` derives MCP registration checks from `plugins/rldyour-mcps/.mcp.json` and uses the same derived server list for `codex mcp list` verification.
+- `scripts/smoke_clean_bootstrap.sh` must run `scripts/sync_fullrepo_branch.sh --bootstrap-init` in the clean clone before strict doctor checks so agent-only files from `fullrepo` are restored.
 
 ## Invariants
 

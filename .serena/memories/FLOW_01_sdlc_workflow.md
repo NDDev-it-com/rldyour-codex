@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: b3dc114 test(codex): strengthen integration smoke gates
+Last commit: be77b6f test(codex): restore fullrepo in clean bootstrap
 Scope: plugins/rldyour-flow, plugins/rldyour-flow/references/reviewer-protocol.md, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md, system/agents/*.toml
 Area: FLOW
 -->
@@ -182,6 +182,8 @@ Flow stop guidance is: Serena sync → instruction-docs sync if needed → check
 - prints final status with `bootstrap_actions`.
 
 `scripts/smoke_fullrepo_bootstrap_init.sh` covers bootstrap publish, restore, ignore, and tracked-index cleanup for `AGENTS.md`, `.claude/CLAUDE.md`, and Serena memories.
+
+`scripts/smoke_clean_bootstrap.sh` uses `scripts/sync_fullrepo_branch.sh --bootstrap-init` immediately after cloning so clean-machine doctor runs validate the restored fullrepo context instead of a main-only checkout.
 
 ## Local Git Pre-Push Guard
 

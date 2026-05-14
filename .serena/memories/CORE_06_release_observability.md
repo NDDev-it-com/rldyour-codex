@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: b3dc114 test(codex): strengthen integration smoke gates
+Last commit: be77b6f test(codex): restore fullrepo in clean bootstrap
 Scope: CHANGELOG.md, README.md, docs/dependency-updates.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
@@ -82,6 +82,7 @@ Use for release evidence and operational tagging flow.
 - `scripts/collect_diagnostics.sh`
 - `scripts/collect_diagnostics.sh --include-doctor` (adds doctor output)
 - artifacts in ignored `diagnostics/` directory
+- `scripts/smoke_clean_bootstrap.sh` is the clean-machine validation path: clone current repo, bootstrap fullrepo agent-only context, install to temporary `CODEX_HOME`, run doctor/validation, then verify MCP registration and fullrepo smoke scripts.
 
 ### CI
 
