@@ -212,6 +212,19 @@ def main() -> int:
         description = manifest.get("description")
         if not isinstance(description, str) or len(description.strip()) < 20:
             errors.append(f"{name}: manifest description must be meaningful")
+        declared_capabilities = {field for field in MANIFEST_PATH_FIELDS if manifest.get(field) is not None}
+        if name == "rldyour-mcps":
+            if manifest.get("mcpServers") is None:
+                errors.append("rldyour-mcps: must declare mcpServers")
+            for forbidden in ("skills", "hooks", "apps"):
+                if manifest.get(forbidden) is not None:
+                    errors.append(f"rldyour-mcps: must not declare {forbidden}; it is transport-only")
+        elif name.startswith("rldyour-") and manifest.get("mcpServers") is not None:
+            errors.append(f"{name}: only rldyour-mcps may declare mcpServers")
+        if name not in {"rldyour-flow", "rldyour-serena-mcp"} and manifest.get("hooks") is not None:
+            errors.append(f"{name}: only rldyour-flow and rldyour-serena-mcp may declare hooks")
+        if not declared_capabilities:
+            errors.append(f"{name}: manifest must declare at least one capability path")
         require_manifest_metadata(manifest, name, manifest_path, errors)
 
     for plugin_dir in sorted((ROOT / "plugins").glob("rldyour-*")):

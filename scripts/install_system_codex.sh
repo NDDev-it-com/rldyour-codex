@@ -161,6 +161,7 @@ patch_config() {
   export RLDYOUR_MCP_CONFIG="$ROOT/plugins/rldyour-mcps/.mcp.json"
   export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
   export RLDYOUR_CODEX_AGENT_DIR="$CODEX_AGENT_DIR"
+  export RLDYOUR_MARKETPLACE_CONFIG="$ROOT/.agents/plugins/marketplace.json"
 
   python3 <<'PY'
 from __future__ import annotations
@@ -184,18 +185,35 @@ dry_run = os.environ.get("RLDYOUR_DRY_RUN") == "1"
 mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
 system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
 codex_agent_dir = Path(os.environ["RLDYOUR_CODEX_AGENT_DIR"])
+marketplace_config_path = Path(os.environ["RLDYOUR_MARKETPLACE_CONFIG"])
 
-rldyour_plugins = [
-    "rldyour-mcps",
-    "rldyour-explore",
-    "rldyour-serena-mcp",
-    "rldyour-security",
-    "rldyour-browser",
-    "rldyour-design",
-    "rldyour-lsps",
-    "rldyour-flow",
-    "rldyour-rules",
-]
+
+def load_rldyour_plugins(path: Path) -> list[str]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    entries = data.get("plugins")
+    if not isinstance(entries, list):
+        raise SystemExit(f"{path}: plugins must be a list")
+    result: list[str] = []
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise SystemExit(f"{path}: plugins[{index}] must be an object")
+        name = entry.get("name")
+        source = entry.get("source")
+        if not isinstance(name, str) or not name:
+            raise SystemExit(f"{path}: plugins[{index}] missing name")
+        if not isinstance(source, dict):
+            raise SystemExit(f"{path}: {name} missing source")
+        rel_path = source.get("path")
+        if source.get("source") != "local" or rel_path != f"./plugins/{name}":
+            raise SystemExit(f"{path}: {name} must use local source ./plugins/{name}")
+        if name.startswith("rldyour-"):
+            result.append(name)
+    if not result:
+        raise SystemExit(f"{path}: no rldyour plugins found")
+    return result
+
+
+rldyour_plugins = load_rldyour_plugins(marketplace_config_path)
 curated_plugins = ["gmail@openai-curated", "github@openai-curated"]
 managed_model = "gpt-5.5"
 managed_reasoning_effort = "xhigh"
@@ -380,6 +398,15 @@ def append_features_block() -> None:
     out.extend(feature_dotted_lines)
     append_managed_features()
 
+
+def is_rldyour_plugin_header(header_path: list[str]) -> bool:
+    return (
+        len(header_path) == 2
+        and header_path[0] == "plugins"
+        and header_path[1].startswith("rldyour-")
+        and header_path[1].endswith("@rldyour-codex")
+    )
+
 for raw_line in existing.splitlines():
     if raw_line.strip() == SCHEMA_COMMENT:
         continue
@@ -390,7 +417,7 @@ for raw_line in existing.splitlines():
             append_managed_features()
         header = match.group(1)
         header_path = split_toml_key(header)
-        if header in managed_headers:
+        if header in managed_headers or is_rldyour_plugin_header(header_path):
             skip_managed = True
             in_features = False
             continue

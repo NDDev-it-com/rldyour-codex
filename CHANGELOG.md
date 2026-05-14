@@ -24,6 +24,10 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - System Codex install migration now normalizes dotted, quoted, and inline-table legacy hook feature keys, with dedicated smoke coverage in `scripts/smoke_codex_hooks_migration.sh`.
 - Flow post-task state now treats stale Serena memories and stale fullrepo snapshots as pending sync instead of false green states.
 - Doctor and validation now use stricter parsed-config/current-state checks for system config, Serena memory freshness, and fullrepo sync.
+- System Codex install and doctor now derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP server checks from `plugins/rldyour-mcps/.mcp.json` instead of parallel hardcoded lists.
+- Hook smoke validation now parses plugin `hooks.json` wiring and executes the configured command wrappers in addition to direct hook script lifecycle checks.
+- GitHub validation now includes scheduled and manual MCP safe-call smoke coverage for deterministic unauthenticated MCP tool invocations.
+- Fullrepo bootstrap-init smoke now covers `.claude/CLAUDE.md` restore, ignore, and current-branch index cleanup alongside `AGENTS.md` and Serena memories.
 - MCP runtime smoke now checks remote URL servers with a Streamable HTTP `initialize` POST preflight, parses JSON and SSE initialize responses, accepts auth-gated `401`/`403` endpoints, and keeps retry/timeout controls.
 - MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls five attempts by default.
 - Marketplace validation now enforces parity between `config/mcp-runtime-versions.env` and local MCP launcher package specs in `plugins/rldyour-mcps/.mcp.json`.

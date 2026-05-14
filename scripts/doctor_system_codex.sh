@@ -94,9 +94,12 @@ if [ -f "$CONFIG_PATH" ]; then
   export RLDYOUR_CODEX_CONFIG="$CONFIG_PATH"
   export RLDYOUR_REPO_ROOT="$ROOT"
   export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
+  export RLDYOUR_MARKETPLACE_CONFIG="$ROOT/.agents/plugins/marketplace.json"
+  export RLDYOUR_MCP_CONFIG="$ROOT/plugins/rldyour-mcps/.mcp.json"
   python3 <<'PY' || exit_code=$?
 from __future__ import annotations
 
+import json
 import os
 import sys
 import tomllib
@@ -106,9 +109,36 @@ path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
 repo_root = os.environ["RLDYOUR_REPO_ROOT"]
 codex_home = path.parent
 system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
+marketplace_config_path = Path(os.environ["RLDYOUR_MARKETPLACE_CONFIG"])
+mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
 text = path.read_text(encoding="utf-8")
 config_data = tomllib.loads(text)
 schema_comment = "#:schema https://developers.openai.com/codex/config-schema.json"
+
+
+def load_rldyour_plugins(path: Path) -> list[str]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    entries = data.get("plugins")
+    if not isinstance(entries, list):
+        raise SystemExit(f"{path}: plugins must be a list")
+    result: list[str] = []
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise SystemExit(f"{path}: plugins[{index}] must be an object")
+        name = entry.get("name")
+        source = entry.get("source")
+        if not isinstance(name, str) or not name:
+            raise SystemExit(f"{path}: plugins[{index}] missing name")
+        if not isinstance(source, dict):
+            raise SystemExit(f"{path}: {name} missing source")
+        rel_path = source.get("path")
+        if source.get("source") != "local" or rel_path != f"./plugins/{name}":
+            raise SystemExit(f"{path}: {name} must use local source ./plugins/{name}")
+        if name.startswith("rldyour-"):
+            result.append(name)
+    if not result:
+        raise SystemExit(f"{path}: no rldyour plugins found")
+    return result
 
 checks = []
 checks.append(("config schema comment", text.startswith(f"{schema_comment}\n")))
@@ -149,38 +179,18 @@ for agent_path in sorted(system_agent_dir.glob("*.toml")):
     checks.append((f"agent configured {name}", agent_config.get("config_file") == expected_path))
     checks.append((f"agent description {name}", agent_config.get("description") == agent_data.get("description")))
 
-plugins = [
-    "gmail@openai-curated",
-    "github@openai-curated",
-    "rldyour-mcps@rldyour-codex",
-    "rldyour-explore@rldyour-codex",
-    "rldyour-serena-mcp@rldyour-codex",
-    "rldyour-security@rldyour-codex",
-    "rldyour-browser@rldyour-codex",
-    "rldyour-design@rldyour-codex",
-    "rldyour-lsps@rldyour-codex",
-    "rldyour-flow@rldyour-codex",
-    "rldyour-rules@rldyour-codex",
-]
+rldyour_plugins = [f"{name}@rldyour-codex" for name in load_rldyour_plugins(marketplace_config_path)]
+plugins = ["gmail@openai-curated", "github@openai-curated", *rldyour_plugins]
 configured_plugins = config_data.get("plugins") or {}
 for plugin in plugins:
     plugin_config = configured_plugins.get(plugin) or {}
     checks.append((f"plugin enabled {plugin}", plugin_config.get("enabled") is True))
+expected_rldyour_plugins = set(rldyour_plugins)
+for plugin in sorted(configured_plugins):
+    if plugin.startswith("rldyour-") and plugin.endswith("@rldyour-codex") and plugin not in expected_rldyour_plugins:
+        checks.append((f"stale rldyour plugin absent {plugin}", False))
 
-mcp_servers = [
-    "serena",
-    "sequential-thinking",
-    "playwright",
-    "chrome-devtools",
-    "context7",
-    "deepwiki",
-    "grep",
-    "semgrep",
-    "shadcn",
-    "dart-flutter",
-    "figma",
-    "openaiDeveloperDocs",
-]
+mcp_servers = sorted(json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"])
 configured_mcp_servers = config_data.get("mcp_servers") or {}
 for server in mcp_servers:
     checks.append((f"mcp configured {server}", server in configured_mcp_servers))
@@ -322,13 +332,24 @@ fi
 section "MCP runtime"
 if [ -n "$CODEX_CMD" ]; then
   if env CODEX_HOME="$CODEX_HOME_DIR" "$CODEX_CMD" mcp list >/tmp/rldyour-codex-mcp-list.txt 2>/tmp/rldyour-codex-mcp-list.err; then
-    for server in serena sequential-thinking playwright chrome-devtools context7 deepwiki grep semgrep shadcn dart-flutter figma openaiDeveloperDocs; do
+    while IFS= read -r server; do
+      [ -n "$server" ] || continue
       if grep -q "^${server}[[:space:]]" /tmp/rldyour-codex-mcp-list.txt; then
         pass "mcp listed $server"
       else
         fail "mcp not listed $server"
       fi
-    done
+    done < <(python3 - "$ROOT/plugins/rldyour-mcps/.mcp.json" <<'PY'
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+servers = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))["mcpServers"]
+print("\n".join(sorted(servers)))
+PY
+)
     if grep -E '^context7[[:space:]].*CONTEXT7_API_KEY=\*+' /tmp/rldyour-codex-mcp-list.txt >/dev/null; then
       pass "context7 runtime environment registered"
     else
