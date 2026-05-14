@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Last commit: 1911e5b fix(ci): make main fullrepo gate advisory
 Scope: CHANGELOG.md, README.md, docs/dependency-updates.md, config/skill-routing-policy.json, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/skills/instruction-docs-sync, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md
 Area: CORE
 -->
@@ -90,6 +90,7 @@ Use for release evidence and operational tagging flow.
   - writes `GITHUB_STEP_SUMMARY`
   - writes and uploads `diagnostics/ci` on failure
 - `validate_marketplace.sh` skips Serena memory freshness on `fullrepo` because fullrepo snapshot commits intentionally differ from source commits recorded in memory metadata.
+- `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally but reports it as a warning on GitHub Actions `main` runs; the separate `fullrepo` branch workflow is the CI authority for published agent-only snapshots.
 - `.github/workflows/dependency-check.yml` runs pinned-version freshness weekly + manual (`--fail-on-outdated`).
 
 ## Verification

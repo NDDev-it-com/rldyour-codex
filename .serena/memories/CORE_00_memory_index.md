@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Last commit: 1911e5b fix(ci): make main fullrepo gate advisory
 Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, system/agents, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
@@ -15,7 +15,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `a6adcb76b41638a988ed24dd96a9b310d1d91ecb`
+- Current source HEAD: `1911e5b5750caa0a7daa7ab6c193637808c8855c`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
@@ -68,6 +68,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - MCP package specs must stay pinned; `@latest` is invalid in runtime definitions.
 - `config/mcp-runtime-versions.env` and local MCP launcher package specs in `plugins/rldyour-mcps/.mcp.json` must stay in parity.
 - Serena memory freshness is checked on source branches; `fullrepo` validation skips the freshness comparison because fullrepo snapshots intentionally use a different commit from the source commit recorded in memory metadata.
+- `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; on GitHub Actions `main` runs it is advisory because the separate `fullrepo` workflow validates published agent-only snapshots.
 - Generated system Codex config starts with `#:schema https://developers.openai.com/codex/config-schema.json`, keeps `[features].hooks = true` and `[features].multi_agent = true`, excludes legacy hook feature keys, writes parent `model = "gpt-5.5"` plus `model_reasoning_effort = "xhigh"`, registers managed `[agents]`, installs `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` from `system/agents/*.toml`, and requires managed subagents to use `gpt-5.5` with `medium` reasoning.
 - Managed subagent roles currently tracked in `system/agents` are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Remote URL MCP runtime smoke uses Streamable HTTP JSON-RPC `initialize` POST preflight, not raw GET reachability; auth-gated `401`/`403` can pass, but POST `405` fails.

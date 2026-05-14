@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-14
-Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Last commit: 1911e5b fix(ci): make main fullrepo gate advisory
 Scope: system/AGENTS.md, system/agents/*.toml, README.md, AGENTS.md, .claude/CLAUDE.md, docs/dependency-updates.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml
 Area: CORE
 -->
@@ -83,6 +83,7 @@ Validates:
 - fullrepo status script availability
 - no dirty non-agent files during doctor checks
 - on `main`, remote fullrepo tree matches current `HEAD` plus agent-only files when agent-only files exist
+- on GitHub Actions `main` runs, the fullrepo current-state gate is advisory because main and fullrepo are separate push workflows; local doctor remains strict and the `fullrepo` branch workflow validates the published snapshot
 - `scripts/validate_marketplace.sh` pass
 
 ### `scripts/bootstrap_check.sh`
