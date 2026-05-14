@@ -1,7 +1,7 @@
 interface:
   display_name: "Figma To Code"
-  short_description: "Auto Figma to code workflow"
-  default_prompt: "Use $figma-to-code to implement a Figma frame, designer layout, or pixel-perfect frontend UI."
+  short_description: "Figma to code with full gates"
+  default_prompt: "Use $figma-to-code to implement Figma with screenshots, tokens, i18n, data classification, and validation."
 
 dependencies:
   tools:

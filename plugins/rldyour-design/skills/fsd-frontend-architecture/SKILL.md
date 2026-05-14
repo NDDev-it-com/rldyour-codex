@@ -1,6 +1,6 @@
 ---
 name: fsd-frontend-architecture
-description: "Apply strict Feature-Sliced Design placement for frontend/UI code. Use for FSD, frontend architecture, слои, pages/widgets/features/entities/shared, public APIs, imports."
+description: "Apply strict FSD placement for frontend/UI, i18n, data/admin boundaries. Use for FSD, архитектура, pages/widgets/features/entities/shared, imports."
 ---
 
 # FSD Frontend Architecture
@@ -20,6 +20,8 @@ Use this skill without waiting for an explicit `$fsd-frontend-architecture` call
 - Keeping a design implementation scalable instead of page-local and ad hoc.
 
 Use it together with `design-system-implementation` whenever token or shared UI placement is involved.
+
+For Figma-to-code work with dynamic content or i18n decisions, read `../../references/figma-delivery-contract.md`.
 
 ## Layers
 
@@ -65,6 +67,10 @@ Use this placement by default:
 - ReactBits primitives/effects: `shared/ui` if generic, otherwise the owning widget/feature.
 - Reusable icons/assets: `shared/assets`.
 - Domain-specific assets: owning entity/feature/widget/page slice.
+- i18n setup, translation resources, locale formatting helpers: `shared/i18n` or the existing centralized i18n location.
+- Static localized content: existing content/i18n location, not inline component literals.
+- Admin/CMS-backed sections: owning `entities`, `features`, `widgets`, or `pages` API/model boundaries, depending on project conventions.
+- API/domain-backed UI: `entities/<entity>` for reusable domain representation, `features/<action>` for user actions, `widgets/<block>` for composed reusable blocks, and `pages/<page>` for route-specific composition.
 - Page-specific layout: `pages/<page>/ui`.
 - Large reusable page sections: `widgets/<widget>/ui`.
 - User actions: `features/<feature>/ui`, `features/<feature>/model`, `features/<feature>/api`.
@@ -78,16 +84,19 @@ Before committing generated or copied code:
 
 1. Remove demo-only code, unused props, unused variants, placeholder assets, and unrelated styles.
 2. Replace raw design values with centralized tokens.
-3. Split code into FSD-appropriate slices and segments.
-4. Add or update public APIs.
-5. Preserve existing project conventions.
-6. Validate in browser.
+3. Move visible text to i18n/resources and keep long localized text in the validation state matrix.
+4. Classify static/config/admin/API/session content before choosing ownership.
+5. Split code into FSD-appropriate slices and segments.
+6. Add or update public APIs.
+7. Preserve existing project conventions.
+8. Validate in browser.
 
 ## Output
 
 For design implementation, report in Russian:
 
 - `Placement`: layer/slice/segment decisions.
+- `Content ownership`: static/config/admin/API/session placement and i18n namespace decisions.
 - `Public APIs`: new or changed exports.
 - `Architecture constraints`: import boundaries or compromises.
 - `Generated code adaptation`: what was removed, tokenized, or moved.

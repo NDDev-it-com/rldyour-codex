@@ -9,6 +9,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ### Added
 
 - Formal release, rollback, dependency-update, routing-policy, and observability workflows for the rldyour Codex marketplace.
+- `rldyour-design` Figma delivery contract for implementation manifests, dynamic/static/admin content classification, centralized i18n, token/UI-kit gates, and browser/static validation before final delivery.
 - `fullrepo` branch workflow for portable agent-only files: restore, migrate, publish, status, smoke validation, and Flow/Serena lifecycle integration.
 - Safe `--force-with-lease` fullrepo publishing after normal branch synchronization.
 - Instruction docs sync workflow for first-class Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` maintenance.

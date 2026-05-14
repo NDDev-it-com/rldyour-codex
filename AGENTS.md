@@ -34,7 +34,8 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `rldyour-serena-mcp` owns Serena-first code workflow, memory sync, and Serena lifecycle hooks.
 - `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, advisory session/commit hooks, and post-task synchronization hooks.
 - `rldyour-rules` owns quality, architecture, dependency, verification, Codex/Claude project-instruction, and ADR policy.
-- `rldyour-explore`, `rldyour-browser`, `rldyour-design`, `rldyour-security`, and `rldyour-lsps` own their domain workflows and must not duplicate MCP transports.
+- `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
+- `rldyour-explore`, `rldyour-browser`, `rldyour-security`, and `rldyour-lsps` own their domain workflows and must not duplicate MCP transports.
 - Curated `github@openai-curated` and `gmail@openai-curated` are intentionally enabled in system Codex.
 
 ## Development Rules

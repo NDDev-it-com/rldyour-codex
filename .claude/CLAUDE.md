@@ -50,7 +50,8 @@ This repository is the owner's personal Codex marketplace and system setup sourc
 - `rldyour-serena-mcp` owns Serena-first code workflow and memory sync.
 - `rldyour-flow` owns `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, instruction docs sync, post-task sync, and fullrepo sync orchestration.
 - `rldyour-rules` owns quality, architecture, dependency, verification, project-instruction, agent-only file, and ADR policy.
-- Domain plugins own their workflows: explore, browser, design, security, and LSP.
+- `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
+- Other domain plugins own their workflows: explore, browser, security, and LSP.
 
 ## Validation Commands
 

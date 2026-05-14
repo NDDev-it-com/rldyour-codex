@@ -24,7 +24,7 @@ The active marketplace currently contains:
 - `rldyour-serena-mcp`: Serena-first semantic code workflow, fact-only `.serena` memory sync, plans, research archive, and lifecycle hooks.
 - `rldyour-security`: non-blocking OWASP-oriented secure implementation guidance and `ry-sec-review` security review skill.
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
-- `rldyour-design`: Figma-to-code, centralized token-based design system, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
+- `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation gates.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, Codex and Claude Code project instructions, ADR policy, and `ry-rules-review`.
@@ -36,7 +36,7 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-mcps`: created. Base MCP servers approved by the owner.
 - `rldyour-serena-mcp`: created. Serena-specific workflow layer that depends on the Serena MCP server from `rldyour-mcps`.
 - `rldyour-browser`: created. Browser validation, pixel-perfect checks, functional checks, business-logic verification, and runtime debugging through Playwright MCP and Chrome DevTools MCP.
-- `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized design tokens, strict FSD, shadcn/ui, ReactBits, and browser evidence.
+- `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized i18n, dynamic/static/admin content classification, design tokens, reusable UI kit, strict FSD, shadcn/ui, ReactBits, and browser evidence.
 - `rldyour-lsps`: created. Language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: created. Command-like SDLC skills, deep `ry-init` context packs, `ry-start` context sufficiency gate, reviewer workflows orchestrated by `ry-start`/`ry-review`, instruction docs sync, advisory SessionStart/PostToolUse hooks, and post-task sync hook for Serena/docs/git/GitHub cleanup.
 - `rldyour-rules`: created. Hard and advisory rules for quality-first engineering, architecture, dependencies, verification, Codex/Claude project instructions, and ADRs.
