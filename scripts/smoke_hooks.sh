@@ -90,6 +90,106 @@ run_stop_hook() {
   printf 'ok      %s\n' "$label"
 }
 
+hook_json_command() {
+  local hooks_json=$1
+  local event=$2
+  local matcher=$3
+  local expected_script=$4
+
+  python3 - "$hooks_json" "$event" "$matcher" "$expected_script" <<'PY'
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+hooks_json = Path(sys.argv[1])
+event, matcher, expected_script = sys.argv[2:5]
+data = json.loads(hooks_json.read_text(encoding="utf-8"))
+events = data.get("hooks")
+if not isinstance(events, dict):
+    raise SystemExit(f"{hooks_json}: missing hooks object")
+groups = events.get(event)
+if not isinstance(groups, list) or not groups:
+    raise SystemExit(f"{hooks_json}: missing event {event}")
+
+if matcher == "-":
+    candidates = [group for group in groups if "matcher" not in group]
+else:
+    candidates = [group for group in groups if group.get("matcher") == matcher]
+if len(candidates) != 1:
+    raise SystemExit(f"{hooks_json}: expected one {event} matcher {matcher}, found {len(candidates)}")
+
+hook_entries = candidates[0].get("hooks")
+if not isinstance(hook_entries, list) or len(hook_entries) != 1:
+    raise SystemExit(f"{hooks_json}: {event} matcher {matcher} must have exactly one hook")
+hook = hook_entries[0]
+if hook.get("type") != "command":
+    raise SystemExit(f"{hooks_json}: {event} matcher {matcher} hook type must be command")
+command = hook.get("command")
+if not isinstance(command, str) or not command:
+    raise SystemExit(f"{hooks_json}: {event} matcher {matcher} command missing")
+if expected_script not in command:
+    raise SystemExit(f"{hooks_json}: {event} command does not reference {expected_script}")
+timeout = hook.get("timeout")
+if not isinstance(timeout, int) or timeout <= 0:
+    raise SystemExit(f"{hooks_json}: {event} timeout must be a positive integer")
+print(command)
+PY
+}
+
+run_configured_hook() {
+  local label=$1
+  local hooks_json=$2
+  local event=$3
+  local matcher=$4
+  local expected_script=$5
+  local cwd=$6
+  local input=$7
+  local expected=$8
+  local command output
+
+  command=$(hook_json_command "$hooks_json" "$event" "$matcher" "$expected_script")
+  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" bash -lc "$command")
+  if [ -n "$expected" ] && ! printf '%s' "$output" | grep -F "$expected" >/dev/null; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label did not include expected text: $expected"
+  fi
+  printf 'ok      %s\n' "$label"
+}
+
+run_configured_quiet_hook() {
+  local label=$1
+  local hooks_json=$2
+  local event=$3
+  local matcher=$4
+  local expected_script=$5
+  local cwd=$6
+  local input=$7
+  local command output
+
+  command=$(hook_json_command "$hooks_json" "$event" "$matcher" "$expected_script")
+  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" bash -lc "$command")
+  if [ -n "$output" ]; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label should not emit output for this smoke input"
+  fi
+  printf 'ok      %s\n' "$label"
+}
+
+run_configured_stop_hook() {
+  local label=$1
+  local hooks_json=$2
+  local event=$3
+  local expected_script=$4
+  local cwd=$5
+  local command
+
+  command=$(hook_json_command "$hooks_json" "$event" "-" "$expected_script")
+  (cd "$cwd" && printf '{}' | CODEX_HOME="$CODEX_HOME_DIR" RLDYOUR_SKIP_STOP_GATES=1 bash -lc "$command")
+  printf 'ok      %s\n' "$label"
+}
+
 run_hook_in_dir() {
   local label=$1
   local cwd=$2
@@ -233,11 +333,49 @@ EOF_MEMORY
   trap - RETURN
 }
 
+smoke_hook_wiring() {
+  local name=$1
+  local serena_hooks_json=$2
+  local flow_hooks_json=$3
+  local cwd=$4
+
+  printf '\n== Hook wiring smoke: %s ==\n' "$name"
+  run_configured_hook "$name wiring serena UserPromptSubmit" \
+    "$serena_hooks_json" UserPromptSubmit - "hooks/user_prompt_submit.sh" "$cwd" \
+    '{"prompt":"изучи код проекта и найди архитектуру"}' \
+    "Serena-first code workflow"
+
+  run_configured_quiet_hook "$name wiring serena PreToolUse non-commit" \
+    "$serena_hooks_json" PreToolUse Bash "hooks/prepare_auto_sync.sh" "$cwd" \
+    '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
+
+  run_configured_quiet_hook "$name wiring serena PostToolUse no marker" \
+    "$serena_hooks_json" PostToolUse Bash "hooks/mark_sync_required.sh" "$cwd" \
+    '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
+
+  run_configured_stop_hook "$name wiring serena Stop skip gate" \
+    "$serena_hooks_json" Stop "hooks/stop_memory_sync.sh" "$cwd"
+
+  run_configured_hook "$name wiring flow SessionStart" \
+    "$flow_hooks_json" SessionStart - "hooks/session_start_context.sh" "$cwd" \
+    '{"source":"smoke"}' \
+    "rldyour-flow session context"
+
+  run_configured_quiet_hook "$name wiring flow PostToolUse non-commit" \
+    "$flow_hooks_json" PostToolUse Bash "hooks/post_tool_use_commit_advice.sh" "$cwd" \
+    '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
+
+  run_configured_stop_hook "$name wiring flow Stop skip gate" \
+    "$flow_hooks_json" Stop "hooks/stop_post_task_sync.sh" "$cwd"
+}
+
 smoke_root() {
   local name=$1
   local base=$2
   local serena_dir
   local flow_dir
+  local wiring_cwd
+  local cleanup_wiring_cwd=""
 
   printf '\n== Hook smoke: %s ==\n' "$name"
   [ -d "$base" ] || fail "$name hook root missing: $base"
@@ -250,6 +388,17 @@ smoke_root() {
     flow_dir="$base/rldyour-flow/local"
   else
     flow_dir="$base/rldyour-flow"
+  fi
+
+  if [ "$name" = "installed" ]; then
+    wiring_cwd=$(make_lifecycle_repo)
+    cleanup_wiring_cwd="$wiring_cwd"
+  else
+    wiring_cwd="$ROOT"
+  fi
+  smoke_hook_wiring "$name" "$serena_dir/hooks.json" "$flow_dir/hooks.json" "$wiring_cwd"
+  if [ -n "$cleanup_wiring_cwd" ]; then
+    rm -rf "$cleanup_wiring_cwd"
   fi
 
   run_hook "$name serena UserPromptSubmit" \

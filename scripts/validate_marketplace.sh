@@ -111,6 +111,7 @@ python3 scripts/validate_instruction_docs.py
 
 step "OpenAI skill metadata"
 "$UV_BIN" run --with pyyaml python - <<'PY'
+import json
 from pathlib import Path
 import re
 import sys
@@ -127,20 +128,9 @@ ORCHESTRATED_ONLY = {
     "flow-security-review",
     "flow-verification-review",
 }
-KNOWN_MCP_SERVERS = {
-    "serena",
-    "sequential-thinking",
-    "playwright",
-    "chrome-devtools",
-    "context7",
-    "deepwiki",
-    "grep",
-    "semgrep",
-    "shadcn",
-    "dart-flutter",
-    "figma",
-    "openaiDeveloperDocs",
-}
+KNOWN_MCP_SERVERS = set(
+    json.loads(Path("plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
+)
 
 
 def skill_name_for(path: Path) -> str | None:
