@@ -283,6 +283,7 @@ if python3 "$ROOT/plugins/rldyour-flow/scripts/fullrepo_sync.py" --status-json >
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -291,12 +292,24 @@ dirty = payload.get("dirty_non_agent_paths") or []
 if dirty:
     raise SystemExit(f"non-agent files are dirty: {dirty}")
 if payload.get("branch") == "main" and payload.get("worktree_agent_paths") and payload.get("fullrepo_matches_worktree") is not True:
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(
+            "fullrepo current-state gate is advisory on GitHub Actions main runs; "
+            "the fullrepo branch workflow validates published agent-only snapshots",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
     raise SystemExit("fullrepo does not match current HEAD plus agent-only files")
 PY
     then
       pass "fullrepo current-state gate"
     else
-      fail "fullrepo current-state gate"
+      gate_status=$?
+      if [ "$gate_status" -eq 2 ]; then
+        warn "fullrepo current-state gate advisory on GitHub Actions main run"
+      else
+        fail "fullrepo current-state gate"
+      fi
     fi
   else
     fail "fullrepo state JSON invalid"

@@ -161,6 +161,7 @@ python3 scripts/validate_instruction_docs.py --require-agent-docs
 `scripts/smoke_mcp_capabilities.sh` verifies MCP protocol behavior with `initialize`, `list_tools`, and safe `call_tool` probes where a deterministic read-only tool exists. It retries each server five times by default to absorb transient remote MCP failures. Figma is skipped by default because it requires OAuth; pass `--include-auth` only after authorizing that runtime.
 
 GitHub Actions runs the same marketplace/system checks on push and pull request with a temporary `CODEX_HOME`, list-only MCP capability probes, and a clean bootstrap clone.
+On `main` CI, the doctor treats fullrepo current-state as advisory because the fullrepo branch is published and validated as a separate push; local doctor and `fullrepo` CI keep the fullrepo snapshot gate strict.
 
 ## Fullrepo Branch
 
