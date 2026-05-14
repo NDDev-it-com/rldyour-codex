@@ -31,7 +31,7 @@ Use the installed rldyour plugins automatically when the task matches their scop
 - `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, instruction docs sync, advisory session/commit hooks, and post-task synchronization.
 - `rldyour-lsps`: language-server selection, setup, health checks, and Serena LSP integration.
 - `rldyour-browser`: browser validation, screenshots, responsive checks, user flows, business logic, console/network/runtime debugging, and performance diagnosis.
-- `rldyour-design`: Figma-to-code, centralized design systems, FSD frontend placement, shadcn/ui, ReactBits, and design validation.
+- `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized design systems, UI-kit reuse, FSD frontend placement, shadcn/ui, ReactBits, and design validation gates.
 - `rldyour-security`: OWASP-oriented secure implementation guidance and `$ry-sec-review`.
 - `rldyour-mcps`: MCP runtime only. It must not be treated as a behavior policy plugin.
 
@@ -96,7 +96,7 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 
 - Browser-visible changes require browser validation when a browser can be run.
 - Screenshots and temporary browser evidence belong under `browser/` and should not be committed unless explicitly requested.
-- Figma is the source of truth for Figma-to-code tasks. Adapt designs into centralized tokens, project architecture, and browser-validated implementation.
+- Figma is the source of truth for Figma-to-code tasks. Adapt designs into centralized i18n, tokens, UI kit, project architecture, content/data ownership, and browser-validated implementation.
 - Security-relevant work should apply OWASP-oriented guidance and run `$ry-sec-review` when the owner asks for a security review or the touched scope is sensitive.
 
 ## Serena Memories And Project Knowledge

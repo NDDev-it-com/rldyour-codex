@@ -1,6 +1,6 @@
 ---
 name: design-system-implementation
-description: "Implement centralized design systems with tokens, shadcn/ui, and ReactBits. Use for дизайн-система, токены, UI primitives, theme, CSS variables, typography, colors, motion."
+description: "Implement centralized design systems, tokens, UI kit, i18n-ready primitives, shadcn/ui, ReactBits. Use for дизайн-система, токены, theme, colors, motion."
 ---
 
 # Design System Implementation
@@ -10,6 +10,8 @@ description: "Implement centralized design systems with tokens, shadcn/ui, and R
 Build and maintain a centralized design system so design implementation is consistent, scalable, and easy for future Codex sessions to modify with high confidence.
 
 The design system is the source of truth for reusable visual decisions. Components should consume tokens instead of scattering raw values across pages and features.
+
+For Figma-driven work, read `../../references/figma-delivery-contract.md` before adding tokens or UI-kit components.
 
 ## Auto Invocation
 
@@ -39,11 +41,13 @@ Create or update centralized tokens for all relevant categories:
 - Motion: duration, easing, delay, stagger, reduced-motion behavior.
 - Opacity/blur: overlays, disabled states, glass effects.
 - Component states: hover, focus, active, disabled, selected, loading, error.
+- Content and i18n surface: reusable text components, locale-aware formatting helpers, and layout constraints for long translated strings.
 
 Preferred placement in strict FSD:
 
 - `shared/config/theme`: token definitions, CSS variables, theme config, Tailwind/shadcn theme mapping.
 - `shared/ui`: reusable primitives and shadcn-based components without business logic.
+- `shared/i18n` or the existing i18n location: translation setup, namespaces, typed keys, formatting helpers, and locale resources.
 - `app`: global style imports, providers, theme initialization, and root CSS variable attachment.
 
 If the project already has a design-token convention, extend it rather than creating a parallel system.
@@ -69,6 +73,14 @@ Use shadcn/ui MCP as the primary component and registry workflow:
 - Do not keep unused variants, demo-only code, or registry leftovers.
 - Preserve accessibility behavior from shadcn primitives.
 
+## UI Kit And i18n Rules
+
+- Build or extend a central UI kit instead of page-local one-off components for reusable controls, layout primitives, typography, forms, modals, tables, tabs, menus, cards, and status states.
+- Keep visible copy outside UI-kit primitives unless the copy is part of a generic accessibility label or component state owned by the design system.
+- Expose slots, props, or composition APIs so features/pages pass localized content from i18n resources.
+- Test UI-kit primitives with long labels, RTL-sensitive layouts when the project supports RTL, empty labels where allowed, and keyboard/focus states.
+- If no i18n system exists and the task adds visible copy, create the smallest centralized i18n setup compatible with the stack before adding page text.
+
 ## ReactBits Rules
 
 Use ReactBits.dev for purposeful motion and interactive effects only:
@@ -84,6 +96,7 @@ Use ReactBits.dev for purposeful motion and interactive effects only:
 
 - No duplicated token definitions across pages/features.
 - No raw colors, shadows, radii, motion timings, or typography values when a design token exists or should exist.
+- No unapproved hardcoded user-visible text in components that should consume i18n resources.
 - No business logic in `shared/ui`.
 - No component imports from another slice internals; use public APIs.
 - No visual-only implementation that breaks business logic, accessibility, or browser validation.

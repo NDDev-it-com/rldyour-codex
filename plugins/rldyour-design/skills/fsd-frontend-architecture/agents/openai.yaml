@@ -1,7 +1,7 @@
 interface:
   display_name: "FSD Frontend Architecture"
-  short_description: "Auto strict FSD UI placement"
-  default_prompt: "Use $fsd-frontend-architecture to place frontend UI, assets, tokens, imports, and public APIs in FSD."
+  short_description: "FSD UI and data placement"
+  default_prompt: "Use $fsd-frontend-architecture to place UI, i18n, assets, data/admin ownership, imports, and public APIs in FSD."
 
 dependencies:
   tools:

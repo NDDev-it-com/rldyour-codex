@@ -81,6 +81,25 @@
       ]
     },
     {
+      "id": "ru-figma-quality-gates",
+      "prompt": "перенеси Figma макеты, определи dynamic/static, вынеси тексты в i18n, сделай токены и проверь перед отдачей",
+      "prompt_terms": ["dynamic/static", "i18n"],
+      "expected": [
+        {
+          "skill": "rldyour-design:ry-design",
+          "description_terms": ["data classification", "i18n", "full validation"]
+        },
+        {
+          "skill": "rldyour-design:figma-to-code",
+          "description_terms": ["dynamic/static", "i18n", "browser validation"]
+        },
+        {
+          "skill": "rldyour-design:design-validation",
+          "description_terms": ["i18n/token/static scans", "responsive states"]
+        }
+      ]
+    },
+    {
       "id": "ru-lsp-health",
       "prompt": "проверь LSP и диагностики Serena для Python и TypeScript",
       "prompt_terms": ["LSP", "диагностики"],
