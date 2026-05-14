@@ -8,6 +8,8 @@ Pinned runtime versions keep MCP startup reproducible. Update checks are intenti
 - `plugins/rldyour-mcps/.mcp.json`: actual MCP launcher package specs consumed by the installer.
 - `.github/dependabot.yml`: GitHub Actions dependency update configuration.
 
+`scripts/validate_marketplace.sh` enforces parity between `config/mcp-runtime-versions.env` and local MCP launcher package specs in `.mcp.json`.
+
 ## Local Check
 
 ```bash

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-12
-Last commit: 6d70b15 chore(codex): manage subagent model configs
-Scope: plugins/rldyour-flow, plugins/rldyour-flow/references/reviewer-protocol.md, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md, system/agents/*.toml
+Last updated: 2026-05-14
+Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Scope: plugins/rldyour-flow, plugins/rldyour-flow/references/reviewer-protocol.md, plugins/rldyour-rules, scripts/validate_instruction_docs.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_fullrepo_sync.sh, scripts/smoke_local_git_guard.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/install_local_git_hooks.sh, scripts/validate_marketplace.sh, config/skill-routing-policy.json, README.md, AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md, system/agents/*.toml
 Area: FLOW
 -->
 
@@ -23,6 +23,8 @@ Area: FLOW
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`
 - `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`
 - `scripts/install_local_git_hooks.sh`
+- `scripts/check_serena_memory_freshness.py`
+- `scripts/smoke_serena_memory_freshness.sh`
 - `scripts/sync_fullrepo_branch.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_hooks.sh`
@@ -102,6 +104,14 @@ Area: FLOW
 
 `needs_flow_sync` is true when Serena memories are stale or any of the following is present: dirty files, ahead/behind, changed instruction docs, fullrepo attention needed, branch cleanup needed, or instruction-docs review required. The Flow Stop hook still exits silently while Serena is stale so the Serena Stop hook can request memory refresh first.
 
+## Serena Memory Freshness Gate
+
+`scripts/check_serena_memory_freshness.py` is the source-branch validation gate for Serena memories:
+
+- On normal source branches, it runs `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` and fails when `is_current` is not true.
+- On `fullrepo`, it skips freshness comparison because fullrepo commits are snapshots generated from source `HEAD` plus agent-only files; Serena memory metadata tracks the source commit, not the fullrepo snapshot commit.
+- `scripts/smoke_serena_memory_freshness.sh` covers current, stale, explicit `--branch fullrepo`, and `GITHUB_REF_NAME=fullrepo` paths.
+
 ## Branch Cleanup Contract
 
 Flow treats branch hygiene as part of final synchronization.
@@ -179,6 +189,7 @@ Flow stop guidance is: Serena sync → instruction-docs sync if needed → check
 - Product refs use strict mode: agent-only paths, runtime/local-only paths, definite secrets, and AI-marker additions block the push.
 - `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` uses fullrepo mode: durable AI context and AI markers are allowed, suspicious security wording is advisory, and definite secrets/runtime/local-only files still block.
 - Mixed pushes are evaluated per pushed remote ref.
+- Keep this guard Bash 3-compatible for macOS `/bin/bash`; avoid Bash 4-only helpers such as `mapfile` and `readarray`.
 
 ## Verification
 
@@ -187,6 +198,7 @@ Flow stop guidance is: Serena sync → instruction-docs sync if needed → check
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`
 - `scripts/smoke_local_git_guard.sh`
 - `scripts/smoke_flow_branch_cleanup.sh`
+- `scripts/smoke_serena_memory_freshness.sh`
 - `scripts/smoke_fullrepo_bootstrap_init.sh`
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_hooks.sh`

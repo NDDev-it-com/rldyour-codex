@@ -15,6 +15,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Branch-aware local Git pre-push guard for rldyour-managed repositories, with strict product-branch protection and fullrepo-aware AI context publishing.
 - Flow branch-cleanup state and smoke coverage so merged workflow branches, remote branches, and merged worktree candidates keep post-task sync pending until cleanup is done or explicitly reported.
 - `fullrepo` bootstrap init command and smoke coverage for first-run repository initialization, remote context restore, local AI-file publishing, and current-branch AI-file index cleanup.
+- Serena memory freshness helper and smoke coverage for source-branch freshness, stale memory failures, and `fullrepo` snapshot skip behavior.
 
 ### Changed
 
@@ -24,18 +25,19 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Doctor and validation now use stricter parsed-config/current-state checks for system config, Serena memory freshness, and fullrepo sync.
 - MCP runtime smoke now checks remote URL servers with a Streamable HTTP `initialize` POST preflight, parses JSON and SSE initialize responses, accepts auth-gated `401`/`403` endpoints, and keeps retry/timeout controls.
 - MCP capability smoke now probes Grep with a fast code-pattern query that matches the current `searchGitHub` tool contract and gives transient remote calls five attempts by default.
+- Marketplace validation now enforces parity between `config/mcp-runtime-versions.env` and local MCP launcher package specs in `plugins/rldyour-mcps/.mcp.json`.
 - System Codex install now writes the official Codex config schema hint at the top of generated `config.toml`, and doctor/migration smoke verify it.
 - System Codex install now reproduces the owner-selected `gpt-5.5`/`xhigh` model defaults and approved MCP tool overrides from a clean `CODEX_HOME`.
 - Plugin release validation now enforces Codex marketplace policy fields, plugin interface metadata, relative bundled capability paths, default prompt limits, and brand color format.
 - System Codex install now manages `~/.codex/agents/*.toml` subagent role configs from `system/agents/*.toml`, enables `features.multi_agent`, and verifies managed subagents use `gpt-5.5` with medium reasoning.
 - Runtime Codex CLI pin updated from `0.128.0` to `0.130.0`.
 - MCP Python SDK pin updated from `1.27.0` to `1.27.1` for the latest compatibility fixes.
-- MCP runtime pins updated for Semgrep `1.162.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.25.0`, and shadcn `4.7.0`.
+- MCP runtime pins updated for Serena Agent `1.3.0`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.26.0`, Context7 MCP `2.2.5`, and shadcn `4.7.0`.
 - `rldyour-flow` plugin version updated to `0.2.4` for read-only `ry-init` memory discipline and fullrepo bootstrap init behavior.
 - `ry-init` is now explicitly read-only for Serena memories by default; it reports memory candidates instead of writing `.serena` unless the user requested memory sync or a stale-memory hook requires it.
 - `serena-memory-sync` no longer auto-runs for read-only init, log audits, server snapshots, report-only reviews, or exploratory debugging without an explicit memory-sync request.
 - Global and project instructions now state the explicit fullrepo-managed task sync order: Serena/docs, checks, normal branch push, fullrepo publish, and safe cleanup.
-- `@upstash/context7-mcp` runtime pin updated from `2.2.3` to `2.2.4`.
+- `@upstash/context7-mcp` runtime pin updated from `2.2.3` to `2.2.5`.
 - `rldyour-flow` now treats `fullrepo` as part of `ry-init` and `flow-post-task-sync`.
 - `rldyour-flow` now detects missing or stale instruction docs and routes post-task sync through `$instruction-docs-sync`.
 - `rldyour-serena-mcp` memory sync now supports fullrepo-managed `.serena` knowledge without committing AI files to normal branches.

@@ -298,6 +298,7 @@ paths = [
     Path("scripts/validate_skill_routing.py"),
     Path("scripts/release_manifest.py"),
     Path("scripts/check_mcp_runtime_versions.py"),
+    Path("scripts/check_serena_memory_freshness.py"),
 ]
 
 for path in paths:
@@ -315,26 +316,11 @@ else
   plugins/rldyour-lsps/scripts/check_lsps.sh
 fi
 
+step "Serena memory freshness smoke"
+scripts/smoke_serena_memory_freshness.sh
+
 step "Serena memory state"
-python3 - <<'PY'
-from __future__ import annotations
-
-import json
-import subprocess
-
-proc = subprocess.run(
-    ["python3", "plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"],
-    check=False,
-    capture_output=True,
-    text=True,
-)
-if proc.returncode != 0:
-    raise SystemExit(proc.stderr.strip() or proc.stdout.strip() or "serena memory state failed")
-payload = json.loads(proc.stdout)
-if payload.get("is_current") is not True:
-    raise SystemExit(f"Serena memories are stale for HEAD: {payload!r}")
-print(f"Serena memories current for {payload.get('head_sha', 'unknown')}")
-PY
+python3 scripts/check_serena_memory_freshness.py
 
 step "Flow post-task state"
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool >/dev/null
@@ -443,6 +429,69 @@ if errors:
     raise SystemExit("\n".join(errors))
 
 print("MCP local runtime package specs are pinned")
+PY
+
+step "MCP runtime pin parity"
+python3 - <<'PY'
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+
+def parse_env(path: Path) -> dict[str, str]:
+    values: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, value = stripped.split("=", 1)
+        values[key.strip()] = value.strip().strip("\"'")
+    return values
+
+
+def runtime_package_spec(server_name: str) -> str:
+    spec = servers.get(server_name)
+    if not isinstance(spec, dict):
+        return ""
+    command = spec.get("command")
+    args = [str(arg) for arg in spec.get("args") or []]
+    if command == "bunx":
+        return args[0] if args else ""
+    if command == "uvx":
+        for index, arg in enumerate(args):
+            if arg == "--from" and index + 1 < len(args):
+                return args[index + 1]
+    return ""
+
+
+pins = parse_env(Path("config/mcp-runtime-versions.env"))
+servers = json.loads(Path("plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
+checks = (
+    ("SERENA_AGENT_VERSION", "serena", "serena-agent", "=="),
+    ("SEMGREP_VERSION", "semgrep", "semgrep", "=="),
+    ("SEQUENTIAL_THINKING_MCP_VERSION", "sequential-thinking", "@modelcontextprotocol/server-sequential-thinking", "@"),
+    ("PLAYWRIGHT_MCP_VERSION", "playwright", "@playwright/mcp", "@"),
+    ("CHROME_DEVTOOLS_MCP_VERSION", "chrome-devtools", "chrome-devtools-mcp", "@"),
+    ("CONTEXT7_MCP_VERSION", "context7", "@upstash/context7-mcp", "@"),
+    ("SHADCN_VERSION", "shadcn", "shadcn", "@"),
+)
+errors: list[str] = []
+
+for key, server_name, package, separator in checks:
+    version = pins.get(key)
+    if not version:
+        errors.append(f"{key}: missing pin")
+        continue
+    expected = f"{package}{separator}{version}"
+    actual = runtime_package_spec(server_name)
+    if actual != expected:
+        errors.append(f"{server_name}: expected {expected!r} from {key}, found {actual!r}")
+
+if errors:
+    raise SystemExit("\n".join(errors))
+
+print(f"MCP runtime pins match .mcp.json specs: {len(checks)} packages")
 PY
 
 step "MCP runtime smoke"

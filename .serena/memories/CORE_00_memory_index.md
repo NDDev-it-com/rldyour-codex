@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-12
-Last commit: 6d70b15 chore(codex): manage subagent model configs
-Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, system/agents, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
+Last updated: 2026-05-14
+Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Scope: .serena/memories, AGENTS.md, .claude/CLAUDE.md, README.md, system/agents, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/release_manifest.py, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_codex_hooks_migration.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/sync_fullrepo_branch.sh
 Area: CORE
 -->
 
@@ -15,7 +15,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Use it first 
 
 - Repository: `rldyour-codex`
 - Normal branch: `main`
-- Current source HEAD: `6d70b159bec8b3a6ddb33f58051239c57a5647ac`
+- Current source HEAD: `a6adcb76b41638a988ed24dd96a9b310d1d91ecb`
 - Current fullrepo snapshot is generated from `main` HEAD plus agent-only files; verify the exact local/remote SHA with `scripts/sync_fullrepo_branch.sh --status`.
 - Marketplace version: `0.1.0`
 - Active rldyour plugins: `9`
@@ -36,7 +36,7 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - Release and plugin metadata validation: `scripts/validate_plugin_versions.py`
 - Fullrepo and flow sync: `scripts/sync_fullrepo_branch.sh`, `plugins/rldyour-flow/scripts/fullrepo_sync.py`, `plugins/rldyour-flow/scripts/flow_post_task_state.py`, `plugins/rldyour-flow/scripts/git_sync_audit.sh`
 - Local Git guard: `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`, `scripts/install_local_git_hooks.sh`, `scripts/smoke_local_git_guard.sh`
-- Serena knowledge freshness: `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`
+- Serena knowledge freshness: `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`, `scripts/check_serena_memory_freshness.py`, `scripts/smoke_serena_memory_freshness.sh`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`
 
 ## Memory Map
 
@@ -66,6 +66,8 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 - `branch_cleanup_state` is a finish gate: merged local branches, merged remote branches, and merged workflow worktrees keep Flow sync pending until cleaned or explicitly reported as blockers. Protected branches such as `main` and `fullrepo` are excluded.
 - Fullrepo status compares the expected tree from current `HEAD` plus agent-only files against local/remote `fullrepo`; stale snapshots keep Flow sync pending.
 - MCP package specs must stay pinned; `@latest` is invalid in runtime definitions.
+- `config/mcp-runtime-versions.env` and local MCP launcher package specs in `plugins/rldyour-mcps/.mcp.json` must stay in parity.
+- Serena memory freshness is checked on source branches; `fullrepo` validation skips the freshness comparison because fullrepo snapshots intentionally use a different commit from the source commit recorded in memory metadata.
 - Generated system Codex config starts with `#:schema https://developers.openai.com/codex/config-schema.json`, keeps `[features].hooks = true` and `[features].multi_agent = true`, excludes legacy hook feature keys, writes parent `model = "gpt-5.5"` plus `model_reasoning_effort = "xhigh"`, registers managed `[agents]`, installs `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` from `system/agents/*.toml`, and requires managed subagents to use `gpt-5.5` with `medium` reasoning.
 - Managed subagent roles currently tracked in `system/agents` are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Remote URL MCP runtime smoke uses Streamable HTTP JSON-RPC `initialize` POST preflight, not raw GET reachability; auth-gated `401`/`403` can pass, but POST `405` fails.
@@ -74,6 +76,8 @@ Use code and configuration as the source of truth. Memories are compact indexes 
 ## Verification
 
 - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool`
+- `python3 scripts/check_serena_memory_freshness.py`
+- `scripts/smoke_serena_memory_freshness.sh`
 - `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --root . --json | python3 -m json.tool`
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`

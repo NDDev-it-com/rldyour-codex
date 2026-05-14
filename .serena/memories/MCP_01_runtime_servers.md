@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-11
-Last commit: d034a86 chore(codex): harden runtime validation
+Last updated: 2026-05-14
+Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
 Scope: plugins/rldyour-mcps/.mcp.json, plugins/rldyour-mcps/.codex-plugin/plugin.json, plugins/rldyour-mcps/README.md, plugins/rldyour-mcps/.env.example, README.md, config/mcp-runtime-versions.env, scripts/install_system_codex.sh, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, .github/workflows/validate.yml, ${CODEX_HOME:-$HOME/.codex}/config.toml
 Area: MCP
 -->
@@ -19,7 +19,7 @@ Area: MCP
 - `plugins/rldyour-mcps/.env.example`: environment placeholder contract.
 - `config/mcp-runtime-versions.env`: pinned package versions used by installer and checks.
 - `scripts/install_system_codex.sh`: maps portable `.mcp.json` commands to installed executable paths.
-- `scripts/validate_marketplace.sh`: MCP pinning, config sync, and runtime smoke checks.
+- `scripts/validate_marketplace.sh`: MCP pinning, env/runtime pin parity, config sync, and runtime smoke checks.
 - `scripts/smoke_mcp_runtime.sh`: installed-config, command, and Streamable HTTP endpoint smoke.
 - `scripts/smoke_mcp_capabilities.py/.sh`: MCP initialize/list_tools/safe probe smoke.
 - `${CODEX_HOME:-$HOME/.codex}/config.toml`: installed MCP runtime.
@@ -41,12 +41,12 @@ Area: MCP
 
 Local command/runtime contracts from `.mcp.json`:
 
-- `serena`: `uvx --from serena-agent==1.2.0 ... serena start-mcp-server ... --enable-web-dashboard False --open-web-dashboard False`
+- `serena`: `uvx --from serena-agent==1.3.0 ... serena start-mcp-server ... --enable-web-dashboard False --open-web-dashboard False`
 - `sequential-thinking`: `bunx @modelcontextprotocol/server-sequential-thinking@2025.12.18`
 - `playwright`: `bunx @playwright/mcp@0.0.75 --headless --caps=network,storage,testing,devtools`
-- `chrome-devtools`: `bunx chrome-devtools-mcp@0.25.0 --headless --isolated --no-usage-statistics --no-performance-crux`
-- `context7`: `bunx @upstash/context7-mcp@2.2.4` (reads `CONTEXT7_API_KEY` via `env_vars`)
-- `semgrep`: `uvx --from semgrep==1.162.0 semgrep mcp`
+- `chrome-devtools`: `bunx chrome-devtools-mcp@0.26.0 --headless --isolated --no-usage-statistics --no-performance-crux`
+- `context7`: `bunx @upstash/context7-mcp@2.2.5` (reads `CONTEXT7_API_KEY` via `env_vars`)
+- `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp`
 - `shadcn`: `bunx shadcn@4.7.0 mcp`
 - `dart-flutter`: `dart mcp-server --force-roots-fallback`
 
@@ -77,14 +77,15 @@ Timeouts:
   - with executable path difference allowed.
 - `@latest` is disallowed for MCP runtime definitions by validation.
 - Pinned package specs in `.mcp.json` must be exact:
-  - `serena-agent==1.2.0`
+  - `serena-agent==1.3.0`
   - `@modelcontextprotocol/server-sequential-thinking@2025.12.18`
   - `@playwright/mcp@0.0.75`
-  - `chrome-devtools-mcp@0.25.0`
-  - `@upstash/context7-mcp@2.2.4`
-  - `semgrep==1.162.0`
+  - `chrome-devtools-mcp@0.26.0`
+  - `@upstash/context7-mcp@2.2.5`
+  - `semgrep==1.163.0`
   - `shadcn@4.7.0`
 - `config/mcp-runtime-versions.env` is expected to mirror MCP launcher pins and includes `CODEX_CLI_VERSION=0.130.0` and `MCP_PYTHON_SDK_VERSION=1.27.1`.
+- `scripts/validate_marketplace.sh` fails if `config/mcp-runtime-versions.env` drifts from the local launcher package specs in `.mcp.json`.
 
 ## Capability Smoke Contract
 
@@ -116,7 +117,7 @@ Default per-server retry count is `5`; this gives remote HTTP MCPs enough headro
 
 Remote endpoint preflight checks default to `3` attempts and an `8` second timeout per attempt. The script sends JSON-RPC `initialize` with protocol `2025-11-25`, `Accept: application/json, text/event-stream`, and `Content-Type: application/json`; it parses both JSON and SSE initialize responses. `401` and `403` pass for auth-gated endpoints such as Figma. `405` is not accepted for POST initialize because the MCP spec allows `405` only for optional GET SSE compatibility. Override with `--url-retries`, `--url-timeout`, `RLDYOUR_MCP_URL_RETRIES`, or `RLDYOUR_MCP_URL_TIMEOUT`.
 
-Live runtime smoke on 2026-05-08 verified:
+Live runtime smoke on 2026-05-14 verified:
 
 - `deepwiki`: HTTP 200 initialize `DeepWiki`, protocol `2025-11-25`
 - `grep`: HTTP 200 initialize `mcp-typescript server on vercel`, protocol `2025-06-18`

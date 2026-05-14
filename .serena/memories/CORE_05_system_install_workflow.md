@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-12
-Last commit: 6d70b15 chore(codex): manage subagent model configs
-Scope: system/AGENTS.md, system/agents/*.toml, README.md, AGENTS.md, .claude/CLAUDE.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml
+Last updated: 2026-05-14
+Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Scope: system/AGENTS.md, system/agents/*.toml, README.md, AGENTS.md, .claude/CLAUDE.md, docs/dependency-updates.md, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/validate_instruction_docs.py, scripts/validate_marketplace.sh, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_fullrepo_sync.sh, plugins/rldyour-flow/scripts/instruction_docs_state.py, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml
 Area: CORE
 -->
 
@@ -24,6 +24,8 @@ This repository owns the canonical install/doctor/rollback workflow for this Cod
 - `system/agents/*.toml` (managed subagent role source)
 - `scripts/install_system_codex.sh`
 - `scripts/smoke_codex_hooks_migration.sh`
+- `scripts/check_serena_memory_freshness.py`
+- `scripts/smoke_serena_memory_freshness.sh`
 - `scripts/doctor_system_codex.sh`
 - `scripts/rollback_system_codex.sh`
 - `scripts/bootstrap_check.sh`
@@ -115,6 +117,7 @@ Validates:
 - `scripts/validate_marketplace.sh`
 - `scripts/smoke_mcp_runtime.sh`
 - `scripts/smoke_mcp_capabilities.sh`
+- `scripts/smoke_serena_memory_freshness.sh`
 - `scripts/smoke_hooks.sh`
 - `scripts/smoke_clean_bootstrap.sh`
 - `scripts/smoke_fullrepo_bootstrap_init.sh`

@@ -56,7 +56,7 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | `context7` | Current library documentation | `bunx`, `CONTEXT7_API_KEY` |
 | `deepwiki` | Repository documentation and explanations | remote URL |
 | `grep` | Search across public GitHub repositories | remote URL |
-| `semgrep` | Static analysis and security checks | `uvx --from semgrep==1.162.0 semgrep mcp` |
+| `semgrep` | Static analysis and security checks | `uvx --from semgrep==1.163.0 semgrep mcp` |
 | `shadcn` | shadcn/ui registry work | `bunx` |
 | `dart-flutter` | Dart/Flutter MCP for Dart and Flutter projects | `dart` |
 | `figma` | Figma design context | remote URL, OAuth |
@@ -124,7 +124,7 @@ After plugin installation, browser/OAuth authorization may be required. If Codex
 Serena is configured without starting or opening the web dashboard:
 
 ```text
-uvx --from serena-agent==1.2.0 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --enable-web-dashboard False --open-web-dashboard False
+uvx --from serena-agent==1.3.0 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --enable-web-dashboard False --open-web-dashboard False
 ```
 
 If the dashboard is needed manually, change this runtime policy intentionally and re-run the system installer.

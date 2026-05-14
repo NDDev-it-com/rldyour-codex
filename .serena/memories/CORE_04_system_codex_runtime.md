@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-12
-Last commit: 6d70b15 chore(codex): manage subagent model configs
-Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
+Last updated: 2026-05-14
+Last commit: a6adcb7 chore(codex): refresh MCP runtime validation
+Scope: ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/dependabot.yml, VERSION, CHANGELOG.md, docs, config/mcp-runtime-versions.env, config/skill-routing-policy.json, scripts/install_system_codex.sh, scripts/smoke_codex_hooks_migration.sh, scripts/doctor_system_codex.sh, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, scripts/check_serena_memory_freshness.py, scripts/smoke_serena_memory_freshness.sh, scripts/collect_diagnostics.sh, scripts/rollback_system_codex.sh, scripts/bootstrap_check.sh, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.py, scripts/smoke_mcp_capabilities.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_fullrepo_sync.sh, pyrightconfig.json, plugins/rldyour-*, .agents/plugins/marketplace.json, AGENTS.md, README.md
 Area: CORE
 -->
 
@@ -24,6 +24,7 @@ This memory records the installed system Codex runtime state for this repository
 - `scripts/validate_marketplace.sh`: repository/runtime consistency check.
 - `scripts/smoke_mcp_runtime.sh`: installed MCP runtime smoke.
 - `scripts/smoke_mcp_capabilities.*`: MCP tool-level smoke through `mcp` SDK.
+- `scripts/check_serena_memory_freshness.py` and `scripts/smoke_serena_memory_freshness.sh`: source-branch Serena memory freshness gate and fullrepo skip regression smoke.
 - `scripts/bootstrap_check.sh`, `scripts/smoke_clean_bootstrap.sh`: bootstrap/install smoke.
 - `scripts/smoke_hooks.sh`: hook smoke and temporary lifecycle verification.
 - `scripts/check_mcp_runtime_versions.py`: pinned package freshness policy.
@@ -119,13 +120,14 @@ This memory records the installed system Codex runtime state for this repository
 - `config/mcp-runtime-versions.env` currently pins:
   - `CODEX_CLI_VERSION=0.130.0`
   - `MCP_PYTHON_SDK_VERSION=1.27.1`
-  - `SERENA_AGENT_VERSION=1.2.0`
-  - `SEMGREP_VERSION=1.162.0`
+  - `SERENA_AGENT_VERSION=1.3.0`
+  - `SEMGREP_VERSION=1.163.0`
   - `SEQUENTIAL_THINKING_MCP_VERSION=2025.12.18`
   - `PLAYWRIGHT_MCP_VERSION=0.0.75`
-  - `CHROME_DEVTOOLS_MCP_VERSION=0.25.0`
-  - `CONTEXT7_MCP_VERSION=2.2.4`
+  - `CHROME_DEVTOOLS_MCP_VERSION=0.26.0`
+  - `CONTEXT7_MCP_VERSION=2.2.5`
   - `SHADCN_VERSION=4.7.0`
+- `scripts/validate_marketplace.sh` statically verifies that local MCP launcher pins in `config/mcp-runtime-versions.env` match the package specs in `plugins/rldyour-mcps/.mcp.json`.
 
 ## Invariants
 
@@ -158,6 +160,7 @@ This memory records the installed system Codex runtime state for this repository
 - `scripts/bootstrap_check.sh --apply`.
 - `scripts/smoke_mcp_runtime.sh`.
 - `scripts/smoke_mcp_capabilities.sh`.
+- `scripts/smoke_serena_memory_freshness.sh`.
 - `scripts/smoke_hooks.sh`.
 - `scripts/smoke_clean_bootstrap.sh`.
 - `scripts/validate_marketplace.sh`.
