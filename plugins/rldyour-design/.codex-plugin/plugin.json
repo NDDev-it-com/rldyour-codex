@@ -1,7 +1,7 @@
 {
   "name": "rldyour-design",
-  "version": "0.1.1",
-  "description": "Auto-invoked design workflow skills for Figma-to-code, centralized design systems, strict FSD, shadcn/ui, ReactBits, and browser-validated UI implementation.",
+  "version": "0.2.0",
+  "description": "Auto-invoked design workflow skills for Figma-to-code, centralized design systems, i18n, content classification, strict FSD, shadcn/ui, ReactBits, and browser-validated UI implementation.",
   "author": {
     "name": "rldyourmnd",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -20,6 +20,8 @@
     "fsd",
     "feature-sliced-design",
     "design-system",
+    "i18n",
+    "content-classification",
     "tokens",
     "ui-implementation",
     "frontend",
@@ -34,7 +36,7 @@
   "interface": {
     "displayName": "rldyour Design",
     "shortDescription": "Auto design workflow: Figma, tokens, FSD, browser proof",
-    "longDescription": "This skills-only plugin defines the rldyour design implementation workflow for Codex and is optimized for automatic skill routing. Its skills should be selected automatically when a task mentions Figma layouts, designer frames, pixel-perfect frontend implementation, UI creation or restyling, centralized design tokens, shadcn/ui, ReactBits, strict Feature-Sliced Design placement, responsive visual work, or browser-based design validation. Figma MCP is the source of truth for designer-provided layouts, variables, components, assets, layout data, and Code Connect hints when available. All frontend design work should centralize tokens in a strict design system, use Feature-Sliced Design placement by default, use shadcn/ui MCP as the primary source for UI primitives and blocks, and use ReactBits.dev selectively for purposeful animated or interactive React components. Design work must be validated through browser evidence with Playwright MCP and Chrome DevTools MCP, with artifacts stored under browser/ and ignored by git.",
+    "longDescription": "This skills-only plugin defines the rldyour design implementation workflow for Codex and is optimized for automatic skill routing. Its skills should be selected automatically when a task mentions Figma layouts, designer frames, pixel-perfect frontend implementation, UI creation or restyling, centralized design tokens, centralized i18n, dynamic/static content classification, admin/CMS-backed UI, shadcn/ui, ReactBits, strict Feature-Sliced Design placement, responsive visual work, or browser-based design validation. Figma MCP is the source of truth for designer-provided layouts, variables, components, assets, screenshots, layout data, and Code Connect hints when available. All frontend design work should classify content ownership before coding, keep visible copy in i18n/resources, centralize tokens in a strict design system, use Feature-Sliced Design placement by default, use shadcn/ui MCP as the primary source for UI primitives and blocks, and use ReactBits.dev selectively for purposeful animated or interactive React components. Design work must be validated through browser evidence with Playwright MCP and Chrome DevTools MCP, plus static i18n/token/placeholder scans, with artifacts stored under browser/ and ignored by git.",
     "developerName": "rldyourmnd",
     "category": "Design",
     "capabilities": [
@@ -42,6 +44,10 @@
       "Skills",
       "Figma MCP workflow",
       "Centralized design tokens",
+      "Centralized i18n workflow",
+      "Dynamic/static content classification",
+      "Admin and CMS content ownership",
+      "Reusable UI kit gates",
       "Feature-Sliced Design",
       "shadcn/ui MCP workflow",
       "ReactBits workflow",
@@ -54,9 +60,9 @@
     "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
     "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
-      "Use $ry-design for end-to-end Figma/UI implementation with tokens, FSD, shadcn/ui, ReactBits, and browser validation.",
-      "Use $figma-to-code to implement the selected Figma frame pixel-perfect.",
-      "Use $design-system-implementation to centralize frontend design tokens and UI primitives."
+      "Use $ry-design for Figma/UI work with i18n, tokens, data classification, FSD, and validation.",
+      "Use $figma-to-code to implement Figma with screenshots, tokens, i18n, data classification, and validation.",
+      "Use $design-system-implementation to centralize tokens, UI kit, i18n-ready primitives, and motion."
     ],
     "brandColor": "#DB2777",
     "screenshots": []

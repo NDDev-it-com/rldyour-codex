@@ -1,7 +1,7 @@
 interface:
   display_name: "Design Validation"
-  short_description: "Auto browser design validation"
-  default_prompt: "Use $design-validation to verify visible frontend changes with browser evidence, screenshots under browser/, and runtime checks."
+  short_description: "Browser design parity gate"
+  default_prompt: "Use $design-validation to verify Figma parity, responsive states, i18n/tokens, browser runtime, and scans."
 
 dependencies:
   tools:
