@@ -40,8 +40,12 @@ The plugin includes lifecycle hooks for:
 - `PreToolUse` / `PostToolUse`: mark project knowledge as stale after git commit-like changes.
 - `Stop`: continue the current turn with a Serena memory sync prompt when project knowledge is stale.
 
-The Stop hook does not spawn a separate sync agent. It asks the current Codex session to run `serena-memory-sync`, then uses `scripts/commit_serena_knowledge.sh` to either create a knowledge-only commit when `.serena` is intentionally tracked or acknowledge fullrepo-managed knowledge without committing AI files to the current branch.
+The Stop hook routes memory refresh work to the managed Codex `serena-sync` subagent when delegation is allowed, or to the main `serena-memory-sync` workflow as a fallback. The sync keeps `.serena/memories/*.md` in the numbered taxonomy and enforces source-of-truth-only updates.
+
+The Stop hook requires a fresh `serena_memory_state.py` state check and uses a loop guard so it does not re-prompt for the same stale HEAD.
+
+Use `serena-memory-sync` for durable `.serena/` updates in the current task and, for large updates, delegate the audit/update pass to the managed Codex `serena-sync` subagent.
 
 ## Memory Quality Target
 
-Memory files are not chat logs or summaries of intent. They are compact implementation maps for future Codex sessions. A good memory tells the model what exists, where the source of truth is, how the area behaves, which invariants must not break, how to change it safely, and how to verify the result.
+Memory files are not chat logs or summaries of intent. They are compact implementation maps for future Codex sessions. A good memory tells the model what exists, where the source of truth is, how the area behaves, which invariants must not break, how to change it safely, and how to verify the result. Use `AREA-01-SLUG.md` naming with `CORE-01-INDEX.md` as the map.
