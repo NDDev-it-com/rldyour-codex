@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh
 Area: TECHDEBT
 -->
@@ -32,6 +32,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `commit_serena_knowledge.sh` refuses to acknowledge stale fullrepo-managed memories. A touched memory must directly mention current HEAD before markers are cleared.
 - `scripts/worktree_add.sh` refuses to create a helper worktree without `origin/fullrepo`; it prints seed instructions instead of auto-publishing agent context from a helper script.
 - `session_start_worktree_bootstrap.sh` only restores from existing `origin/fullrepo`; it never publishes.
+- `plugin_hooks` was incorrectly treated as a deprecated/unstable key during the Codex adaptation. Official Codex docs make it the required opt-in for bundled plugin hooks, so installer/doctor/smoke now manage it as `true` and only remove `codex_hooks`.
 
 ## Contracts And Data
 
@@ -46,6 +47,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - Do not let Stop hooks edit memory content directly; they should route the workflow.
 - Do not allow a hook loop to block Stop forever for the same HEAD/state.
 - Do not let fullrepo helper scripts publish from a newly created worktree implicitly.
+- Do not port old hook-feature assumptions forward without re-checking official Codex docs; `plugin_hooks` must remain enabled while rldyour hooks are bundled in plugins.
 
 ## Change Rules
 

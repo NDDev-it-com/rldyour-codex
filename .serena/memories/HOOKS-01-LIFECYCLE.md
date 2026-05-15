@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh
 Area: HOOKS
 -->
@@ -30,12 +30,13 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 
 - `scripts/smoke_hooks.sh`: validates hook JSON wiring and temporary lifecycle behavior.
 - `scripts/smoke_serena_memory_taxonomy.sh`: validates memory-specific hook behavior.
-- `scripts/install_system_codex.sh --apply`: installs plugin cache and enables Codex hooks via `[features].hooks = true`.
-- `scripts/smoke_codex_hooks_migration.sh`: proves deprecated hook feature keys are removed from managed config.
+- `scripts/install_system_codex.sh --apply`: installs plugin cache and enables Codex hooks via `[features].hooks = true` plus bundled plugin hooks via `[features].plugin_hooks = true`.
+- `scripts/smoke_codex_hooks_migration.sh`: proves deprecated `codex_hooks` aliases are removed and managed hook feature flags are forced to the supported values.
 
 ## Current Behavior
 
 - Official Codex lifecycle events used here are `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop`.
+- Installed plugin hook declarations require both an enabled plugin and system config with `[features].hooks = true` and `[features].plugin_hooks = true`.
 - `PreToolUse` and `PostToolUse` match tool names such as `Bash`; `SessionStart` uses startup/resume/clear-style matching; `UserPromptSubmit` and `Stop` ignore matcher.
 - Multiple hooks can be registered for the same event/matcher. `plugins/rldyour-flow/hooks.json` uses two `SessionStart` command hooks: bootstrap first, context second.
 - `scripts/smoke_hooks.sh` selects the hook entry by expected script path instead of assuming exactly one hook per event/matcher.
@@ -58,6 +59,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - Hook output must be Codex-compatible. Do not emit Claude Code `Agent(...)` syntax or Claude-only fields as the primary path.
 - The Flow Stop hook must not duplicate Serena memory sync. It waits until Serena reports current, then handles instruction docs, git/GitHub/fullrepo, and cleanup sync.
 - SessionStart bootstrap must be additive only and must not publish `fullrepo`.
+- Do not treat `plugin_hooks` as a legacy key; it is the supported Codex opt-in for loading bundled plugin hook files.
 
 ## Change Rules
 

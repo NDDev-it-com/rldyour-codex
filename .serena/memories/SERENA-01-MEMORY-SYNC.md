@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, system/agents/serena-sync.toml, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->
@@ -39,6 +39,7 @@ Area: SERENA
 - Serena knowledge paths are `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`. Agent instruction files are no longer treated as Serena knowledge paths for freshness; they trigger memory sync when durable behavior changed.
 - `mark_sync_required.sh` writes `.serena/.serena_sync_state.json` with changed files, non-knowledge changed files, previous/current HEAD, and analyzer output when a commit-like Bash command changes HEAD.
 - `stop_memory_sync.sh` exits `2` when memories are stale, includes analyzer focus and taxonomy guidance, and asks to delegate to managed Codex `serena-sync` when the active workflow allows subagents.
+- System Codex config must include `[features].plugin_hooks = true`; otherwise the installed `rldyour-serena-mcp` hook declarations can exist in plugin cache without being loaded as bundled plugin hooks.
 - Stop loop prevention uses `.serena/.sync_marker`: when the same HEAD has already requested sync in the current Stop continuation, the hook exits `0` to avoid an infinite loop.
 - `commit_serena_knowledge.sh` clears runtime markers after current memories mention HEAD. In fullrepo-managed repositories it acknowledges current memories without creating a normal-branch commit.
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md, plugins/rldyour-flow/skills/instruction-docs-sync/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py
 Area: DOCS
 -->
@@ -34,7 +34,7 @@ This memory records how durable project instruction docs are kept aligned for Co
 - `system/AGENTS.md` is tracked because it is a product artifact and the canonical global Codex template.
 - `AGENTS.md` is Codex-native and contains Codex plugin routing, tool priority, Serena workflow, fullrepo rules, managed subagents, and system Codex setup.
 - `.claude/CLAUDE.md` remains Claude Code-native and should not be reduced to `@AGENTS.md`; shared facts may overlap, but CLI-specific commands and concepts stay separate.
-- After this commit, the instruction docs describe Flow SessionStart worktree bootstrap/context hooks and advisory commit hooks rather than calling all SessionStart hooks advisory.
+- Instruction docs state that system Codex manages `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`; only `codex_hooks` remains a deprecated hook alias.
 
 ## Contracts And Data
 

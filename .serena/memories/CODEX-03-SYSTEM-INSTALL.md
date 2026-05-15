@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml
 Area: CODEX
 -->
@@ -35,7 +35,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 
 - Installer writes global `AGENTS.md`, managed agents, Codex config sections, marketplace registration, MCP servers, approved tool overrides, and plugin cache.
 - Installer preserves unrelated config where supported but owns rldyour-managed sections.
-- Installer removes legacy/deprecated hook feature keys and writes `[features].hooks = true` plus `[features].multi_agent = true`.
+- Installer removes legacy `codex_hooks` aliases and writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`.
 - Installer derives plugin and MCP runtime data from repository source files instead of static lists.
 - Doctor validates the installed result and runs repository marketplace validation as part of the stricter local gate.
 - Doctor's fullrepo current-state gate is strict locally and advisory only in GitHub Actions `main` context.
@@ -46,7 +46,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 - Installer backups are the only supported rollback source for global Codex files changed by installer apply.
 - Plugin cache must mirror `plugins/<plugin>` under `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local`.
 - The clean bootstrap smoke must be able to restore fullrepo agent-only context before strict doctor checks.
-- Official Codex hook support uses `[features].hooks`; `codex_hooks` is a deprecated alias and `plugin_hooks` is not a managed feature key here.
+- Official Codex hook support uses `[features].hooks` for lifecycle hooks. Bundled hooks from enabled plugins require `[features].plugin_hooks = true`; `codex_hooks` is the deprecated alias that must be removed.
 
 ## Invariants
 
@@ -58,6 +58,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 ## Change Rules
 
 - When installer output shape changes, update doctor and relevant smoke tests in the same commit.
+- When official Codex feature flags change, update installer, doctor, migration smoke, global/project instructions, and this memory from source-backed docs.
 - When adding managed agents, update installer, doctor, `validate_agent_tools.py`, and system templates if needed.
 - When changing fullrepo or clean bootstrap behavior, update `scripts/smoke_clean_bootstrap.sh` and fullrepo memories.
 

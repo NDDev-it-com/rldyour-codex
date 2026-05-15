@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py
 Area: CODEX
 -->
@@ -37,7 +37,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Managed subagents are TOML files, not plugin-root Markdown agents. Current managed roles must have `model = "gpt-5.5"` and `model_reasoning_effort = "medium"`.
 - `system/agents/serena-sync.toml` is the Codex-native memory-maintenance role. It may edit only `.serena/memories/` and closely related Serena metadata, not source code, plugin files, docs, configs, tests, scripts, or git history.
 - Plugin hook support is used only by `rldyour-flow` and `rldyour-serena-mcp`.
-- Official Codex docs verified for this implementation: Codex plugin manifests live at `.codex-plugin/plugin.json`; plugin hooks can point to `hooks.json`; Codex skills use `skills/`; Codex config uses `[features].hooks`; and plugin hooks require the plugin hook feature when installed from marketplace.
+- Official Codex docs verified for this implementation: Codex plugin manifests live at `.codex-plugin/plugin.json`; plugin hooks can point to `hooks.json`; Codex skills use `skills/`; Codex config uses `[features].hooks` for lifecycle hooks and `[features].plugin_hooks` to opt into bundled hooks from enabled plugins.
 
 ## Contracts And Data
 
@@ -53,6 +53,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Do not add `plugins/rldyour-*/agents/*.md`; that is a Claude Code plugin-root subagent format, not this Codex format.
 - Do not encode tool allowlists in Codex `SKILL.md` frontmatter. Use `agents/openai.yaml` dependencies and project policy instead.
 - Do not hardcode plugin or MCP lists in installer/doctor logic; derive plugin enablement from `.agents/plugins/marketplace.json` and MCP registration from `plugins/rldyour-mcps/.mcp.json`.
+- Do not strip `[features].plugin_hooks`; it is the official opt-in for bundled plugin hooks and is managed as `true` here.
 
 ## Change Rules
 

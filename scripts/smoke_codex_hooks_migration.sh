@@ -119,10 +119,10 @@ features = data.get("features") or {}
 
 if features.get("hooks") is not True:
     raise SystemExit(f"{case_name}: expected [features].hooks = true, got {features!r}")
+if features.get("plugin_hooks") is not True:
+    raise SystemExit(f"{case_name}: expected [features].plugin_hooks = true, got {features!r}")
 if "codex_hooks" in features:
     raise SystemExit(f"{case_name}: legacy codex_hooks key was not removed: {features!r}")
-if "plugin_hooks" in features:
-    raise SystemExit(f"{case_name}: legacy plugin_hooks key was not removed: {features!r}")
 if case_name in {
     "table_legacy",
     "table_plugin_only",
@@ -174,8 +174,6 @@ from pathlib import Path
 features = tomllib.loads(Path(os.environ["CONFIG_PATH"]).read_text(encoding="utf-8")).get("features") or {}
 if features.get("hooks") is not True or "codex_hooks" in features:
     raise SystemExit(f"codex runtime generated unexpected hooks features: {features!r}")
-if "plugin_hooks" in features:
-    raise SystemExit(f"codex runtime generated unexpected plugin_hooks feature: {features!r}")
 PY
   printf 'ok      codex runtime hooks flag\n'
 else

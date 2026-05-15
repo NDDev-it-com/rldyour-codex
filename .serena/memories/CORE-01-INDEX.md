@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, scripts/validate_marketplace.sh
 Area: CORE
 -->
@@ -37,6 +37,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 - `rldyour-flow` is version `0.2.5` and owns SDLC commands, fullrepo, instruction docs, worktree bootstrap, and post-task sync.
 - `rldyour-serena-mcp` is version `0.2.2` and owns Serena-first code workflow plus memory freshness, taxonomy, sync hooks, and acknowledgement.
 - The repository currently has 38 rldyour skills, 12 MCP server definitions, and 8 managed Codex subagent TOML files validated by scripts.
+- System install manages Codex hook runtime with `[features].hooks = true` and `[features].plugin_hooks = true`, so enabled rldyour plugin hook declarations are actually loaded.
 - Normal `main` excludes root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, and similar agent-only files through `.git/info/exclude`; `fullrepo` carries the portable agent context snapshot.
 - Project memories use the numbered taxonomy `AREA-01-SLUG.md`; `CORE-01-INDEX.md` is the map.
 
@@ -46,6 +47,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 - `Last commit` should mention the current normal-branch commit when a memory is updated for a code/config change.
 - Codex skills must not use Claude-only frontmatter keys such as `allowed-tools`; Codex dependencies live in `agents/openai.yaml`.
 - Codex managed subagents live in `system/agents/*.toml`; plugin-root `plugins/rldyour-*/agents/*.md` is a rejected Claude Code surface.
+- `plugin_hooks` is an official Codex feature flag and is managed as enabled here; `codex_hooks` is the deprecated alias that must be removed.
 
 ## Invariants
 

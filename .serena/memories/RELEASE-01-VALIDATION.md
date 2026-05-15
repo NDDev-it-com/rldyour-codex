@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
 Scope: scripts/validate_marketplace.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, CHANGELOG.md, VERSION, .github/workflows/validate.yml
 Area: RELEASE
 -->
@@ -38,12 +38,13 @@ This memory records the validation and release gates that keep the marketplace, 
 - Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py` and `scripts/validate_agent_tools.py`.
 - Marketplace validation runs `scripts/smoke_serena_memory_taxonomy.sh` after `scripts/smoke_serena_memory_freshness.sh`.
 - `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher and selects the expected hook by script path.
+- `scripts/smoke_codex_hooks_migration.sh` now expects installer output to contain `[features].hooks = true` and `[features].plugin_hooks = true`, while removing legacy `codex_hooks` aliases.
 - `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
 - The current task introduced plugin versions `rldyour-serena-mcp@0.2.2` and `rldyour-flow@0.2.5`.
 
 ## Contracts And Data
 
-- `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, skill routing, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, and release manifest checks.
+- `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, skill routing, hook feature migration smoke, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, and release manifest checks.
 - `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`.
 - `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
 
@@ -51,6 +52,7 @@ This memory records the validation and release gates that keep the marketplace, 
 
 - No fake green checks: if a validation command cannot run, final delivery must report the blocker.
 - `scripts/doctor_system_codex.sh` should be rerun after `scripts/install_system_codex.sh --apply` when global AGENTS, managed agents, plugin cache, hooks, or MCP runtime definitions change.
+- Doctor must fail when installed config lacks `features.plugin_hooks = true`, because rldyour hook behavior is distributed as bundled plugin hooks.
 - Full marketplace validation should pass before pushing normal branch changes.
 - Changelog entries should describe durable behavior changes, not transient task notes.
 
