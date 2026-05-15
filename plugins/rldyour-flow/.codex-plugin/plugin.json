@@ -1,6 +1,6 @@
 {
   "name": "rldyour-flow",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Autonomous Russian-first SDLC workflow for Codex: deep ry-init context packs, instruction docs sync, fullrepo sync, reviewer skills, deploy, and non-blocking hooks.",
   "author": {
     "name": "rldyourmnd",
@@ -36,7 +36,7 @@
   "interface": {
     "displayName": "rldyour Flow",
     "shortDescription": "Auto SDLC commands: init, start, review, deploy",
-    "longDescription": "This plugin defines the rldyour autonomous SDLC workflow for Codex. It provides Russian-first command skills for ry-init, ry-start, ry-newp, ry-review, and ry-deploy, plus reviewer skills for architecture, implementation quality, consistency, integration synchronization, verification/manual tests, and security. The workflow uses Serena-first code understanding, scoped context packs, context sufficiency gates, technical and web research, LSP quality gates, browser validation, security review, GitHub and worktree workflows, instruction docs synchronization for Codex AGENTS.md and Claude Code .claude/CLAUDE.md, fullrepo branch synchronization for agent-only files, server deployment verification, and post-task synchronization. Its SessionStart and PostToolUse hooks are advisory only: they provide repository context and commit quality hints without blocking execution. Its Stop hook does not compete with the Serena memory hook: it waits for Serena memories to become current, then asks Codex to synchronize project instruction docs, normal branch commits, fullrepo, GitHub, and cleanup state without creating an infinite hook loop.",
+    "longDescription": "This plugin defines the rldyour autonomous SDLC workflow for Codex. It provides Russian-first command skills for ry-init, ry-start, ry-newp, ry-review, and ry-deploy, plus reviewer skills for architecture, implementation quality, consistency, integration synchronization, verification/manual tests, and security. The workflow uses Serena-first code understanding, scoped context packs, context sufficiency gates, technical and web research, LSP quality gates, browser validation, security review, GitHub and worktree workflows, instruction docs synchronization for Codex AGENTS.md and Claude Code .claude/CLAUDE.md, fullrepo branch synchronization for agent-only files, server deployment verification, and post-task synchronization. Its SessionStart hooks first restore missing agent-only context from origin/fullrepo when safe, then provide read-only repository context; PostToolUse hooks provide commit quality hints without blocking execution. Its Stop hook does not compete with the Serena memory hook: it waits for Serena memories to become current, then asks Codex to synchronize project instruction docs, normal branch commits, fullrepo, GitHub, and cleanup state without creating an infinite hook loop.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [
@@ -51,6 +51,7 @@
       "Multi-reviewer workflow",
       "Deployment workflow",
       "Session start context",
+      "Session start worktree bootstrap",
       "Non-blocking commit advice",
       "Post-task sync",
       "Instruction docs sync",

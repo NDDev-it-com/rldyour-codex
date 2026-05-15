@@ -1,27 +1,27 @@
 ---
 name: serena-memory-sync
-description: "Maintain fact-only Serena memories, plans, and research from verified code/diffs/tests. Use after durable changes or prompts: обнови memories, синхронизируй память."
+description: "Синхронизируй Serena memory после коммита, Stop-хука и durable изменений: use для обновления serena memories/plans/research по verified facts."
 ---
 
 # Serena Memory Sync
 
 ## Purpose
 
-Keep `.serena/` useful for future Codex sessions without creating hallucinated project lore. Memories must explain what the code actually does, where it lives, how it behaves, which invariants matter, and how to safely change and verify the area.
+Keep `.serena/` useful for future Codex, Claude Code, and other GPT-based coding agent sessions without creating hallucinated project lore. Memories must explain what the code actually does, where it lives, how it behaves, which invariants matter, and how to safely change and verify the area.
 
 User-facing conversation stays in Russian. All stored `.serena/` knowledge files are written in English.
 
-## Auto Invocation
+## When To Use
 
-Use this skill without waiting for an explicit `$serena-memory-sync` call when:
+Use this skill without waiting for explicit invocation when:
 
 - Meaningful code, plugin, workflow, architecture, design-system, security, integration, or configuration behavior changed.
 - A Stop hook, commit-like action, or stale-memory marker indicates project knowledge should be synchronized.
 - Durable facts were discovered while making or verifying project changes, and those facts are now encoded in code, configuration, workflow files, committed docs, or stable tests.
 - `.serena/memories`, `.serena/plans`, or `.serena/research` may be stale or need a fact-only audit.
-- A future Codex session would need verified source-of-truth paths, invariants, contracts, entry points, or verification commands to implement confidently.
+- A future Codex, Claude Code, or GPT-based agent session would need verified source-of-truth paths, invariants, contracts, entry points, or verification commands to implement confidently.
 
-Do not auto-invoke this skill for read-only `ry-init`, context discovery, log/server audits, report-only reviews, exploratory debugging, or current-status snapshots unless the user explicitly asked to update/synchronize memories or a Stop/stale-memory hook requires it. In those read-only workflows, list useful candidates in the user report and wait for permission before writing `.serena`.
+Do not auto-invoke this skill for read-only context discovery, log/server audits, report-only reviews, exploratory debugging, or current-status snapshots unless the user explicitly asked to update/synchronize memories or a Stop/stale-memory hook requires it. In those read-only workflows, list useful candidates in the user report and wait for permission before writing `.serena`.
 
 Do not create memory noise for trivial formatting, purely mechanical edits, current runtime status, timestamped snapshots, server log summaries, health-check output, or unverified assumptions.
 
@@ -33,15 +33,26 @@ Do not create memory noise for trivial formatting, purely mechanical edits, curr
 
 In normal product repositories, these knowledge files are agent-only context. They are restored from and published to `fullrepo`, then ignored through `.git/info/exclude` instead of being committed to `main`. Repositories that are themselves agent tooling may intentionally track selected `.serena` knowledge files when they are part of the product source of truth.
 
-Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`.
+Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`.
 
 ## Memory Structure
 
-Name memory files as `AREA_NN_slug.md`.
+Name memory files as `AREA-01-SLUG.md`.
 
-Default areas: `CORE`, `BACKEND`, `FRONTEND`, `MOBILE`, `INFRA`, `API`, `AUTH`, `DATA`, `SEC`, `TEST`, `DESIGN`, `CLI`, `MCP`.
+Default cross-project areas: `CORE`, `BACKEND`, `FRONTEND`, `MOBILE`, `INFRA`, `API`, `AUTH`, `DATA`, `SEC`, `TEST`, `DESIGN`, `CLI`, `MCP`, `DOCS`, `RELEASE`, `TECHDEBT`. Agent-tooling repositories may add tool-specific areas such as `CODEX` when they are clearer than overloading `CORE`.
 
 Create custom area prefixes only when the project needs a clearer domain boundary. Keep files narrow and split large memories instead of creating broad catch-all files.
+
+Every project should maintain a compact index memory, normally `CORE-01-INDEX.md`, that lists the active memory areas, canonical file names, and which source-of-truth paths each memory owns. When adding a new memory, update the index in the same sync pass.
+
+Numbering is stable:
+
+- `01` is normally the area index or the first canonical topic.
+- Add `02`, `03`, ... for new durable topics inside the same area.
+- Do not renumber existing memories unless performing an explicit taxonomy migration.
+- Use uppercase area codes and uppercase hyphenated slugs: `SERENA-01-MEMORY-SYNC.md`, `TECHDEBT-01-NOW.md`.
+
+Split a memory when it starts covering more than one domain responsibility, when sections become hard to scan, or when a future agent would need to read many unrelated facts to answer one scoped question. Prefer adding a specific numbered file over appending unrelated content to an older broad memory.
 
 Do not create timestamped snapshot memories such as `SYNC_YYYYMMDD_*`. If a runtime observation reveals a durable contract, update the relevant area memory with the stable contract and source paths instead of storing the observation as a snapshot.
 
@@ -63,7 +74,7 @@ Do not add subjective confidence fields or unsupported metadata. If a fact is un
 After the metadata block, use this body structure unless a section is truly irrelevant. Keep sections concise and factual.
 
 ```markdown
-# <AREA_NN_slug>
+# <AREA-01-SLUG>
 
 ## Purpose
 
@@ -135,19 +146,26 @@ Do not write:
 
 ## Sync Workflow
 
-1. Inspect git state: current HEAD, recent commits, changed files, and non-memory diffs.
-2. Use Serena first: `list_memories`, `read_memory` for relevant files, then `get_symbols_overview`, targeted `find_symbol`, and `find_referencing_symbols` for changed code.
-3. Update or create memory files with verified facts only, using the memory body template. Remove or correct stale statements instead of preserving outdated text.
-4. Save non-trivial plans to `.serena/plans/` only when they will help future sessions continue work.
-5. Save long research summaries to `.serena/research/` only when the research was complex, source-backed, and likely reusable.
-6. Keep exact paths, symbol names, commands, contracts, invariants, verification checks, and behavior. Avoid generic advice.
-7. Run `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` when this repository contains the plugin, or the absolute script path provided by the Stop hook when the plugin is loaded from Codex cache. In repositories where `.serena` knowledge is still tracked, this creates the knowledge-only commit. In fullrepo-managed repositories, it acknowledges current memories and clears runtime sync markers without committing AI files to the current branch; `flow-post-task-sync` publishes the final `fullrepo` snapshot.
+1. Read marker + impact analysis:
+   - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` (state + stale marker)
+   - `jq`/`python3` read `.serena/.serena_sync_state.json` if present; use `analysis.memory_taxonomy`, `analysis.memory_targets`, `analysis.areas`, and `analysis.areas_summary` as the first-pass scope.
+   - Treat `analysis.schema_version` as the analyzer payload contract; if the field is missing, proceed conservatively from changed files.
+2. Build the concrete sync scope:
+   - Start from `sync_state.changed_files` when available.
+   - If analysis exists, prioritize files and areas in `analysis.areas` and `analysis.memory_targets`.
+   - If analysis is missing, fall back to `changed_files_since_sync` in state.
+3. Use Serena first: `list_memories`, then read `CORE-01-INDEX` when present and every relevant memory target inferred from names. For code, use `get_symbols_overview`, targeted `find_symbol`, and `find_referencing_symbols` before raw reads when the language server supports the file type.
+4. Update or create memory files with verified facts only, using the memory body template and the project taxonomy. Remove or correct stale statements instead of preserving outdated text.
+5. Save non-trivial plans to `.serena/plans/` only when they will help future sessions continue work.
+6. Save long research summaries to `.serena/research/` only when the research was complex, source-backed, and likely reusable.
+7. Keep exact paths, symbol names, commands, contracts, invariants, verification checks, and behavior. Avoid generic advice.
+8. Run the plugin's `commit_serena_knowledge.sh` script (path provided by the Stop hook message, or `${CLAUDE_PLUGIN_ROOT}/scripts/commit_serena_knowledge.sh` when the plugin is enabled). In repositories where `.serena` knowledge is still tracked, this creates the knowledge-only commit. In fullrepo-managed repositories, it acknowledges current memories and clears runtime sync markers without committing AI files to the current branch; `flow-post-task-sync` publishes the final `fullrepo` snapshot.
 
 ## Quality Rules
 
 Code is the source of truth. Never write a memory fact just because an old memory, plan, comment, or README says it.
 
-Prefer small factual paragraphs over narratives. A future Codex session should be able to quickly answer: what exists, where it is implemented, what conventions apply, what behavior and contracts matter, what must not break, how to safely change it, and what checks prove correctness.
+Prefer small factual paragraphs over narratives. A future GPT-based coding agent should be able to quickly answer: what exists, where it is implemented, what conventions apply, what behavior and contracts matter, what must not break, how to safely change it, and what checks prove correctness.
 
 Do not store secrets, tokens, private cookies, raw credentials, or sensitive runtime data.
 

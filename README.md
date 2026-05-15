@@ -26,7 +26,7 @@ The active marketplace currently contains:
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation gates.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, advisory session/commit hooks, reviewer tracks, and post-task synchronization.
+- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, SessionStart worktree bootstrap/context hooks, advisory commit hooks, reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, Codex and Claude Code project instructions, ADR policy, and `ry-rules-review`.
 
 ## Planned Plugin Architecture
@@ -38,7 +38,7 @@ These plugins are plans only unless listed in the active catalog above.
 - `rldyour-browser`: created. Browser validation, pixel-perfect checks, functional checks, business-logic verification, and runtime debugging through Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: created. Design implementation workflow through Figma MCP, centralized i18n, dynamic/static/admin content classification, design tokens, reusable UI kit, strict FSD, shadcn/ui, ReactBits, and browser evidence.
 - `rldyour-lsps`: created. Language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: created. Command-like SDLC skills, deep `ry-init` context packs, `ry-start` context sufficiency gate, reviewer workflows orchestrated by `ry-start`/`ry-review`, instruction docs sync, advisory SessionStart/PostToolUse hooks, and post-task sync hook for Serena/docs/git/GitHub cleanup.
+- `rldyour-flow`: created. Command-like SDLC skills, deep `ry-init` context packs, `ry-start` context sufficiency gate, reviewer workflows orchestrated by `ry-start`/`ry-review`, instruction docs sync, SessionStart fullrepo worktree bootstrap plus context hooks, advisory PostToolUse hooks, and post-task sync hook for Serena/docs/git/GitHub cleanup.
 - `rldyour-rules`: created. Hard and advisory rules for quality-first engineering, architecture, dependencies, verification, Codex/Claude project instructions, and ADRs.
 - `rldyour-security`: created. Skills-only security guidance, OWASP Top 10 coverage, and defensive review workflow.
 - `rldyour-explore`: created. Research workflows through Context7, DeepWiki, Grep by Vercel, and web research.
@@ -143,10 +143,12 @@ scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_serena_memory_freshness.sh
+scripts/smoke_serena_memory_taxonomy.sh
 scripts/smoke_local_git_guard.sh
 scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
+python3 scripts/validate_agent_tools.py
 ```
 
 `scripts/smoke_mcp_runtime.sh` validates remote MCP endpoints with a Streamable HTTP `initialize` POST preflight. OAuth-gated endpoints may pass with `401`/`403`; a `405` is valid only for optional GET SSE and is not accepted as a POST initialize result.
@@ -172,13 +174,14 @@ In rldyour-managed projects, `AGENTS.md` is the Codex-native project instruction
 Use:
 
 ```bash
+scripts/worktree_add.sh <branch> [path]
 scripts/sync_fullrepo_branch.sh --restore
 scripts/sync_fullrepo_branch.sh --migrate-main
 scripts/sync_fullrepo_branch.sh --publish
 scripts/sync_fullrepo_branch.sh --status
 ```
 
-`--restore` initializes local agent context from `origin/fullrepo`. `--migrate-main` removes tracked agent-only files from the current branch index while keeping them locally. `--publish` builds a snapshot from current `HEAD` plus local agent-only files and pushes it to `fullrepo` with safe `--force-with-lease`.
+`scripts/worktree_add.sh` creates a git worktree and runs `fullrepo_sync.py --restore` so parallel Codex sessions start with agent-only context. `--restore` initializes local agent context from `origin/fullrepo`. `--migrate-main` removes tracked agent-only files from the current branch index while keeping them locally. `--publish` builds a snapshot from current `HEAD` plus local agent-only files and pushes it to `fullrepo` with safe `--force-with-lease`.
 
 Local product repositories can install the rldyour Git pre-push guard:
 

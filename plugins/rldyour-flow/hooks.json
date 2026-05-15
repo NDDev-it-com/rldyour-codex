@@ -5,6 +5,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash -lc 'for p in \"plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/hooks/session_start_worktree_bootstrap.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "timeout": 10,
+            "statusMessage": "Bootstrapping rldyour fullrepo context"
+          },
+          {
+            "type": "command",
             "command": "bash -lc 'for p in \"plugins/rldyour-flow/hooks/session_start_context.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/hooks/session_start_context.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
             "timeout": 5,
             "statusMessage": "Loading rldyour flow session context"

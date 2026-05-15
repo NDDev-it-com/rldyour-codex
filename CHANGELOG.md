@@ -17,6 +17,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Flow branch-cleanup state and smoke coverage so merged workflow branches, remote branches, and merged worktree candidates keep post-task sync pending until cleanup is done or explicitly reported.
 - `fullrepo` bootstrap init command and smoke coverage for first-run repository initialization, remote context restore, local AI-file publishing, and current-branch AI-file index cleanup.
 - Serena memory freshness helper and smoke coverage for source-branch freshness, stale memory failures, and `fullrepo` snapshot skip behavior.
+- Codex-native Serena sync impact analyzer, numbered memory taxonomy smoke coverage, managed `serena-sync` guidance, and agent surface validation for Codex TOML/OpenAI skill metadata.
+- `scripts/worktree_add.sh` and Flow SessionStart worktree bootstrap so new Codex worktrees restore agent-only context from `origin/fullrepo` before deep work starts.
 
 ### Changed
 
@@ -40,7 +42,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Runtime Codex CLI pin updated from `0.128.0` to `0.130.0`.
 - MCP Python SDK pin updated from `1.27.0` to `1.27.1` for the latest compatibility fixes.
 - MCP runtime pins updated for Serena Agent `1.3.0`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.26.0`, Context7 MCP `2.2.5`, and shadcn `4.7.0`.
-- `rldyour-flow` plugin version updated to `0.2.4` for read-only `ry-init` memory discipline and fullrepo bootstrap init behavior.
+- `rldyour-serena-mcp` plugin version updated to `0.2.2` for Codex-native memory taxonomy, impact analysis, and managed `serena-sync` routing.
+- `rldyour-flow` plugin version updated to `0.2.5` for read-only `ry-init` memory discipline, fullrepo bootstrap init behavior, and SessionStart worktree bootstrap.
 - `ry-init` is now explicitly read-only for Serena memories by default; it reports memory candidates instead of writing `.serena` unless the user requested memory sync or a stale-memory hook requires it.
 - `serena-memory-sync` no longer auto-runs for read-only init, log audits, server snapshots, report-only reviews, or exploratory debugging without an explicit memory-sync request.
 - Global and project instructions now state the explicit fullrepo-managed task sync order: Serena/docs, checks, normal branch push, fullrepo publish, and safe cleanup.
