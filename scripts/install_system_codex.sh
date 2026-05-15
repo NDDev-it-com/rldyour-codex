@@ -19,6 +19,7 @@ Managed state:
 - rldyour-codex marketplace registration
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
 - hooks feature flag
+- plugin hooks feature flag
 - multi-agent feature flag
 - owner-requested YOLO permission defaults
 - owner-selected model defaults
@@ -315,10 +316,11 @@ in_features = False
 features_table_seen = False
 feature_dotted_lines: list[str] = []
 hooks_written = False
+plugin_hooks_written = False
 multi_agent_written = False
 current_header: str | None = None
 managed_feature_keys = {"codex_hooks", "hooks", "plugin_hooks", "multi_agent"}
-legacy_hook_feature_keys = {"codex_hooks", "plugin_hooks"}
+legacy_hook_feature_keys = {"codex_hooks"}
 
 
 def unquote_toml_key(segment: str) -> str:
@@ -383,10 +385,13 @@ def toml_value(value: object) -> str:
 
 
 def append_managed_features() -> None:
-    global hooks_written, multi_agent_written
+    global hooks_written, plugin_hooks_written, multi_agent_written
     if not hooks_written:
         out.append("hooks = true")
         hooks_written = True
+    if not plugin_hooks_written:
+        out.append("plugin_hooks = true")
+        plugin_hooks_written = True
     if not multi_agent_written:
         out.append("multi_agent = true")
         multi_agent_written = True
@@ -466,6 +471,11 @@ for raw_line in existing.splitlines():
             if not hooks_written:
                 out.append("hooks = true")
                 hooks_written = True
+            continue
+        if feature_key == "plugin_hooks":
+            if not plugin_hooks_written:
+                out.append("plugin_hooks = true")
+                plugin_hooks_written = True
             continue
         if feature_key == "multi_agent":
             if not multi_agent_written:

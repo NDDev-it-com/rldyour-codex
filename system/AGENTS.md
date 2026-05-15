@@ -136,7 +136,7 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 
 The canonical source for this global setup is the `rldyour-codex` repository.
 
-System Codex is intentionally configured for owner-controlled YOLO execution with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, managed subagents on `gpt-5.5`/`medium`, and `[features].hooks = true` plus `[features].multi_agent = true`. Deprecated or unstable hook feature keys such as `codex_hooks` and `plugin_hooks` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
+System Codex is intentionally configured for owner-controlled YOLO execution with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, managed subagents on `gpt-5.5`/`medium`, and `[features].hooks = true`, `[features].plugin_hooks = true`, plus `[features].multi_agent = true`. Deprecated hook aliases such as `codex_hooks` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
 
 System install and doctor checks derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP server registration from `plugins/rldyour-mcps/.mcp.json`; do not add parallel hardcoded plugin or MCP lists.
 
