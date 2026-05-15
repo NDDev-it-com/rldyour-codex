@@ -21,6 +21,7 @@ Managed state:
 - hooks feature flag
 - plugin hooks feature flag
 - multi-agent feature flag
+- Codex config deprecated-key migration for managed global setup
 - owner-requested YOLO permission defaults
 - owner-selected model defaults
 - owner-selected subagent model defaults
@@ -292,9 +293,16 @@ header_re = re.compile(r"^\s*\[([^\]]+)\]\s*$")
 assignment_re = re.compile(r"^\s*((?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+')(?:\s*\.\s*(?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+'))*)\s*=(.*)$")
 bare_key_re = re.compile(r"^[A-Za-z0-9_-]+$")
 existing = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
+try:
+    existing_data = tomllib.loads(existing) if existing.strip() else {}
+except tomllib.TOMLDecodeError:
+    existing_data = {}
+existing_features = existing_data.get("features") if isinstance(existing_data.get("features"), dict) else {}
+existing_memories = existing_data.get("memories") if isinstance(existing_data.get("memories"), dict) else {}
 managed_root_keys = {
     "profile",
     "approval_policy",
+    "suppress_unstable_features_warning",
     "sandbox_mode",
     "default_permissions",
     "model",
@@ -309,18 +317,40 @@ out: list[str] = [
     'default_permissions = ":danger-no-sandbox"',
     f"model = {json.dumps(managed_model)}",
     f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
-    "",
+    "suppress_unstable_features_warning = true",
 ]
 skip_managed = False
 in_features = False
+in_memories = False
 features_table_seen = False
 feature_dotted_lines: list[str] = []
 hooks_written = False
 plugin_hooks_written = False
 multi_agent_written = False
+memories_external_context_written = "disable_on_external_context" in existing_memories
 current_header: str | None = None
-managed_feature_keys = {"codex_hooks", "hooks", "plugin_hooks", "multi_agent"}
+managed_feature_keys = {
+    "codex_hooks",
+    "hooks",
+    "multi_agent",
+    "plugin_hooks",
+    "use_legacy_landlock",
+    "web_search",
+    "web_search_cached",
+    "web_search_request",
+}
 legacy_hook_feature_keys = {"codex_hooks"}
+deprecated_root_keys = {
+    "background_terminal_timeout",
+    "experimental_instructions_file",
+    "experimental_use_unified_exec_tool",
+}
+deprecated_feature_keys = {
+    "use_legacy_landlock",
+    "web_search",
+    "web_search_cached",
+    "web_search_request",
+}
 
 
 def unquote_toml_key(segment: str) -> str:
@@ -384,6 +414,28 @@ def toml_value(value: object) -> str:
     raise TypeError(f"Unsupported TOML value: {value!r}")
 
 
+if "model_instructions_file" not in existing_data and isinstance(existing_data.get("experimental_instructions_file"), str):
+    out.append(f"model_instructions_file = {toml_value(existing_data['experimental_instructions_file'])}")
+if "background_terminal_max_timeout" not in existing_data and isinstance(existing_data.get("background_terminal_timeout"), int):
+    out.append(f"background_terminal_max_timeout = {toml_value(existing_data['background_terminal_timeout'])}")
+if "web_search" not in existing_data:
+    legacy_web_search = None
+    if existing_features.get("web_search_request") is True:
+        legacy_web_search = "live"
+    elif existing_features.get("web_search_cached") is True:
+        legacy_web_search = "cached"
+    elif existing_features.get("web_search") is True:
+        legacy_web_search = "live"
+    elif existing_features.get("web_search") is False:
+        legacy_web_search = "disabled"
+    if legacy_web_search:
+        out.append(f"web_search = {toml_value(legacy_web_search)}")
+if "unified_exec" not in existing_features and isinstance(existing_data.get("experimental_use_unified_exec_tool"), bool):
+    feature_dotted_lines.append(f"unified_exec = {toml_value(existing_data['experimental_use_unified_exec_tool'])}")
+
+out.append("")
+
+
 def append_managed_features() -> None:
     global hooks_written, plugin_hooks_written, multi_agent_written
     if not hooks_written:
@@ -425,9 +477,11 @@ for raw_line in existing.splitlines():
         if header in managed_headers or is_rldyour_plugin_header(header_path):
             skip_managed = True
             in_features = False
+            in_memories = False
             continue
         skip_managed = False
         in_features = header_path == ["features"]
+        in_memories = header_path == ["memories"]
         if in_features:
             features_table_seen = True
         current_header = header
@@ -441,6 +495,8 @@ for raw_line in existing.splitlines():
         key_info = assignment_key_path(raw_line)
         key_path = key_info[0] if key_info else []
         if len(key_path) == 1 and key_path[0] in managed_root_keys:
+            continue
+        if len(key_path) == 1 and key_path[0] in deprecated_root_keys:
             continue
         if len(key_path) == 1 and key_path[0] == "features":
             try:
@@ -460,12 +516,23 @@ for raw_line in existing.splitlines():
                 continue
             feature_dotted_lines.append(f"{toml_key(feature_key)} = {key_info[1]}")
             continue
+        if (
+            len(key_path) == 2
+            and key_path[0] == "memories"
+            and key_path[1] == "no_memories_if_mcp_or_web_search"
+        ):
+            if not memories_external_context_written:
+                out.append(f"memories.disable_on_external_context = {key_info[1]}")
+                memories_external_context_written = True
+            continue
 
     if in_features:
         key_info = assignment_key_path(raw_line)
         key_path = key_info[0] if key_info else []
         feature_key = key_path[0] if len(key_path) == 1 else ""
         if feature_key in legacy_hook_feature_keys:
+            continue
+        if feature_key in deprecated_feature_keys:
             continue
         if feature_key == "hooks":
             if not hooks_written:
@@ -482,6 +549,18 @@ for raw_line in existing.splitlines():
                 out.append("multi_agent = true")
                 multi_agent_written = True
             continue
+
+    if in_memories:
+        key_info = assignment_key_path(raw_line)
+        key_path = key_info[0] if key_info else []
+        memory_key = key_path[0] if len(key_path) == 1 else ""
+        if memory_key == "no_memories_if_mcp_or_web_search":
+            if not memories_external_context_written:
+                out.append(f"disable_on_external_context = {key_info[1]}")
+                memories_external_context_written = True
+            continue
+        if memory_key == "disable_on_external_context":
+            memories_external_context_written = True
 
     out.append(raw_line)
 
