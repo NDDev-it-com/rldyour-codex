@@ -10,6 +10,11 @@ write_case_config() {
   local config_path=$2
 
   case "$case_name" in
+    suppress_warning_false)
+      cat >"$config_path" <<'EOF'
+suppress_unstable_features_warning = false
+EOF
+      ;;
     no_features)
       cat >"$config_path" <<'EOF'
 profile = "custom"
@@ -86,6 +91,63 @@ EOF
 features = { hooks = false, codex_hooks = true, plugin_hooks = true, shell_snapshot = false }
 EOF
       ;;
+    root_legacy_config)
+      cat >"$config_path" <<'EOF'
+experimental_instructions_file = "/tmp/legacy-instructions.md"
+background_terminal_timeout = 120000
+experimental_use_unified_exec_tool = false
+EOF
+      ;;
+    root_canonical_config)
+      cat >"$config_path" <<'EOF'
+model_instructions_file = "/tmp/current-instructions.md"
+experimental_instructions_file = "/tmp/legacy-instructions.md"
+background_terminal_max_timeout = 90000
+background_terminal_timeout = 120000
+experimental_use_unified_exec_tool = false
+
+[features]
+unified_exec = true
+EOF
+      ;;
+    features_web_search_request)
+      cat >"$config_path" <<'EOF'
+[features]
+web_search_request = true
+EOF
+      ;;
+    features_web_search_cached)
+      cat >"$config_path" <<'EOF'
+[features]
+web_search_cached = true
+EOF
+      ;;
+    features_web_search_bool_false)
+      cat >"$config_path" <<'EOF'
+[features]
+web_search = false
+EOF
+      ;;
+    features_web_search_canonical_wins)
+      cat >"$config_path" <<'EOF'
+web_search = "cached"
+
+[features]
+web_search_request = true
+EOF
+      ;;
+    memories_legacy)
+      cat >"$config_path" <<'EOF'
+[memories]
+no_memories_if_mcp_or_web_search = true
+EOF
+      ;;
+    features_legacy_landlock)
+      cat >"$config_path" <<'EOF'
+[features]
+use_legacy_landlock = true
+EOF
+      ;;
     *)
       printf 'unknown smoke case: %s\n' "$case_name" >&2
       return 2
@@ -121,8 +183,26 @@ if features.get("hooks") is not True:
     raise SystemExit(f"{case_name}: expected [features].hooks = true, got {features!r}")
 if features.get("plugin_hooks") is not True:
     raise SystemExit(f"{case_name}: expected [features].plugin_hooks = true, got {features!r}")
-if "codex_hooks" in features:
-    raise SystemExit(f"{case_name}: legacy codex_hooks key was not removed: {features!r}")
+deprecated_features = {
+    "codex_hooks",
+    "use_legacy_landlock",
+    "web_search",
+    "web_search_cached",
+    "web_search_request",
+}
+unexpected_deprecated_features = sorted(deprecated_features.intersection(features))
+if unexpected_deprecated_features:
+    raise SystemExit(f"{case_name}: deprecated feature keys were not removed: {unexpected_deprecated_features}: {features!r}")
+for deprecated_root_key in {
+    "background_terminal_timeout",
+    "experimental_instructions_file",
+    "experimental_use_unified_exec_tool",
+}:
+    if deprecated_root_key in data:
+        raise SystemExit(f"{case_name}: deprecated root key was not removed: {deprecated_root_key}")
+if data.get("suppress_unstable_features_warning") is not True:
+    raise SystemExit(f"{case_name}: suppress_unstable_features_warning was not enabled: {data!r}")
+
 if case_name in {
     "table_legacy",
     "table_plugin_only",
@@ -136,12 +216,41 @@ if case_name in {
 }:
     if features.get("shell_snapshot") is not False:
         raise SystemExit(f"{case_name}: shell_snapshot flag was not preserved: {features!r}")
+if case_name == "root_legacy_config":
+    if data.get("model_instructions_file") != "/tmp/legacy-instructions.md":
+        raise SystemExit(f"{case_name}: experimental_instructions_file was not migrated: {data!r}")
+    if data.get("background_terminal_max_timeout") != 120000:
+        raise SystemExit(f"{case_name}: background_terminal_timeout was not migrated: {data!r}")
+    if features.get("unified_exec") is not False:
+        raise SystemExit(f"{case_name}: experimental_use_unified_exec_tool was not migrated: {features!r}")
+if case_name == "root_canonical_config":
+    if data.get("model_instructions_file") != "/tmp/current-instructions.md":
+        raise SystemExit(f"{case_name}: canonical model_instructions_file did not win: {data!r}")
+    if data.get("background_terminal_max_timeout") != 90000:
+        raise SystemExit(f"{case_name}: canonical background_terminal_max_timeout did not win: {data!r}")
+    if features.get("unified_exec") is not True:
+        raise SystemExit(f"{case_name}: canonical features.unified_exec did not win: {features!r}")
+if case_name == "features_web_search_request" and data.get("web_search") != "live":
+    raise SystemExit(f"{case_name}: web_search_request was not migrated to live: {data!r}")
+if case_name == "features_web_search_cached" and data.get("web_search") != "cached":
+    raise SystemExit(f"{case_name}: web_search_cached was not migrated to cached: {data!r}")
+if case_name == "features_web_search_bool_false" and data.get("web_search") != "disabled":
+    raise SystemExit(f"{case_name}: features.web_search=false was not migrated to disabled: {data!r}")
+if case_name == "features_web_search_canonical_wins" and data.get("web_search") != "cached":
+    raise SystemExit(f"{case_name}: canonical web_search did not win: {data!r}")
+if case_name == "memories_legacy":
+    memories = data.get("memories") or {}
+    if memories.get("disable_on_external_context") is not True:
+        raise SystemExit(f"{case_name}: memories legacy alias was not migrated: {memories!r}")
+    if "no_memories_if_mcp_or_web_search" in memories:
+        raise SystemExit(f"{case_name}: memories legacy alias was not removed: {memories!r}")
 PY
 
   printf 'ok      %s\n' "$case_name"
 }
 
 cases=(
+  suppress_warning_false
   no_features
   table_legacy
   table_plugin_only
@@ -154,6 +263,14 @@ cases=(
   inline_legacy
   inline_plugin_only
   inline_existing_hooks
+  root_legacy_config
+  root_canonical_config
+  features_web_search_request
+  features_web_search_cached
+  features_web_search_bool_false
+  features_web_search_canonical_wins
+  memories_legacy
+  features_legacy_landlock
 )
 
 for case_name in "${cases[@]}"; do
