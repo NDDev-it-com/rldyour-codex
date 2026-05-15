@@ -70,6 +70,7 @@ scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_codex_hooks_migration.sh
 scripts/smoke_serena_memory_freshness.sh
+scripts/smoke_serena_memory_taxonomy.sh
 scripts/smoke_local_git_guard.sh
 scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
@@ -82,6 +83,7 @@ plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.
 python3 scripts/validate_instruction_docs.py --require-agent-docs
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 python3 scripts/check_serena_memory_freshness.py
+python3 scripts/validate_agent_tools.py
 python3 scripts/validate_plugin_versions.py
 python3 scripts/validate_skill_routing.py
 python3 scripts/check_mcp_runtime_versions.py
@@ -92,7 +94,7 @@ scripts/doctor_system_codex.sh
 
 - Keep `main` synchronized with `origin/main` unless an explicit branch/worktree workflow is active.
 - Normal branches should not track agent-only files such as `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena`, `.codex`, `.cursor/rules`, or `.agents/skills`.
-- Bootstrap agent-only files at initialization with `scripts/sync_fullrepo_branch.sh --bootstrap-init`; it restores existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs excludes, and removes tracked agent-only files from the current branch index when migration is needed.
+- Bootstrap agent-only files at initialization with `scripts/sync_fullrepo_branch.sh --bootstrap-init`; it restores existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs excludes, and removes tracked agent-only files from the current branch index when migration is needed. Use `scripts/worktree_add.sh <branch> [path]` for parallel Codex worktrees that should immediately restore agent-only context from `fullrepo`.
 - Publish agent-only files after normal branch sync with `scripts/sync_fullrepo_branch.sh --publish`.
 - Install the local branch-aware pre-push guard in product repositories with `scripts/install_local_git_hooks.sh --repo <project> --apply`; it blocks agent-only files on product branches and permits them only on the configured fullrepo branch while keeping secret/runtime protection active.
 - Treat `branch_cleanup_state` from `plugins/rldyour-flow/scripts/flow_post_task_state.py` as a finish gate: merged local/remote workflow branches and merged workflow worktrees must be cleaned or explicitly reported as blockers before final delivery.

@@ -269,6 +269,9 @@ if errors:
 print(f"validated managed subagent configs: {len(source_files)}")
 PY
 
+step "Codex agent tool surfaces"
+"$UV_BIN" run --with pyyaml python scripts/validate_agent_tools.py
+
 step "Shell scripts"
 shellcheck plugins/rldyour-serena-mcp/hooks/*.sh plugins/rldyour-serena-mcp/scripts/*.sh plugins/rldyour-flow/hooks/*.sh plugins/rldyour-flow/scripts/*.sh plugins/rldyour-lsps/scripts/*.sh scripts/*.sh
 
@@ -278,6 +281,7 @@ from pathlib import Path
 import ast
 
 paths = [
+    Path("plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py"),
     Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
     Path("plugins/rldyour-flow/scripts/flow_post_task_state.py"),
     Path("plugins/rldyour-flow/scripts/instruction_docs_state.py"),
@@ -289,6 +293,7 @@ paths = [
     Path("scripts/release_manifest.py"),
     Path("scripts/check_mcp_runtime_versions.py"),
     Path("scripts/check_serena_memory_freshness.py"),
+    Path("scripts/validate_agent_tools.py"),
 ]
 
 for path in paths:
@@ -308,6 +313,9 @@ fi
 
 step "Serena memory freshness smoke"
 scripts/smoke_serena_memory_freshness.sh
+
+step "Serena memory taxonomy smoke"
+scripts/smoke_serena_memory_taxonomy.sh
 
 step "Serena memory state"
 python3 scripts/check_serena_memory_freshness.py

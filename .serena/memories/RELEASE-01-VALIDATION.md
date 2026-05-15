@@ -1,0 +1,68 @@
+<!-- Memory Metadata
+Last updated: 2026-05-16
+Last commit: 1132859 feat(serena): harden codex memory sync brain
+Scope: scripts/validate_marketplace.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, CHANGELOG.md, VERSION, .github/workflows/validate.yml
+Area: RELEASE
+-->
+
+# RELEASE-01-VALIDATION
+
+## Purpose
+
+This memory records the validation and release gates that keep the marketplace, plugins, hooks, MCP runtime, managed agents, and agent-only context coherent.
+
+## Source Of Truth
+
+- `scripts/validate_marketplace.sh`: top-level validation pipeline.
+- `scripts/validate_agent_tools.py`: Codex-native agent/skill surface validation.
+- `scripts/validate_plugin_versions.py`: plugin manifest and marketplace metadata validation.
+- `scripts/validate_skill_routing.py`: deterministic prompt-to-skill routing checks.
+- `scripts/smoke_hooks.sh`: hook wiring and lifecycle smoke.
+- `scripts/smoke_serena_memory_taxonomy.sh`: memory taxonomy/analyzer/hook smoke.
+- `scripts/smoke_serena_memory_freshness.sh`: memory freshness regression smoke.
+- `scripts/doctor_system_codex.sh`: installed runtime doctor.
+- `scripts/release_manifest.py`: generated release manifest.
+- `CHANGELOG.md` and `VERSION`: release notes and marketplace version.
+
+## Entry Points
+
+- `scripts/validate_marketplace.sh`: run before finalizing repository changes.
+- `scripts/doctor_system_codex.sh`: run after installing changed global config/plugins/hooks/agents.
+- `python3 scripts/release_manifest.py`: inspect release inventory.
+- `python3 scripts/check_mcp_runtime_versions.py`: validate pinned runtime versions.
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validate restored agent-only instruction docs.
+
+## Current Behavior
+
+- Marketplace validation now runs `uv run --with pyyaml python scripts/validate_agent_tools.py` before shell/Python/smoke checks.
+- Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py` and `scripts/validate_agent_tools.py`.
+- Marketplace validation runs `scripts/smoke_serena_memory_taxonomy.sh` after `scripts/smoke_serena_memory_freshness.sh`.
+- `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher and selects the expected hook by script path.
+- `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
+- The current task introduced plugin versions `rldyour-serena-mcp@0.2.2` and `rldyour-flow@0.2.5`.
+
+## Contracts And Data
+
+- `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, skill routing, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, and release manifest checks.
+- `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`.
+- `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
+
+## Invariants
+
+- No fake green checks: if a validation command cannot run, final delivery must report the blocker.
+- `scripts/doctor_system_codex.sh` should be rerun after `scripts/install_system_codex.sh --apply` when global AGENTS, managed agents, plugin cache, hooks, or MCP runtime definitions change.
+- Full marketplace validation should pass before pushing normal branch changes.
+- Changelog entries should describe durable behavior changes, not transient task notes.
+
+## Change Rules
+
+- When adding a new validator/smoke, wire it into `scripts/validate_marketplace.sh` if it is part of the release gate.
+- When changing hook layout, update `scripts/smoke_hooks.sh`.
+- When changing memory taxonomy/freshness behavior, update `scripts/smoke_serena_memory_taxonomy.sh` and `scripts/smoke_serena_memory_freshness.sh` if needed.
+
+## Verification
+
+- `scripts/validate_marketplace.sh`: full repository validation.
+- `scripts/doctor_system_codex.sh`: installed runtime validation after cache/config install.
+- `python3 scripts/release_manifest.py`: generated manifest includes expected plugin versions.
+- `git diff --check`: whitespace sanity before commit.

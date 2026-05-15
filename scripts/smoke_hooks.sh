@@ -121,9 +121,21 @@ if len(candidates) != 1:
     raise SystemExit(f"{hooks_json}: expected one {event} matcher {matcher}, found {len(candidates)}")
 
 hook_entries = candidates[0].get("hooks")
-if not isinstance(hook_entries, list) or len(hook_entries) != 1:
-    raise SystemExit(f"{hooks_json}: {event} matcher {matcher} must have exactly one hook")
-hook = hook_entries[0]
+if not isinstance(hook_entries, list) or not hook_entries:
+    raise SystemExit(f"{hooks_json}: {event} matcher {matcher} must have at least one hook")
+matching_hooks = []
+for entry in hook_entries:
+    if not isinstance(entry, dict):
+        continue
+    command_value = entry.get("command")
+    if isinstance(command_value, str) and expected_script in command_value:
+        matching_hooks.append(entry)
+if len(matching_hooks) != 1:
+    raise SystemExit(
+        f"{hooks_json}: {event} matcher {matcher} expected one hook referencing "
+        f"{expected_script}, found {len(matching_hooks)}"
+    )
+hook = matching_hooks[0]
 if hook.get("type") != "command":
     raise SystemExit(f"{hooks_json}: {event} matcher {matcher} hook type must be command")
 command = hook.get("command")

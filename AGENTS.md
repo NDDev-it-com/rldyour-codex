@@ -32,7 +32,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 
 - `rldyour-mcps` owns MCP transport definitions only. It must not contain behavior policy or skills.
 - `rldyour-serena-mcp` owns Serena-first code workflow, memory sync, and Serena lifecycle hooks.
-- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, advisory session/commit hooks, and post-task synchronization hooks.
+- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, SessionStart worktree bootstrap/context hooks, advisory commit hooks, and post-task synchronization hooks.
 - `rldyour-rules` owns quality, architecture, dependency, verification, Codex/Claude project-instruction, and ADR policy.
 - `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
 - `rldyour-explore`, `rldyour-browser`, `rldyour-security`, and `rldyour-lsps` own their domain workflows and must not duplicate MCP transports.
@@ -67,11 +67,13 @@ scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
 scripts/smoke_codex_hooks_migration.sh
 scripts/smoke_serena_memory_freshness.sh
+scripts/smoke_serena_memory_taxonomy.sh
 scripts/smoke_local_git_guard.sh
 scripts/smoke_flow_branch_cleanup.sh
 scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 scripts/smoke_fullrepo_bootstrap_init.sh
+python3 scripts/validate_agent_tools.py
 scripts/bootstrap_check.sh --apply
 scripts/sync_fullrepo_branch.sh --status
 scripts/sync_fullrepo_branch.sh --bootstrap-init
@@ -100,7 +102,7 @@ diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-cod
 - Prefer atomic commits with Conventional Commits.
 - Use `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` for knowledge-only Serena updates.
 - Use `$instruction-docs-sync` after Serena memory sync when durable project instruction facts changed.
-- Use `scripts/sync_fullrepo_branch.sh --bootstrap-init` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push. Bootstrap restores existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs excludes, and removes tracked agent-only files from the current branch index when migration is needed.
+- Use `scripts/sync_fullrepo_branch.sh --bootstrap-init` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push. Bootstrap restores existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs excludes, and removes tracked agent-only files from the current branch index when migration is needed. Use `scripts/worktree_add.sh <branch> [path]` for parallel Codex worktrees that should immediately restore agent-only context from `fullrepo`.
 - Use `scripts/install_local_git_hooks.sh --repo <project> --apply` to install the branch-aware local pre-push guard in product repositories; it keeps product branches strict and allows AI context only on the configured `fullrepo` branch while still blocking secrets/runtime files.
 - Treat `branch_cleanup_state` from `plugins/rldyour-flow/scripts/flow_post_task_state.py` as a finish gate: merged local/remote workflow branches and merged workflow worktrees must be cleaned or explicitly reported as blockers before final delivery.
 - Standard finish order is Serena memories and durable docs from verified code, matching checks, atomic normal-branch commit and push, `fullrepo` publish from final `HEAD`, then safe cleanup of merged workflow branches and worktrees.
