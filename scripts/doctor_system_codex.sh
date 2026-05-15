@@ -151,7 +151,26 @@ features = config_data.get("features") or {}
 checks.append(("hooks feature enabled", features.get("hooks") is True))
 checks.append(("plugin hooks feature enabled", features.get("plugin_hooks") is True))
 checks.append(("multi-agent feature enabled", features.get("multi_agent") is True))
-checks.append(("legacy codex_hooks absent", "codex_hooks" not in features))
+deprecated_feature_keys = {
+    "codex_hooks",
+    "use_legacy_landlock",
+    "web_search",
+    "web_search_cached",
+    "web_search_request",
+}
+for feature_key in sorted(deprecated_feature_keys):
+    checks.append((f"deprecated feature {feature_key} absent", feature_key not in features))
+
+checks.append(("legacy experimental_instructions_file absent", "experimental_instructions_file" not in config_data))
+checks.append(("legacy background_terminal_timeout absent", "background_terminal_timeout" not in config_data))
+checks.append(("legacy experimental_use_unified_exec_tool absent", "experimental_use_unified_exec_tool" not in config_data))
+checks.append(("suppress unstable feature warning enabled", config_data.get("suppress_unstable_features_warning") is True))
+checks.append(("approval policy on-failure absent", config_data.get("approval_policy") != "on-failure"))
+memories_config = config_data.get("memories") or {}
+checks.append((
+    "legacy memories.no_memories_if_mcp_or_web_search absent",
+    "no_memories_if_mcp_or_web_search" not in memories_config,
+))
 
 checks.append(("yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
 checks.append(("approval policy never", config_data.get("approval_policy") == "never"))
@@ -163,6 +182,15 @@ yolo_profile = (config_data.get("profiles") or {}).get("rldyour-yolo") or {}
 checks.append(("profile rldyour-yolo approval policy", yolo_profile.get("approval_policy") == "never"))
 checks.append(("profile rldyour-yolo sandbox", yolo_profile.get("sandbox_mode") == "danger-full-access"))
 checks.append(("profile rldyour-yolo permissions", yolo_profile.get("default_permissions") == ":danger-no-sandbox"))
+profiles_config = config_data.get("profiles") or {}
+for profile_name, profile_data in sorted(profiles_config.items()):
+    if not isinstance(profile_data, dict):
+        continue
+    checks.append((f"profile {profile_name} on-failure absent", profile_data.get("approval_policy") != "on-failure"))
+    checks.append((
+        f"profile {profile_name} legacy unified exec absent",
+        "experimental_use_unified_exec_tool" not in profile_data,
+    ))
 
 agents_config = config_data.get("agents") or {}
 checks.append(("agents max_threads", agents_config.get("max_threads") == 6))
