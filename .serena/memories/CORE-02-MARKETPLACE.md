@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last commit: ee8c90a chore(codex): unify codex hook migration and system checks
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, scripts/validate_plugin_versions.py, scripts/release_manifest.py
 Area: CORE
 -->
@@ -50,6 +50,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Do not duplicate MCP server registration outside `plugins/rldyour-mcps/.mcp.json`.
 - Do not maintain hardcoded plugin allowlists in installer or doctor scripts; derive from marketplace catalog.
 - README, plugin manifests, changelog, and release manifest must not describe behavior that code no longer implements.
+- `plugin_hooks` is a managed canonical feature for this repo and should be treated as stable/required when plugin hook behavior is in scope.
 
 ## Change Rules
 

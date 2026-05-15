@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
+Last commit: ee8c90a chore(codex): unify codex hook migration and system checks
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py
 Area: CODEX
 -->
@@ -21,6 +21,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - `system/agents/*.toml`: managed Codex subagent roles installed to `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`.
 - `scripts/validate_agent_tools.py`: Codex-specific surface validator.
 - `scripts/validate_plugin_versions.py` and `scripts/validate_skill_routing.py`: manifest and deterministic routing checks.
+- `scripts/smoke_codex_hooks_migration.sh`: end-to-end deprecated-alias migration smoke for installed system config.
 
 ## Entry Points
 
@@ -38,6 +39,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - `system/agents/serena-sync.toml` is the Codex-native memory-maintenance role. It may edit only `.serena/memories/` and closely related Serena metadata, not source code, plugin files, docs, configs, tests, scripts, or git history.
 - Plugin hook support is used only by `rldyour-flow` and `rldyour-serena-mcp`.
 - Official Codex docs verified for this implementation: Codex plugin manifests live at `.codex-plugin/plugin.json`; plugin hooks can point to `hooks.json`; Codex skills use `skills/`; Codex config uses `[features].hooks` for lifecycle hooks and `[features].plugin_hooks` to opt into bundled hooks from enabled plugins.
+- Legacy config aliases (`codex_hooks`, `use_legacy_landlock`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, and deprecated `features.web_search*`) are migrated by installer/doctor/smoke into canonical equivalents.
 
 ## Contracts And Data
 
