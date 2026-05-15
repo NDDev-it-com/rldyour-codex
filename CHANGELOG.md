@@ -22,8 +22,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
-- System Codex install now writes `[features].hooks = true` and removes deprecated hook feature keys from managed config.
-- System Codex install migration now normalizes dotted, quoted, and inline-table legacy hook feature keys, with dedicated smoke coverage in `scripts/smoke_codex_hooks_migration.sh`.
+- System Codex install now writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true` so bundled rldyour plugin hooks load from enabled plugins.
+- System Codex install migration now normalizes dotted, quoted, and inline-table legacy `codex_hooks` aliases plus managed hook feature keys, with dedicated smoke coverage in `scripts/smoke_codex_hooks_migration.sh`.
 - Flow post-task state now treats stale Serena memories and stale fullrepo snapshots as pending sync instead of false green states.
 - Doctor and validation now use stricter parsed-config/current-state checks for system config, Serena memory freshness, and fullrepo sync.
 - System Codex install and doctor now derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP server checks from `plugins/rldyour-mcps/.mcp.json` instead of parallel hardcoded lists.

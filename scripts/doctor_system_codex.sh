@@ -149,9 +149,9 @@ checks.append(("repo trusted", project.get("trust_level") == "trusted"))
 
 features = config_data.get("features") or {}
 checks.append(("hooks feature enabled", features.get("hooks") is True))
+checks.append(("plugin hooks feature enabled", features.get("plugin_hooks") is True))
 checks.append(("multi-agent feature enabled", features.get("multi_agent") is True))
 checks.append(("legacy codex_hooks absent", "codex_hooks" not in features))
-checks.append(("legacy plugin_hooks absent", "plugin_hooks" not in features))
 
 checks.append(("yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
 checks.append(("approval policy never", config_data.get("approval_policy") == "never"))
