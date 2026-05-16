@@ -113,6 +113,45 @@ jobs:
           name: diagnostics-${{ matrix.os }}
           path: diagnostics/ci
 
+  dependency-pins:
+    name: MCP runtime pin freshness
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.13"
+
+      - name: Check pinned MCP runtime versions
+        run: python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json > dependency-check.json
+
+      - name: Write dependency summary
+        if: always()
+        run: |
+          {
+            echo "## MCP runtime pin freshness"
+            echo ""
+            if [ -f dependency-check.json ]; then
+              echo '```json'
+              cat dependency-check.json
+              echo '```'
+            else
+              echo "dependency-check.json was not created"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload dependency report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: dependency-check
+          path: dependency-check.json
+
   mcp-safe-calls:
     name: MCP safe call smoke (ubuntu)
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
