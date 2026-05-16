@@ -38,6 +38,7 @@ GitHub Actions writes:
 - standard workflow logs for validation, doctor, bootstrap, and dependency checks.
 
 The `validate` workflow runs on Ubuntu and macOS because this setup must remain portable across the owner's Linux and macOS machines plus clean CI runners.
+On `push`, `pull_request`, and manual dispatch, `validate.yml` adds the `dependency-pins` job and uploads `dependency-check.json` for MCP pin freshness diagnostics.
 
 ## Failure Triage Order
 

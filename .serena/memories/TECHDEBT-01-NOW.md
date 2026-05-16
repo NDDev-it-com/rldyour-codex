@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: ee8c90a chore(codex): unify codex hook migration and system checks
+Last commit: 3bdc586 ci: enforce MCP pin freshness in validate workflow
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh
 Area: TECHDEBT
 -->
@@ -35,6 +35,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `plugin_hooks` was incorrectly treated as a deprecated/unstable key during the Codex adaptation. Official Codex docs make it the required opt-in for bundled plugin hooks, so installer/doctor/smoke now manage it as `true` and only remove `codex_hooks`.
 - Codex alias migration is now split by risk: safe aliases (`experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `memories.no_memories_if_mcp_or_web_search`) are mapped deterministically; `use_legacy_landlock` is treated as explicit deprecated opt-in removal.
 - Full migration smoke now includes a dedicated `suppress_warning_false` case to assert `suppress_unstable_features_warning = true` is respected as a unified config contract.
+- MCP runtime pin freshness checks are now covered in both `.github/workflows/validate.yml` (`dependency-pins` on push/PR/dispatch) and `.github/workflows/dependency-check.yml` (scheduled/manual). Keep command flags, failure mode, and artifact contract in sync across both to avoid hidden drift by surface.
 
 ## Contracts And Data
 
