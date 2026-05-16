@@ -53,6 +53,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - `rldyour-flow` now detects missing or stale instruction docs and routes post-task sync through `$instruction-docs-sync`.
 - `rldyour-serena-mcp` memory sync now supports fullrepo-managed `.serena` knowledge without committing AI files to normal branches.
 - `rldyour-rules` now documents the agent-only file policy for `AGENTS.md`, `.claude/CLAUDE.md`, `.serena`, and related AI workflow paths.
+- `validate.yml` now runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated --json` in a dedicated `dependency-pins` job on `push`, `pull_request`, and manual dispatch; this catches MCP runtime pin drift in normal CI alongside the scheduled `dependency-check` workflow.
 
 ## [0.1.0] - 2026-05-03
 
