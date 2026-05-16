@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: ee8aa56 docs(ci): document validate dependency-pins contract
+Last commit: 6b6dfd3 chore(release): cut 0.1.1
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py
 Area: CODEX
 -->
@@ -62,7 +62,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - When adding a plugin, update `.agents/plugins/marketplace.json`, create `plugins/<plugin>/.codex-plugin/plugin.json`, add skill metadata under `skills/*/agents/openai.yaml`, and run marketplace validation.
 - When adding a managed subagent, add a TOML file under `system/agents/`, ensure installer/doctor parity still passes, and avoid unsupported tool allowlist fields.
 - When changing Codex surfaces, update this memory and run `validate_agent_tools.py`.
-- This commit updates validation/CI documentation references only and does not change Codex plugin surface behavior.
+- `6b6dfd3` is a release-level maintenance commit (VERSION/CHANGELOG) and does not change plugin manifests, hooks, install logic, or managed-agent behavior in this memory scope.
 
 ## Verification
 

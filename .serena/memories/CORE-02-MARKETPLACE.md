@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: ee8c90a chore(codex): unify codex hook migration and system checks
+Last commit: 6b6dfd3 chore(release): cut 0.1.1
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, scripts/validate_plugin_versions.py, scripts/release_manifest.py
 Area: CORE
 -->
@@ -17,6 +17,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - `plugins/<plugin>/.codex-plugin/plugin.json`: per-plugin manifest, version, interface metadata, and bundled capabilities.
 - `README.md`: active catalog and architectural boundaries.
 - `CHANGELOG.md`: human-readable release notes.
+- `VERSION`: marketplace release version.
 - `scripts/validate_plugin_versions.py`: manifest, marketplace, policy, and version validation.
 - `scripts/release_manifest.py`: generated release/runtime inventory.
 
@@ -35,6 +36,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Only `rldyour-flow` and `rldyour-serena-mcp` may declare plugin hooks in this repository.
 - `rldyour-mcps` owns MCP transport definitions only and must not contain behavior skills.
 - Curated GitHub and Gmail plugins are enabled in system Codex but are not rldyour plugin directories in this repository.
+- Repository marketplace version is `0.1.1` (from `VERSION`, committed in `6b6dfd3`).
 
 ## Contracts And Data
 
@@ -43,6 +45,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Manifest bundled capability paths are relative to the plugin root.
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
+- Current head `6b6dfd3` keeps changelog entry `[0.1.1]` and matching `VERSION=0.1.1`.
 
 ## Invariants
 
