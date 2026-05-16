@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 3bdc586 ci: enforce MCP pin freshness in validate workflow
+Last commit: ee8aa56 docs(ci): document validate dependency-pins contract
 Scope: scripts/validate_marketplace.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, CHANGELOG.md, VERSION, .github/workflows/validate.yml
 Area: RELEASE
 -->
@@ -66,6 +66,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - When changing hook layout, update `scripts/smoke_hooks.sh`.
 - When changing memory taxonomy/freshness behavior, update `scripts/smoke_serena_memory_taxonomy.sh` and `scripts/smoke_serena_memory_freshness.sh` if needed.
 - MCP runtime pin checks must stay synchronized across `validate.yml` and `dependency-check.yml`: one catches drift in evented CI and one preserves periodic/manual review cadence.
+- In docs, this contract must be described consistently in `docs/dependency-updates.md`, `docs/observability.md`, and `README.md` whenever validate/dependency-check behavior changes.
 
 ## Verification
 
