@@ -34,3 +34,5 @@ python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated
 ## CI
 
 The `dependency-check` workflow runs weekly and through manual dispatch. It reports stale pinned MCP packages before they silently drift away from current upstream releases.
+
+`validate.yml` now also runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated --json` in the `dependency-pins` job on `push`, `pull_request`, and manual dispatch, so MCP pin drift is detected during normal CI as well.
