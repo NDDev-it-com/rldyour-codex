@@ -8,6 +8,16 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Added
 
+- None.
+
+### Changed
+
+- None.
+
+## [0.1.1] - 2026-05-16
+
+### Added
+
 - Formal release, rollback, dependency-update, routing-policy, and observability workflows for the rldyour Codex marketplace.
 - `rldyour-design` Figma delivery contract for implementation manifests, dynamic/static/admin content classification, centralized i18n, token/UI-kit gates, and browser/static validation before final delivery.
 - `fullrepo` branch workflow for portable agent-only files: restore, migrate, publish, status, smoke validation, and Flow/Serena lifecycle integration.
