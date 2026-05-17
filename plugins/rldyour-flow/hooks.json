@@ -5,13 +5,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/hooks/session_start_worktree_bootstrap.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/session_start_worktree_bootstrap.sh\"'",
             "timeout": 10,
             "statusMessage": "Bootstrapping rldyour fullrepo context"
           },
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-flow/hooks/session_start_context.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/hooks/session_start_context.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/session_start_context.sh\"'",
             "timeout": 5,
             "statusMessage": "Loading rldyour flow session context"
           }
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/hooks/post_tool_use_commit_advice.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/post_tool_use_commit_advice.sh\"'",
             "timeout": 5,
             "statusMessage": "Checking rldyour commit advice"
           }
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-flow/hooks/stop_post_task_sync.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/hooks/stop_post_task_sync.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/stop_post_task_sync.sh\"'",
             "timeout": 10,
             "statusMessage": "Checking rldyour flow post-task sync"
           }

@@ -143,11 +143,23 @@ if not isinstance(command, str) or not command:
     raise SystemExit(f"{hooks_json}: {event} matcher {matcher} command missing")
 if expected_script not in command:
     raise SystemExit(f"{hooks_json}: {event} command does not reference {expected_script}")
+if "PLUGIN_ROOT" not in command:
+    raise SystemExit(f"{hooks_json}: {event} command must resolve scripts via PLUGIN_ROOT")
+for forbidden in ("plugins/rldyour-", "CODEX_HOME", ".codex/plugins/cache", "for p in "):
+    if forbidden in command:
+        raise SystemExit(
+            f"{hooks_json}: {event} command must not use cwd/cache search fallback: {forbidden}"
+        )
 timeout = hook.get("timeout")
 if not isinstance(timeout, int) or timeout <= 0:
     raise SystemExit(f"{hooks_json}: {event} timeout must be a positive integer")
 print(command)
 PY
+}
+
+plugin_root_for_hooks_json() {
+  local hooks_json=$1
+  cd -- "$(dirname -- "$hooks_json")" && pwd
 }
 
 run_configured_hook() {
@@ -159,10 +171,12 @@ run_configured_hook() {
   local cwd=$6
   local input=$7
   local expected=$8
-  local command output
+  local command output plugin_root plugin_data
 
   command=$(hook_json_command "$hooks_json" "$event" "$matcher" "$expected_script")
-  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" bash -lc "$command")
+  plugin_root=$(plugin_root_for_hooks_json "$hooks_json")
+  plugin_data="$plugin_root/.plugin-data-smoke"
+  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" bash -lc "$command")
   if [ -n "$expected" ] && ! printf '%s' "$output" | grep -F "$expected" >/dev/null; then
     printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
     fail "$label did not include expected text: $expected"
@@ -178,10 +192,12 @@ run_configured_quiet_hook() {
   local expected_script=$5
   local cwd=$6
   local input=$7
-  local command output
+  local command output plugin_root plugin_data
 
   command=$(hook_json_command "$hooks_json" "$event" "$matcher" "$expected_script")
-  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" bash -lc "$command")
+  plugin_root=$(plugin_root_for_hooks_json "$hooks_json")
+  plugin_data="$plugin_root/.plugin-data-smoke"
+  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" bash -lc "$command")
   if [ -n "$output" ]; then
     printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
     fail "$label should not emit output for this smoke input"
@@ -195,10 +211,12 @@ run_configured_stop_hook() {
   local event=$3
   local expected_script=$4
   local cwd=$5
-  local command
+  local command plugin_root plugin_data
 
   command=$(hook_json_command "$hooks_json" "$event" "-" "$expected_script")
-  (cd "$cwd" && printf '{}' | CODEX_HOME="$CODEX_HOME_DIR" RLDYOUR_SKIP_STOP_GATES=1 bash -lc "$command")
+  plugin_root=$(plugin_root_for_hooks_json "$hooks_json")
+  plugin_data="$plugin_root/.plugin-data-smoke"
+  (cd "$cwd" && printf '{}' | CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" RLDYOUR_SKIP_STOP_GATES=1 bash -lc "$command")
   printf 'ok      %s\n' "$label"
 }
 
@@ -402,12 +420,8 @@ smoke_root() {
     flow_dir="$base/rldyour-flow"
   fi
 
-  if [ "$name" = "installed" ]; then
-    wiring_cwd=$(make_lifecycle_repo)
-    cleanup_wiring_cwd="$wiring_cwd"
-  else
-    wiring_cwd="$ROOT"
-  fi
+  wiring_cwd=$(make_lifecycle_repo)
+  cleanup_wiring_cwd="$wiring_cwd"
   smoke_hook_wiring "$name" "$serena_dir/hooks.json" "$flow_dir/hooks.json" "$wiring_cwd"
   if [ -n "$cleanup_wiring_cwd" ]; then
     rm -rf "$cleanup_wiring_cwd"
