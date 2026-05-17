@@ -46,6 +46,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Dependency freshness workflows now share the CI runtime setup action and keep retention limits on generated reports.
 - Release workflow now bootstraps `fullrepo` agent context before requiring agent instruction docs in release validation.
 - Release workflow now runs Codex agent-surface validation through the same `uv --with pyyaml` dependency contract as marketplace validation.
+- Release workflow now extracts versioned release notes with a portable AWK expression during deterministic bundle generation.
 - Python project metadata now pins the validation runtime to Python 3.13.x for local/CI parity.
 - `rldyour-flow` plugin version updated to `0.2.6` for deterministic SessionStart dispatch and hook prologue hardening.
 - `rldyour-serena-mcp` plugin version updated to `0.2.3` for expanded memory taxonomy coverage.
