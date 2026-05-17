@@ -10,16 +10,39 @@ nickname_candidates = ["Gauge", "Vector", "Anvil"]
 # Allowed/inherited: sequential-thinking, serena, context7, grep, deepwiki,
 # openaiDeveloperDocs, codex_apps.
 mcp_servers.playwright.enabled = false
+mcp_servers.playwright.command = "bunx"
+mcp_servers.playwright.args = ["@playwright/mcp@0.0.75", "--headless", "--caps=network,storage,testing,devtools"]
+mcp_servers.playwright.startup_timeout_sec = 90
+mcp_servers.playwright.tool_timeout_sec = 180
 
 mcp_servers.chrome-devtools.enabled = false
+mcp_servers.chrome-devtools.command = "bunx"
+mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@0.26.0", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
+mcp_servers.chrome-devtools.startup_timeout_sec = 90
+mcp_servers.chrome-devtools.tool_timeout_sec = 180
 
 mcp_servers.semgrep.enabled = false
+mcp_servers.semgrep.command = "uvx"
+mcp_servers.semgrep.args = ["--from", "semgrep==1.163.0", "semgrep", "mcp"]
+mcp_servers.semgrep.startup_timeout_sec = 90
+mcp_servers.semgrep.tool_timeout_sec = 180
 
 mcp_servers.shadcn.enabled = false
+mcp_servers.shadcn.command = "bunx"
+mcp_servers.shadcn.args = ["shadcn@4.7.0", "mcp"]
+mcp_servers.shadcn.startup_timeout_sec = 90
+mcp_servers.shadcn.tool_timeout_sec = 120
 
 mcp_servers.dart-flutter.enabled = false
+mcp_servers.dart-flutter.command = "dart"
+mcp_servers.dart-flutter.args = ["mcp-server", "--force-roots-fallback"]
+mcp_servers.dart-flutter.startup_timeout_sec = 90
+mcp_servers.dart-flutter.tool_timeout_sec = 180
 
 mcp_servers.figma.enabled = false
+mcp_servers.figma.url = "https://mcp.figma.com/mcp"
+mcp_servers.figma.startup_timeout_sec = 60
+mcp_servers.figma.tool_timeout_sec = 120
 
 developer_instructions = """
 You are quality-reviewer, a focused implementation-quality review agent.

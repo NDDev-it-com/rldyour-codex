@@ -36,6 +36,26 @@ TEMPORARY_SUBAGENT_MCP_ALLOWLIST = {
     "serena",
 }
 TEMPORARY_SUBAGENT_MCP_BUILTINS = {"codex_apps"}
+MCP_TRANSPORT_KEYS = {
+    "args",
+    "bearer_token_env_var",
+    "command",
+    "cwd",
+    "disabled_tools",
+    "enabled_tools",
+    "env",
+    "env_http_headers",
+    "env_vars",
+    "experimental_environment",
+    "http_headers",
+    "oauth_resource",
+    "required",
+    "scopes",
+    "startup_timeout_ms",
+    "startup_timeout_sec",
+    "tool_timeout_sec",
+    "url",
+}
 CLAUDE_ONLY_SKILL_KEYS = {
     "allowed-tools",
     "allowed_tools",
@@ -119,7 +139,31 @@ def validate_openai_metadata(path: Path, valid_mcp_servers: set[str], failures: 
             failures.append(f"{path}: unknown MCP dependency {value!r}")
 
 
-def validate_managed_agent(path: Path, valid_mcp_servers: set[str], failures: list[str]) -> None:
+def validate_disabled_mcp_transport(
+    path: Path,
+    server: str,
+    server_config: dict[str, Any],
+    registry_spec: dict[str, Any],
+    failures: list[str],
+) -> None:
+    if "command" not in server_config and "url" not in server_config:
+        failures.append(
+            f"{path}: temporary subagent MCP policy for {server} must include a valid disabled "
+            "transport copied from plugins/rldyour-mcps/.mcp.json"
+        )
+        return
+
+    for key in sorted(registry_spec):
+        if key not in MCP_TRANSPORT_KEYS:
+            continue
+        if server_config.get(key) != registry_spec[key]:
+            failures.append(
+                f"{path}: temporary subagent MCP policy for {server} must copy {key} "
+                "from plugins/rldyour-mcps/.mcp.json"
+            )
+
+
+def validate_managed_agent(path: Path, mcp_registry: dict[str, Any], failures: list[str]) -> None:
     try:
         data = tomllib.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
@@ -142,6 +186,7 @@ def validate_managed_agent(path: Path, valid_mcp_servers: set[str], failures: li
         failures.append(f"{path}: managed agents must declare temporary mcp_servers isolation policy")
         return
 
+    valid_mcp_servers = set(mcp_registry)
     known_servers = valid_mcp_servers | TEMPORARY_SUBAGENT_MCP_BUILTINS
     for server in sorted(mcp_servers):
         if server not in known_servers:
@@ -153,6 +198,12 @@ def validate_managed_agent(path: Path, valid_mcp_servers: set[str], failures: li
             failures.append(
                 f"{path}: temporary subagent MCP policy must set mcp_servers.{server}.enabled = false"
             )
+            continue
+        registry_spec = mcp_registry.get(server)
+        if not isinstance(registry_spec, dict):
+            failures.append(f"{path}: missing MCP registry spec for {server}")
+            continue
+        validate_disabled_mcp_transport(path, server, server_config, registry_spec, failures)
 
     for server in sorted(TEMPORARY_SUBAGENT_MCP_ALLOWLIST & valid_mcp_servers):
         server_config = mcp_servers.get(server)
@@ -161,14 +212,18 @@ def validate_managed_agent(path: Path, valid_mcp_servers: set[str], failures: li
 
     for server in sorted(TEMPORARY_SUBAGENT_MCP_BUILTINS):
         server_config = mcp_servers.get(server)
-        if isinstance(server_config, dict) and server_config.get("enabled") is False:
-            failures.append(f"{path}: built-in subagent MCP surface {server} must not be disabled")
+        if isinstance(server_config, dict):
+            failures.append(
+                f"{path}: built-in subagent MCP surface {server} must not be declared under "
+                "mcp_servers; leave it inherited from Codex Apps/connectors"
+            )
 
 
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     mcp_manifest = repo_root / "plugins" / "rldyour-mcps" / ".mcp.json"
-    valid_mcp_servers = set(json.loads(mcp_manifest.read_text(encoding="utf-8"))["mcpServers"])
+    mcp_registry = json.loads(mcp_manifest.read_text(encoding="utf-8"))["mcpServers"]
+    valid_mcp_servers = set(mcp_registry)
 
     failures: list[str] = []
     validate_no_claude_agent_files(repo_root, failures)
@@ -183,7 +238,7 @@ def main() -> int:
     for path in metadata_files:
         validate_openai_metadata(path, valid_mcp_servers, failures)
     for path in managed_agents:
-        validate_managed_agent(path, valid_mcp_servers, failures)
+        validate_managed_agent(path, mcp_registry, failures)
 
     if failures:
         print("validate_agent_tools.py: validation FAILED", file=sys.stderr)

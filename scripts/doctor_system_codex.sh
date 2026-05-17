@@ -290,7 +290,8 @@ from pathlib import Path
 system_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
 installed_dir = Path(os.environ["RLDYOUR_INSTALLED_AGENT_DIR"])
 mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
-valid_mcp_servers = set(json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"])
+mcp_registry = json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"]
+valid_mcp_servers = set(mcp_registry)
 temporary_allowlist = {
     "context7",
     "deepwiki",
@@ -300,6 +301,26 @@ temporary_allowlist = {
     "serena",
 }
 temporary_builtins = {"codex_apps"}
+mcp_transport_keys = {
+    "args",
+    "bearer_token_env_var",
+    "command",
+    "cwd",
+    "disabled_tools",
+    "enabled_tools",
+    "env",
+    "env_http_headers",
+    "env_vars",
+    "experimental_environment",
+    "http_headers",
+    "oauth_resource",
+    "required",
+    "scopes",
+    "startup_timeout_ms",
+    "startup_timeout_sec",
+    "tool_timeout_sec",
+    "url",
+}
 errors = False
 
 for source in sorted(system_dir.glob("*.toml")):
@@ -348,13 +369,24 @@ for source in sorted(system_dir.glob("*.toml")):
             errors = True
         else:
             print(f"ok      subagent {label} disables temporary non-core MCP {server}")
+            server_config = mcp_servers[server]
+            if "command" not in server_config and "url" not in server_config:
+                print(f"fail    subagent {label} MCP {server} has disabled policy without transport", file=sys.stderr)
+                errors = True
+            registry_spec = mcp_registry.get(server) or {}
+            for key in sorted(registry_spec):
+                if key not in mcp_transport_keys:
+                    continue
+                if server_config.get(key) != registry_spec[key]:
+                    print(f"fail    subagent {label} MCP {server} transport drift: {key}", file=sys.stderr)
+                    errors = True
     for server in sorted(temporary_allowlist & valid_mcp_servers):
         if isinstance(mcp_servers.get(server), dict) and mcp_servers[server].get("enabled") is False:
             print(f"fail    subagent {label} does not disable allowlisted MCP {server}", file=sys.stderr)
             errors = True
     for server in sorted(temporary_builtins):
-        if isinstance(mcp_servers.get(server), dict) and mcp_servers[server].get("enabled") is False:
-            print(f"fail    subagent {label} does not disable built-in MCP surface {server}", file=sys.stderr)
+        if isinstance(mcp_servers.get(server), dict):
+            print(f"fail    subagent {label} declares built-in MCP surface {server} under mcp_servers", file=sys.stderr)
             errors = True
 
 raise SystemExit(1 if errors else 0)
