@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 08e3bc6 fix(release): bootstrap fullrepo context for release validation
+Last commit: c901197 fix(release): install pyyaml for agent validation
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->
@@ -50,6 +50,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `882030e` closed the normal-branch CI/fullrepo boundary gap: GitHub normal-branch validation no longer requires absent fullrepo-managed memories, while local/fullrepo-aware checkouts still validate live memory freshness.
 - `eb39996` closed the follow-up untracked-memory CI gap: if GitHub Actions creates or restores `.serena/memories` as untracked fullrepo context during a normal-branch job, taxonomy and marketplace validation still skip live repository-memory freshness instead of treating that untracked context as normal-branch source.
 - `08e3bc6` closed the release-workflow/fullrepo context gap: manual release validation bootstraps `fullrepo` before requiring agent instruction docs, so `main` can remain free of agent-only files while release validation stays strict.
+- `c901197` closed the release-workflow PyYAML dependency gap: manual release validation now runs `validate_agent_tools.py` through `uv --with pyyaml`, matching the marketplace validation dependency contract.
 - Semgrep's global `IFS` tampering rule is intentionally excluded in `security-static` because this repository uses `IFS=$'\n\t'` as a strict shell prologue and validates shell scripts with ShellCheck.
 
 ## Contracts And Data

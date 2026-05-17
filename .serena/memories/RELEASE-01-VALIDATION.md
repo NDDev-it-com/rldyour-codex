@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 08e3bc6 fix(release): bootstrap fullrepo context for release validation
+Last commit: c901197 fix(release): install pyyaml for agent validation
 Scope: scripts/validate_marketplace.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/classify_ci_noise.py, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
@@ -63,11 +63,11 @@ This memory records the validation and release gates that keep the marketplace, 
 - GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
 - `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
 - `.github/workflows/security-static.yml` runs action pin validation, actionlint, text security scan, ShellCheck, Pyright, and Semgrep CLI without requiring paid GitHub Code Security.
-- `.github/workflows/release.yml` manually publishes exact SemVer tags without a `v` prefix, bootstraps `fullrepo` agent context before requiring agent docs, and produces deterministic `tar.gz` bundles, release manifests, generated SPDX SBOMs, optional GitHub dependency graph SBOMs, artifact attestations, and GitHub Releases.
+- `.github/workflows/release.yml` manually publishes exact SemVer tags without a `v` prefix, bootstraps `fullrepo` agent context before requiring agent docs, runs `validate_agent_tools.py` through `uv --with pyyaml`, and produces deterministic `tar.gz` bundles, release manifests, generated SPDX SBOMs, optional GitHub dependency graph SBOMs, artifact attestations, and GitHub Releases.
 - `scripts/classify_ci_noise.py` keeps known benign third-party stderr documented while failing targeted strict jobs on unknown lines.
 - `config/skill-routing-policy.json` version 2 assigns routing classes to all 38 skills and requires cases for implicit, explicit-only, and finalization skills.
 - Text security scan covers tracked text plus agent-only instruction/memory/research paths and rejects secret-like values, BIDI controls, and zero-width controls.
-- Release `0.2.0` is prepared at commit `08e3bc6` (`VERSION=0.2.0`), with changelog coverage in `CHANGELOG.md`.
+- Release `0.2.0` is prepared at commit `c901197` (`VERSION=0.2.0`), with changelog coverage in `CHANGELOG.md`.
 - `tests/unit/test_fullrepo_sync.py` configures git identity for temporary repositories and clones before fixture commits, which keeps the unit-test matrix deterministic on GitHub-hosted runners.
 - `scripts/classify_ci_noise.py` allowlists `uv` package download progress lines such as `Downloading pygments (...)` and `Downloaded pygments` as deterministic setup noise.
 - `scripts/validate_marketplace.sh` skips only the live Serena freshness state check in GitHub Actions when fullrepo-managed `.serena/memories/CORE-01-INDEX.md` is not tracked in the normal-branch checkout.
