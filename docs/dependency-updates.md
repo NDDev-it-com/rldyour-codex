@@ -10,6 +10,8 @@ Pinned runtime versions keep MCP startup reproducible. Update checks are intenti
 
 `scripts/validate_marketplace.sh` enforces parity between `config/mcp-runtime-versions.env` and local MCP launcher package specs in `.mcp.json`.
 
+`dart-flutter` is the explicit exception: it runs through the local Dart SDK and is declared as `DART_FLUTTER_MCP_RUNTIME=external-local-dart-sdk` instead of a package-version pin.
+
 ## Local Check
 
 ```bash
@@ -27,9 +29,10 @@ python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated
 1. Run the check and inspect upstream versions.
 2. Read upstream release notes for every changed package.
 3. Update both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`.
-4. Reinstall into system Codex with `scripts/install_system_codex.sh --apply`.
-5. Run `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh`.
-6. Commit the runtime pin update separately from unrelated workflow changes.
+4. For GitHub Actions, resolve the new tag to a full commit SHA, pin `uses:` to that SHA, and keep the tag as an inline comment for review.
+5. Reinstall into system Codex with `scripts/install_system_codex.sh --apply`.
+6. Run `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh`.
+7. Commit the runtime pin update separately from unrelated workflow changes.
 
 ## CI
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 18d9e80 fix(flow): prevent bootstrap stop hook loops
+Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
 Scope: scripts/validate_marketplace.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, CHANGELOG.md, VERSION, .github/workflows/validate.yml
 Area: RELEASE
 -->
@@ -17,6 +17,8 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_agent_tools.py`: Codex-native agent/skill surface validation.
 - `scripts/validate_plugin_versions.py`: plugin manifest and marketplace metadata validation.
 - `scripts/validate_skill_routing.py`: deterministic prompt-to-skill routing checks.
+- `scripts/validate_action_pins.py`: full-SHA pin validation for external GitHub Actions.
+- `scripts/scan_text_security.py`: tracked and agent-only text scan for secret-like values and hidden Unicode controls.
 - `scripts/smoke_hooks.sh`: hook wiring, `PLUGIN_ROOT` command execution, and lifecycle smoke.
 - `scripts/smoke_serena_memory_taxonomy.sh`: memory taxonomy/analyzer/hook smoke.
 - `scripts/smoke_serena_memory_freshness.sh`: memory freshness regression smoke.
@@ -32,12 +34,15 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/doctor_system_codex.sh`: run after installing changed global config/plugins/hooks/agents.
 - `python3 scripts/release_manifest.py`: inspect release inventory.
 - `python3 scripts/check_mcp_runtime_versions.py`: validate pinned runtime versions.
+- `python3 scripts/validate_action_pins.py`: validate external GitHub Actions are pinned to 40-character commit SHAs.
+- `python3 scripts/scan_text_security.py`: scan repository text for secret-like patterns and hidden Unicode controls without printing matched values.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validate restored agent-only instruction docs.
 
 ## Current Behavior
 
 - Marketplace validation now runs `uv run --with pyyaml python scripts/validate_agent_tools.py` before shell/Python/smoke checks.
-- Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py` and `scripts/validate_agent_tools.py`.
+- Marketplace validation now runs `python3 scripts/validate_action_pins.py` before skill checks.
+- Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`, `scripts/validate_agent_tools.py`, `scripts/validate_action_pins.py`, and `scripts/scan_text_security.py`.
 - Marketplace validation runs `scripts/smoke_serena_memory_taxonomy.sh` after `scripts/smoke_serena_memory_freshness.sh`.
 - `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher, selects the expected hook by script path, rejects cwd/cache-search command wrappers, and runs configured hook commands from a temporary git repo with plugin runtime environment variables.
 - `scripts/smoke_hooks.sh` includes a bootstrap-only `.serena` regression scenario: an unborn git repository containing only auto-created `.serena/project.yml`, `.serena/.gitignore`, and flow runtime markers must not require Flow post-task sync.
@@ -46,12 +51,14 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/smoke_codex_hooks_migration.sh` and `scripts/doctor_system_codex.sh` keep deprecated key migration logic synchronized (including `codex_hooks`, legacy `web_search*`, unified exec/instructions/memories keys, and `use_legacy_landlock` cleanup).
 - `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
 - `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to `codex app-server hooks/list`.
+- GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
+- Text security scan covers tracked text plus agent-only instruction/memory/research paths and rejects secret-like values, BIDI controls, and zero-width controls.
 - Release `v0.1.1` is now published from commit `6b6dfd3` (`VERSION=0.1.1`), with changelog coverage in `CHANGELOG.md`.
 - Validation contracts still include pinned runtime checks and `smoke` coverage defined in `dependency-check.yml` and `validate.yml`.
 
 ## Contracts And Data
 
-- `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, skill routing, hook feature migration smoke, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, and release manifest checks.
+- `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, GitHub Action SHA pin validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, skill routing, hook feature migration smoke, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, text security scan, and release manifest checks.
 - `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`.
 - `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
 

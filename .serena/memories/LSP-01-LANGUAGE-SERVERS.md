@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
-Scope: plugins/rldyour-lsps, plugins/rldyour-lsps/scripts/check_lsps.sh, plugins/rldyour-serena-mcp, pyrightconfig.json, README.md
+Last updated: 2026-05-17
+Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
+Scope: plugins/rldyour-lsps, plugins/rldyour-lsps/scripts/check_lsps.sh, plugins/rldyour-serena-mcp, .serena/project.yml, pyrightconfig.json, README.md
 Area: LSP
 -->
 
@@ -19,6 +19,7 @@ Area: LSP
 - `plugins/rldyour-lsps/skills/serena-lsp-integration/SKILL.md`: Serena project language settings.
 - `plugins/rldyour-lsps/scripts/check_lsps.sh`: health-check script.
 - `pyrightconfig.json`: Python type-check configuration for repository scripts.
+- `.serena/project.yml`: project-local Serena LSP language list published through `fullrepo`.
 
 ## Entry Points
 
@@ -31,6 +32,7 @@ Area: LSP
 ## Current Behavior
 
 - Serena symbolic tools are preferred for supported code structure and references.
+- `.serena/project.yml` starts Serena LSPs for `bash`, `python`, `json`, `yaml`, `toml`, and `markdown`, matching the repository's script/config/documentation surfaces.
 - Direct `rg`/file reads are still appropriate for shell, Markdown, JSON, YAML, TOML, and other text/config surfaces where LSP tools are not useful.
 - LSP setup is brew-first where applicable, with toolchain fallbacks documented by the skill.
 

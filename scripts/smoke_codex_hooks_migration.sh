@@ -277,6 +277,25 @@ for case_name in "${cases[@]}"; do
   run_case "$case_name"
 done
 
+malformed_home="$TMPDIR_ROOT/malformed_existing_config"
+mkdir -p "$malformed_home"
+printf '[features\nhooks = true\n' > "$malformed_home/config.toml"
+set +e
+malformed_output=$("$ROOT/scripts/install_system_codex.sh" --apply --codex-home "$malformed_home" 2>&1)
+malformed_status=$?
+set -e
+if [ "$malformed_status" -eq 0 ]; then
+  printf '%s\n' "$malformed_output" >&2
+  printf 'malformed_existing_config: installer unexpectedly succeeded\n' >&2
+  exit 1
+fi
+if ! printf '%s\n' "$malformed_output" | grep -F 'Malformed existing Codex config' >/dev/null; then
+  printf '%s\n' "$malformed_output" >&2
+  printf 'malformed_existing_config: installer did not report parse failure\n' >&2
+  exit 1
+fi
+printf 'ok      malformed_existing_config\n'
+
 if command -v codex >/dev/null 2>&1; then
   runtime_home="$TMPDIR_ROOT/codex-runtime"
   mkdir -p "$runtime_home"

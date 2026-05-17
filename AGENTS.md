@@ -32,7 +32,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 
 - `rldyour-mcps` owns MCP transport definitions only. It must not contain behavior policy or skills.
 - `rldyour-serena-mcp` owns Serena-first code workflow, memory sync, and Serena lifecycle hooks.
-- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, SessionStart worktree bootstrap/context hooks, advisory commit hooks, and post-task synchronization hooks.
+- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, serialized SessionStart worktree bootstrap/context dispatcher hooks, advisory commit hooks, and post-task synchronization hooks.
 - `rldyour-rules` owns quality, architecture, dependency, verification, Codex/Claude project-instruction, and ADR policy.
 - `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
 - `rldyour-explore`, `rldyour-browser`, `rldyour-security`, and `rldyour-lsps` own their domain workflows and must not duplicate MCP transports.
@@ -74,6 +74,8 @@ scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 scripts/smoke_fullrepo_bootstrap_init.sh
 python3 scripts/validate_agent_tools.py
+python3 scripts/validate_action_pins.py
+python3 scripts/scan_text_security.py
 scripts/bootstrap_check.sh --apply
 scripts/sync_fullrepo_branch.sh --status
 scripts/sync_fullrepo_branch.sh --bootstrap-init

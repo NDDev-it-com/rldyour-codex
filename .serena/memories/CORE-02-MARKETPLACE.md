@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 6b6dfd3 chore(release): cut 0.1.1
+Last updated: 2026-05-17
+Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, scripts/validate_plugin_versions.py, scripts/release_manifest.py
 Area: CORE
 -->
@@ -31,8 +31,8 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 
 - Marketplace name is `rldyour-codex` and all active rldyour plugins are local sources under `./plugins/<plugin>`.
 - Active plugin count is 9.
-- `rldyour-serena-mcp` version is `0.2.2`; it declares `skills` and `hooks` and owns Serena code workflow and memory sync.
-- `rldyour-flow` version is `0.2.5`; it declares `skills` and `hooks` and owns SDLC workflows, fullrepo, worktree bootstrap, instruction docs, and post-task sync.
+- `rldyour-serena-mcp` version is `0.2.3`; it declares `skills` and `hooks` and owns Serena code workflow and memory sync.
+- `rldyour-flow` version is `0.2.6`; it declares `skills` and `hooks` and owns SDLC workflows, fullrepo, worktree bootstrap, instruction docs, and post-task sync.
 - Only `rldyour-flow` and `rldyour-serena-mcp` may declare plugin hooks in this repository.
 - `rldyour-mcps` owns MCP transport definitions only and must not contain behavior skills.
 - Curated GitHub and Gmail plugins are enabled in system Codex but are not rldyour plugin directories in this repository.
@@ -45,7 +45,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Manifest bundled capability paths are relative to the plugin root.
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
-- Current head `6b6dfd3` keeps changelog entry `[0.1.1]` and matching `VERSION=0.1.1`.
+- Current marketplace version remains `0.1.1`; commit `9a1cdc2` changes plugin behavior versions and `[Unreleased]` changelog entries without changing root `VERSION`.
 
 ## Invariants
 

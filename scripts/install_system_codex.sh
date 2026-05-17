@@ -152,6 +152,31 @@ trust home: $TRUST_HOME
 EOF
 }
 
+validate_existing_config() {
+  if [ ! -f "$CONFIG_PATH" ]; then
+    return 0
+  fi
+  python3 - "$CONFIG_PATH" <<'PY'
+from __future__ import annotations
+
+import sys
+import tomllib
+from pathlib import Path
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+if not text.strip():
+    raise SystemExit(0)
+try:
+    tomllib.loads(text)
+except tomllib.TOMLDecodeError as exc:
+    raise SystemExit(
+        f"Malformed existing Codex config: {path}: {exc}. "
+        "Repair the file or restore an installer backup before running install_system_codex.sh."
+    )
+PY
+}
+
 patch_config() {
   export RLDYOUR_CODEX_CONFIG="$CONFIG_PATH"
   export RLDYOUR_REPO_ROOT="$ROOT"
@@ -296,8 +321,11 @@ bare_key_re = re.compile(r"^[A-Za-z0-9_-]+$")
 existing = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
 try:
     existing_data = tomllib.loads(existing) if existing.strip() else {}
-except tomllib.TOMLDecodeError:
-    existing_data = {}
+except tomllib.TOMLDecodeError as exc:
+    raise SystemExit(
+        f"Malformed existing Codex config: {config_path}: {exc}. "
+        "Repair the file or restore an installer backup before running install_system_codex.sh."
+    )
 existing_features = existing_data.get("features") if isinstance(existing_data.get("features"), dict) else {}
 existing_memories = existing_data.get("memories") if isinstance(existing_data.get("memories"), dict) else {}
 managed_root_keys = {
@@ -831,6 +859,8 @@ for agent_file in "$SYSTEM_AGENT_DIR"/*.toml; do
   [ -f "$agent_file" ] || continue
   backup_agent_file "$CODEX_AGENT_DIR/$(basename "$agent_file")"
 done
+
+validate_existing_config
 
 if [ "$APPLY" -eq 1 ]; then
   install -m 0644 "$SYSTEM_AGENTS" "$CODEX_HOME_DIR/AGENTS.md"

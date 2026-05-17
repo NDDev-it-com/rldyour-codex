@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 18d9e80 fix(flow): prevent bootstrap stop hook loops
+Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
 Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
 Area: HOOKS
 -->
@@ -14,6 +14,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 ## Source Of Truth
 
 - `plugins/rldyour-flow/hooks.json`: Flow hook wiring.
+- `plugins/rldyour-flow/hooks/session_start_dispatcher.sh`: serialized SessionStart dispatcher for bootstrap then context.
 - `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh`: bounded mutating SessionStart bootstrap.
 - `plugins/rldyour-flow/hooks/session_start_context.sh`: read-only SessionStart context packet.
 - `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: non-blocking commit advice.
@@ -40,12 +41,13 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - Official Codex lifecycle events used here are `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop`.
 - Installed plugin hook declarations require both an enabled plugin and system config with `[features].hooks = true` and `[features].plugin_hooks = true`.
 - `PreToolUse` and `PostToolUse` match tool names such as `Bash`; `SessionStart` uses startup/resume/clear-style matching; `UserPromptSubmit` and `Stop` ignore matcher.
-- Multiple hooks can be registered for the same event/matcher. `plugins/rldyour-flow/hooks.json` uses two `SessionStart` command hooks: bootstrap first, context second.
-- `scripts/smoke_hooks.sh` selects the hook entry by expected script path instead of assuming exactly one hook per event/matcher.
+- Multiple hooks can be registered for the same event/matcher, but Codex may launch matching command hooks concurrently. `plugins/rldyour-flow/hooks.json` therefore uses one Flow `SessionStart` command hook that runs `session_start_dispatcher.sh`.
+- `session_start_dispatcher.sh` serializes `session_start_worktree_bootstrap.sh` before `session_start_context.sh`, combines their Codex `additionalContext`, and reports child hook failures as bounded context.
+- `scripts/smoke_hooks.sh` validates the dispatcher path and still selects hook entries by expected script path for future multi-hook events.
 - Hook command entries resolve scripts through `PLUGIN_ROOT`, the official plugin-bundled hook environment variable, and do not depend on the current project cwd or hardcoded `${CODEX_HOME}` cache paths.
 - `scripts/smoke_hooks.sh` rejects hook commands that use repo-relative `plugins/rldyour-*`, `${CODEX_HOME}`, `.codex/plugins/cache`, or `for p in` cache-search wrappers, then runs configured commands from a temporary git repo with `PLUGIN_ROOT`/`PLUGIN_DATA` set.
 - `scripts/install_system_codex.sh --apply` uses `codex app-server hooks/list` current hashes and `config/batchWrite` to keep `hooks.state` trusted after plugin cache updates. `scripts/doctor_system_codex.sh` fails if installed rldyour plugin hooks are not live, enabled, and trusted.
-- `session_start_worktree_bootstrap.sh` runs `fullrepo_sync.py --restore` only when canonical agent-only markers are missing and `origin/fullrepo` exists. It never publishes, pushes, commits, or edits non-agent files.
+- `session_start_worktree_bootstrap.sh` runs `fullrepo_sync.py --restore` only when canonical agent-only markers are missing and `origin/fullrepo` exists. It never publishes, pushes, commits, or edits non-agent files, and it says "auto-restored" only when restore exits `0`.
 - `session_start_context.sh` remains read-only and reports branch, HEAD, dirty state, worktrees, Serena freshness, fullrepo, and flow sync state.
 - `flow_post_task_state.py` expands untracked directories before evaluating dirty paths and ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and runtime markers.
 - Serena `mark_sync_required.sh` emits Codex `hookSpecificOutput.additionalContext` after commit-like HEAD changes.
@@ -53,7 +55,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 
 ## Contracts And Data
 
-- Codex hook JSON command entries use `type = command` semantics and invoke plugin-local scripts with `/usr/bin/env bash -lc 'exec bash "${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/<script>.sh"'`.
+- Codex hook JSON command entries use `type = command` semantics and invoke plugin-local scripts with `/usr/bin/env bash -lc 'exec bash "${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/<script>.sh"'`; Flow `SessionStart` points at `hooks/session_start_dispatcher.sh`.
 - `PLUGIN_ROOT`, `PLUGIN_DATA`, `CLAUDE_PLUGIN_ROOT`, and `CLAUDE_PLUGIN_DATA` are populated in hook smoke tests to mirror the plugin-bundled runtime environment.
 - Hook scripts use strict shell mode: `set -euo pipefail`, `IFS=$'\n\t'`, and `unset CDPATH`.
 - Runtime markers live under `.serena/` and are ignored: `.auto_sync_head`, `.serena_sync_state.json`, `.sync_marker`, `.flow_sync_marker`, `.flow_post_task_state.json`.

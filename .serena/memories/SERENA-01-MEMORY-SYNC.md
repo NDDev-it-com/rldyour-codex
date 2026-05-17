@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
+Last updated: 2026-05-17
+Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
 Scope: plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, system/agents/serena-sync.toml, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->
@@ -33,7 +33,8 @@ Area: SERENA
 ## Current Behavior
 
 - Memories use numbered filenames: `AREA-01-SLUG.md`. The active index is `CORE-01-INDEX.md`.
-- `analyze_sync_scope.py` emits schema version `2`, `memory_taxonomy`, `areas`, `areas_summary`, `memory_targets`, `candidate_memory_focus`, and `risk_profile`.
+- `analyze_sync_scope.py` emits schema version `2`, taxonomy version `2`, `memory_taxonomy`, `areas`, `areas_summary`, `memory_targets`, `candidate_memory_focus`, and `risk_profile`.
+- Analyzer taxonomy v2 includes the indexed areas `DESIGN`, `LSP`, and `RULES` in addition to the original CORE/CODEX/MCP/SERENA/HOOKS/FLOW/DOCS/RELEASE/TECHDEBT areas.
 - The analyzer is Codex-specific: Codex agent/skill/plugin changes target `CODEX-*` memories, not Claude Code taxonomy.
 - `serena_memory_state.py` recursively scans `.serena/memories/**/*.md`, parses `Last commit:` metadata, resolves commits, and reports `direct-head-reference`, `newest-synced-head`, `knowledge-only-commits-since-sync`, `stale-or-missing`, or `sync-marker-requires-refresh`.
 - Serena knowledge paths are `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`. Agent instruction files are no longer treated as Serena knowledge paths for freshness; they trigger memory sync when durable behavior changed.
@@ -47,7 +48,7 @@ Area: SERENA
 
 - Runtime files are not durable knowledge and must not be committed or published as memory content: `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`, `.serena/cache/`, `.serena/project.local.yml`.
 - Every touched memory starts with the metadata block from the skill and includes `Last commit: <sha> <message>`.
-- Analyzer memory targets for this commit include `CODEX-01-PLUGIN-CANON.md`, `CORE-02-MARKETPLACE.md`, `FLOW-01-SDLC.md`, `HOOKS-01-LIFECYCLE.md`, `RELEASE-01-VALIDATION.md`, `SERENA-01-MEMORY-SYNC.md`, and `TECHDEBT-01-NOW.md`.
+- Analyzer memory targets for commit `9a1cdc2` include `CODEX-01-PLUGIN-CANON.md`, `CORE-02-MARKETPLACE.md`, `FLOW-01-SDLC.md`, `HOOKS-01-LIFECYCLE.md`, `MCP-01-TRANSPORT.md`, `RELEASE-01-VALIDATION.md`, `SERENA-01-MEMORY-SYNC.md`, and `TECHDEBT-01-NOW.md`.
 - The managed `serena-sync` subagent verifies claims from current code/config/tests at HEAD, then recent git history, then diff, then old memories.
 
 ## Invariants
@@ -66,7 +67,7 @@ Area: SERENA
 
 ## Verification
 
-- `scripts/smoke_serena_memory_taxonomy.sh`: proves analyzer schema, taxonomy, target routing, nested memory scan, Stop advisory, loop guard, and fullrepo acknowledgement/refusal.
+- `scripts/smoke_serena_memory_taxonomy.sh`: proves analyzer schema, taxonomy version, index-area parity, target routing, nested memory scan, Stop advisory, loop guard, and fullrepo acknowledgement/refusal.
 - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool`: proves freshness against HEAD and shows analyzer payload.
 - `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`: proves current fullrepo-managed memories can be acknowledged.
 - `scripts/validate_marketplace.sh`: includes the taxonomy smoke and repository-wide validation.

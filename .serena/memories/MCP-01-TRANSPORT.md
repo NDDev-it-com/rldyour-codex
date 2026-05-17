@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last updated: 2026-05-17
+Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, scripts/smoke_mcp_capabilities.py, scripts/check_mcp_runtime_versions.py, scripts/doctor_system_codex.sh
 Area: MCP
 -->
@@ -31,6 +31,7 @@ Area: MCP
 
 - Configured MCP servers: `chrome-devtools`, `context7`, `dart-flutter`, `deepwiki`, `figma`, `grep`, `openaiDeveloperDocs`, `playwright`, `semgrep`, `sequential-thinking`, `serena`, and `shadcn`.
 - Current pins from `config/mcp-runtime-versions.env`: Codex CLI `0.130.0`, MCP Python SDK `1.27.1`, Serena Agent `1.3.0`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.26.0`, Context7 MCP `2.2.5`, shadcn `4.7.0`, sequential-thinking `2025.12.18`.
+- `dart-flutter` is the explicit reproducibility exception: it launches through the local Dart SDK and is declared as `DART_FLUTTER_MCP_RUNTIME=external-local-dart-sdk` instead of a package-version pin.
 - Remote URL MCP smoke uses Streamable HTTP JSON-RPC `initialize` POST preflight; auth-gated `401`/`403` may pass, but unsupported POST behavior fails.
 - Serena MCP is started with `--project-from-cwd`, `--context=codex`, web dashboard disabled, and Python `3.13` through `uvx`.
 - OpenAI docs are available through `openaiDeveloperDocs` and should be preferred over general web search for OpenAI/Codex product facts.
@@ -39,6 +40,7 @@ Area: MCP
 
 - MCP launcher package specs must be pinned; `@latest` is invalid in runtime definitions.
 - `config/mcp-runtime-versions.env` and local package specs in `.mcp.json` must stay in parity.
+- If `dart-flutter` uses command `dart`, marketplace validation requires `DART_FLUTTER_MCP_RUNTIME=external-local-dart-sdk`.
 - Environment variable references in `.mcp.json` are names only; do not commit secret values.
 - `rldyour-mcps` must not add behavior skills. Domain behavior belongs to the domain plugins.
 

@@ -84,6 +84,8 @@ python3 scripts/validate_instruction_docs.py --require-agent-docs
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 python3 scripts/check_serena_memory_freshness.py
 python3 scripts/validate_agent_tools.py
+python3 scripts/validate_action_pins.py
+python3 scripts/scan_text_security.py
 python3 scripts/validate_plugin_versions.py
 python3 scripts/validate_skill_routing.py
 python3 scripts/check_mcp_runtime_versions.py

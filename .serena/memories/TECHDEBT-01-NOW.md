@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 6b6dfd3 chore(release): cut 0.1.1
+Last updated: 2026-05-17
+Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh
 Area: TECHDEBT
 -->
@@ -36,11 +36,17 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - Codex alias migration is now split by risk: safe aliases (`experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `memories.no_memories_if_mcp_or_web_search`) are mapped deterministically; `use_legacy_landlock` is treated as explicit deprecated opt-in removal.
 - Full migration smoke now includes a dedicated `suppress_warning_false` case to assert `suppress_unstable_features_warning = true` is respected as a unified config contract.
 - MCP runtime pin freshness checks are now covered in both `.github/workflows/validate.yml` (`dependency-pins` on push/PR/dispatch) and `.github/workflows/dependency-check.yml` (scheduled/manual). Keep command flags, failure mode, and artifact contract in sync across both to avoid hidden drift by surface.
-- `6b6dfd3` completed release metadata synchronization (`VERSION`/`CHANGELOG.md`) and requires `README.md`, docs, and release/validation memories to reflect `0.1.1` before final delivery.
+- `9a1cdc2` closed the stale SessionStart ordering debt by replacing separate Flow `SessionStart` hooks with one dispatcher, and `scripts/smoke_hooks.sh` now validates that dispatcher.
+- `9a1cdc2` closed the malformed config fallback debt: `scripts/install_system_codex.sh` now fails closed on invalid existing TOML, and `scripts/smoke_codex_hooks_migration.sh` covers the failure.
+- `9a1cdc2` closed the GitHub Actions tag-pin debt by pinning external actions to full SHAs and adding `scripts/validate_action_pins.py`.
+- `9a1cdc2` closed the narrow secret-regex debt by adding `scripts/scan_text_security.py` for broader tracked/agent-only text scanning plus hidden Unicode controls.
+- `9a1cdc2` introduced `docs/adr/0001-codex-marketplace-operating-model.md`; further irreversible decisions should add/update ADRs rather than living only in memories.
 
 ## Contracts And Data
 
 - `scripts/smoke_serena_memory_taxonomy.sh` must keep tests for analyzer schema v2, `CORE-01-INDEX.md`, `AREA-01-SLUG.md`, agent-instruction sync routing, recursive memory scan, Stop advisory, loop guard, and fullrepo acknowledgement/refusal.
+- `scripts/smoke_hooks.sh` must keep Flow `SessionStart` dispatcher coverage and hook strict prologue coverage.
+- `scripts/validate_action_pins.py` and `scripts/scan_text_security.py` are now release-gate guardrails and should stay in `scripts/validate_marketplace.sh`.
 - `RLDYOUR_DRY_RUN=1 scripts/worktree_add.sh <branch>` must show one git command and one fullrepo restore command without side effects.
 - Fullrepo-managed memory acknowledgement is allowed only after `serena_memory_state.py` reports current or a memory directly mentions HEAD.
 
