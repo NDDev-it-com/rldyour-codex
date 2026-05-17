@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - fullrepo
+      - "release/**"
   pull_request:
     branches:
       - main
@@ -20,6 +21,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  unit-tests:
+    name: Unit tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up validation runtime
+        uses: ./.github/actions/setup-codex-runtime
+        with:
+          install-codex: "false"
+          install-dart: "false"
+
+      - name: Run unit tests with coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run --with pytest --with pytest-cov --with pyyaml python -m pytest 2>pytest.stderr.log
+          python3 scripts/classify_ci_noise.py --strict pytest.stderr.log
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: test-reports-${{ matrix.os }}
+          path: |
+            pytest.xml
+            coverage.xml
+            pytest.stderr.log
+          retention-days: 14
+
   marketplace:
     name: Marketplace and system smoke (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -39,43 +78,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: "3.13"
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
-        with:
-          enable-cache: false
-
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-
-      - name: Set up Dart
-        uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
-
-      - name: Install system packages
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" = "Linux" ]; then
-            sudo apt-get update
-            sudo apt-get install -y jq ripgrep shellcheck
-          elif [ "$RUNNER_OS" = "macOS" ]; then
-            command -v jq >/dev/null 2>&1 || brew install jq
-            command -v rg >/dev/null 2>&1 || brew install ripgrep
-            command -v shellcheck >/dev/null 2>&1 || brew install shellcheck
-          else
-            echo "Unsupported runner OS: $RUNNER_OS" >&2
-            exit 1
-          fi
-
-      - name: Install pinned Codex CLI
-        run: |
-          # shellcheck source=config/mcp-runtime-versions.env
-          . config/mcp-runtime-versions.env
-          npm install -g "@openai/codex@${CODEX_CLI_VERSION}"
-          codex --version
+      - name: Set up validation runtime
+        uses: ./.github/actions/setup-codex-runtime
 
       - name: Install rldyour Codex into temporary CODEX_HOME
         run: |
@@ -112,6 +116,7 @@ jobs:
         with:
           name: diagnostics-${{ matrix.os }}
           path: diagnostics/ci
+          retention-days: 14
 
   dependency-pins:
     name: MCP runtime pin freshness
@@ -122,10 +127,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Set up validation runtime
+        uses: ./.github/actions/setup-codex-runtime
         with:
-          python-version: "3.13"
+          install-codex: "false"
+          install-dart: "false"
 
       - name: Check pinned MCP runtime versions
         run: python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json > dependency-check.json
@@ -151,6 +157,7 @@ jobs:
         with:
           name: dependency-check
           path: dependency-check.json
+          retention-days: 14
 
   mcp-safe-calls:
     name: MCP safe call smoke (ubuntu)
@@ -165,40 +172,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: "3.13"
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
-        with:
-          enable-cache: false
-
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-
-      - name: Set up Dart
-        uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
-
-      - name: Install system packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq ripgrep shellcheck
-
-      - name: Install pinned Codex CLI
-        run: |
-          # shellcheck source=config/mcp-runtime-versions.env
-          . config/mcp-runtime-versions.env
-          npm install -g "@openai/codex@${CODEX_CLI_VERSION}"
-          codex --version
+      - name: Set up validation runtime
+        uses: ./.github/actions/setup-codex-runtime
 
       - name: Install rldyour Codex into temporary CODEX_HOME
         run: scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME"
 
       - name: Probe deterministic MCP tool calls
         run: |
+          set -euo pipefail
           scripts/smoke_mcp_capabilities.sh \
             --codex-home "$CODEX_HOME" \
             --allow-missing-env \
-            --skip-server figma
+            --skip-server figma \
+            2>mcp-safe-calls.stderr.log
+          python3 scripts/classify_ci_noise.py --strict mcp-safe-calls.stderr.log
+
+      - name: Upload MCP safe-call stderr
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mcp-safe-calls-stderr
+          path: mcp-safe-calls.stderr.log
+          retention-days: 14

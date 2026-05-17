@@ -1,0 +1,26 @@
+{
+  "branch": "main",
+  "owner_access": "owner can always administer and push intentionally",
+  "required_status_checks": [
+    "Unit tests (ubuntu-latest)",
+    "Unit tests (macos-latest)",
+    "Marketplace and system smoke (ubuntu-latest)",
+    "Marketplace and system smoke (macos-latest)",
+    "MCP runtime pin freshness",
+    "No-paid static security"
+  ],
+  "allow_force_pushes": false,
+  "allow_deletions": false,
+  "require_linear_history": true,
+  "required_pull_request_reviews": {
+    "required_approving_review_count": 0,
+    "dismiss_stale_reviews": false,
+    "require_code_owner_review": false
+  },
+  "enforce_admins": false,
+  "notes": [
+    "This file is desired state documentation, not an auto-applied policy.",
+    "The owner keeps direct access to main for controlled personal workflow.",
+    "Required check names must be adjusted if GitHub renders matrix job names differently."
+  ]
+}

@@ -1,0 +1,42 @@
+name: Change request
+description: Propose a plugin, workflow, CI, or documentation change.
+title: "[change] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What concrete gap or workflow pain should change?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should be added, removed, or changed?
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - plugins
+        - MCP runtime
+        - hooks
+        - skills
+        - CI/CD
+        - release
+        - docs
+        - Serena memories
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: ADR impact
+      description: Does this require a durable decision record?
+    validations:
+      required: false

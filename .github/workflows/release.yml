@@ -1,0 +1,168 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version from VERSION.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish release bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up validation runtime
+        uses: ./.github/actions/setup-codex-runtime
+        with:
+          install-codex: "false"
+          install-dart: "false"
+
+      - name: Validate release version
+        shell: bash
+        env:
+          RELEASE_INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          version="$RELEASE_INPUT_VERSION"
+          file_version="$(tr -d '[:space:]' < VERSION)"
+          if [ "$version" != "$file_version" ]; then
+            echo "workflow version '$version' does not match VERSION '$file_version'" >&2
+            exit 1
+          fi
+          if ! grep -q "^## \\[$version\\]" CHANGELOG.md; then
+            echo "CHANGELOG.md has no release entry for $version" >&2
+            exit 1
+          fi
+          echo "RELEASE_VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Run release validation
+        run: |
+          python3 scripts/validate_plugin_versions.py
+          python3 scripts/validate_skill_routing.py
+          python3 scripts/validate_instruction_docs.py --require-agent-docs
+          python3 scripts/validate_agent_tools.py
+          uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
+
+      - name: Build deterministic bundle and evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          release_paths=(
+            .agents
+            .github
+            config
+            docs
+            plugins
+            scripts
+            system
+            tests
+            README.md
+            CHANGELOG.md
+            VERSION
+            LICENSE
+            pyproject.toml
+            pyrightconfig.json
+            uv.lock
+          )
+          existing_paths=()
+          for path in "${release_paths[@]}"; do
+            if [ -e "$path" ]; then
+              existing_paths+=("$path")
+            fi
+          done
+          source_date="$(git log -1 --format=%cI)"
+          tar --sort=name \
+            --mtime="$source_date" \
+            --owner=0 \
+            --group=0 \
+            --numeric-owner \
+            --exclude='.git' \
+            --exclude='.pytest_cache' \
+            --exclude='.venv' \
+            -cf - "${existing_paths[@]}" \
+            | gzip -n > "dist/rldyour-codex-${RELEASE_VERSION}.tar.gz"
+          python3 scripts/release_manifest.py > dist/release-manifest.json
+          python3 scripts/release_sbom.py > dist/sbom.spdx.json
+          awk -v version="$RELEASE_VERSION" '
+            $0 ~ "^## \\[" version "\\]" { flag = 1; next }
+            flag && /^## \\[/ { exit }
+            flag { print }
+          ' CHANGELOG.md > dist/release-notes.md
+          sha256sum dist/* > dist/SHA256SUMS
+
+      - name: Export GitHub dependency graph SBOM when available
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "/repos/${GITHUB_REPOSITORY}/dependency-graph/sbom/generate-report" \
+            > dist/github-dependency-graph-sbom.spdx.json \
+            || rm -f dist/github-dependency-graph-sbom.spdx.json
+
+      - name: Attest release bundle
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4
+        with:
+          subject-path: dist/rldyour-codex-${{ env.RELEASE_VERSION }}.tar.gz
+
+      - name: Attest generated SBOM
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4
+        with:
+          subject-path: dist/sbom.spdx.json
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-${{ env.RELEASE_VERSION }}
+          path: dist
+          retention-days: 30
+
+      - name: Create release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git rev-parse -q --verify "refs/tags/${RELEASE_VERSION}" >/dev/null; then
+            echo "Tag ${RELEASE_VERSION} already exists"
+          else
+            git tag "${RELEASE_VERSION}"
+            git push origin "refs/tags/${RELEASE_VERSION}"
+          fi
+
+      - name: Publish GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_VERSION" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_VERSION" dist/* --clobber
+          else
+            gh release create "$RELEASE_VERSION" \
+              --verify-tag \
+              --title "$RELEASE_VERSION" \
+              --notes-file dist/release-notes.md \
+              dist/*
+          fi

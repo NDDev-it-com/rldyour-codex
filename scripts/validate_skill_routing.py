@@ -9,6 +9,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.S)
+ALLOWED_ROUTING_CLASSES = {
+    "implicit",
+    "explicit-only",
+    "reviewer-only",
+    "finalization",
+    "manual-only",
+}
+CASE_REQUIRED_CLASSES = {"implicit", "explicit-only", "finalization"}
 
 
 def frontmatter_value(frontmatter: str, key: str) -> str | None:
@@ -52,7 +60,24 @@ def main() -> int:
 
     skills = load_skills()
     errors: list[str] = []
+    routing_classes = policy.get("routing_classes", {})
+    if not isinstance(routing_classes, dict):
+        errors.append("config/skill-routing-policy.json: routing_classes must be an object")
+        routing_classes = {}
 
+    for skill_name in sorted(skills):
+        routing_class = routing_classes.get(skill_name)
+        if routing_class not in ALLOWED_ROUTING_CLASSES:
+            errors.append(
+                f"config/skill-routing-policy.json: {skill_name} must define routing class "
+                f"one of {sorted(ALLOWED_ROUTING_CLASSES)}"
+            )
+
+    for skill_name in sorted(routing_classes):
+        if skill_name not in skills:
+            errors.append(f"config/skill-routing-policy.json: routing class references unknown skill {skill_name}")
+
+    covered_skills: set[str] = set()
     for case in cases:
         case_id = str(case.get("id") or "<missing-id>")
         prompt = str(case.get("prompt") or "")
@@ -77,6 +102,7 @@ def main() -> int:
             if skill_name not in skills:
                 errors.append(f"{case_id}: expected skill not found: {skill_name}")
                 continue
+            covered_skills.add(skill_name)
             terms = expected_entry.get("description_terms", [])
             if not isinstance(terms, list) or not terms:
                 errors.append(f"{case_id}: {skill_name} must define description_terms")
@@ -88,11 +114,22 @@ def main() -> int:
                     f"path={skills[skill_name]['path']}"
                 )
 
+    missing_coverage = [
+        skill_name
+        for skill_name, routing_class in sorted(routing_classes.items())
+        if routing_class in CASE_REQUIRED_CLASSES and skill_name not in covered_skills
+    ]
+    for skill_name in missing_coverage:
+        errors.append(f"config/skill-routing-policy.json: missing routing case for callable skill {skill_name}")
+
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
 
-    print(f"validated skill routing policy cases: {len(cases)}")
+    print(
+        f"validated skill routing policy cases: {len(cases)}; "
+        f"covered skills: {len(covered_skills)}; routing classes: {len(routing_classes)}"
+    )
     return 0
 
 
