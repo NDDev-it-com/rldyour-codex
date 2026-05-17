@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: a9a66a2 fix(codex): harden runtime determinism and execpolicy rules
+Last commit: 932b4b1 docs(codex): clarify app-server hook trust rpc
 Scope: ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/rules/*.rules, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, system/rules/*.rules, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_execpolicy_rules.sh, plugins/rldyour-mcps/.mcp.json
 Area: CODEX
 -->
@@ -45,8 +45,8 @@ This memory records the installed system Codex runtime state owned by this repos
 - Managed subagents are installed from `system/agents/*.toml`; all rldyour-managed roles use `gpt-5.5` with `medium` reasoning.
 - Active managed roles are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Installer/doctor derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP registration from `plugins/rldyour-mcps/.mcp.json`.
-- Installer refreshes installed rldyour plugin hook trust after cache sync by reading `currentHash` from `codex app-server hooks/list` and upserting `hooks.state` through `config/batchWrite`.
-- Doctor includes a live hook trust gate: all installed rldyour plugin hooks returned by `codex app-server hooks/list` must be present, enabled, and `trustStatus = trusted`.
+- Installer refreshes installed rldyour plugin hook trust after cache sync by reading `currentHash` from the app-server RPC method `hooks/list` over `codex app-server --listen stdio://` and upserting `hooks.state` through `config/batchWrite`.
+- Doctor includes a live hook trust gate: all installed rldyour plugin hooks returned by the `hooks/list` app-server RPC method must be present, enabled, and `trustStatus = trusted`.
 - Doctor verifies installed managed execpolicy rules exactly match `system/rules/*.rules`.
 - After plugin/hook/skill/agent changes, plugin cache must be synced through `scripts/install_system_codex.sh --apply`, and Codex should be restarted for runtime reload.
 
@@ -81,5 +81,5 @@ This memory records the installed system Codex runtime state owned by this repos
 - `scripts/install_system_codex.sh --apply`: sync active system runtime and plugin cache.
 - `scripts/doctor_system_codex.sh`: installed-state verification.
 - `scripts/validate_execpolicy_rules.sh`: managed execpolicy rule decision validation.
-- `codex app-server hooks/list`: live source of current hook keys, hashes, enabled flags, and trust status.
+- App-server RPC method `hooks/list` over `codex app-server --listen stdio://`: live source of current hook keys, hashes, enabled flags, and trust status.
 - `diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local"`: targeted plugin cache parity check.

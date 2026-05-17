@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: a9a66a2 fix(codex): harden runtime determinism and execpolicy rules
+Last commit: 932b4b1 docs(codex): clarify app-server hook trust rpc
 Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
@@ -73,7 +73,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/smoke_codex_hooks_migration.sh` now expects installer output to contain `[features].hooks = true` and `[features].plugin_hooks = true`, while removing legacy `codex_hooks` aliases.
 - `scripts/smoke_codex_hooks_migration.sh` and `scripts/doctor_system_codex.sh` keep deprecated key migration logic synchronized (including `codex_hooks`, legacy `web_search*`, unified exec/instructions/memories keys, and `use_legacy_landlock` cleanup).
 - `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
-- `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to `codex app-server hooks/list`.
+- `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to the app-server RPC method `hooks/list`.
 - GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
 - `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
 - `.github/workflows/security-static.yml` is manual-only and runs action pin validation, actionlint `1.7.12`, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
@@ -123,7 +123,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_runtime.sh --strict-runtime`: strict runtime/install/hook/fullrepo validation slice.
 - `scripts/validate_release.sh`: release manifest/SBOM validation slice.
 - `scripts/doctor_system_codex.sh`: installed runtime validation after cache/config install.
-- `codex app-server hooks/list`: live hook trust/hash verification used by installer and doctor.
+- App-server RPC method `hooks/list` over `codex app-server --listen stdio://`: live hook trust/hash verification used by installer and doctor.
 - `python3 scripts/release_manifest.py`: generated manifest includes expected plugin versions.
 - `python3 scripts/release_sbom.py`: generated SPDX 2.3 SBOM includes root package, plugins, and MCP runtime pins.
 - `git diff --check`: whitespace sanity before commit.

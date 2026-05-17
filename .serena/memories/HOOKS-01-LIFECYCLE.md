@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: a9a66a2 fix(codex): harden runtime determinism and execpolicy rules
+Last commit: 932b4b1 docs(codex): clarify app-server hook trust rpc
 Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, system/rules/*.rules, scripts/validate_execpolicy_rules.sh
 Area: HOOKS
 -->
@@ -48,7 +48,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - `scripts/smoke_hooks.sh` validates the dispatcher path, still selects hook entries by expected script path for future multi-hook events, and runs each hook smoke through a process-group timeout runner so one stuck hook cannot hang the whole smoke.
 - Hook command entries resolve scripts through `PLUGIN_ROOT`, the official plugin-bundled hook environment variable, and do not depend on the current project cwd or hardcoded `${CODEX_HOME}` cache paths.
 - `scripts/smoke_hooks.sh` rejects hook commands that use repo-relative `plugins/rldyour-*`, `${CODEX_HOME}`, `.codex/plugins/cache`, or `for p in` cache-search wrappers, then runs configured commands from a temporary git repo with `PLUGIN_ROOT`/`PLUGIN_DATA` set.
-- `scripts/install_system_codex.sh --apply` uses `codex app-server hooks/list` current hashes and `config/batchWrite` to keep `hooks.state` trusted after plugin cache updates. `scripts/doctor_system_codex.sh` fails if installed rldyour plugin hooks are not live, enabled, and trusted.
+- `scripts/install_system_codex.sh --apply` uses current hashes from the app-server RPC method `hooks/list` over `codex app-server --listen stdio://` and `config/batchWrite` to keep `hooks.state` trusted after plugin cache updates. `scripts/doctor_system_codex.sh` fails if installed rldyour plugin hooks are not live, enabled, and trusted.
 - `session_start_worktree_bootstrap.sh` runs `fullrepo_sync.py --restore` only when canonical agent-only markers are missing and `origin/fullrepo` exists. It never publishes, pushes, commits, or edits non-agent files, and it says "auto-restored" only when restore exits `0`.
 - `session_start_context.sh` remains read-only and reports branch, HEAD, dirty state, worktrees, Serena freshness, fullrepo, and flow sync state. `flow_post_task_state.py` resolves installed helper scripts through `CODEX_HOME` before falling back to the default home cache.
 - `flow_post_task_state.py` expands untracked directories before evaluating dirty paths and ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and runtime markers.
@@ -77,7 +77,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - When adding another hook entry under an existing matcher, update `scripts/smoke_hooks.sh` expectations so the smoke selects by script path.
 - When changing hook payload/output shape, verify against official Codex hook docs and run smoke tests.
 - When changing hook scripts, run `shellcheck` through `scripts/validate_marketplace.sh`.
-- When changing hook commands or installed hook trust behavior, run `scripts/install_system_codex.sh --apply`, `scripts/smoke_hooks.sh`, a live `codex app-server hooks/list` trust check, and `scripts/doctor_system_codex.sh` after the normal branch is clean.
+- When changing hook commands or installed hook trust behavior, run `scripts/install_system_codex.sh --apply`, `scripts/smoke_hooks.sh`, a live app-server RPC `hooks/list` trust check, and `scripts/doctor_system_codex.sh` after the normal branch is clean.
 
 ## Verification
 
@@ -85,4 +85,4 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - `scripts/smoke_serena_memory_taxonomy.sh`: memory hook stale/advisory/loop behavior.
 - `scripts/smoke_codex_hooks_migration.sh`: installer hook feature migration.
 - `scripts/validate_marketplace.sh`: shellcheck plus hook smoke coverage.
-- `codex app-server hooks/list`: confirms installed hook `trustStatus = trusted` and `enabled = true`.
+- App-server RPC method `hooks/list`: confirms installed hook `trustStatus = trusted` and `enabled = true`.
