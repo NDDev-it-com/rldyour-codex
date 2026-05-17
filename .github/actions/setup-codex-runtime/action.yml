@@ -14,6 +14,15 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Load runtime pins
+      shell: bash
+      run: |
+        set -euo pipefail
+        # shellcheck source=config/mcp-runtime-versions.env
+        . config/mcp-runtime-versions.env
+        echo "RLDYOUR_BUN_VERSION=${BUN_VERSION}" >> "$GITHUB_ENV"
+        echo "RLDYOUR_DART_SDK_VERSION=${DART_SDK_VERSION}" >> "$GITHUB_ENV"
+
     - name: Set up Python
       uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
       with:
@@ -26,10 +35,14 @@ runs:
 
     - name: Set up Bun
       uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      with:
+        bun-version: ${{ env.RLDYOUR_BUN_VERSION }}
 
     - name: Set up Dart
       if: inputs.install-dart == 'true'
       uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
+      with:
+        sdk: ${{ env.RLDYOUR_DART_SDK_VERSION }}
 
     - name: Install system packages
       shell: bash

@@ -28,7 +28,7 @@ Use the installed rldyour plugins automatically when the task matches their scop
 - `rldyour-serena-mcp`: repository understanding, code exploration, semantic symbol work, refactors, code review, and Serena memory sync.
 - `rldyour-explore`: technical research, official docs, repository architecture research, production code patterns, and web research.
 - `rldyour-rules`: quality-first engineering, architecture boundaries, dependency compatibility, verification gates, project instructions, and ADR policy.
-- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, instruction docs sync, serialized SessionStart worktree bootstrap/context dispatcher hooks, advisory commit hooks, and post-task synchronization.
+- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, instruction docs sync, bounded serialized SessionStart worktree bootstrap/context dispatcher hooks, advisory commit hooks, ordered Stop lifecycle dispatch, and post-task synchronization.
 - `rldyour-lsps`: language-server selection, setup, health checks, and Serena LSP integration.
 - `rldyour-browser`: browser validation, screenshots, responsive checks, user flows, business logic, console/network/runtime debugging, and performance diagnosis.
 - `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized design systems, UI-kit reuse, FSD frontend placement, shadcn/ui, ReactBits, and design validation gates.
@@ -146,7 +146,12 @@ Use:
 ```bash
 scripts/install_system_codex.sh --dry-run
 scripts/install_system_codex.sh --apply
+scripts/install_system_codex.sh --apply --strict-runtime
 scripts/doctor_system_codex.sh
+scripts/doctor_system_codex.sh --quick --strict-runtime
+scripts/validate_fast.sh
+scripts/validate_runtime.sh --strict-runtime
+scripts/validate_release.sh
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
@@ -163,6 +168,7 @@ python3 scripts/validate_instruction_docs.py --require-agent-docs
 python3 scripts/check_serena_memory_freshness.py
 python3 scripts/validate_agent_tools.py
 python3 scripts/validate_action_pins.py
+python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 python3 scripts/scan_text_security.py
 uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
 python3 scripts/release_manifest.py

@@ -301,6 +301,7 @@ paths = [
     Path("scripts/validate_action_pins.py"),
     Path("scripts/scan_text_security.py"),
     Path("scripts/classify_ci_noise.py"),
+    Path("scripts/validate_runtime_prereqs.py"),
 ]
 
 for path in paths:
@@ -310,6 +311,9 @@ PY
 
 step "GitHub Action SHA pins"
 python3 scripts/validate_action_pins.py
+
+step "Runtime prerequisites policy"
+python3 scripts/validate_runtime_prereqs.py --json >/dev/null
 
 step "Python unit tests"
 "$UV_BIN" run --with pytest --with pytest-cov --with pyyaml python -m pytest

@@ -1,8 +1,6 @@
 name: dependency-check
 
 on:
-  schedule:
-    - cron: "17 6 * * 1"
   workflow_dispatch:
 
 permissions:

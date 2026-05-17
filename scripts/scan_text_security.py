@@ -36,13 +36,48 @@ EXTRA_TEXT_PATHS = (
 )
 
 SKIP_PARTS = {
+    ".cache",
     ".git",
     ".mypy_cache",
     ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
     "__pycache__",
     "browser",
     "diagnostics",
+    "dist",
     "node_modules",
+}
+
+TEXT_EXTENSIONS = {
+    ".cfg",
+    ".css",
+    ".env",
+    ".example",
+    ".html",
+    ".ini",
+    ".js",
+    ".json",
+    ".lock",
+    ".md",
+    ".py",
+    ".rules",
+    ".sh",
+    ".toml",
+    ".ts",
+    ".txt",
+    ".yaml",
+    ".yml",
+}
+
+TEXT_FILENAMES = {
+    ".gitignore",
+    ".python-version",
+    "CODEOWNERS",
+    "Dockerfile",
+    "LICENSE",
+    "Makefile",
+    "VERSION",
 }
 
 
@@ -55,6 +90,19 @@ def tracked_files() -> set[Path]:
     if proc.returncode != 0:
         return set()
     return {Path(raw.decode("utf-8")) for raw in proc.stdout.split(b"\0") if raw}
+
+
+def fallback_text_files(root: Path = Path(".")) -> set[Path]:
+    result: set[Path] = set()
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        rel_path = path.relative_to(root)
+        if should_skip(rel_path):
+            continue
+        if rel_path.name in TEXT_FILENAMES or rel_path.suffix in TEXT_EXTENSIONS:
+            result.add(rel_path)
+    return result
 
 
 def extra_files() -> set[Path]:
@@ -105,8 +153,15 @@ def scan_file(path: Path) -> list[str]:
     return findings
 
 
+def candidate_files() -> set[Path]:
+    files = tracked_files()
+    if not files:
+        files = fallback_text_files()
+    return files.union(extra_files())
+
+
 def main() -> int:
-    files = sorted(path for path in tracked_files().union(extra_files()) if path.is_file() and not should_skip(path))
+    files = sorted(path for path in candidate_files() if path.is_file() and not should_skip(path))
     findings: list[str] = []
     for path in files:
         findings.extend(scan_file(path))

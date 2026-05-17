@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from conftest import import_script
+from tests.support.importing import import_script
 
 
 mod = import_script("scripts/classify_ci_noise.py")

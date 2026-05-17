@@ -23,6 +23,9 @@ This repository has two versioning layers:
 5. Run local validation:
 
 ```bash
+scripts/validate_fast.sh
+scripts/validate_runtime.sh --strict-runtime
+scripts/validate_release.sh
 scripts/validate_marketplace.sh
 scripts/doctor_system_codex.sh
 scripts/smoke_local_git_guard.sh
@@ -35,8 +38,8 @@ python3 scripts/release_sbom.py > diagnostics/sbom.spdx.json
 ```
 
 6. Commit with a Conventional Commit message.
-7. Push to `main`, publish `fullrepo` when agent-only files changed, and wait for CI on Ubuntu and macOS.
-8. Create the release from `.github/workflows/release.yml` after CI is green. The workflow validates `VERSION` and `CHANGELOG.md`, builds a deterministic `tar.gz`, writes `release-manifest.json`, writes generated SPDX SBOM evidence, exports the GitHub dependency graph SBOM when available, creates artifact attestations, and publishes the GitHub Release.
+7. Push to `main`, publish `fullrepo` when agent-only files changed, then manually run the `validate` workflow with `scope=full`; set `include_macos=true` when the release needs Linux/macOS parity proof.
+8. Create the release from `.github/workflows/release.yml` after the requested manual CI scope is green. The workflow validates `VERSION` and `CHANGELOG.md`, builds a deterministic `tar.gz`, writes `release-manifest.json`, writes generated SPDX SBOM evidence, exports the GitHub dependency graph SPDX SBOM from the dependency graph SBOM endpoint when available, creates artifact attestations, and publishes the GitHub Release.
 
 Release tags use the exact SemVer value from `VERSION` without a `v` prefix, for example `0.2.0`.
 
@@ -69,4 +72,4 @@ scripts/doctor_system_codex.sh
 scripts/smoke_clean_bootstrap.sh
 ```
 
-Scheduled CI runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated` to surface stale pins.
+Manual CI runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated` through the `dependency-check` workflow or the `validate` workflow's `mcp`/`full` scopes when the owner or agent explicitly requests pin freshness validation.

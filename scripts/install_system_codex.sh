@@ -3,11 +3,12 @@ set -euo pipefail
 
 APPLY=0
 TRUST_HOME=0
+STRICT_RUNTIME=0
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 
 usage() {
   cat <<'EOF'
-Usage: scripts/install_system_codex.sh [--dry-run] [--apply] [--codex-home PATH] [--trust-home]
+Usage: scripts/install_system_codex.sh [--dry-run] [--apply] [--codex-home PATH] [--trust-home] [--strict-runtime]
 
 Installs the current rldyour Codex system state into CODEX_HOME.
 
@@ -48,6 +49,9 @@ while [ "$#" -gt 0 ]; do
       ;;
     --trust-home)
       TRUST_HOME=1
+      ;;
+    --strict|--strict-runtime)
+      STRICT_RUNTIME=1
       ;;
     -h|--help)
       usage
@@ -149,6 +153,7 @@ bunx: $BUNX_CMD
 dart: $DART_CMD
 codex: ${CODEX_CMD:-not found}
 trust home: $TRUST_HOME
+strict runtime: $STRICT_RUNTIME
 EOF
 }
 
@@ -175,6 +180,20 @@ except tomllib.TOMLDecodeError as exc:
         "Repair the file or restore an installer backup before running install_system_codex.sh."
     )
 PY
+}
+
+validate_runtime_prereqs() {
+  if [ "$STRICT_RUNTIME" -ne 1 ]; then
+    return 0
+  fi
+  UVX_BIN="$UVX_CMD" \
+    BUNX_BIN="$BUNX_CMD" \
+    DART_BIN="$DART_CMD" \
+    CODEX_BIN="${CODEX_CMD:-}" \
+    python3 "$ROOT/scripts/validate_runtime_prereqs.py" \
+      --mcp-config "$ROOT/plugins/rldyour-mcps/.mcp.json" \
+      --require-codex \
+      --strict
 }
 
 patch_config() {
@@ -848,6 +867,7 @@ sync_agent_configs() {
 }
 
 print_plan
+validate_runtime_prereqs
 
 if [ "$APPLY" -eq 1 ]; then
   mkdir -p "$CODEX_HOME_DIR"

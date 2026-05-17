@@ -406,14 +406,14 @@ Area: CORE
 Temporary hook lifecycle smoke memory.
 EOF_MEMORY
 
-  run_hook_expect_exit_in_dir "$name lifecycle flow Stop requires sync" \
-    "$tmp" "$flow_dir/hooks/stop_post_task_sync.sh" \
+  run_hook_expect_exit_in_dir "$name lifecycle ordered Stop requires flow sync" \
+    "$tmp" "$flow_dir/hooks/stop_lifecycle_dispatcher.sh" \
     '{"stop_hook_active":false}' \
     2 \
     "[RLDYOUR-FLOW POST-TASK SYNC REQUIRED]"
 
-  run_hook_expect_exit_in_dir "$name lifecycle flow Stop loop guard" \
-    "$tmp" "$flow_dir/hooks/stop_post_task_sync.sh" \
+  run_hook_expect_exit_in_dir "$name lifecycle ordered Stop loop guard" \
+    "$tmp" "$flow_dir/hooks/stop_lifecycle_dispatcher.sh" \
     '{"stop_hook_active":true}' \
     0 \
     "already requested"
@@ -422,8 +422,8 @@ EOF_MEMORY
   bootstrap_tmp=$(make_unborn_bootstrap_repo)
   assert_flow_state_clean "$name lifecycle flow ignores bootstrap-only Serena state" \
     "$bootstrap_tmp" "$flow_dir/scripts/flow_post_task_state.py"
-  run_hook_expect_exit_in_dir "$name lifecycle flow Stop ignores bootstrap-only Serena state" \
-    "$bootstrap_tmp" "$flow_dir/hooks/stop_post_task_sync.sh" \
+  run_hook_expect_exit_in_dir "$name lifecycle ordered Stop ignores bootstrap-only Serena state" \
+    "$bootstrap_tmp" "$flow_dir/hooks/stop_lifecycle_dispatcher.sh" \
     '{"stop_hook_active":false}' \
     0 \
     ""
@@ -461,9 +461,6 @@ smoke_hook_wiring() {
     "$serena_hooks_json" PostToolUse Bash "hooks/mark_sync_required.sh" "$cwd" \
     '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
 
-  run_configured_stop_hook "$name wiring serena Stop skip gate" \
-    "$serena_hooks_json" Stop "hooks/stop_memory_sync.sh" "$cwd"
-
   run_configured_hook "$name wiring flow SessionStart" \
     "$flow_hooks_json" SessionStart - "hooks/session_start_dispatcher.sh" "$cwd" \
     '{"source":"smoke"}' \
@@ -473,8 +470,8 @@ smoke_hook_wiring() {
     "$flow_hooks_json" PostToolUse Bash "hooks/post_tool_use_commit_advice.sh" "$cwd" \
     '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
 
-  run_configured_stop_hook "$name wiring flow Stop skip gate" \
-    "$flow_hooks_json" Stop "hooks/stop_post_task_sync.sh" "$cwd"
+  run_configured_stop_hook "$name wiring flow ordered Stop skip gate" \
+    "$flow_hooks_json" Stop "hooks/stop_lifecycle_dispatcher.sh" "$cwd"
 }
 
 smoke_root() {
@@ -533,8 +530,8 @@ smoke_root() {
     "$flow_dir/hooks/post_tool_use_commit_advice.sh" \
     '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
 
-  run_stop_hook "$name flow Stop skip gate" \
-    "$flow_dir/hooks/stop_post_task_sync.sh"
+  run_stop_hook "$name flow ordered Stop skip gate" \
+    "$flow_dir/hooks/stop_lifecycle_dispatcher.sh"
 
   smoke_lifecycle "$name" "$serena_dir" "$flow_dir"
 }

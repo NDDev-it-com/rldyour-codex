@@ -18,7 +18,8 @@ The repository has several durable decisions that were previously spread across 
 
 - Keep one domain per plugin. `rldyour-mcps` owns only MCP transport definitions; behavior belongs to domain plugins such as `rldyour-flow`, `rldyour-serena-mcp`, `rldyour-rules`, `rldyour-browser`, `rldyour-design`, `rldyour-explore`, `rldyour-lsps`, and `rldyour-security`.
 - Load bundled plugin hooks through Codex plugin runtime variables, especially `PLUGIN_ROOT`; plugin hook commands must not resolve scripts from the session repository cwd or from hardcoded cache paths.
-- Serialize dependent `SessionStart` behavior inside a single Flow dispatcher when ordering matters, because Codex can launch multiple matching command hooks for the same event concurrently.
+- Serialize dependent `SessionStart` behavior inside a single bounded Flow dispatcher when ordering matters, because Codex can launch multiple matching command hooks for the same event concurrently.
+- Serialize dependent Stop lifecycle behavior inside Flow's ordered dispatcher: Serena memory gating runs first, and Flow post-task synchronization runs only after Serena is current.
 - Keep agent-only context out of normal branches and publish it through the `fullrepo` branch with safe `--force-with-lease`.
 - Treat Serena memories as operational fact knowledge and ADRs as durable architecture-decision authority. Memories may summarize decisions but should point back to ADRs when the decision is structural.
 - Use GitHub-hosted Actions with least-privilege permissions and SHA-pinned external actions. CodeQL or repository-side secret scanning can be added only when the required GitHub Code Security / Secret Protection entitlement is confirmed.
@@ -27,6 +28,7 @@ The repository has several durable decisions that were previously spread across 
 ## Consequences
 
 - Hook safety is validated both by `scripts/smoke_hooks.sh` and by installed hook trust checks in `scripts/doctor_system_codex.sh`.
+- Cross-plugin Stop hooks must not depend on Codex hook ordering. If another plugin needs ordered Stop behavior, it should be called by the lifecycle dispatcher or proven independent.
 - New plugins, skills, hooks, MCP servers, and managed agents must update validators, smoke tests, docs, and Serena memories together.
 - Architecture changes that affect plugin boundaries, hook loading, fullrepo behavior, MCP runtime policy, install canon, CI security posture, or cross-agent instruction policy require a new ADR or an update to this ADR.
 - External action updates require resolving the upstream tag to a full commit SHA and preserving a comment with the human-readable tag for review.
@@ -51,6 +53,7 @@ The repository has several durable decisions that were previously spread across 
 - `.agents/plugins/marketplace.json`
 - `plugins/rldyour-flow/hooks.json`
 - `plugins/rldyour-flow/hooks/session_start_dispatcher.sh`
+- `plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh`
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`
 - `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`
 - `plugins/rldyour-mcps/.mcp.json`

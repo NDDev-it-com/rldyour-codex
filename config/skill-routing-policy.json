@@ -359,6 +359,14 @@
             "find problems"
           ]
         }
+      ],
+      "not_expected": [
+        "rldyour-flow:flow-architecture-review",
+        "rldyour-flow:flow-consistency-review",
+        "rldyour-flow:flow-integration-review",
+        "rldyour-flow:flow-quality-review",
+        "rldyour-flow:flow-security-review",
+        "rldyour-flow:flow-verification-review"
       ]
     },
     {
