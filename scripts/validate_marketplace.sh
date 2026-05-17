@@ -331,7 +331,11 @@ step "Serena memory taxonomy smoke"
 scripts/smoke_serena_memory_taxonomy.sh
 
 step "Serena memory state"
-python3 scripts/check_serena_memory_freshness.py
+if [ -f ".serena/memories/CORE-01-INDEX.md" ]; then
+  python3 scripts/check_serena_memory_freshness.py
+else
+  printf 'skip    fullrepo-managed Serena memories absent from this normal-branch checkout\n'
+fi
 
 step "Flow post-task state"
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool >/dev/null
