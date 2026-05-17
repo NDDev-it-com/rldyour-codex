@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
+Last commit: e50e038 fix(ci): stabilize mcp safe-call noise classification
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/validate_runtime_prereqs.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, plugins/rldyour-flow/hooks/session_start_dispatcher.sh, plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->
@@ -58,6 +58,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `2ee72cf` closed the no-git text security under-scan debt by adding a bounded tree-walk fallback to `scripts/scan_text_security.py`.
 - `2ee72cf` closed the GitHub Actions spend-control gap by making validation, security, and dependency workflows manual-only, with Ubuntu default and explicit macOS opt-in.
 - `2ee72cf` raised the unit coverage gate to 75% and added strict runtime prerequisite validation through `scripts/validate_runtime_prereqs.py`.
+- `e50e038` closed the MCP safe-call clean-runner noise gap: the manual MCP job now restores fullrepo context before install and `scripts/classify_ci_noise.py` recognizes known first-run MCP/uv/Serena stderr while still failing on unknown lines in strict mode.
 - Semgrep's global `IFS` tampering rule is intentionally excluded in `security-static` because this repository uses `IFS=$'\n\t'` as a strict shell prologue and validates shell scripts with ShellCheck.
 
 ## Contracts And Data

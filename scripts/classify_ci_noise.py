@@ -30,10 +30,37 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
             r"Removed virtual environment at:|"
             r"Creating virtual environment at:|"
             r"Installed \d+ packages? in|"
+            r"Resolving dependencies|"
+            r"Resolved, downloaded and extracted \[\d+\]|"
+            r"Saved lockfile|"
+            r"Building [A-Za-z0-9_.=-]+|"
+            r"Built [A-Za-z0-9_.=-]+|"
             r"Downloading [A-Za-z0-9_.-]+ \([^)]+\)|"
             r"Downloaded [A-Za-z0-9_.-]+"
         ),
         "uv may report environment setup to stderr while preparing an isolated test runtime.",
+    ),
+    NoiseRule(
+        "chrome-devtools-mcp-advisory",
+        re.compile(
+            r"turning off usage statistics|"
+            r"chrome-devtools-mcp exposes content|"
+            r"debug, and modify any data|"
+            r"Avoid sharing sensitive or personal information",
+            re.IGNORECASE,
+        ),
+        "Chrome DevTools MCP prints a non-blocking safety notice on startup.",
+    ),
+    NoiseRule(
+        "mcp-server-stdio-startup",
+        re.compile(
+            r"Context7 Documentation MCP Server .* running on stdio|"
+            r"Sequential Thinking MCP Server running on stdio|"
+            r"Starting Semgrep MCP server version|"
+            r"Tracing initialized|"
+            r"get_supported_languages succeeded"
+        ),
+        "MCP servers print startup banners and successful safe-call traces to stderr.",
     ),
     NoiseRule(
         "chrome-devtools-localstorage",
@@ -49,6 +76,15 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         "serena-lsp-configuration",
         re.compile(r"workspace/configuration|taplo.*catalog|language server.*configuration", re.IGNORECASE),
         "Known LSP capability warning from third-party language servers.",
+    ),
+    NoiseRule(
+        "serena-mcp-runtime-log",
+        re.compile(
+            r"^(INFO|WARNING)  \d{4}-\d{2}-\d{2} .*"
+            r"(serena|solidlsp|sensai|mcp\.server)\."
+            r"|^CRITICAL: Before starting to work on a coding task, call the `initial_instructions` tool"
+        ),
+        "Serena MCP and its language-server dependencies log normal startup/shutdown detail to stderr.",
     ),
 )
 
