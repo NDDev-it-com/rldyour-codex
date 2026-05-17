@@ -67,7 +67,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/classify_ci_noise.py` keeps known benign third-party stderr documented while failing targeted strict jobs on unknown lines.
 - `config/skill-routing-policy.json` version 2 assigns routing classes to all 38 skills and requires cases for implicit, explicit-only, and finalization skills.
 - Text security scan covers tracked text plus agent-only instruction/memory/research paths and rejects secret-like values, BIDI controls, and zero-width controls.
-- Release `0.2.0` is prepared at commit `fe9b88f` (`VERSION=0.2.0`), with changelog coverage in `CHANGELOG.md`.
+- Release `0.2.0` is published at tag `0.2.0` from commit `fe9b88f` (`VERSION=0.2.0`) with changelog coverage in `CHANGELOG.md`, deterministic bundle artifacts, generated SBOM evidence, and GitHub artifact attestations.
 - `tests/unit/test_fullrepo_sync.py` configures git identity for temporary repositories and clones before fixture commits, which keeps the unit-test matrix deterministic on GitHub-hosted runners.
 - `scripts/classify_ci_noise.py` allowlists `uv` package download progress lines such as `Downloading pygments (...)` and `Downloaded pygments` as deterministic setup noise.
 - `scripts/validate_marketplace.sh` skips only the live Serena freshness state check in GitHub Actions when fullrepo-managed `.serena/memories/CORE-01-INDEX.md` is not tracked in the normal-branch checkout.
