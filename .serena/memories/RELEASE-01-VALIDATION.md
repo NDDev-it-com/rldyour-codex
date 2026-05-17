@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: e50e038 fix(ci): stabilize mcp safe-call noise classification
+Last commit: bc81217 fix(ci): classify taplo startup noise
 Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
@@ -64,6 +64,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/smoke_hooks.sh` includes a bootstrap-only `.serena` regression scenario: an unborn git repository containing only auto-created `.serena/project.yml`, `.serena/.gitignore`, and flow runtime markers must not require Flow post-task sync.
 - `.github/workflows/validate.yml` is manual-only through `workflow_dispatch`. It defaults to Ubuntu and runs macOS only when `include_macos=true`, so expensive macOS minutes are spent only on explicit owner/agent requests.
 - The manual `validate.yml` MCP safe-call job bootstraps `fullrepo` agent context before installing into temporary `CODEX_HOME`, then runs deterministic MCP capability calls and strict stderr classification against known first-run MCP/uv/Serena startup noise.
+- `scripts/classify_ci_noise.py` recognizes known first-run Taplo/LSP configuration stderr such as `failed to fetch configuration` and `invalid configuration response`, while strict mode still fails on unknown MCP safe-call output.
 - `scripts/smoke_codex_hooks_migration.sh` now expects installer output to contain `[features].hooks = true` and `[features].plugin_hooks = true`, while removing legacy `codex_hooks` aliases.
 - `scripts/smoke_codex_hooks_migration.sh` and `scripts/doctor_system_codex.sh` keep deprecated key migration logic synchronized (including `codex_hooks`, legacy `web_search*`, unified exec/instructions/memories keys, and `use_legacy_landlock` cleanup).
 - `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
@@ -77,7 +78,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `config/skill-routing-policy.json` version 2 assigns routing classes to all 38 skills and requires cases for implicit, explicit-only, and finalization skills.
 - Text security scan covers tracked text plus agent-only instruction/memory/research paths and rejects secret-like values, BIDI controls, and zero-width controls. When `.git` is absent, it falls back to a bounded text-extension tree walk so extracted release bundles and temporary audit copies are not under-scanned.
 - `config/skill-routing-policy.json` supports `not_expected` assertions for conflict checks; broad review prompts must not route directly to orchestrated reviewer-only micro-skills.
-- Release `0.3.0` is prepared at commit `e50e038` (`VERSION=0.3.0`) with changelog coverage in `CHANGELOG.md`, deterministic release manifest/SBOM validation, manual-only CI workflows, strict runtime prerequisite gates, ordered lifecycle hook behavior, and clean-runner MCP safe-call stderr classification.
+- Release `0.3.0` is prepared at commit `bc81217` (`VERSION=0.3.0`) with changelog coverage in `CHANGELOG.md`, deterministic release manifest/SBOM validation, manual-only CI workflows, strict runtime prerequisite gates, ordered lifecycle hook behavior, and clean-runner MCP safe-call stderr classification.
 - `tests/unit/test_fullrepo_sync.py` configures git identity for temporary repositories and clones before fixture commits, which keeps the unit-test matrix deterministic on GitHub-hosted runners.
 - `scripts/classify_ci_noise.py` allowlists `uv` package download progress lines such as `Downloading pygments (...)` and `Downloaded pygments` as deterministic setup noise.
 - `scripts/validate_marketplace.sh` skips only the live Serena freshness state check in GitHub Actions when fullrepo-managed `.serena/memories/CORE-01-INDEX.md` is not tracked in the normal-branch checkout.
