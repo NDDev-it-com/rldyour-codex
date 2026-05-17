@@ -108,7 +108,7 @@ jobs:
           python3 scripts/release_sbom.py > dist/sbom.spdx.json
           awk -v version="$RELEASE_VERSION" '
             $0 ~ "^## \\[" version "\\]" { flag = 1; next }
-            flag && /^## \\[/ { exit }
+            flag && /^## \[/ { exit }
             flag { print }
           ' CHANGELOG.md > dist/release-notes.md
           sha256sum dist/* > dist/SHA256SUMS
