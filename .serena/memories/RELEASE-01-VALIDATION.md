@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 5f511ad ci: refresh workflow tool pins
+Last commit: 6345543 ci: refresh actionlint pin
 Scope: scripts/validate_marketplace.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/classify_ci_noise.py, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
@@ -62,7 +62,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to `codex app-server hooks/list`.
 - GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
 - `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
-- `.github/workflows/security-static.yml` runs action pin validation, actionlint, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
+- `.github/workflows/security-static.yml` runs action pin validation, actionlint `1.7.12`, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
 - `.github/workflows/release.yml` manually publishes exact SemVer tags without a `v` prefix, bootstraps `fullrepo` agent context before requiring agent docs, runs `validate_agent_tools.py` through `uv --with pyyaml`, extracts versioned release notes with a portable AWK expression, and produces deterministic `tar.gz` bundles, release manifests, generated SPDX SBOMs, optional GitHub dependency graph SBOMs, artifact attestations, and GitHub Releases.
 - `scripts/classify_ci_noise.py` keeps known benign third-party stderr documented while failing targeted strict jobs on unknown lines.
 - `config/skill-routing-policy.json` version 2 assigns routing classes to all 38 skills and requires cases for implicit, explicit-only, and finalization skills.
