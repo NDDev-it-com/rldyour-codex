@@ -105,6 +105,28 @@ def test_publish_status_restore_and_migrate_main(tmp_path: Path, monkeypatch) ->
     assert "AGENTS.md" not in mod.tracked_agent_paths_in_index()
 
 
+def test_restore_local_uses_existing_tracking_ref_without_fetch(tmp_path: Path, monkeypatch) -> None:
+    remote, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+    mod.publish("origin", "fullrepo")
+
+    clone = tmp_path / "clone-local"
+    git(tmp_path, "clone", str(remote), str(clone))
+    configure_git_identity(clone)
+    monkeypatch.chdir(clone)
+    git(clone, "checkout", "main")
+    assert not (clone / "AGENTS.md").exists()
+
+    def fail_fetch(*_args, **_kwargs):
+        raise AssertionError("restore_local must not fetch or inspect the network")
+
+    monkeypatch.setattr(mod, "fetch_fullrepo", fail_fetch)
+    mod.restore_local("origin", "fullrepo")
+
+    assert (clone / "AGENTS.md").read_text(encoding="utf-8") == "agent docs\n"
+
+
 def test_publish_uses_identity_env_fallback(tmp_path: Path, monkeypatch) -> None:
     _, work = init_repo(tmp_path)
     monkeypatch.chdir(work)

@@ -55,7 +55,7 @@ Core order:
 
 ## Session Context
 
-The SessionStart hook is advisory and read-only. It adds compact state at session startup or resume so Codex knows whether repository sync, Serena memory freshness, docs, dirty files, or worktrees need attention. This context informs planning; it is not a blocker.
+The SessionStart hook is advisory, fast, offline, and read-only except for the local-only worktree bootstrap that may restore agent-only files from an already present local `origin/fullrepo` ref. It adds compact startup state so Codex knows whether local repository markers, docs, tracked dirty files, or worktrees need attention. Deep Serena freshness, fullrepo network state, and branch cleanup are handled by `ry-init`, Stop, doctor, or explicit validation rather than SessionStart.
 
 The PostToolUse commit advice hook is advisory and read-only. It checks recently created commits for conventional commit format, suspicious sensitive paths, runtime markers, browser evidence, and broad commit scope. It informs the next model step without rejecting the command.
 
@@ -74,6 +74,7 @@ Runtime files, secrets, caches, local env files, browser artifacts, tokens, cook
 Use `plugins/rldyour-flow/scripts/fullrepo_sync.py` or `scripts/sync_fullrepo_branch.sh`:
 
 - `--restore`: fetch and restore agent-only files from `origin/fullrepo` into the worktree and install `.git/info/exclude`.
+- `--restore-local`: restore agent-only files from an existing local `origin/fullrepo` tracking ref without fetching; this is the only restore mode used by SessionStart.
 - `--migrate-main`: remove currently tracked agent-only files from the current branch index through `git rm --cached`, leaving files in the worktree.
 - `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`.
 - `--bootstrap-init`: install excludes, restore existing remote `fullrepo` context, publish local agent-only files when no remote `fullrepo` exists, and run `--migrate-main` when the current branch still tracks agent-only files.

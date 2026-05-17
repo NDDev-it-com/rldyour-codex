@@ -1,6 +1,6 @@
 {
   "name": "rldyour-flow",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Autonomous Russian-first SDLC workflow for Codex: deep ry-init context packs, instruction docs sync, fullrepo sync, reviewer skills, deploy, and non-blocking hooks.",
   "author": {
     "name": "rldyourmnd",
@@ -36,7 +36,7 @@
   "interface": {
     "displayName": "rldyour Flow",
     "shortDescription": "Auto SDLC commands: init, start, review, deploy",
-    "longDescription": "This plugin defines the rldyour autonomous SDLC workflow for Codex. It provides Russian-first command skills for ry-init, ry-start, ry-newp, ry-review, and ry-deploy, plus reviewer skills for architecture, implementation quality, consistency, integration synchronization, verification/manual tests, and security. The workflow uses Serena-first code understanding, scoped context packs, context sufficiency gates, technical and web research, LSP quality gates, browser validation, security review, GitHub and worktree workflows, instruction docs synchronization for Codex AGENTS.md and Claude Code .claude/CLAUDE.md, fullrepo branch synchronization for agent-only files, server deployment verification, and post-task synchronization. Its bounded SessionStart dispatcher first restores missing agent-only context from origin/fullrepo when safe, then provides read-only repository context with child timeouts, output caps, and process-group cleanup for timed-out children. Its ordered Stop lifecycle dispatcher invokes Serena memory synchronization first and only then runs Flow post-task synchronization, so cross-plugin Stop hooks cannot race while Codex still sees one blocking lifecycle gate.",
+    "longDescription": "This plugin defines the rldyour autonomous SDLC workflow for Codex. It provides Russian-first command skills for ry-init, ry-start, ry-newp, ry-review, and ry-deploy, plus reviewer skills for architecture, implementation quality, consistency, integration synchronization, verification/manual tests, and security. The workflow uses Serena-first code understanding, scoped context packs, context sufficiency gates, technical and web research, LSP quality gates, browser validation, security review, GitHub and worktree workflows, instruction docs synchronization for Codex AGENTS.md and Claude Code .claude/CLAUDE.md, fullrepo branch synchronization for agent-only files, server deployment verification, and post-task synchronization. Its bounded SessionStart dispatcher stays fast and offline: it may restore missing agent-only context only from an existing local origin/fullrepo ref, then provides read-only local repository context with child timeouts, output caps, and process-group cleanup for timed-out children. Deep fullrepo, Serena, and branch-cleanup checks run in ry-init, Stop, doctor, or explicit validation instead of the startup hook. Its ordered Stop lifecycle dispatcher invokes Serena memory synchronization first and only then runs Flow post-task synchronization, so cross-plugin Stop hooks cannot race while Codex still sees one blocking lifecycle gate.",
     "developerName": "rldyourmnd",
     "category": "Developer Tools",
     "capabilities": [
