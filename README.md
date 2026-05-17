@@ -147,6 +147,8 @@ python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 
 System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. Managed subagent roles in `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"` so orchestration uses the owner's selected subagent default instead of stale local role files. This is an owner-required operating mode for trusted machines, not a temporary risk exception.
 
+Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit security, design, browser, Flutter, or shadcn work.
+
 Managed execpolicy rules in `system/rules/*.rules` install to `~/.codex/rules/` and are validated with `codex execpolicy check`. They add hard rails for root deletion, direct forced Git pushes, private-key disclosure, and release/deploy side effects without changing the owner-required YOLO defaults.
 
 Runtime smoke checks:

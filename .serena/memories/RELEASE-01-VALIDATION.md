@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 932b4b1 docs(codex): clarify app-server hook trust rpc
-Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
+Last updated: 2026-05-18
+Last commit: 037397e feat(codex): isolate subagent mcp startup
+Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, system/agents/*.toml, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
 
@@ -58,6 +58,7 @@ This memory records the validation and release gates that keep the marketplace, 
 ## Current Behavior
 
 - Marketplace validation now runs `uv run --with pyyaml python scripts/validate_agent_tools.py` before shell/Python/smoke checks.
+- `scripts/validate_agent_tools.py` verifies the temporary managed-subagent MCP isolation policy from the current `.mcp.json` registry. Every current non-core MCP server must be explicitly disabled in each managed agent TOML, while the lightweight core inherited surface and built-in `codex_apps` remain allowed.
 - Marketplace validation now runs `python3 scripts/validate_action_pins.py` before skill checks.
 - Marketplace validation now runs the Python unit/coverage harness and requires at least 75% coverage.
 - Marketplace validation runs `scripts/validate_execpolicy_rules.sh` when Codex CLI is available, and runtime validation enforces it after temporary installation.
@@ -74,6 +75,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/smoke_codex_hooks_migration.sh` and `scripts/doctor_system_codex.sh` keep deprecated key migration logic synchronized (including `codex_hooks`, legacy `web_search*`, unified exec/instructions/memories keys, and `use_legacy_landlock` cleanup).
 - `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
 - `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to the app-server RPC method `hooks/list`.
+- `scripts/doctor_system_codex.sh` also verifies that installed managed subagent TOML files match source and preserve the temporary specialist-MCP isolation policy.
 - GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
 - `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
 - `.github/workflows/security-static.yml` is manual-only and runs action pin validation, actionlint `1.7.12`, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
@@ -95,7 +97,7 @@ This memory records the validation and release gates that keep the marketplace, 
 
 - `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, GitHub Action SHA pin validation, strict runtime prerequisite validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, pytest/coverage, skill routing, hook feature migration smoke, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, text security scan, and release manifest checks.
 - `scripts/validate_marketplace.sh` should include Codex execpolicy rule validation when Codex CLI is present; `scripts/validate_runtime.sh --strict-runtime` must validate installed rules.
-- `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`.
+- `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`; it is the source-tree gate for managed-agent model/reasoning settings and temporary subagent MCP isolation.
 - `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
 
 ## Invariants

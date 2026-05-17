@@ -12,6 +12,14 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Security
 
+## [0.3.2] - 2026-05-18
+
+### Changed
+
+- Managed Codex subagents now carry a temporary per-agent MCP isolation policy: spawned subagents inherit only the lightweight core MCP surface (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`) while specialist MCP servers remain available to the parent session for explicit browser, design, security, Flutter, and shadcn work.
+- `browser-tester` and `security-audit` instructions now account for the temporary policy by asking the parent session to run browser tooling or Semgrep when those specialist MCP tools are unavailable inside the subagent.
+- `validate_agent_tools.py` and `doctor_system_codex.sh` now verify managed-agent temporary MCP policy from the current `.mcp.json` server registry so newly added non-core MCP servers must be explicitly disabled for subagents.
+
 ## [0.3.1] - 2026-05-17
 
 ### Added

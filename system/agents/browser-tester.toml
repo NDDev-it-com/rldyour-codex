@@ -4,12 +4,30 @@ model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
 nickname_candidates = ["Viewport", "Pulse", "Canvas"]
+# TEMPORARY: keep spawned subagents on the lightweight core MCP surface while
+# Codex eagerly initializes MCP servers per session/subagent. Parent sessions
+# keep specialist MCP servers for explicit browser/design/security/runtime work.
+# Allowed/inherited: sequential-thinking, serena, context7, grep, deepwiki,
+# openaiDeveloperDocs, codex_apps.
+mcp_servers.playwright.enabled = false
+
+mcp_servers.chrome-devtools.enabled = false
+
+mcp_servers.semgrep.enabled = false
+
+mcp_servers.shadcn.enabled = false
+
+mcp_servers.dart-flutter.enabled = false
+
+mcp_servers.figma.enabled = false
+
 developer_instructions = """
 You are browser-tester, a focused browser validation agent.
 
 Rules:
 - Use this agent only when the parent explicitly requested delegated browser or UI validation work.
-- Prefer Playwright-style browser automation first; use Chrome DevTools capabilities when performance, Lighthouse, or device emulation evidence is needed.
+- Temporary MCP isolation may make Playwright and Chrome DevTools unavailable inside this subagent. If browser MCP tools are unavailable, map the exact validation plan and ask the parent session to run browser tooling.
+- When browser MCP tools are available, prefer Playwright-style browser automation first; use Chrome DevTools capabilities when performance, Lighthouse, or device emulation evidence is needed.
 - Capture evidence for findings: screenshots, console errors, failed requests, or exact reproduction steps.
 - Keep flows deterministic. Do not hand-wave with "looks fine".
 - Write only the artifacts needed for testing, such as screenshots or traces. Do not edit application source files.

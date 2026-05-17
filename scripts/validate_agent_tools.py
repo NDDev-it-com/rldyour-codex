@@ -27,6 +27,15 @@ import yaml
 
 EXPECTED_AGENT_MODEL = "gpt-5.5"
 EXPECTED_AGENT_REASONING = "medium"
+TEMPORARY_SUBAGENT_MCP_ALLOWLIST = {
+    "context7",
+    "deepwiki",
+    "grep",
+    "openaiDeveloperDocs",
+    "sequential-thinking",
+    "serena",
+}
+TEMPORARY_SUBAGENT_MCP_BUILTINS = {"codex_apps"}
 CLAUDE_ONLY_SKILL_KEYS = {
     "allowed-tools",
     "allowed_tools",
@@ -110,7 +119,7 @@ def validate_openai_metadata(path: Path, valid_mcp_servers: set[str], failures: 
             failures.append(f"{path}: unknown MCP dependency {value!r}")
 
 
-def validate_managed_agent(path: Path, failures: list[str]) -> None:
+def validate_managed_agent(path: Path, valid_mcp_servers: set[str], failures: list[str]) -> None:
     try:
         data = tomllib.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
@@ -128,6 +137,32 @@ def validate_managed_agent(path: Path, failures: list[str]) -> None:
             failures.append(
                 f"{path}: {unsupported} is not a supported managed-agent TOML field in this repository"
             )
+    mcp_servers = data.get("mcp_servers")
+    if not isinstance(mcp_servers, dict):
+        failures.append(f"{path}: managed agents must declare temporary mcp_servers isolation policy")
+        return
+
+    known_servers = valid_mcp_servers | TEMPORARY_SUBAGENT_MCP_BUILTINS
+    for server in sorted(mcp_servers):
+        if server not in known_servers:
+            failures.append(f"{path}: unknown managed-agent MCP server policy {server}")
+
+    for server in sorted(valid_mcp_servers - TEMPORARY_SUBAGENT_MCP_ALLOWLIST):
+        server_config = mcp_servers.get(server)
+        if not isinstance(server_config, dict) or server_config.get("enabled") is not False:
+            failures.append(
+                f"{path}: temporary subagent MCP policy must set mcp_servers.{server}.enabled = false"
+            )
+
+    for server in sorted(TEMPORARY_SUBAGENT_MCP_ALLOWLIST & valid_mcp_servers):
+        server_config = mcp_servers.get(server)
+        if isinstance(server_config, dict) and server_config.get("enabled") is False:
+            failures.append(f"{path}: temporary subagent MCP allowlisted server {server} must not be disabled")
+
+    for server in sorted(TEMPORARY_SUBAGENT_MCP_BUILTINS):
+        server_config = mcp_servers.get(server)
+        if isinstance(server_config, dict) and server_config.get("enabled") is False:
+            failures.append(f"{path}: built-in subagent MCP surface {server} must not be disabled")
 
 
 def main() -> int:
@@ -148,7 +183,7 @@ def main() -> int:
     for path in metadata_files:
         validate_openai_metadata(path, valid_mcp_servers, failures)
     for path in managed_agents:
-        validate_managed_agent(path, failures)
+        validate_managed_agent(path, valid_mcp_servers, failures)
 
     if failures:
         print("validate_agent_tools.py: validation FAILED", file=sys.stderr)
