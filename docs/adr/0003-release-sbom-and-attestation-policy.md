@@ -19,7 +19,7 @@ The marketplace is installed into the owner's global Codex runtime, so release a
 - Build a deterministic `tar.gz` bundle from tracked repository release paths.
 - Generate `release-manifest.json` from repository code.
 - Generate a lightweight SPDX 2.3 SBOM from plugin manifests and MCP runtime pins.
-- Export the GitHub dependency graph SBOM when the repository endpoint is available, but do not fail the release when that optional export is unavailable.
+- Export the GitHub dependency graph SBOM through the synchronous dependency graph SBOM endpoint when available, validate that the optional artifact is SPDX JSON, and do not fail the release when the export is unavailable.
 - Generate GitHub artifact attestations for the release bundle and generated SBOM.
 
 ## Consequences

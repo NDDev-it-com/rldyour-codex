@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
+Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py
 Area: CODEX
 -->
@@ -40,6 +40,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Plugin hook support is used only by `rldyour-flow` and `rldyour-serena-mcp`.
 - Plugin hook command entries use the official plugin runtime environment and call scripts through `PLUGIN_ROOT`; they must not use repo-cwd relative script paths or installed-cache search fallbacks.
 - Flow `SessionStart` uses one plugin hook entry for `session_start_dispatcher.sh`, which serializes bootstrap and context because official Codex hook semantics allow concurrent execution of multiple matching command hooks.
+- Flow `Stop` uses one plugin hook entry for `stop_lifecycle_dispatcher.sh`; it invokes the Serena Stop memory gate first and invokes Flow post-task sync only after Serena exits cleanly. `rldyour-serena-mcp/hooks.json` intentionally does not register its own Stop hook to avoid cross-plugin Stop races.
 - Official Codex docs verified for this implementation: Codex plugin manifests live at `.codex-plugin/plugin.json`; plugin hooks can point to `hooks.json`; Codex skills use `skills/`; Codex config uses `[features].hooks` for lifecycle hooks and `[features].plugin_hooks` to opt into bundled hooks from enabled plugins.
 - Legacy config aliases (`codex_hooks`, `use_legacy_landlock`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, and deprecated `features.web_search*`) are migrated by installer/doctor/smoke into canonical equivalents.
 
@@ -47,7 +48,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 
 - Plugin manifests include `name`, `version`, `description`, bundled capability paths such as `skills`/`hooks`, and `interface` metadata.
 - Bundled hook JSON paths are relative to the plugin root, while command bodies resolve executable hook scripts through the `PLUGIN_ROOT` environment variable supplied by Codex at runtime.
-- Current hook-enabled plugin versions after `9a1cdc2`: `rldyour-flow` `0.2.6` and `rldyour-serena-mcp` `0.2.3`.
+- Current hook-enabled plugin versions after `2ee72cf`: `rldyour-flow` `0.3.0` and `rldyour-serena-mcp` `0.2.4`.
 - Marketplace entries use local `source.path` references to `./plugins/<plugin>`.
 - `plugins/rldyour-mcps/.mcp.json` defines valid MCP dependency values for `agents/openai.yaml`.
 - `scripts/validate_agent_tools.py` loads `.mcp.json`, parses YAML/TOML, and rejects unknown MCP dependency names.

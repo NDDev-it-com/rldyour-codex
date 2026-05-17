@@ -2,12 +2,19 @@
 set -euo pipefail
 
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
+QUICK=0
+STRICT_RUNTIME=0
 
 usage() {
   cat <<'EOF'
-Usage: scripts/doctor_system_codex.sh [--codex-home PATH]
+Usage: scripts/doctor_system_codex.sh [--codex-home PATH] [--quick] [--strict-runtime] [--full]
 
 Checks whether the current machine matches the rldyour Codex system setup.
+
+Modes:
+  --quick           Check installed files, config, and managed subagents only.
+  --strict-runtime  Fail when enabled local MCP launchers or codex are missing.
+  --full            Run the full doctor. This is the default.
 EOF
 }
 
@@ -16,6 +23,15 @@ while [ "$#" -gt 0 ]; do
     --codex-home)
       shift
       CODEX_HOME_DIR=${1:?--codex-home requires a path}
+      ;;
+    --quick)
+      QUICK=1
+      ;;
+    --strict|--strict-runtime)
+      STRICT_RUNTIME=1
+      ;;
+    --full)
+      QUICK=0
       ;;
     -h|--help)
       usage
@@ -43,6 +59,9 @@ INSTALLED_AGENT_DIR="$CODEX_HOME_DIR/agents"
 CONFIG_PATH="$CODEX_HOME_DIR/config.toml"
 CACHE_ROOT="$CODEX_HOME_DIR/plugins/cache/rldyour-codex"
 CODEX_CMD=${CODEX_BIN:-$(command -v codex 2>/dev/null || true)}
+UVX_CMD=${UVX_BIN:-$(command -v uvx 2>/dev/null || true)}
+BUNX_CMD=${BUNX_BIN:-$(command -v bunx 2>/dev/null || true)}
+DART_CMD=${DART_BIN:-$(command -v dart 2>/dev/null || true)}
 
 FAILURES=0
 WARNINGS=0
@@ -304,6 +323,33 @@ for source in sorted(system_dir.glob("*.toml")):
 
 raise SystemExit(1 if errors else 0)
 PY
+
+if [ "$STRICT_RUNTIME" -eq 1 ]; then
+  section "Runtime prerequisites"
+  if UVX_BIN="${UVX_CMD:-uvx}" \
+    BUNX_BIN="${BUNX_CMD:-bunx}" \
+    DART_BIN="${DART_CMD:-dart}" \
+    CODEX_BIN="${CODEX_CMD:-}" \
+    python3 "$ROOT/scripts/validate_runtime_prereqs.py" \
+      --mcp-config "$ROOT/plugins/rldyour-mcps/.mcp.json" \
+      --require-codex \
+      --strict; then
+    pass "strict runtime prerequisites"
+  else
+    fail "strict runtime prerequisites"
+  fi
+fi
+
+if [ "$QUICK" -eq 1 ]; then
+  section "Summary"
+  printf 'warnings: %s\n' "$WARNINGS"
+  printf 'failures: %s\n' "$FAILURES"
+  if [ "$FAILURES" -ne 0 ]; then
+    exit 1
+  fi
+  printf 'System Codex quick doctor passed.\n'
+  exit 0
+fi
 
 section "Repository validation"
 if "$ROOT/scripts/validate_marketplace.sh"; then

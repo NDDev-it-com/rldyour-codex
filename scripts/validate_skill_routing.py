@@ -78,6 +78,7 @@ def main() -> int:
             errors.append(f"config/skill-routing-policy.json: routing class references unknown skill {skill_name}")
 
     covered_skills: set[str] = set()
+    negative_skills: set[str] = set()
     for case in cases:
         case_id = str(case.get("id") or "<missing-id>")
         prompt = str(case.get("prompt") or "")
@@ -94,6 +95,7 @@ def main() -> int:
             errors.append(f"{case_id}: expected must be a non-empty list")
             continue
 
+        expected_skill_names: set[str] = set()
         for expected_entry in expected:
             if not isinstance(expected_entry, dict):
                 errors.append(f"{case_id}: expected entries must be objects")
@@ -102,6 +104,7 @@ def main() -> int:
             if skill_name not in skills:
                 errors.append(f"{case_id}: expected skill not found: {skill_name}")
                 continue
+            expected_skill_names.add(skill_name)
             covered_skills.add(skill_name)
             terms = expected_entry.get("description_terms", [])
             if not isinstance(terms, list) or not terms:
@@ -113,6 +116,25 @@ def main() -> int:
                     f"{case_id}: {skill_name} description does not contain any expected routing term; "
                     f"path={skills[skill_name]['path']}"
                 )
+
+        not_expected = case.get("not_expected", [])
+        if not_expected is None:
+            not_expected = []
+        if not isinstance(not_expected, list):
+            errors.append(f"{case_id}: not_expected must be a list when present")
+            continue
+        for entry in not_expected:
+            if isinstance(entry, dict):
+                skill_name = str(entry.get("skill") or "")
+            else:
+                skill_name = str(entry)
+            if skill_name not in skills:
+                errors.append(f"{case_id}: not_expected skill not found: {skill_name}")
+                continue
+            if skill_name in expected_skill_names:
+                errors.append(f"{case_id}: {skill_name} cannot be both expected and not_expected")
+                continue
+            negative_skills.add(skill_name)
 
     missing_coverage = [
         skill_name
@@ -128,7 +150,9 @@ def main() -> int:
 
     print(
         f"validated skill routing policy cases: {len(cases)}; "
-        f"covered skills: {len(covered_skills)}; routing classes: {len(routing_classes)}"
+        f"covered skills: {len(covered_skills)}; "
+        f"negative skills: {len(negative_skills)}; "
+        f"routing classes: {len(routing_classes)}"
     )
     return 0
 

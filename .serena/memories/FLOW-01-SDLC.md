@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
+Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
 Scope: plugins/rldyour-flow, plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/*.py, plugins/rldyour-flow/scripts/*.sh, scripts/sync_fullrepo_branch.sh, scripts/worktree_add.sh, scripts/install_local_git_hooks.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/smoke_fullrepo_bootstrap_init.sh, scripts/smoke_clean_bootstrap.sh
 Area: FLOW
 -->
@@ -13,7 +13,7 @@ Area: FLOW
 
 ## Source Of Truth
 
-- `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin version `0.2.6`, capabilities, hook/skill links.
+- `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin version `0.3.0`, capabilities, hook/skill links.
 - `plugins/rldyour-flow/skills/ry-start/SKILL.md`: full implementation lifecycle.
 - `plugins/rldyour-flow/skills/ry-init/SKILL.md`: scoped read-only initialization.
 - `plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md`: final sync workflow.
@@ -22,6 +22,7 @@ Area: FLOW
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`: post-task sync state and cleanup candidates.
 - `plugins/rldyour-flow/scripts/git_sync_audit.sh`: git/GitHub branch state audit.
 - `plugins/rldyour-flow/hooks/session_start_dispatcher.sh`: serialized SessionStart dispatch for bootstrap before context.
+- `plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh`: ordered Stop dispatcher that runs Serena memory state before Flow post-task state.
 - `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh`: auto-restore missing agent-only context in fresh worktrees.
 - `plugins/rldyour-flow/hooks/session_start_context.sh`: read-only context packet.
 - `scripts/sync_fullrepo_branch.sh`: repository wrapper for fullrepo sync.
@@ -40,8 +41,9 @@ Area: FLOW
 
 - Normal branches exclude agent-only files; `fullrepo` publishes current `HEAD` plus ignored agent-only files using safe `--force-with-lease`.
 - `--bootstrap-init` installs excludes, restores existing `fullrepo` context when available, publishes local agent-only files when no `fullrepo` exists, and removes tracked agent-only files from the current branch index when migration is needed.
-- Flow `SessionStart` wiring uses `session_start_dispatcher.sh` as a single hook entry so worktree bootstrap runs before session context under Codex hook concurrency semantics.
+- Flow `SessionStart` wiring uses `session_start_dispatcher.sh` as a single hook entry so worktree bootstrap runs before session context under Codex hook concurrency semantics. The dispatcher runs children with bounded timeouts (`session_start_worktree_bootstrap.sh` 6s, `session_start_context.sh` 8s), uses temp-file input, caps child output, and emits degraded context instead of relying only on the outer Codex timeout.
 - `session_start_worktree_bootstrap.sh` restores agent-only context from `origin/fullrepo` when `.serena/project.yml`, `AGENTS.md`, or `.claude/CLAUDE.md` is missing. It is additive, never publishes, and reports restore failure honestly instead of success-like wording.
+- Flow `Stop` wiring uses `stop_lifecycle_dispatcher.sh` as the only registered Stop command. The dispatcher invokes `rldyour-serena-mcp/hooks/stop_memory_sync.sh` first and invokes `stop_post_task_sync.sh` only when Serena exits cleanly, so cross-plugin Stop ordering no longer depends on Codex concurrent hook execution.
 - `scripts/worktree_add.sh` refuses to create a helper worktree if `origin/fullrepo` does not exist; it does not auto-publish from a helper script.
 - `flow_post_task_state.py` keeps flow sync pending when instruction docs are stale/missing, fullrepo is stale, git sync is pending, or merged workflow branches/worktrees need cleanup.
 - `flow_post_task_state.py` ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and flow runtime markers; those files alone must not force a Stop-hook `flow-post-task-sync` continuation.
@@ -60,7 +62,7 @@ Area: FLOW
 ## Invariants
 
 - Flow must not own MCP transport definitions; `rldyour-mcps` owns `.mcp.json`.
-- Flow Stop must not duplicate Serena memory writing; it waits for Serena freshness first.
+- Flow Stop must not duplicate Serena memory writing; `stop_lifecycle_dispatcher.sh` waits for Serena freshness first and only then evaluates Flow post-task sync.
 - Fullrepo publishing must not run before normal branch sync when the workflow is finishing a normal product change.
 - Worktree bootstrap must not push, publish, commit, or edit non-agent project files.
 - Do not clean branches/worktrees unless merged state is verified and protected branches are excluded.

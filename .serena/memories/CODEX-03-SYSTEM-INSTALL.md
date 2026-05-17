@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 6b85464 feat(release): prepare marketplace 0.2.0 hardening
-Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml, pyproject.toml, scripts/validate_marketplace.sh
+Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
+Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_runtime_prereqs.py, scripts/validate_runtime.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml, pyproject.toml, scripts/validate_marketplace.sh
 Area: CODEX
 -->
 
@@ -15,6 +15,8 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 
 - `scripts/install_system_codex.sh`: installer and cache sync.
 - `scripts/doctor_system_codex.sh`: installed-state doctor.
+- `scripts/validate_runtime_prereqs.py`: strict launcher prerequisite validator for enabled MCP/Codex runtime surfaces.
+- `scripts/validate_runtime.sh`: focused installer/runtime/hook/fullrepo validation slice.
 - `scripts/rollback_system_codex.sh`: backup listing and restore.
 - `scripts/collect_diagnostics.sh`: local diagnostics bundle.
 - `scripts/bootstrap_check.sh`: bootstrap sanity checks.
@@ -26,7 +28,10 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 
 - `scripts/install_system_codex.sh --dry-run`: preview global file/config/cache changes.
 - `scripts/install_system_codex.sh --apply`: apply managed global Codex state.
-- `scripts/doctor_system_codex.sh`: verify installed state.
+- `scripts/install_system_codex.sh --apply --strict-runtime`: apply managed global Codex state only when required launchers for enabled runtime surfaces are present.
+- `scripts/doctor_system_codex.sh --quick`: verify installed state without running the full marketplace validation path.
+- `scripts/doctor_system_codex.sh --strict-runtime`: verify installed state and fail on missing launchers for enabled runtime surfaces.
+- `scripts/doctor_system_codex.sh --full`: verify installed state and run the full marketplace validation path.
 - `scripts/rollback_system_codex.sh --list`: list installer backups.
 - `scripts/rollback_system_codex.sh --restore <backup>`: restore backed up global files.
 - `scripts/collect_diagnostics.sh`: write ignored diagnostics bundle for triage.
@@ -37,9 +42,10 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 - Installer preserves unrelated config where supported but owns rldyour-managed sections.
 - Installer removes legacy `codex_hooks` aliases and writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`.
 - Installer derives plugin and MCP runtime data from repository source files instead of static lists.
+- Installer strict runtime mode (`--strict` or `--strict-runtime`) validates enabled MCP/Codex launcher prerequisites through `scripts/validate_runtime_prereqs.py` before writing managed config.
 - Installer refuses malformed existing `config.toml` instead of silently falling back to an empty config model.
 - Rollback restores backed-up files through temporary files before renaming them into place.
-- Doctor validates the installed result and runs repository marketplace validation as part of the stricter local gate.
+- Doctor supports quick, strict-runtime, and full modes. Quick mode validates installed config/cache/hook trust without the full marketplace path; full mode includes repository marketplace validation.
 - Doctor's fullrepo current-state gate is strict locally and advisory only in GitHub Actions `main` context.
 - Doctor intentionally fails the local fullrepo current-state gate while normal-branch code/config changes are dirty; rerun after normal commit/push/fullrepo publish for final green state.
 - `scripts/collect_diagnostics.sh` writes local ignored artifacts; do not commit diagnostics bundles.
@@ -48,6 +54,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 
 - Installer backups are the only supported rollback source for global Codex files changed by installer apply.
 - Plugin cache must mirror `plugins/<plugin>` under `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local`.
+- Strict runtime mode checks launcher availability for enabled local MCP servers and the Codex CLI surface; it should fail rather than silently installing a config that cannot start required local tooling.
 - The clean bootstrap smoke must be able to restore fullrepo agent-only context before strict doctor checks.
 - Official Codex hook support uses `[features].hooks` for lifecycle hooks. Bundled hooks from enabled plugins require `[features].plugin_hooks = true`; `codex_hooks` is the deprecated alias that must be removed.
 
@@ -55,7 +62,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 
 - Do not run destructive git or filesystem actions from install/doctor scripts.
 - Do not install secrets or machine-local credentials into tracked files.
-- Do not bypass marketplace validation in doctor except for explicit CI advisory logic already encoded in the script.
+- Do not bypass marketplace validation in full doctor mode except for explicit CI advisory logic already encoded in the script.
 - Restart Codex after successful apply when global config, plugin cache, hooks, skills, or managed agents changed.
 
 ## Change Rules
@@ -68,8 +75,10 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 ## Verification
 
 - `scripts/install_system_codex.sh --dry-run`
-- `scripts/install_system_codex.sh --apply`
-- `scripts/doctor_system_codex.sh`
+- `scripts/install_system_codex.sh --apply --strict-runtime`
+- `scripts/doctor_system_codex.sh --quick --strict-runtime`
+- `scripts/doctor_system_codex.sh --strict-runtime`
+- `scripts/validate_runtime.sh --strict-runtime`
 - `scripts/smoke_clean_bootstrap.sh`
 - `scripts/smoke_codex_hooks_migration.sh`
 - `scripts/rollback_system_codex.sh --list`

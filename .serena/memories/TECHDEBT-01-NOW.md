@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: fe9b88f fix(release): repair release note extraction
-Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
+Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
+Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/validate_runtime_prereqs.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, plugins/rldyour-flow/hooks/session_start_dispatcher.sh, plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->
 
@@ -35,7 +35,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `plugin_hooks` was incorrectly treated as a deprecated/unstable key during the Codex adaptation. Official Codex docs make it the required opt-in for bundled plugin hooks, so installer/doctor/smoke now manage it as `true` and only remove `codex_hooks`.
 - Codex alias migration is now split by risk: safe aliases (`experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `memories.no_memories_if_mcp_or_web_search`) are mapped deterministically; `use_legacy_landlock` is treated as explicit deprecated opt-in removal.
 - Full migration smoke now includes a dedicated `suppress_warning_false` case to assert `suppress_unstable_features_warning = true` is respected as a unified config contract.
-- MCP runtime pin freshness checks are now covered in both `.github/workflows/validate.yml` (`dependency-pins` on push/PR/dispatch) and `.github/workflows/dependency-check.yml` (scheduled/manual). Keep command flags, failure mode, and artifact contract in sync across both to avoid hidden drift by surface.
+- MCP runtime pin freshness checks are manual-only in `.github/workflows/validate.yml` and `.github/workflows/dependency-check.yml`; do not reintroduce push/schedule spend without an explicit owner decision.
 - `9a1cdc2` closed the stale SessionStart ordering debt by replacing separate Flow `SessionStart` hooks with one dispatcher, and `scripts/smoke_hooks.sh` now validates that dispatcher.
 - `9a1cdc2` closed the malformed config fallback debt: `scripts/install_system_codex.sh` now fails closed on invalid existing TOML, and `scripts/smoke_codex_hooks_migration.sh` covers the failure.
 - `9a1cdc2` closed the GitHub Actions tag-pin debt by pinning external actions to full SHAs and adding `scripts/validate_action_pins.py`.
@@ -52,6 +52,12 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `08e3bc6` closed the release-workflow/fullrepo context gap: manual release validation bootstraps `fullrepo` before requiring agent instruction docs, so `main` can remain free of agent-only files while release validation stays strict.
 - `c901197` closed the release-workflow PyYAML dependency gap: manual release validation now runs `validate_agent_tools.py` through `uv --with pyyaml`, matching the marketplace validation dependency contract.
 - `fe9b88f` closed the release-note extraction gap: manual release bundle generation now uses a portable AWK regex for the next changelog heading and local bundle evidence generation verifies the expression.
+- `2ee72cf` closed the Stop concurrency debt by moving the blocking Stop lifecycle into `plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh` and removing the registered Serena Stop command from `rldyour-serena-mcp/hooks.json`.
+- `2ee72cf` closed the hot-path SessionStart budget debt by adding child timeouts, temp-file input, output caps, and degraded output behavior to `session_start_dispatcher.sh`; direct temp-repo smoke measured about 0.54s.
+- `2ee72cf` closed the pytest entrypoint drift debt by moving test helper imports to `tests/support/importing.py` and keeping both `pytest` and `python -m pytest` compatible.
+- `2ee72cf` closed the no-git text security under-scan debt by adding a bounded tree-walk fallback to `scripts/scan_text_security.py`.
+- `2ee72cf` closed the GitHub Actions spend-control gap by making validation, security, and dependency workflows manual-only, with Ubuntu default and explicit macOS opt-in.
+- `2ee72cf` raised the unit coverage gate to 75% and added strict runtime prerequisite validation through `scripts/validate_runtime_prereqs.py`.
 - Semgrep's global `IFS` tampering rule is intentionally excluded in `security-static` because this repository uses `IFS=$'\n\t'` as a strict shell prologue and validates shell scripts with ShellCheck.
 
 ## Contracts And Data
@@ -67,7 +73,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 
 - Do not port Claude Code implementation files verbatim into Codex without mapping them to Codex surfaces.
 - Do not treat runtime markers or one-off audit observations as memories.
-- Do not let Stop hooks edit memory content directly; they should route the workflow.
+- Do not let Stop hooks edit memory content directly; they should route the workflow through the ordered Flow Stop dispatcher.
 - Do not allow a hook loop to block Stop forever for the same HEAD/state.
 - Do not let fullrepo helper scripts publish from a newly created worktree implicitly.
 - Do not port old hook-feature assumptions forward without re-checking official Codex docs; `plugin_hooks` must remain enabled while rldyour hooks are bundled in plugins.

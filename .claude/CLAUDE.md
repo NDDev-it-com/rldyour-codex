@@ -17,8 +17,9 @@ This repository is the owner's personal Codex marketplace and system setup sourc
 - `plugins/<plugin>/skills/*/SKILL.md`: Codex skill routing and workflow contracts.
 - `plugins/<plugin>/skills/*/agents/openai.yaml`: skill UI metadata and implicit invocation policy.
 - `plugins/rldyour-mcps/.mcp.json`: MCP runtime definitions.
+- `config/mcp-runtime-versions.env`: pinned MCP package, host runtime, and Codex CLI versions.
 - `plugins/rldyour-flow/hooks.json`: Codex flow lifecycle hooks.
-- `plugins/rldyour-serena-mcp/hooks.json`: Serena lifecycle hooks.
+- `plugins/rldyour-serena-mcp/hooks.json`: Serena reminder and marker hooks; its Stop memory gate is invoked by Flow's ordered lifecycle dispatcher.
 - `system/AGENTS.md`: canonical global Codex instructions installed to `~/.codex/AGENTS.md`.
 - `system/agents/*.toml`: managed Codex custom subagent role configs installed to `~/.codex/agents/*.toml`.
 - `AGENTS.md`: Codex-native project instructions, restored from and published to `fullrepo`.
@@ -47,8 +48,8 @@ This repository is the owner's personal Codex marketplace and system setup sourc
 ## Plugin Boundaries
 
 - `rldyour-mcps` owns MCP transport definitions only.
-- `rldyour-serena-mcp` owns Serena-first code workflow and memory sync.
-- `rldyour-flow` owns `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, instruction docs sync, post-task sync, and fullrepo sync orchestration.
+- `rldyour-serena-mcp` owns Serena-first code workflow and memory sync. Its Stop script is an ordered child of the Flow lifecycle dispatcher, not a competing plugin Stop hook.
+- `rldyour-flow` owns `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, bounded SessionStart dispatch, ordered Stop lifecycle dispatch, instruction docs sync, post-task sync, and fullrepo sync orchestration.
 - `rldyour-rules` owns quality, architecture, dependency, verification, project-instruction, agent-only file, and ADR policy.
 - `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
 - Other domain plugins own their workflows: explore, browser, security, and LSP.
@@ -59,6 +60,9 @@ Run the marketplace validation script before finalizing tracked source changes:
 
 ```bash
 scripts/validate_marketplace.sh
+scripts/validate_fast.sh
+scripts/validate_runtime.sh --strict-runtime
+scripts/validate_release.sh
 ```
 
 Targeted checks:
@@ -91,7 +95,9 @@ python3 scripts/validate_plugin_versions.py
 python3 scripts/validate_skill_routing.py
 python3 scripts/release_sbom.py
 python3 scripts/check_mcp_runtime_versions.py
+python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 scripts/doctor_system_codex.sh
+scripts/doctor_system_codex.sh --quick --strict-runtime
 ```
 
 ## Git And Fullrepo
@@ -108,7 +114,7 @@ scripts/doctor_system_codex.sh
 ## System Install
 
 - `scripts/install_system_codex.sh --dry-run` previews the system Codex install.
-- `scripts/install_system_codex.sh --apply` installs global Codex instructions, managed `~/.codex/agents/*.toml`, config sections, the official Codex config schema hint, `[features].hooks = true`, `[features].plugin_hooks = true`, `[features].multi_agent = true`, deprecated hook alias removal, marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, YOLO/model defaults, approved MCP tool overrides, marketplace registration, plugin cache, and trusted hashes for installed rldyour plugin hooks.
-- `scripts/doctor_system_codex.sh` verifies installed state, including marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, the config schema hint, active `hooks`, `plugin_hooks`, and `multi_agent` features, managed subagent config parity, managed subagent `gpt-5.5`/`medium` settings, installed rldyour plugin hook trust/enabled state, and absence of deprecated hook aliases.
+- `scripts/install_system_codex.sh --apply` installs global Codex instructions, managed `~/.codex/agents/*.toml`, config sections, the official Codex config schema hint, `[features].hooks = true`, `[features].plugin_hooks = true`, `[features].multi_agent = true`, deprecated hook alias removal, marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, YOLO/model defaults, approved MCP tool overrides, marketplace registration, plugin cache, and trusted hashes for installed rldyour plugin hooks. Add `--strict-runtime` when enabled MCP launchers must be present.
+- `scripts/doctor_system_codex.sh` verifies installed state, including marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, the config schema hint, active `hooks`, `plugin_hooks`, and `multi_agent` features, managed subagent config parity, managed subagent `gpt-5.5`/`medium` settings, installed rldyour plugin hook trust/enabled state, and absence of deprecated hook aliases. Use `--quick --strict-runtime` for bounded strict runtime validation.
 - `scripts/rollback_system_codex.sh --list` and `--restore <backup>` manage installer backups for `AGENTS.md`, `config.toml`, and managed `agents/*.toml`.
 - `scripts/collect_diagnostics.sh` writes ignored diagnostics bundles for failure triage.

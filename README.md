@@ -120,6 +120,7 @@ Verify the installed system state:
 
 ```bash
 scripts/doctor_system_codex.sh
+scripts/doctor_system_codex.sh --quick --strict-runtime
 ```
 
 Run the full bootstrap smoke flow on a new or resynced machine:
@@ -134,13 +135,24 @@ The installer writes `~/.codex/AGENTS.md`, writes managed `~/.codex/agents/*.tom
 
 Local MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runtime-versions.env`; marketplace validation fails if these sources drift. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke.
 
-`dart-flutter` is intentionally declared as an external local Dart SDK runtime in `config/mcp-runtime-versions.env`; all other local package launchers remain package-pinned. GitHub Actions workflows pin external actions to full commit SHAs, with the source tag kept as an inline comment for review.
+`dart-flutter` is intentionally declared as an external local Dart SDK runtime in `config/mcp-runtime-versions.env`; all other local package launchers remain package-pinned. Host runtime pins for Node major, Bun, and Dart SDK also live in this file so local setup, GitHub Actions, and the devcontainer share one source of truth. GitHub Actions workflows pin external actions to full commit SHAs, with the source tag kept as an inline comment for review.
+
+Strict runtime mode is available when the environment must be fully reproducible instead of warning-only:
+
+```bash
+scripts/install_system_codex.sh --apply --strict-runtime
+scripts/doctor_system_codex.sh --strict-runtime
+python3 scripts/validate_runtime_prereqs.py --strict --require-codex
+```
 
 System Codex is intentionally configured for unattended owner-controlled execution: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. Managed subagent roles in `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"` so orchestration uses the owner's selected subagent default instead of stale local role files. This is an owner-required operating mode for trusted machines, not a temporary risk exception.
 
 Runtime smoke checks:
 
 ```bash
+scripts/validate_fast.sh
+scripts/validate_runtime.sh --strict-runtime
+scripts/validate_release.sh
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh
@@ -164,8 +176,7 @@ python3 scripts/validate_instruction_docs.py --require-agent-docs
 
 `scripts/smoke_mcp_capabilities.sh` verifies MCP protocol behavior with `initialize`, `list_tools`, and safe `call_tool` probes where a deterministic read-only tool exists. It retries each server five times by default to absorb transient remote MCP failures. Figma is skipped by default because it requires OAuth; pass `--include-auth` only after authorizing that runtime.
 
-GitHub Actions runs the same marketplace/system checks on push and pull request with a temporary `CODEX_HOME`, list-only MCP capability probes, and a clean bootstrap clone. On `push`, `pull_request`, and `workflow_dispatch`, the `validate` workflow includes a `dependency-pins` job that runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated --json` to fail fast on MCP runtime pin drift.
-On `main` CI, the doctor treats fullrepo current-state as advisory because the fullrepo branch is published and validated as a separate push; local doctor and `fullrepo` CI keep the fullrepo snapshot gate strict.
+GitHub Actions validation is intentionally manual-only. Use the `validate` workflow through `workflow_dispatch` when an agent or the owner explicitly requests CI. The default `fast` scope runs on Ubuntu only; `include_macos=true` opts into macOS validation for parity checks when the extra runner cost is justified. The `runtime`, `release`, `mcp`, and `full` scopes run progressively heavier gates with temporary `CODEX_HOME` installs, strict runtime checks, list-only MCP capability probes, and release dry-run evidence.
 
 ## Fullrepo Branch
 
@@ -214,4 +225,4 @@ Reference documents:
 - `docs/dependency-updates.md`: pinned MCP runtime update policy.
 - `docs/observability.md`: diagnostics, CI artifacts, and failure triage.
 
-CI validates the repository on Ubuntu and macOS. A scheduled dependency-check workflow monitors pinned MCP runtime versions, and Dependabot tracks GitHub Actions updates.
+Manual CI validates the repository on Ubuntu by default and on macOS only when requested. The manual `dependency-check` workflow and the `validate` workflow's `mcp`/`full` scopes monitor pinned MCP runtime versions; Dependabot still tracks GitHub Actions updates, but no workflow spends runner minutes automatically.
