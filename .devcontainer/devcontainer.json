@@ -1,0 +1,30 @@
+{
+  "name": "rldyour-codex",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "CODEX_HOME": "/home/vscode/.codex"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "timonwong.shellcheck",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python3",
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": [
+          "tests"
+        ]
+      }
+    }
+  },
+  "postCreateCommand": "uv run --with pytest --with pytest-cov --with pyyaml python -m pytest",
+  "features": {}
+}

@@ -164,6 +164,9 @@ python3 scripts/check_serena_memory_freshness.py
 python3 scripts/validate_agent_tools.py
 python3 scripts/validate_action_pins.py
 python3 scripts/scan_text_security.py
+uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
+python3 scripts/release_manifest.py
+python3 scripts/release_sbom.py
 scripts/sync_fullrepo_branch.sh --status
 scripts/sync_fullrepo_branch.sh --bootstrap-init
 scripts/sync_fullrepo_branch.sh --publish

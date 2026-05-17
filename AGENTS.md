@@ -76,6 +76,7 @@ scripts/smoke_fullrepo_bootstrap_init.sh
 python3 scripts/validate_agent_tools.py
 python3 scripts/validate_action_pins.py
 python3 scripts/scan_text_security.py
+uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
 scripts/bootstrap_check.sh --apply
 scripts/sync_fullrepo_branch.sh --status
 scripts/sync_fullrepo_branch.sh --bootstrap-init
@@ -88,6 +89,7 @@ plugins/rldyour-lsps/scripts/check_lsps.sh
 python3 scripts/validate_plugin_versions.py
 python3 scripts/validate_skill_routing.py
 python3 scripts/release_manifest.py
+python3 scripts/release_sbom.py
 python3 scripts/check_mcp_runtime_versions.py
 scripts/doctor_system_codex.sh
 ```

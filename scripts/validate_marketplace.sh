@@ -294,17 +294,25 @@ paths = [
     Path("scripts/validate_plugin_versions.py"),
     Path("scripts/validate_skill_routing.py"),
     Path("scripts/release_manifest.py"),
+    Path("scripts/release_sbom.py"),
     Path("scripts/check_mcp_runtime_versions.py"),
     Path("scripts/check_serena_memory_freshness.py"),
     Path("scripts/validate_agent_tools.py"),
     Path("scripts/validate_action_pins.py"),
     Path("scripts/scan_text_security.py"),
+    Path("scripts/classify_ci_noise.py"),
 ]
 
 for path in paths:
     ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     print(f"syntax ok {path}")
 PY
+
+step "GitHub Action SHA pins"
+python3 scripts/validate_action_pins.py
+
+step "Python unit tests"
+"$UV_BIN" run --with pytest --with pytest-cov --with pyyaml python -m pytest
 
 step "Codex hooks migration"
 scripts/smoke_codex_hooks_migration.sh
@@ -323,7 +331,14 @@ step "Serena memory taxonomy smoke"
 scripts/smoke_serena_memory_taxonomy.sh
 
 step "Serena memory state"
-python3 scripts/check_serena_memory_freshness.py
+if [ "${GITHUB_ACTIONS:-}" = "true" ] \
+  && ! git ls-files --error-unmatch ".serena/memories/CORE-01-INDEX.md" >/dev/null 2>&1; then
+  printf 'skip    fullrepo-managed Serena memories are not tracked in this GitHub normal-branch checkout\n'
+elif [ -f ".serena/memories/CORE-01-INDEX.md" ]; then
+  python3 scripts/check_serena_memory_freshness.py
+else
+  printf 'skip    fullrepo-managed Serena memories absent from this normal-branch checkout\n'
+fi
 
 step "Flow post-task state"
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool >/dev/null

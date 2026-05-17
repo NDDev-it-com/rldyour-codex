@@ -31,17 +31,14 @@ scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 scripts/sync_fullrepo_branch.sh --status
 python3 scripts/release_manifest.py > diagnostics/release-manifest.json
+python3 scripts/release_sbom.py > diagnostics/sbom.spdx.json
 ```
 
 6. Commit with a Conventional Commit message.
 7. Push to `main`, publish `fullrepo` when agent-only files changed, and wait for CI on Ubuntu and macOS.
-8. Tag only after CI is green:
+8. Create the release from `.github/workflows/release.yml` after CI is green. The workflow validates `VERSION` and `CHANGELOG.md`, builds a deterministic `tar.gz`, writes `release-manifest.json`, writes generated SPDX SBOM evidence, exports the GitHub dependency graph SBOM when available, creates artifact attestations, and publishes the GitHub Release.
 
-```bash
-version=$(cat VERSION)
-git tag -a "v${version}" -m "Release ${version}"
-git push origin "v${version}"
-```
+Release tags use the exact SemVer value from `VERSION` without a `v` prefix, for example `0.2.0`.
 
 ## Release Manifest
 
@@ -54,6 +51,10 @@ git push origin "v${version}"
 - local MCP server package specs.
 
 Use this manifest as the release evidence and rollback reference. Generated manifests belong in `diagnostics/` or GitHub artifacts, not in normal commits unless explicitly needed for an audit.
+
+## SBOM And Attestation
+
+`scripts/release_sbom.py` generates a lightweight SPDX 2.3 SBOM from plugin manifests and MCP runtime pins. The release workflow also attempts to export GitHub's dependency graph SBOM through the repository API when available. GitHub artifact attestations are generated for the release bundle and generated SBOM on GitHub Enterprise Cloud.
 
 ## Dependency Pin Updates
 

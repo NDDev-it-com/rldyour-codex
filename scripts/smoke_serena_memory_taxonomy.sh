@@ -41,6 +41,7 @@ assert_json() {
 step "analyzer schema and target routing"
 assert_json "$ANALYZER" <<'PY'
 import json
+import os
 import re
 import subprocess
 import sys
@@ -69,15 +70,33 @@ assert empty["memory_taxonomy"]["index_memory"] == "CORE-01-INDEX.md", empty
 assert empty["memory_taxonomy"]["filename_pattern"] == "AREA-01-SLUG.md", empty
 assert empty["memory_targets"] == [], empty
 taxonomy_areas = {item["area"] for item in empty["memory_taxonomy"]["areas"]}
-index_text = (repo_root / ".serena/memories/CORE-01-INDEX.md").read_text(encoding="utf-8")
-index_areas = set(re.findall(r"`([A-Z]+)-\d+-[^`]+\.md`", index_text))
-index_areas.discard("AREA")
-missing_areas = index_areas - taxonomy_areas
-assert not missing_areas, {
-    "missing_areas": sorted(missing_areas),
-    "taxonomy_areas": sorted(taxonomy_areas),
-    "index_areas": sorted(index_areas),
-}
+index_path = repo_root / ".serena/memories/CORE-01-INDEX.md"
+
+
+def is_tracked(path: Path) -> bool:
+    proc = subprocess.run(
+        ["git", "-C", str(repo_root), "ls-files", "--error-unmatch", str(path.relative_to(repo_root))],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return proc.returncode == 0
+
+
+if index_path.exists() and (os.environ.get("GITHUB_ACTIONS") != "true" or is_tracked(index_path)):
+    index_text = index_path.read_text(encoding="utf-8")
+    index_areas = set(re.findall(r"`([A-Z]+)-\d+-[^`]+\.md`", index_text))
+    index_areas.discard("AREA")
+    missing_areas = index_areas - taxonomy_areas
+    assert not missing_areas, {
+        "missing_areas": sorted(missing_areas),
+        "taxonomy_areas": sorted(taxonomy_areas),
+        "index_areas": sorted(index_areas),
+    }
+elif index_path.exists():
+    print("skip    repository CORE-01-INDEX.md is untracked fullrepo context in GitHub Actions")
+else:
+    print("skip    repository CORE-01-INDEX.md absent; normal branch may exclude fullrepo-managed memories")
 
 cases = [
     (

@@ -5,6 +5,12 @@
 *.log
 *.local
 __pycache__/
+.venv/
+.coverage
+coverage.xml
+pytest.xml
+*.stderr.log
+.pytest_cache/
 node_modules/
 .playwright-mcp/
 diagnostics/

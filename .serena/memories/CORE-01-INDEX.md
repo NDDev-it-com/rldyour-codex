@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
-Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, scripts/validate_marketplace.sh
+Last updated: 2026-05-17
+Last commit: eb39996 fix(ci): ignore untracked fullrepo memories in validation
+Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
 
@@ -30,15 +30,23 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 - `scripts/doctor_system_codex.sh`: verify installed runtime and fullrepo/current-state gates.
 - `scripts/sync_fullrepo_branch.sh --bootstrap-init|--publish|--status`: restore or publish agent-only context.
 - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: memory freshness and analyzer state.
+- `uv run --with pytest --with pytest-cov --with pyyaml python -m pytest`: unit and coverage gate.
+- `python3 scripts/release_sbom.py`: generated SPDX 2.3 release SBOM evidence.
 
 ## Current Behavior
 
 - Active rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- `rldyour-flow` is version `0.2.5` and owns SDLC commands, fullrepo, instruction docs, worktree bootstrap, and post-task sync.
-- `rldyour-serena-mcp` is version `0.2.2` and owns Serena-first code workflow plus memory freshness, taxonomy, sync hooks, and acknowledgement.
+- Marketplace release version is `0.2.0`.
+- `rldyour-flow` is version `0.2.6` and owns SDLC commands, fullrepo, instruction docs, worktree bootstrap, deterministic SessionStart dispatch, and post-task sync.
+- `rldyour-serena-mcp` is version `0.2.3` and owns Serena-first code workflow plus memory freshness, expanded taxonomy, sync hooks, and acknowledgement.
 - The repository currently has 38 rldyour skills, 12 MCP server definitions, and 8 managed Codex subagent TOML files validated by scripts.
+- The Python test harness has 40 unit tests and enforces an initial 70% coverage threshold through `pyproject.toml`.
+- Fullrepo unit-test fixtures configure local git identity inside temporary repositories and clones, so GitHub-hosted runners do not depend on global git author settings.
+- CI noise classification treats `uv` package download progress lines as known setup noise while still failing strict jobs on unrelated stderr.
+- GitHub CI has split unit-test reports, marketplace/system smoke, dependency pin checks, no-paid static security, and manual release workflows with deterministic bundle/SBOM/attestation output.
 - System install manages Codex hook runtime with `[features].hooks = true` and `[features].plugin_hooks = true`, so enabled rldyour plugin hook declarations are actually loaded.
 - Normal `main` excludes root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, and similar agent-only files through `.git/info/exclude`; `fullrepo` carries the portable agent context snapshot.
+- Normal-branch GitHub CI may run without tracked fullrepo-managed `.serena/memories`; memory taxonomy smoke still tests analyzer/fixture contracts, and the final live freshness state check is skipped until memories are present as tracked fullrepo context.
 - Project memories use the numbered taxonomy `AREA-01-SLUG.md`; `CORE-01-INDEX.md` is the map.
 
 ## Contracts And Data

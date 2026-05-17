@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
-Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh
+Last commit: eb39996 fix(ci): ignore untracked fullrepo memories in validation
+Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->
 
@@ -41,12 +41,22 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `9a1cdc2` closed the GitHub Actions tag-pin debt by pinning external actions to full SHAs and adding `scripts/validate_action_pins.py`.
 - `9a1cdc2` closed the narrow secret-regex debt by adding `scripts/scan_text_security.py` for broader tracked/agent-only text scanning plus hidden Unicode controls.
 - `9a1cdc2` introduced `docs/adr/0001-codex-marketplace-operating-model.md`; further irreversible decisions should add/update ADRs rather than living only in memories.
+- `6b85464` closed the missing unit/coverage harness debt by adding `pyproject.toml`, 40 unit tests, `pytest.xml`, `coverage.xml`, and a 70% initial coverage threshold.
+- `6b85464` closed the release evidence gap by adding `scripts/release_sbom.py` and a manual GitHub release workflow with deterministic bundle, release manifest, generated SPDX SBOM, optional GitHub dependency graph SBOM export, and artifact attestations.
+- `6b85464` closed the governance-template gap with CODEOWNERS, issue templates, PR template, `CONTRIBUTING.md`, `SECURITY.md`, branch-protection desired-state files, and ADRs 0002-0005.
+- `6b85464` closed the sparse routing-class debt by adding explicit routing classes for all 38 skills and coverage requirements for implicit, explicit-only, and finalization skills.
+- `9da936d` closed the GitHub-hosted runner git-identity fixture gap by configuring local author settings for temp fullrepo repositories and clones before test commits.
+- `af26c31` closed the strict-noise classifier false negative for clean-runner `uv` package download progress lines while preserving unknown-stderr failure behavior.
+- `882030e` closed the normal-branch CI/fullrepo boundary gap: GitHub normal-branch validation no longer requires absent fullrepo-managed memories, while local/fullrepo-aware checkouts still validate live memory freshness.
+- `eb39996` closed the follow-up untracked-memory CI gap: if GitHub Actions creates or restores `.serena/memories` as untracked fullrepo context during a normal-branch job, taxonomy and marketplace validation still skip live repository-memory freshness instead of treating that untracked context as normal-branch source.
+- Semgrep's global `IFS` tampering rule is intentionally excluded in `security-static` because this repository uses `IFS=$'\n\t'` as a strict shell prologue and validates shell scripts with ShellCheck.
 
 ## Contracts And Data
 
 - `scripts/smoke_serena_memory_taxonomy.sh` must keep tests for analyzer schema v2, `CORE-01-INDEX.md`, `AREA-01-SLUG.md`, agent-instruction sync routing, recursive memory scan, Stop advisory, loop guard, and fullrepo acknowledgement/refusal.
 - `scripts/smoke_hooks.sh` must keep Flow `SessionStart` dispatcher coverage and hook strict prologue coverage.
 - `scripts/validate_action_pins.py` and `scripts/scan_text_security.py` are now release-gate guardrails and should stay in `scripts/validate_marketplace.sh`.
+- `scripts/classify_ci_noise.py` and the pytest/coverage harness are release-gate guardrails and should stay in `scripts/validate_marketplace.sh` or visible CI jobs.
 - `RLDYOUR_DRY_RUN=1 scripts/worktree_add.sh <branch>` must show one git command and one fullrepo restore command without side effects.
 - Fullrepo-managed memory acknowledgement is allowed only after `serena_memory_state.py` reports current or a memory directly mentions HEAD.
 

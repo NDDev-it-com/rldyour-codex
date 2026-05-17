@@ -1,155 +1,567 @@
 {
-  "version": 1,
-  "description": "Deterministic policy tests for Russian and English prompt routing into rldyour skills.",
+  "version": 2,
+  "description": "Deterministic routing coverage and taxonomy tests for Russian and English prompt routing into rldyour skills.",
   "cases": [
     {
       "id": "ru-technical-research",
       "prompt": "изучи интернет и документацию по настройке GitHub Actions для Codex",
-      "prompt_terms": ["изучи интернет", "документацию"],
+      "prompt_terms": [
+        "изучи интернет",
+        "документацию"
+      ],
       "expected": [
         {
           "skill": "rldyour-explore:tech-research",
-          "description_terms": ["исследуй интернет", "documentation", "best practices"]
+          "description_terms": [
+            "исследуй интернет",
+            "documentation",
+            "best practices"
+          ]
         },
         {
           "skill": "rldyour-explore:web-research",
-          "description_terms": ["изучи интернет", "latest/current"]
+          "description_terms": [
+            "изучи интернет",
+            "latest/current"
+          ]
         }
       ]
     },
     {
       "id": "ru-flow-start",
       "prompt": "$rldyour-flow:ry-start реализуй фичу качественно и проверь все",
-      "prompt_terms": ["ry-start", "реализуй"],
+      "prompt_terms": [
+        "ry-start",
+        "реализуй"
+      ],
       "expected": [
         {
           "skill": "rldyour-flow:ry-start",
-          "description_terms": ["ry-start", "реализуй", "Full task lifecycle"]
+          "description_terms": [
+            "ry-start",
+            "реализуй",
+            "Full task lifecycle"
+          ]
         }
       ]
     },
     {
       "id": "ru-init-context",
       "prompt": "ry-init backend инициализируй проект и загрузи контекст",
-      "prompt_terms": ["ry-init", "инициализируй"],
+      "prompt_terms": [
+        "ry-init",
+        "инициализируй"
+      ],
       "expected": [
         {
           "skill": "rldyour-flow:ry-init",
-          "description_terms": ["ry-init", "инициализируй", "Initialize"]
+          "description_terms": [
+            "ry-init",
+            "инициализируй",
+            "Initialize"
+          ]
         }
       ]
     },
     {
       "id": "ru-browser-validation",
       "prompt": "проверь в браузере визуально адаптив и бизнес-логику",
-      "prompt_terms": ["проверь в браузере", "визуально"],
+      "prompt_terms": [
+        "проверь в браузере",
+        "визуально"
+      ],
       "expected": [
         {
           "skill": "rldyour-browser:browser-validation",
-          "description_terms": ["проверь в браузере", "визуально", "business logic"]
+          "description_terms": [
+            "проверь в браузере",
+            "визуально",
+            "business logic"
+          ]
         },
         {
           "skill": "rldyour-browser:browser-tool-routing",
-          "description_terms": ["проверь в браузере", "Playwright", "Chrome DevTools"]
+          "description_terms": [
+            "проверь в браузере",
+            "Playwright",
+            "Chrome DevTools"
+          ]
         }
       ]
     },
     {
       "id": "ru-security-review",
       "prompt": "$ry-sec-review проверь безопасность auth и OWASP",
-      "prompt_terms": ["ry-sec-review", "безопасность"],
+      "prompt_terms": [
+        "ry-sec-review",
+        "безопасность"
+      ],
       "expected": [
         {
           "skill": "rldyour-security:ry-sec-review",
-          "description_terms": ["ry-sec-review", "секьюрити ревью", "security review"]
+          "description_terms": [
+            "ry-sec-review",
+            "секьюрити ревью",
+            "security review"
+          ]
         }
       ]
     },
     {
       "id": "ru-figma-design",
       "prompt": "перенеси макет из Figma pixel-perfect и сделай дизайн-систему",
-      "prompt_terms": ["Figma", "pixel-perfect"],
+      "prompt_terms": [
+        "Figma",
+        "pixel-perfect"
+      ],
       "expected": [
         {
           "skill": "rldyour-design:figma-to-code",
-          "description_terms": ["Figma", "pixel-perfect", "перенеси из фигмы"]
+          "description_terms": [
+            "Figma",
+            "pixel-perfect",
+            "перенеси из фигмы"
+          ]
         },
         {
           "skill": "rldyour-design:design-system-implementation",
-          "description_terms": ["дизайн-система", "tokens", "shadcn/ui"]
+          "description_terms": [
+            "дизайн-система",
+            "tokens",
+            "shadcn/ui"
+          ]
         }
       ]
     },
     {
       "id": "ru-figma-quality-gates",
       "prompt": "перенеси Figma макеты, определи dynamic/static, вынеси тексты в i18n, сделай токены и проверь перед отдачей",
-      "prompt_terms": ["dynamic/static", "i18n"],
+      "prompt_terms": [
+        "dynamic/static",
+        "i18n"
+      ],
       "expected": [
         {
           "skill": "rldyour-design:ry-design",
-          "description_terms": ["data classification", "i18n", "full validation"]
+          "description_terms": [
+            "data classification",
+            "i18n",
+            "full validation"
+          ]
         },
         {
           "skill": "rldyour-design:figma-to-code",
-          "description_terms": ["dynamic/static", "i18n", "browser validation"]
+          "description_terms": [
+            "dynamic/static",
+            "i18n",
+            "browser validation"
+          ]
         },
         {
           "skill": "rldyour-design:design-validation",
-          "description_terms": ["i18n/token/static scans", "responsive states"]
+          "description_terms": [
+            "i18n/token/static scans",
+            "responsive states"
+          ]
         }
       ]
     },
     {
       "id": "ru-lsp-health",
       "prompt": "проверь LSP и диагностики Serena для Python и TypeScript",
-      "prompt_terms": ["LSP", "диагностики"],
+      "prompt_terms": [
+        "LSP",
+        "диагностики"
+      ],
       "expected": [
         {
           "skill": "rldyour-lsps:lsp-health-check",
-          "description_terms": ["проверь LSP", "diagnostics", "Serena"]
+          "description_terms": [
+            "проверь LSP",
+            "diagnostics",
+            "Serena"
+          ]
         }
       ]
     },
     {
       "id": "ru-memory-sync",
       "prompt": "обнови memories и синхронизируй память Serena после задачи",
-      "prompt_terms": ["memories", "синхронизируй"],
+      "prompt_terms": [
+        "memories",
+        "синхронизируй"
+      ],
       "expected": [
         {
           "skill": "rldyour-serena-mcp:serena-memory-sync",
-          "description_terms": ["обнови memories", "синхронизируй память", "Serena memories"]
+          "description_terms": [
+            "обнови memories",
+            "синхронизируй память",
+            "Serena memories"
+          ]
         }
       ]
     },
     {
       "id": "ru-instruction-docs-sync",
       "prompt": "обнови AGENTS.md и CLAUDE.md чтобы документация проекта была актуальной",
-      "prompt_terms": ["AGENTS.md", "CLAUDE.md"],
+      "prompt_terms": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
       "expected": [
         {
           "skill": "rldyour-flow:instruction-docs-sync",
-          "description_terms": ["AGENTS.md", "CLAUDE.md", "инструкции проекта"]
+          "description_terms": [
+            "AGENTS.md",
+            "CLAUDE.md",
+            "инструкции проекта"
+          ]
         },
         {
           "skill": "rldyour-rules:project-instructions-policy",
-          "description_terms": ["правила проекта", "documentation"]
+          "description_terms": [
+            "правила проекта",
+            "documentation"
+          ]
         }
       ]
     },
     {
       "id": "en-quality-rules",
       "prompt": "review the implementation against quality rules and architecture boundaries",
-      "prompt_terms": ["quality", "architecture"],
+      "prompt_terms": [
+        "quality",
+        "architecture"
+      ],
       "expected": [
         {
           "skill": "rldyour-rules:quality-first-engineering",
-          "description_terms": ["quality-first", "качество кода", "technical debt"]
+          "description_terms": [
+            "quality-first",
+            "качество кода",
+            "technical debt"
+          ]
         },
         {
           "skill": "rldyour-rules:architecture-boundaries",
-          "description_terms": ["architecture", "FSD", "VSA"]
+          "description_terms": [
+            "architecture",
+            "FSD",
+            "VSA"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-browser-debug",
+      "prompt": "ошибка в браузере консоль сеть hydration debug",
+      "prompt_terms": [
+        "ошибка",
+        "в"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-browser:browser-debug",
+          "description_terms": [
+            "ошибка в браузере",
+            "консоль",
+            "network"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-fsd-frontend-architecture",
+      "prompt": "проверь FSD архитектура pages widgets features shared imports",
+      "prompt_terms": [
+        "проверь",
+        "FSD"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-design:fsd-frontend-architecture",
+          "description_terms": [
+            "FSD",
+            "архитектура",
+            "imports"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-flow-post-task-sync",
+      "prompt": "заверши задачу синхронизируй git fullrepo worktrees",
+      "prompt_terms": [
+        "заверши",
+        "задачу"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-flow:flow-post-task-sync",
+          "description_terms": [
+            "заверши задачу",
+            "синхронизируй",
+            "fullrepo"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-ry-deploy",
+      "prompt": "ry-deploy задеплой на сервер проверь логи и прод",
+      "prompt_terms": [
+        "ry-deploy",
+        "задеплой"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-deploy",
+          "description_terms": [
+            "ry-deploy",
+            "деплой на сервер",
+            "prod"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-ry-newp",
+      "prompt": "ry-newp новый проект ТЗ архитектура проект с нуля",
+      "prompt_terms": [
+        "ry-newp",
+        "новый"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-newp",
+          "description_terms": [
+            "ry-newp",
+            "новый проект",
+            "ТЗ"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-ry-review",
+      "prompt": "ry-review сделай ревью проверь реализацию и найди проблемы",
+      "prompt_terms": [
+        "ry-review",
+        "сделай"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-review",
+          "description_terms": [
+            "ry-review",
+            "сделай ревью",
+            "find problems"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-lsp-routing",
+      "prompt": "используй LSP для type checking symbols diagnostics Python Rust TS",
+      "prompt_terms": [
+        "используй",
+        "LSP"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-lsps:lsp-routing",
+          "description_terms": [
+            "LSP",
+            "type checking",
+            "symbols"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-lsp-setup",
+      "prompt": "установи LSP почини language server обнови лсп",
+      "prompt_terms": [
+        "установи",
+        "LSP"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-lsps:lsp-setup",
+          "description_terms": [
+            "установи LSP",
+            "обнови лсп",
+            "language server"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-serena-lsp-integration",
+      "prompt": "настрой Serena LSP индексация семантический анализ project.yml",
+      "prompt_terms": [
+        "настрой",
+        "Serena"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-lsps:serena-lsp-integration",
+          "description_terms": [
+            "настрой Serena LSP",
+            "индексация",
+            "semantic analysis"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-dependency-policy",
+      "prompt": "обнови зависимости версии совместимость latest package updates",
+      "prompt_terms": [
+        "обнови",
+        "зависимости"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-rules:dependency-compatibility-policy",
+          "description_terms": [
+            "зависимости",
+            "package updates",
+            "latest"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-implementation-discipline",
+      "prompt": "реализация доработка рефакторинг нейминг ошибки API schemas",
+      "prompt_terms": [
+        "реализация",
+        "доработка"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-rules:implementation-discipline",
+          "description_terms": [
+            "реализация",
+            "рефакторинг",
+            "naming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-rules-review",
+      "prompt": "ry-rules-review проверить по правилам hard rules review качество",
+      "prompt_terms": [
+        "ry-rules-review",
+        "проверить"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-rules:ry-rules-review",
+          "description_terms": [
+            "ry-rules-review",
+            "проверить по правилам",
+            "rules review"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-verification-quality-gates",
+      "prompt": "проверки тесты линтер типы качество quality gates",
+      "prompt_terms": [
+        "проверки",
+        "тесты"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-rules:verification-quality-gates",
+          "description_terms": [
+            "проверки",
+            "тесты",
+            "quality gates"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-owasp-implementation",
+      "prompt": "безопасность OWASP auth authz secrets injection XSS SSRF",
+      "prompt_terms": [
+        "безопасность",
+        "OWASP"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-security:owasp-top-10-implementation",
+          "description_terms": [
+            "безопасность",
+            "OWASP",
+            "injection"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-serena-code-workflow",
+      "prompt": "изучи код проект найди символы ссылки рефакторинг Serena",
+      "prompt_terms": [
+        "изучи",
+        "код"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-serena-mcp:serena-code-workflow",
+          "description_terms": [
+            "изучи код",
+            "symbols",
+            "рефакторинг"
+          ]
         }
       ]
     }
-  ]
+  ],
+  "routing_classes": {
+    "rldyour-browser:browser-debug": "implicit",
+    "rldyour-browser:browser-tool-routing": "implicit",
+    "rldyour-browser:browser-validation": "implicit",
+    "rldyour-design:design-system-implementation": "implicit",
+    "rldyour-design:design-validation": "implicit",
+    "rldyour-design:figma-to-code": "implicit",
+    "rldyour-design:fsd-frontend-architecture": "implicit",
+    "rldyour-design:ry-design": "implicit",
+    "rldyour-explore:tech-research": "implicit",
+    "rldyour-explore:web-research": "implicit",
+    "rldyour-flow:flow-architecture-review": "reviewer-only",
+    "rldyour-flow:flow-consistency-review": "reviewer-only",
+    "rldyour-flow:flow-integration-review": "reviewer-only",
+    "rldyour-flow:flow-post-task-sync": "finalization",
+    "rldyour-flow:flow-quality-review": "reviewer-only",
+    "rldyour-flow:flow-security-review": "reviewer-only",
+    "rldyour-flow:flow-verification-review": "reviewer-only",
+    "rldyour-flow:instruction-docs-sync": "finalization",
+    "rldyour-flow:ry-deploy": "explicit-only",
+    "rldyour-flow:ry-init": "explicit-only",
+    "rldyour-flow:ry-newp": "explicit-only",
+    "rldyour-flow:ry-review": "explicit-only",
+    "rldyour-flow:ry-start": "explicit-only",
+    "rldyour-lsps:lsp-health-check": "implicit",
+    "rldyour-lsps:lsp-routing": "implicit",
+    "rldyour-lsps:lsp-setup": "explicit-only",
+    "rldyour-lsps:serena-lsp-integration": "implicit",
+    "rldyour-rules:architecture-boundaries": "implicit",
+    "rldyour-rules:dependency-compatibility-policy": "implicit",
+    "rldyour-rules:implementation-discipline": "implicit",
+    "rldyour-rules:project-instructions-policy": "implicit",
+    "rldyour-rules:quality-first-engineering": "implicit",
+    "rldyour-rules:ry-rules-review": "implicit",
+    "rldyour-rules:verification-quality-gates": "implicit",
+    "rldyour-security:owasp-top-10-implementation": "implicit",
+    "rldyour-security:ry-sec-review": "implicit",
+    "rldyour-serena-mcp:serena-code-workflow": "implicit",
+    "rldyour-serena-mcp:serena-memory-sync": "finalization"
+  }
 }

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
-Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml
+Last updated: 2026-05-17
+Last commit: 6b85464 feat(release): prepare marketplace 0.2.0 hardening
+Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml, pyproject.toml, scripts/validate_marketplace.sh
 Area: CODEX
 -->
 
@@ -37,8 +37,11 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 - Installer preserves unrelated config where supported but owns rldyour-managed sections.
 - Installer removes legacy `codex_hooks` aliases and writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`.
 - Installer derives plugin and MCP runtime data from repository source files instead of static lists.
+- Installer refuses malformed existing `config.toml` instead of silently falling back to an empty config model.
+- Rollback restores backed-up files through temporary files before renaming them into place.
 - Doctor validates the installed result and runs repository marketplace validation as part of the stricter local gate.
 - Doctor's fullrepo current-state gate is strict locally and advisory only in GitHub Actions `main` context.
+- Doctor intentionally fails the local fullrepo current-state gate while normal-branch code/config changes are dirty; rerun after normal commit/push/fullrepo publish for final green state.
 - `scripts/collect_diagnostics.sh` writes local ignored artifacts; do not commit diagnostics bundles.
 
 ## Contracts And Data

@@ -86,8 +86,10 @@ python3 scripts/check_serena_memory_freshness.py
 python3 scripts/validate_agent_tools.py
 python3 scripts/validate_action_pins.py
 python3 scripts/scan_text_security.py
+uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
 python3 scripts/validate_plugin_versions.py
 python3 scripts/validate_skill_routing.py
+python3 scripts/release_sbom.py
 python3 scripts/check_mcp_runtime_versions.py
 scripts/doctor_system_codex.sh
 ```

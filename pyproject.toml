@@ -1,0 +1,28 @@
+[project]
+name = "rldyour-codex"
+version = "0.2.0"
+requires-python = ">=3.13,<3.14"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+  "--strict-markers",
+  "--strict-config",
+  "--cov",
+  "--cov-report=term-missing",
+  "--cov-report=xml:coverage.xml",
+  "--cov-fail-under=70",
+  "--junitxml=pytest.xml",
+]
+
+[tool.coverage.run]
+branch = true
+parallel = false
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+  "if __name__ == .__main__.:",
+  "raise SystemExit\\(main\\(\\)\\)",
+]

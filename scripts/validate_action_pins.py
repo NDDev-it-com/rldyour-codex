@@ -7,7 +7,7 @@ import re
 import sys
 from pathlib import Path
 
-USES_RE = re.compile(r"^(?P<indent>\s*)uses:\s*(?P<value>[^#\s]+)")
+USES_RE = re.compile(r"^(?P<indent>\s*)(?:-\s*)?uses:\s*(?P<value>[^#\s]+)")
 FULL_SHA_RE = re.compile(r"^[0-9a-f]{40}$", re.IGNORECASE)
 
 
