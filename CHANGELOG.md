@@ -10,6 +10,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
+- Updated the no-paid security workflow Pyright pin to `1.1.409` and aligned `actions/attest` SHA comments with tag `v4.1.0`.
+
 ### Security
 
 ## [0.2.0] - 2026-05-17
