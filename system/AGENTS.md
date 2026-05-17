@@ -28,7 +28,7 @@ Use the installed rldyour plugins automatically when the task matches their scop
 - `rldyour-serena-mcp`: repository understanding, code exploration, semantic symbol work, refactors, code review, and Serena memory sync.
 - `rldyour-explore`: technical research, official docs, repository architecture research, production code patterns, and web research.
 - `rldyour-rules`: quality-first engineering, architecture boundaries, dependency compatibility, verification gates, project instructions, and ADR policy.
-- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, instruction docs sync, SessionStart worktree bootstrap/context hooks, advisory commit hooks, and post-task synchronization.
+- `rldyour-flow`: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, orchestrated reviewer tracks, instruction docs sync, serialized SessionStart worktree bootstrap/context dispatcher hooks, advisory commit hooks, and post-task synchronization.
 - `rldyour-lsps`: language-server selection, setup, health checks, and Serena LSP integration.
 - `rldyour-browser`: browser validation, screenshots, responsive checks, user flows, business logic, console/network/runtime debugging, and performance diagnosis.
 - `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized design systems, UI-kit reuse, FSD frontend placement, shadcn/ui, ReactBits, and design validation gates.
@@ -162,6 +162,8 @@ plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.
 python3 scripts/validate_instruction_docs.py --require-agent-docs
 python3 scripts/check_serena_memory_freshness.py
 python3 scripts/validate_agent_tools.py
+python3 scripts/validate_action_pins.py
+python3 scripts/scan_text_security.py
 scripts/sync_fullrepo_branch.sh --status
 scripts/sync_fullrepo_branch.sh --bootstrap-init
 scripts/sync_fullrepo_branch.sh --publish

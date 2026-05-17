@@ -12,7 +12,7 @@ from typing import Any, Iterable
 
 
 MEMORY_TAXONOMY = {
-    "version": 1,
+    "version": 2,
     "filename_pattern": "AREA-01-SLUG.md",
     "index_memory": "CORE-01-INDEX.md",
     "split_rule": "one durable topic per memory; split when a file starts carrying multiple responsibilities",
@@ -26,6 +26,9 @@ MEMORY_TAXONOMY = {
         {"area": "DOCS", "purpose": "AGENTS.md, CLAUDE.md, durable instruction policy"},
         {"area": "RELEASE", "purpose": "versioning, changelog, validation and release gates"},
         {"area": "TECHDEBT", "purpose": "open debt, closed error patterns, anti-regression rules"},
+        {"area": "DESIGN", "purpose": "Figma, design system, frontend and browser design workflow"},
+        {"area": "LSP", "purpose": "language server routing, health checks, setup and Serena LSP integration"},
+        {"area": "RULES", "purpose": "quality rules, architecture, dependency policy and verification gates"},
     ],
 }
 
