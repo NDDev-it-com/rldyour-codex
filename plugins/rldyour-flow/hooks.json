@@ -5,14 +5,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/session_start_worktree_bootstrap.sh\"'",
-            "timeout": 10,
-            "statusMessage": "Bootstrapping rldyour fullrepo context"
-          },
-          {
-            "type": "command",
-            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/session_start_context.sh\"'",
-            "timeout": 5,
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/session_start_dispatcher.sh\"'",
+            "timeout": 15,
             "statusMessage": "Loading rldyour flow session context"
           }
         ]

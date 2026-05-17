@@ -41,10 +41,13 @@ assert_json() {
 step "analyzer schema and target routing"
 assert_json "$ANALYZER" <<'PY'
 import json
+import re
 import subprocess
 import sys
+from pathlib import Path
 
 analyzer = sys.argv[1]
+repo_root = Path(analyzer).resolve().parents[3]
 
 
 def analyze(*paths: str) -> dict:
@@ -61,9 +64,20 @@ def target_paths(payload: dict) -> set[str]:
 
 empty = analyze()
 assert empty["schema_version"] == 2, empty
+assert empty["memory_taxonomy"]["version"] == 2, empty
 assert empty["memory_taxonomy"]["index_memory"] == "CORE-01-INDEX.md", empty
 assert empty["memory_taxonomy"]["filename_pattern"] == "AREA-01-SLUG.md", empty
 assert empty["memory_targets"] == [], empty
+taxonomy_areas = {item["area"] for item in empty["memory_taxonomy"]["areas"]}
+index_text = (repo_root / ".serena/memories/CORE-01-INDEX.md").read_text(encoding="utf-8")
+index_areas = set(re.findall(r"`([A-Z]+)-\d+-[^`]+\.md`", index_text))
+index_areas.discard("AREA")
+missing_areas = index_areas - taxonomy_areas
+assert not missing_areas, {
+    "missing_areas": sorted(missing_areas),
+    "taxonomy_areas": sorted(taxonomy_areas),
+    "index_areas": sorted(index_areas),
+}
 
 cases = [
     (

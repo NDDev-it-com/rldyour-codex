@@ -62,27 +62,46 @@ if [ "$remote_present" != "true" ]; then
   exit 0
 fi
 
-RESTORE_OUT=$(python3 "$FULLREPO_SCRIPT" --restore 2>&1 || true)
+set +e
+RESTORE_OUT=$(python3 "$FULLREPO_SCRIPT" --restore 2>&1)
+RESTORE_STATUS=$?
+set -e
 
-python3 - "$ROOT" "$RESTORE_OUT" <<'PY'
+python3 - "$ROOT" "$RESTORE_STATUS" "$RESTORE_OUT" <<'PY'
 import json
 import sys
 
-root, restore_out = sys.argv[1:3]
+root, raw_status, restore_out = sys.argv[1:4]
+try:
+    restore_status = int(raw_status)
+except ValueError:
+    restore_status = 1
 lines = [line for line in restore_out.splitlines() if line.strip()]
 preview = lines[:12]
 trailing = max(len(lines) - len(preview), 0)
 
-advisory_lines = [
-    "rldyour-flow worktree bootstrap (auto-restored from origin/fullrepo):",
-    f"- Worktree root: {root}.",
-    "- A canonical agent-only marker (.serena/project.yml / AGENTS.md / .claude/CLAUDE.md) was missing,",
-    "  so plugins/rldyour-flow/scripts/fullrepo_sync.py --restore ran to install the .git/info/exclude",
-    "  block for this worktree and check out agent-only paths from origin/fullrepo.",
-    "- This restore is additive: no commits, no pushes, no fullrepo --publish.",
-    "- Set RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1 before starting Codex to disable this hook.",
-    "- Output:",
-]
+if restore_status == 0:
+    advisory_lines = [
+        "rldyour-flow worktree bootstrap (auto-restored from origin/fullrepo):",
+        f"- Worktree root: {root}.",
+        "- A canonical agent-only marker (.serena/project.yml / AGENTS.md / .claude/CLAUDE.md) was missing,",
+        "  so plugins/rldyour-flow/scripts/fullrepo_sync.py --restore ran to install the .git/info/exclude",
+        "  block for this worktree and check out agent-only paths from origin/fullrepo.",
+        "- This restore is additive: no commits, no pushes, no fullrepo --publish.",
+        "- Set RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1 before starting Codex to disable this hook.",
+        "- Output:",
+    ]
+else:
+    advisory_lines = [
+        "rldyour-flow worktree bootstrap (restore failed):",
+        f"- Worktree root: {root}.",
+        "- A canonical agent-only marker (.serena/project.yml / AGENTS.md / .claude/CLAUDE.md) was missing,",
+        "  but plugins/rldyour-flow/scripts/fullrepo_sync.py --restore exited non-zero.",
+        "- Codex continues with the current worktree state; run scripts/sync_fullrepo_branch.sh --bootstrap-init manually if agent context is missing.",
+        "- This hook did not publish, push, commit, or edit non-agent files.",
+        f"- Exit status: {restore_status}.",
+        "- Output:",
+    ]
 for line in preview:
     advisory_lines.append(f"  {line}")
 if trailing:

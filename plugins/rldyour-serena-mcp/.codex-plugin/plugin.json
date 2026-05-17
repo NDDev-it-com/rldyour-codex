@@ -1,6 +1,6 @@
 {
   "name": "rldyour-serena-mcp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Auto-invoked Serena MCP workflow layer for Codex: semantic code inspection, fullrepo-aware project memory sync, plans, research archives, and lifecycle hooks.",
   "author": {
     "name": "rldyourmnd",

@@ -24,6 +24,9 @@ step "Release metadata"
 python3 scripts/validate_plugin_versions.py
 python3 scripts/release_manifest.py >/dev/null
 
+step "GitHub Actions pinning"
+python3 scripts/validate_action_pins.py
+
 step "Skill frontmatter"
 skill_count=0
 while IFS= read -r skill_md; do
@@ -294,6 +297,8 @@ paths = [
     Path("scripts/check_mcp_runtime_versions.py"),
     Path("scripts/check_serena_memory_freshness.py"),
     Path("scripts/validate_agent_tools.py"),
+    Path("scripts/validate_action_pins.py"),
+    Path("scripts/scan_text_security.py"),
 ]
 
 for path in paths:
@@ -476,6 +481,10 @@ checks = (
 )
 errors: list[str] = []
 
+if servers.get("dart-flutter", {}).get("command") == "dart":
+    if pins.get("DART_FLUTTER_MCP_RUNTIME") != "external-local-dart-sdk":
+        errors.append("dart-flutter: local Dart SDK runtime exception must be declared in DART_FLUTTER_MCP_RUNTIME")
+
 for key, server_name, package, separator in checks:
     version = pins.get(key)
     if not version:
@@ -546,17 +555,8 @@ scripts/smoke_local_git_guard.sh
 step "Flow branch cleanup smoke"
 scripts/smoke_flow_branch_cleanup.sh
 
-step "Secret pattern scan"
-secret_scan_paths=(plugins .agents README.md scripts system)
-for optional_path in .serena/memories AGENTS.md; do
-  if [ -e "$optional_path" ]; then
-    secret_scan_paths+=("$optional_path")
-  fi
-done
-if rg -n 'ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer\s+[A-Za-z0-9._-]{20,}' "${secret_scan_paths[@]}"; then
-  printf 'Potential secret pattern detected\n' >&2
-  exit 1
-fi
+step "Text security scan"
+python3 scripts/scan_text_security.py
 
 step "Whitespace"
 git diff --check

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 BACKUP_ROOT=""
@@ -83,6 +85,8 @@ restore_file() {
   local file=$1
   local source="$SOURCE_DIR/$file"
   local target="$CODEX_HOME_DIR/$file"
+  local target_dir
+  local tmp_target
   if [ ! -f "$source" ]; then
     printf 'skip missing backup file: %s\n' "$source"
     return 0
@@ -90,8 +94,11 @@ restore_file() {
   if [ "$DRY_RUN" = "1" ]; then
     printf 'would restore %s -> %s\n' "$source" "$target"
   else
-    mkdir -p "$(dirname "$target")"
-    cp "$source" "$target"
+    target_dir=$(dirname "$target")
+    mkdir -p "$target_dir"
+    tmp_target=$(mktemp "$target_dir/.restore.$(basename "$target").XXXXXX")
+    install -m 0644 "$source" "$tmp_target"
+    mv -f "$tmp_target" "$target"
     printf 'restored %s\n' "$target"
   fi
 }
@@ -123,8 +130,11 @@ if [ -d "$SOURCE_DIR/agents" ]; then
     if [ "$DRY_RUN" = "1" ]; then
       printf 'would restore %s -> %s\n' "$source" "$target"
     else
-      mkdir -p "$(dirname "$target")"
-      cp "$source" "$target"
+      target_dir=$(dirname "$target")
+      mkdir -p "$target_dir"
+      tmp_target=$(mktemp "$target_dir/.restore.$(basename "$target").XXXXXX")
+      install -m 0644 "$source" "$tmp_target"
+      mv -f "$tmp_target" "$target"
       printf 'restored %s\n' "$target"
     fi
   done

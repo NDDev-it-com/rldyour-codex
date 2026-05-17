@@ -1,6 +1,6 @@
 {
   "name": "rldyour-flow",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Autonomous Russian-first SDLC workflow for Codex: deep ry-init context packs, instruction docs sync, fullrepo sync, reviewer skills, deploy, and non-blocking hooks.",
   "author": {
     "name": "rldyourmnd",

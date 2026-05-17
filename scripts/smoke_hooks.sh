@@ -220,6 +220,30 @@ run_configured_stop_hook() {
   printf 'ok      %s\n' "$label"
 }
 
+check_hook_strict_prologue() {
+  local label=$1
+  local plugin_dir=$2
+
+  python3 - "$label" "$plugin_dir" <<'PY'
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+label, plugin_dir = sys.argv[1:3]
+errors: list[str] = []
+for path in sorted((Path(plugin_dir) / "hooks").glob("*.sh")):
+    lines = path.read_text(encoding="utf-8").splitlines()
+    prefix = "\n".join(lines[:24])
+    for expected in ("set -euo pipefail", "IFS=$'\\n\\t'", "unset CDPATH"):
+        if expected not in prefix:
+            errors.append(f"{path}: missing strict prologue line {expected!r}")
+if errors:
+    raise SystemExit("\n".join(errors))
+print(f"ok      {label} hook strict prologue")
+PY
+}
+
 run_hook_in_dir() {
   local label=$1
   local cwd=$2
@@ -334,7 +358,7 @@ smoke_lifecycle() {
   trap cleanup_lifecycle RETURN
 
   run_hook_in_dir "$name lifecycle flow SessionStart" \
-    "$tmp" "$flow_dir/hooks/session_start_context.sh" \
+    "$tmp" "$flow_dir/hooks/session_start_dispatcher.sh" \
     '{"source":"startup"}' \
     "rldyour-flow session context"
 
@@ -441,7 +465,7 @@ smoke_hook_wiring() {
     "$serena_hooks_json" Stop "hooks/stop_memory_sync.sh" "$cwd"
 
   run_configured_hook "$name wiring flow SessionStart" \
-    "$flow_hooks_json" SessionStart - "hooks/session_start_context.sh" "$cwd" \
+    "$flow_hooks_json" SessionStart - "hooks/session_start_dispatcher.sh" "$cwd" \
     '{"source":"smoke"}' \
     "rldyour-flow session context"
 
@@ -474,6 +498,9 @@ smoke_root() {
     flow_dir="$base/rldyour-flow"
   fi
 
+  check_hook_strict_prologue "$name serena" "$serena_dir"
+  check_hook_strict_prologue "$name flow" "$flow_dir"
+
   wiring_cwd=$(make_lifecycle_repo)
   cleanup_wiring_cwd="$wiring_cwd"
   smoke_hook_wiring "$name" "$serena_dir/hooks.json" "$flow_dir/hooks.json" "$wiring_cwd"
@@ -498,7 +525,7 @@ smoke_root() {
     "$serena_dir/hooks/stop_memory_sync.sh"
 
   run_hook "$name flow SessionStart" \
-    "$flow_dir/hooks/session_start_context.sh" \
+    "$flow_dir/hooks/session_start_dispatcher.sh" \
     '{"source":"smoke"}' \
     "rldyour-flow session context"
 

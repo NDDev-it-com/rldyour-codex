@@ -8,12 +8,22 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Added
 
-- None.
+- `docs/adr/0001-codex-marketplace-operating-model.md` records the core plugin, hook, fullrepo, CI, MCP, and ADR operating decisions.
+- GitHub Actions full-SHA pin validation through `scripts/validate_action_pins.py`.
+- Repository text security scan for secret-like patterns and hidden Unicode controls through `scripts/scan_text_security.py`.
 
 ### Changed
 
 - Flow Stop hook state now ignores bootstrap-only untracked `.serena` files created by tool startup, preventing empty or unborn repositories from being forced into `flow-post-task-sync` loops.
 - `flow-post-task-sync` guidance now resolves rldyour-flow helper scripts from the installed plugin cache when a product repository does not vendor this plugin.
+- Flow `SessionStart` hook wiring now uses a single dispatcher so fullrepo bootstrap and session context run in deterministic order under Codex hook concurrency semantics.
+- Serena memory analyzer taxonomy now includes `DESIGN`, `LSP`, and `RULES`, with smoke coverage against `CORE-01-INDEX.md`.
+- Installer config handling now fails closed on malformed existing `config.toml` instead of silently regenerating from an empty config model.
+- Rollback restore now writes backed-up files through temporary files before renaming them into place.
+- GitHub Actions workflows now pin external actions to full commit SHAs.
+- `dart-flutter` MCP runtime is documented and validated as an explicit external local Dart SDK exception.
+- `rldyour-flow` plugin version updated to `0.2.6` for deterministic SessionStart dispatch and hook prologue hardening.
+- `rldyour-serena-mcp` plugin version updated to `0.2.3` for expanded memory taxonomy coverage.
 
 ## [0.1.1] - 2026-05-16
 
