@@ -407,6 +407,135 @@ for plugin_dir in "$ROOT"/plugins/rldyour-*; do
   fi
 done
 
+section "Hook trust"
+if [ -n "$CODEX_CMD" ]; then
+  export RLDYOUR_CODEX_CMD="$CODEX_CMD"
+  export RLDYOUR_CODEX_HOME="$CODEX_HOME_DIR"
+  export RLDYOUR_REPO_ROOT="$ROOT"
+  python3 <<'PY' || FAILURES=$((FAILURES + 1))
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+from pathlib import Path
+
+codex_cmd = os.environ["RLDYOUR_CODEX_CMD"]
+codex_home = os.environ["RLDYOUR_CODEX_HOME"]
+repo_root = Path(os.environ["RLDYOUR_REPO_ROOT"])
+
+
+def expected_hook_count() -> int:
+    total = 0
+    for hooks_json in sorted(repo_root.glob("plugins/rldyour-*/hooks.json")):
+        data = json.loads(hooks_json.read_text(encoding="utf-8"))
+        for groups in data.get("hooks", {}).values():
+            if not isinstance(groups, list):
+                continue
+            for group in groups:
+                if isinstance(group, dict):
+                    total += sum(1 for hook in group.get("hooks", []) if isinstance(hook, dict) and hook.get("type") == "command")
+    return total
+
+
+proc = subprocess.Popen(
+    [codex_cmd, "app-server", "--listen", "stdio://"],
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,
+    bufsize=1,
+    env={**os.environ, "CODEX_HOME": codex_home},
+)
+assert proc.stdin is not None
+assert proc.stdout is not None
+
+
+def send(payload: dict[str, object]) -> None:
+    proc.stdin.write(json.dumps(payload) + "\n")
+    proc.stdin.flush()
+
+
+def recv(target_id: int) -> dict[str, object]:
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            stderr = proc.stderr.read() if proc.stderr is not None else ""
+            raise RuntimeError(f"codex app-server exited before response {target_id}: {stderr}")
+        payload = json.loads(line)
+        if payload.get("id") == target_id:
+            return payload
+
+
+def checked_response(target_id: int) -> dict[str, object]:
+    payload = recv(target_id)
+    if "error" in payload:
+        raise RuntimeError(json.dumps(payload["error"], ensure_ascii=False))
+    return payload
+
+
+failed = False
+
+try:
+    send(
+        {
+            "id": 1,
+            "method": "initialize",
+            "params": {
+                "clientInfo": {
+                    "name": "rldyour_codex_doctor",
+                    "title": "rldyour Codex doctor",
+                    "version": "0.0.0",
+                },
+                "capabilities": {"experimentalApi": True},
+            },
+        }
+    )
+    checked_response(1)
+    send({"id": 2, "method": "hooks/list", "params": {"cwds": [str(repo_root)]}})
+    response = checked_response(2)
+    data = response.get("result", {}).get("data", [])  # type: ignore[union-attr]
+    hooks = data[0].get("hooks", []) if data else []
+    rldyour_hooks = [
+        hook
+        for hook in hooks
+        if isinstance(hook, dict)
+        and isinstance(hook.get("pluginId"), str)
+        and hook["pluginId"].startswith("rldyour-")
+        and hook["pluginId"].endswith("@rldyour-codex")
+    ]
+    expected = expected_hook_count()
+    if len(rldyour_hooks) == expected:
+        print(f"ok      rldyour plugin hook count {expected}")
+    else:
+        print(f"fail    rldyour plugin hook count {len(rldyour_hooks)} expected {expected}", file=os.sys.stderr)
+        failed = True
+    for hook in rldyour_hooks:
+        key = hook.get("key", "unknown")
+        trust_status = hook.get("trustStatus")
+        enabled = hook.get("enabled")
+        current_hash = hook.get("currentHash")
+        if trust_status == "trusted" and enabled is True and isinstance(current_hash, str):
+            print(f"ok      hook trusted {key}")
+        else:
+            print(
+                f"fail    hook trust {key}: status={trust_status!r} enabled={enabled!r} hash={current_hash!r}",
+                file=os.sys.stderr,
+            )
+            failed = True
+finally:
+    proc.terminate()
+    try:
+        proc.wait(timeout=3)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+
+raise SystemExit(1 if failed else 0)
+PY
+else
+  fail "codex command missing for hook trust check"
+fi
+
 section "Summary"
 printf 'warnings: %s\n' "$WARNINGS"
 printf 'failures: %s\n' "$FAILURES"

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
-Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh
+Last updated: 2026-05-17
+Last commit: e2f5b80 fix(codex): stabilize plugin hook execution
+Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
 Area: HOOKS
 -->
 
@@ -23,14 +23,15 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - `plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh`: pre-commit HEAD marker.
 - `plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh`: post-commit memory sync marker.
 - `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh`: stale-memory Stop gate.
-- `scripts/smoke_hooks.sh`: parsed hook wiring and command-wrapper smoke.
+- `scripts/smoke_hooks.sh`: parsed hook wiring and cwd-independent command smoke.
 - `scripts/smoke_serena_memory_taxonomy.sh`: Stop/mark hook memory contract smoke.
 
 ## Entry Points
 
 - `scripts/smoke_hooks.sh`: validates hook JSON wiring and temporary lifecycle behavior.
 - `scripts/smoke_serena_memory_taxonomy.sh`: validates memory-specific hook behavior.
-- `scripts/install_system_codex.sh --apply`: installs plugin cache and enables Codex hooks via `[features].hooks = true` plus bundled plugin hooks via `[features].plugin_hooks = true`.
+- `scripts/install_system_codex.sh --apply`: installs plugin cache, enables Codex hooks via `[features].hooks = true` plus bundled plugin hooks via `[features].plugin_hooks = true`, and refreshes trusted hashes for installed rldyour plugin hooks.
+- `scripts/doctor_system_codex.sh`: verifies installed hook cache parity and live rldyour plugin hook trust/enabled state through Codex app-server.
 - `scripts/smoke_codex_hooks_migration.sh`: proves deprecated `codex_hooks` aliases are removed and managed hook feature flags are forced to the supported values.
 
 ## Current Behavior
@@ -40,7 +41,9 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - `PreToolUse` and `PostToolUse` match tool names such as `Bash`; `SessionStart` uses startup/resume/clear-style matching; `UserPromptSubmit` and `Stop` ignore matcher.
 - Multiple hooks can be registered for the same event/matcher. `plugins/rldyour-flow/hooks.json` uses two `SessionStart` command hooks: bootstrap first, context second.
 - `scripts/smoke_hooks.sh` selects the hook entry by expected script path instead of assuming exactly one hook per event/matcher.
-- Hook command wrappers resolve repo-local scripts first, then installed cache paths under `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local/...`.
+- Hook command entries resolve scripts through `PLUGIN_ROOT`, the official plugin-bundled hook environment variable, and do not depend on the current project cwd or hardcoded `${CODEX_HOME}` cache paths.
+- `scripts/smoke_hooks.sh` rejects hook commands that use repo-relative `plugins/rldyour-*`, `${CODEX_HOME}`, `.codex/plugins/cache`, or `for p in` cache-search wrappers, then runs configured commands from a temporary git repo with `PLUGIN_ROOT`/`PLUGIN_DATA` set.
+- `scripts/install_system_codex.sh --apply` uses `codex app-server hooks/list` current hashes and `config/batchWrite` to keep `hooks.state` trusted after plugin cache updates. `scripts/doctor_system_codex.sh` fails if installed rldyour plugin hooks are not live, enabled, and trusted.
 - `session_start_worktree_bootstrap.sh` runs `fullrepo_sync.py --restore` only when canonical agent-only markers are missing and `origin/fullrepo` exists. It never publishes, pushes, commits, or edits non-agent files.
 - `session_start_context.sh` remains read-only and reports branch, HEAD, dirty state, worktrees, Serena freshness, fullrepo, and flow sync state.
 - Serena `mark_sync_required.sh` emits Codex `hookSpecificOutput.additionalContext` after commit-like HEAD changes.
@@ -48,7 +51,8 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 
 ## Contracts And Data
 
-- Codex hook JSON command entries use `type = command` semantics in JSON form and shell wrappers.
+- Codex hook JSON command entries use `type = command` semantics and invoke plugin-local scripts with `/usr/bin/env bash -lc 'exec bash "${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/<script>.sh"'`.
+- `PLUGIN_ROOT`, `PLUGIN_DATA`, `CLAUDE_PLUGIN_ROOT`, and `CLAUDE_PLUGIN_DATA` are populated in hook smoke tests to mirror the plugin-bundled runtime environment.
 - Hook scripts use strict shell mode: `set -euo pipefail`, `IFS=$'\n\t'`, and `unset CDPATH`.
 - Runtime markers live under `.serena/` and are ignored: `.auto_sync_head`, `.serena_sync_state.json`, `.sync_marker`, `.flow_sync_marker`, `.flow_post_task_state.json`.
 - Stop hook loop guards must allow a repeated stop after the same state already requested continuation.
@@ -66,10 +70,12 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - When adding another hook entry under an existing matcher, update `scripts/smoke_hooks.sh` expectations so the smoke selects by script path.
 - When changing hook payload/output shape, verify against official Codex hook docs and run smoke tests.
 - When changing hook scripts, run `shellcheck` through `scripts/validate_marketplace.sh`.
+- When changing hook commands or installed hook trust behavior, run `scripts/install_system_codex.sh --apply`, `scripts/smoke_hooks.sh`, a live `codex app-server hooks/list` trust check, and `scripts/doctor_system_codex.sh` after the normal branch is clean.
 
 ## Verification
 
-- `scripts/smoke_hooks.sh`: parsed wiring, wrapper commands, and direct hook lifecycle checks.
+- `scripts/smoke_hooks.sh`: parsed wiring, `PLUGIN_ROOT` command execution from arbitrary cwd, and direct hook lifecycle checks.
 - `scripts/smoke_serena_memory_taxonomy.sh`: memory hook stale/advisory/loop behavior.
 - `scripts/smoke_codex_hooks_migration.sh`: installer hook feature migration.
 - `scripts/validate_marketplace.sh`: shellcheck plus hook smoke coverage.
+- `codex app-server hooks/list`: confirms installed hook `trustStatus = trusted` and `enabled = true`.

@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/user_prompt_submit.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/user_prompt_submit.sh\"'",
             "timeout": 5
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/prepare_auto_sync.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/prepare_auto_sync.sh\"'",
             "timeout": 5
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/mark_sync_required.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/mark_sync_required.sh\"'",
             "timeout": 5
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'for p in \"plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh\" \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/hooks/stop_memory_sync.sh\"; do [ -f \"$p\" ] && exec bash \"$p\"; done; exit 0'",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/stop_memory_sync.sh\"'",
             "timeout": 10
           }
         ]

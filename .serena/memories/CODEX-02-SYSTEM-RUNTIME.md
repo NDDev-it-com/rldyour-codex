@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 2c326a0 fix(codex): enable bundled plugin hooks
+Last updated: 2026-05-17
+Last commit: e2f5b80 fix(codex): stabilize plugin hook execution
 Scope: ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, plugins/rldyour-mcps/.mcp.json
 Area: CODEX
 -->
@@ -15,7 +15,7 @@ This memory records the installed system Codex runtime state owned by this repos
 
 - `system/AGENTS.md`: canonical global Codex instruction template.
 - `system/agents/*.toml`: canonical managed subagent configs.
-- `scripts/install_system_codex.sh`: writes global config, AGENTS, agents, marketplace registration, MCP servers, approved tool overrides, and plugin cache.
+- `scripts/install_system_codex.sh`: writes global config, AGENTS, agents, marketplace registration, MCP servers, approved tool overrides, plugin cache, and trusted hook hashes.
 - `scripts/doctor_system_codex.sh`: verifies installed runtime state.
 - `plugins/rldyour-mcps/.mcp.json`: MCP server definitions.
 - `.agents/plugins/marketplace.json`: enabled rldyour plugin set.
@@ -40,19 +40,23 @@ This memory records the installed system Codex runtime state owned by this repos
 - Managed subagents are installed from `system/agents/*.toml`; all rldyour-managed roles use `gpt-5.5` with `medium` reasoning.
 - Active managed roles are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Installer/doctor derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP registration from `plugins/rldyour-mcps/.mcp.json`.
+- Installer refreshes installed rldyour plugin hook trust after cache sync by reading `currentHash` from `codex app-server hooks/list` and upserting `hooks.state` through `config/batchWrite`.
+- Doctor includes a live hook trust gate: all installed rldyour plugin hooks returned by `codex app-server hooks/list` must be present, enabled, and `trustStatus = trusted`.
 - After plugin/hook/skill/agent changes, plugin cache must be synced through `scripts/install_system_codex.sh --apply`, and Codex should be restarted for runtime reload.
 
 ## Contracts And Data
 
 - `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` is generated from `system/AGENTS.md`.
 - `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` must match `system/agents/*.toml` exactly.
-- `scripts/doctor_system_codex.sh` checks config schema hint, `hooks`/`plugin_hooks`/`multi_agent` feature flags, model defaults, managed agents, marketplace-derived plugin enablement, MCP registration, plugin cache parity, and fullrepo current-state.
+- `scripts/doctor_system_codex.sh` checks config schema hint, `hooks`/`plugin_hooks`/`multi_agent` feature flags, model defaults, managed agents, marketplace-derived plugin enablement, MCP registration, plugin cache parity, installed rldyour plugin hook trust, and fullrepo current-state.
+- `${CODEX_HOME:-$HOME/.codex}/config.toml` stores `hooks.state.<hook key>.trusted_hash` values that must match the installed hook definitions after plugin cache changes.
 - Plugin cache parity matters for runtime because installed hooks and skills execute from `${CODEX_HOME}` in normal Codex sessions.
 
 ## Invariants
 
 - Do not reintroduce deprecated hook aliases such as `codex_hooks`.
 - Do not remove `[features].plugin_hooks = true`; without it, enabled rldyour plugin hook declarations can remain installed but not loaded as bundled plugin hooks.
+- Do not leave installed rldyour plugin hooks in `modified` or `untrusted` trust state after cache sync; run installer apply and doctor to refresh and verify `hooks.state`.
 - Do not hardcode parallel plugin/MCP lists in installer or doctor scripts.
 - Do not change YOLO permission defaults without explicit owner request.
 - Restart Codex after changing global `AGENTS.md`, `config.toml`, managed agents, installed plugins, hooks, skills, or MCP runtime definitions.
@@ -68,4 +72,5 @@ This memory records the installed system Codex runtime state owned by this repos
 - `scripts/install_system_codex.sh --dry-run`: preview install.
 - `scripts/install_system_codex.sh --apply`: sync active system runtime and plugin cache.
 - `scripts/doctor_system_codex.sh`: installed-state verification.
+- `codex app-server hooks/list`: live source of current hook keys, hashes, enabled flags, and trust status.
 - `diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local"`: targeted plugin cache parity check.
