@@ -277,9 +277,11 @@ fi
 section "Subagents"
 export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
 export RLDYOUR_INSTALLED_AGENT_DIR="$INSTALLED_AGENT_DIR"
+export RLDYOUR_MCP_CONFIG="$ROOT/plugins/rldyour-mcps/.mcp.json"
 python3 <<'PY' || FAILURES=$((FAILURES + 1))
 from __future__ import annotations
 
+import json
 import os
 import sys
 import tomllib
@@ -287,6 +289,17 @@ from pathlib import Path
 
 system_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
 installed_dir = Path(os.environ["RLDYOUR_INSTALLED_AGENT_DIR"])
+mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
+valid_mcp_servers = set(json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"])
+temporary_allowlist = {
+    "context7",
+    "deepwiki",
+    "grep",
+    "openaiDeveloperDocs",
+    "sequential-thinking",
+    "serena",
+}
+temporary_builtins = {"codex_apps"}
 errors = False
 
 for source in sorted(system_dir.glob("*.toml")):
@@ -315,12 +328,33 @@ for source in sorted(system_dir.glob("*.toml")):
         "reasoning medium": data.get("model_reasoning_effort") == "medium",
         "description": isinstance(data.get("description"), str) and bool(data.get("description", "").strip()),
         "developer instructions": isinstance(data.get("developer_instructions"), str) and bool(data.get("developer_instructions", "").strip()),
+        "temporary MCP policy": isinstance(data.get("mcp_servers"), dict),
     }
     for check, ok in checks.items():
         if ok:
             print(f"ok      subagent {label} {check}")
         else:
             print(f"fail    subagent {label} {check}", file=sys.stderr)
+            errors = True
+    mcp_servers = data.get("mcp_servers") or {}
+    known_servers = valid_mcp_servers | temporary_builtins
+    for server in sorted(mcp_servers):
+        if server not in known_servers:
+            print(f"fail    subagent {label} unknown MCP policy {server}", file=sys.stderr)
+            errors = True
+    for server in sorted(valid_mcp_servers - temporary_allowlist):
+        if not isinstance(mcp_servers.get(server), dict) or mcp_servers[server].get("enabled") is not False:
+            print(f"fail    subagent {label} disables temporary non-core MCP {server}", file=sys.stderr)
+            errors = True
+        else:
+            print(f"ok      subagent {label} disables temporary non-core MCP {server}")
+    for server in sorted(temporary_allowlist & valid_mcp_servers):
+        if isinstance(mcp_servers.get(server), dict) and mcp_servers[server].get("enabled") is False:
+            print(f"fail    subagent {label} does not disable allowlisted MCP {server}", file=sys.stderr)
+            errors = True
+    for server in sorted(temporary_builtins):
+        if isinstance(mcp_servers.get(server), dict) and mcp_servers[server].get("enabled") is False:
+            print(f"fail    subagent {label} does not disable built-in MCP surface {server}", file=sys.stderr)
             errors = True
 
 raise SystemExit(1 if errors else 0)
