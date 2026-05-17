@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: eb39996 fix(ci): ignore untracked fullrepo memories in validation
+Last commit: 08e3bc6 fix(release): bootstrap fullrepo context for release validation
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
@@ -43,7 +43,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 - The Python test harness has 40 unit tests and enforces an initial 70% coverage threshold through `pyproject.toml`.
 - Fullrepo unit-test fixtures configure local git identity inside temporary repositories and clones, so GitHub-hosted runners do not depend on global git author settings.
 - CI noise classification treats `uv` package download progress lines as known setup noise while still failing strict jobs on unrelated stderr.
-- GitHub CI has split unit-test reports, marketplace/system smoke, dependency pin checks, no-paid static security, and manual release workflows with deterministic bundle/SBOM/attestation output.
+- GitHub CI has split unit-test reports, marketplace/system smoke, dependency pin checks, no-paid static security, and manual release workflows with deterministic bundle/SBOM/attestation output; release validation bootstraps `fullrepo` before requiring agent instruction docs.
 - System install manages Codex hook runtime with `[features].hooks = true` and `[features].plugin_hooks = true`, so enabled rldyour plugin hook declarations are actually loaded.
 - Normal `main` excludes root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, and similar agent-only files through `.git/info/exclude`; `fullrepo` carries the portable agent context snapshot.
 - Normal-branch GitHub CI may run without tracked fullrepo-managed `.serena/memories`; memory taxonomy smoke still tests analyzer/fixture contracts, and the final live freshness state check is skipped until memories are present as tracked fullrepo context.

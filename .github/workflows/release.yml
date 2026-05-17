@@ -36,6 +36,9 @@ jobs:
           install-codex: "false"
           install-dart: "false"
 
+      - name: Bootstrap fullrepo agent context
+        run: scripts/sync_fullrepo_branch.sh --bootstrap-init
+
       - name: Validate release version
         shell: bash
         env:
