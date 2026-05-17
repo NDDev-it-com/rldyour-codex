@@ -315,6 +315,13 @@ python3 scripts/validate_action_pins.py
 step "Runtime prerequisites policy"
 python3 scripts/validate_runtime_prereqs.py --json >/dev/null
 
+step "Codex execpolicy rules"
+if command -v codex >/dev/null 2>&1; then
+  scripts/validate_execpolicy_rules.sh
+else
+  printf 'skip    codex command not found; execpolicy rule validation is covered by strict runtime CI\n'
+fi
+
 step "Python unit tests"
 "$UV_BIN" run --with pytest --with pytest-cov --with pyyaml python -m pytest
 

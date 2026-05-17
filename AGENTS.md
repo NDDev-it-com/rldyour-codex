@@ -23,6 +23,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `.github/workflows/dependency-check.yml`: manual MCP runtime pin freshness check.
 - `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
 - `system/agents/*.toml`: managed Codex custom subagent role configs installed to `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`.
+- `system/rules/*.rules`: managed Codex execpolicy rules installed to `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`.
 - `${CODEX_HOME:-$HOME/.codex}/config.toml`: active system Codex registration, `[features].hooks`, `[features].plugin_hooks`, `[features].multi_agent`, `[agents]` registration, YOLO permission defaults, owner-selected model defaults, approved MCP tool overrides, and MCP runtime config.
 - `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`: active managed subagent role configs; rldyour-managed roles use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
 - `.claude/CLAUDE.md`: Claude Code-native project memory for this repository, published through `fullrepo`.
@@ -59,6 +60,7 @@ scripts/validate_marketplace.sh
 scripts/validate_fast.sh
 scripts/validate_runtime.sh --strict-runtime
 scripts/validate_release.sh
+scripts/validate_execpolicy_rules.sh
 ```
 
 Additional targeted checks:
@@ -122,7 +124,8 @@ diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-cod
 
 - `system/AGENTS.md` is the canonical template for the owner's global `~/.codex/AGENTS.md`.
 - `scripts/install_system_codex.sh --dry-run` shows what would be installed.
-- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, installs managed `agents/*.toml`, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`, removes deprecated hook aliases such as `codex_hooks`, derives rldyour plugin enablement from `.agents/plugins/marketplace.json`, derives MCP server registration from `plugins/rldyour-mcps/.mcp.json`, applies owner-requested YOLO/model defaults, writes approved MCP tool overrides, registers the marketplace, syncs plugin cache, and refreshes trusted hashes for installed rldyour plugin hooks through `codex app-server hooks/list`. Add `--strict-runtime` when missing launchers for enabled MCP servers must fail instead of warn.
+- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, installs managed `agents/*.toml`, installs managed Codex execpolicy rules from `system/rules/*.rules`, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`, removes deprecated hook aliases such as `codex_hooks`, derives rldyour plugin enablement from `.agents/plugins/marketplace.json`, derives MCP server registration from `plugins/rldyour-mcps/.mcp.json`, applies owner-requested YOLO/model defaults, writes approved MCP tool overrides, registers the marketplace, syncs plugin cache, and refreshes trusted hashes for installed rldyour plugin hooks through `codex app-server hooks/list`. Add `--strict-runtime` when missing launchers for enabled MCP servers must fail instead of warn.
+- `scripts/validate_execpolicy_rules.sh` validates managed rules with `codex execpolicy check`.
 - `scripts/doctor_system_codex.sh` verifies the installed system Codex state, including marketplace-derived rldyour plugin enablement, MCP registration from `.mcp.json`, the config schema hint, active `hooks`, `plugin_hooks`, and `multi_agent` features, managed subagent config parity, managed subagent `gpt-5.5`/`medium` settings, installed rldyour plugin hook trust/enabled state, and absence of deprecated hook aliases. Use `--quick --strict-runtime` for a bounded strict runtime smoke and `--strict-runtime` for full strict prerequisite enforcement.
-- `scripts/rollback_system_codex.sh --list` lists installer backups; `--restore <backup>` restores backed up `AGENTS.md`, `config.toml`, and managed `agents/*.toml`.
+- `scripts/rollback_system_codex.sh --list` lists installer backups; `--restore <backup>` restores backed up `AGENTS.md`, `config.toml`, managed `agents/*.toml`, and managed `rules/*.rules`.
 - `scripts/collect_diagnostics.sh` writes a local ignored diagnostics bundle for failure triage.

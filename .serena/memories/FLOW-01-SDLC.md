@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
+Last commit: a9a66a2 fix(codex): harden runtime determinism and execpolicy rules
 Scope: plugins/rldyour-flow, plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/*.py, plugins/rldyour-flow/scripts/*.sh, scripts/sync_fullrepo_branch.sh, scripts/worktree_add.sh, scripts/install_local_git_hooks.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/smoke_fullrepo_bootstrap_init.sh, scripts/smoke_clean_bootstrap.sh
 Area: FLOW
 -->
@@ -13,7 +13,7 @@ Area: FLOW
 
 ## Source Of Truth
 
-- `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin version `0.3.0`, capabilities, hook/skill links.
+- `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin version `0.3.1`, capabilities, hook/skill links.
 - `plugins/rldyour-flow/skills/ry-start/SKILL.md`: full implementation lifecycle.
 - `plugins/rldyour-flow/skills/ry-init/SKILL.md`: scoped read-only initialization.
 - `plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md`: final sync workflow.
@@ -41,12 +41,13 @@ Area: FLOW
 
 - Normal branches exclude agent-only files; `fullrepo` publishes current `HEAD` plus ignored agent-only files using safe `--force-with-lease`.
 - `--bootstrap-init` installs excludes, restores existing `fullrepo` context when available, publishes local agent-only files when no `fullrepo` exists, and removes tracked agent-only files from the current branch index when migration is needed.
-- Flow `SessionStart` wiring uses `session_start_dispatcher.sh` as a single hook entry so worktree bootstrap runs before session context under Codex hook concurrency semantics. The dispatcher runs children with bounded timeouts (`session_start_worktree_bootstrap.sh` 6s, `session_start_context.sh` 8s), uses temp-file input, caps child output, and emits degraded context instead of relying only on the outer Codex timeout.
+- Flow `SessionStart` wiring uses `session_start_dispatcher.sh` as a single hook entry so worktree bootstrap runs before session context under Codex hook concurrency semantics. The dispatcher runs children with bounded timeouts (`session_start_worktree_bootstrap.sh` 6s, `session_start_context.sh` 10s), uses temp-file input, starts children in their own process group, kills descendants on timeout, caps child output, and emits degraded context instead of relying only on the outer Codex timeout.
 - `session_start_worktree_bootstrap.sh` restores agent-only context from `origin/fullrepo` when `.serena/project.yml`, `AGENTS.md`, or `.claude/CLAUDE.md` is missing. It is additive, never publishes, and reports restore failure honestly instead of success-like wording.
 - Flow `Stop` wiring uses `stop_lifecycle_dispatcher.sh` as the only registered Stop command. The dispatcher invokes `rldyour-serena-mcp/hooks/stop_memory_sync.sh` first and invokes `stop_post_task_sync.sh` only when Serena exits cleanly, so cross-plugin Stop ordering no longer depends on Codex concurrent hook execution.
 - `scripts/worktree_add.sh` refuses to create a helper worktree if `origin/fullrepo` does not exist; it does not auto-publish from a helper script.
-- `flow_post_task_state.py` keeps flow sync pending when instruction docs are stale/missing, fullrepo is stale, git sync is pending, or merged workflow branches/worktrees need cleanup.
+- `flow_post_task_state.py` keeps flow sync pending when instruction docs are stale/missing, fullrepo is stale, git sync is pending, or merged workflow branches/worktrees need cleanup. Installed helper lookup honors `CODEX_HOME` before the default `~/.codex` cache so temp installs and CI smoke runs inspect the intended runtime.
 - `flow_post_task_state.py` ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and flow runtime markers; those files alone must not force a Stop-hook `flow-post-task-sync` continuation.
+- `fullrepo_sync.py --publish` supplies fallback author/committer identity to `git commit-tree`, and `scripts/smoke_clean_bootstrap.sh` configures a temporary git identity in clean clones. The clean bootstrap smoke only requires `codex mcp list` when `--require-codex` is passed.
 - `ry-init` remains read-only for Serena memories by default and may report memory candidates rather than writing `.serena`.
 - `flow-post-task-sync` runs after Serena memory sync and should finish by normal branch commit/push, fullrepo publish, and safe cleanup when applicable. Its skill guidance resolves helper scripts from repo-local `plugins/rldyour-flow/scripts/*` when present or from the installed plugin cache in product repositories.
 

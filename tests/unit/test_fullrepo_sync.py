@@ -105,6 +105,30 @@ def test_publish_status_restore_and_migrate_main(tmp_path: Path, monkeypatch) ->
     assert "AGENTS.md" not in mod.tracked_agent_paths_in_index()
 
 
+def test_publish_uses_identity_env_fallback(tmp_path: Path, monkeypatch) -> None:
+    _, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    for key in (
+        "GIT_AUTHOR_NAME",
+        "GIT_AUTHOR_EMAIL",
+        "GIT_COMMITTER_NAME",
+        "GIT_COMMITTER_EMAIL",
+    ):
+        monkeypatch.delenv(key, raising=False)
+    git(work, "config", "--unset", "user.name")
+    git(work, "config", "--unset", "user.email")
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+
+    mod.publish("origin", "fullrepo")
+
+    commit = git(work, "rev-parse", "refs/heads/fullrepo")
+    identity = git(work, "show", "-s", "--format=%an <%ae>|%cn <%ce>", commit)
+    assert identity == (
+        "rldyour-codex <rldyour-codex@example.invalid>|"
+        "rldyour-codex <rldyour-codex@example.invalid>"
+    )
+
+
 def test_publish_refuses_non_agent_dirty(tmp_path: Path, monkeypatch) -> None:
     _, work = init_repo(tmp_path)
     monkeypatch.chdir(work)

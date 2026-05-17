@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: bc81217 fix(ci): classify taplo startup noise
-Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
+Last commit: a9a66a2 fix(codex): harden runtime determinism and execpolicy rules
+Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
 
@@ -21,6 +21,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_plugin_versions.py`: plugin manifest and marketplace metadata validation.
 - `scripts/validate_skill_routing.py`: deterministic prompt-to-skill routing checks.
 - `scripts/validate_action_pins.py`: full-SHA pin validation for external GitHub Actions.
+- `scripts/validate_execpolicy_rules.sh`: Codex execpolicy rule validation for managed YOLO rails.
 - `scripts/scan_text_security.py`: tracked and agent-only text scan for secret-like values and hidden Unicode controls.
 - `scripts/smoke_hooks.sh`: hook wiring, `PLUGIN_ROOT` command execution, and lifecycle smoke.
 - `scripts/smoke_serena_memory_taxonomy.sh`: memory taxonomy/analyzer/hook smoke.
@@ -49,6 +50,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `python3 scripts/release_sbom.py`: inspect generated SBOM inventory.
 - `python3 scripts/check_mcp_runtime_versions.py`: validate pinned runtime versions.
 - `python3 scripts/validate_action_pins.py`: validate external GitHub Actions are pinned to 40-character commit SHAs.
+- `scripts/validate_execpolicy_rules.sh`: validate managed Codex execpolicy rules when Codex CLI is available.
 - `python3 scripts/scan_text_security.py`: scan repository text for secret-like patterns and hidden Unicode controls without printing matched values.
 - `uv run --with pytest --with pytest-cov --with pyyaml python -m pytest`: run unit tests and coverage threshold.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validate restored agent-only instruction docs.
@@ -58,11 +60,14 @@ This memory records the validation and release gates that keep the marketplace, 
 - Marketplace validation now runs `uv run --with pyyaml python scripts/validate_agent_tools.py` before shell/Python/smoke checks.
 - Marketplace validation now runs `python3 scripts/validate_action_pins.py` before skill checks.
 - Marketplace validation now runs the Python unit/coverage harness and requires at least 75% coverage.
+- Marketplace validation runs `scripts/validate_execpolicy_rules.sh` when Codex CLI is available, and runtime validation enforces it after temporary installation.
 - Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`, `scripts/validate_agent_tools.py`, `scripts/validate_action_pins.py`, `scripts/scan_text_security.py`, `scripts/classify_ci_noise.py`, and `scripts/release_sbom.py`.
 - Marketplace validation runs `scripts/smoke_serena_memory_taxonomy.sh` after `scripts/smoke_serena_memory_freshness.sh`.
 - `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher, selects the expected hook by script path, rejects cwd/cache-search command wrappers, and runs configured hook commands from a temporary git repo with plugin runtime environment variables.
 - `scripts/smoke_hooks.sh` includes a bootstrap-only `.serena` regression scenario: an unborn git repository containing only auto-created `.serena/project.yml`, `.serena/.gitignore`, and flow runtime markers must not require Flow post-task sync.
+- `scripts/smoke_hooks.sh` runs each hook smoke through a process-group timeout wrapper controlled by `RLDYOUR_HOOK_SMOKE_TIMEOUT` so a stuck hook reports a labeled timeout instead of hanging validation.
 - `.github/workflows/validate.yml` is manual-only through `workflow_dispatch`. It defaults to Ubuntu and runs macOS only when `include_macos=true`, so expensive macOS minutes are spent only on explicit owner/agent requests.
+- `.github/branch-protection/main.json` documents manual validation checks rather than enforcing required automatic checks, because this repository's GitHub Actions spend policy is explicit-run only.
 - The manual `validate.yml` MCP safe-call job bootstraps `fullrepo` agent context before installing into temporary `CODEX_HOME`, then runs deterministic MCP capability calls and strict stderr classification against known first-run MCP/uv/Serena startup noise.
 - `scripts/classify_ci_noise.py` recognizes known first-run Taplo/LSP configuration stderr such as `failed to fetch configuration` and `invalid configuration response`, while strict mode still fails on unknown MCP safe-call output.
 - `scripts/smoke_codex_hooks_migration.sh` now expects installer output to contain `[features].hooks = true` and `[features].plugin_hooks = true`, while removing legacy `codex_hooks` aliases.
@@ -78,8 +83,9 @@ This memory records the validation and release gates that keep the marketplace, 
 - `config/skill-routing-policy.json` version 2 assigns routing classes to all 38 skills and requires cases for implicit, explicit-only, and finalization skills.
 - Text security scan covers tracked text plus agent-only instruction/memory/research paths and rejects secret-like values, BIDI controls, and zero-width controls. When `.git` is absent, it falls back to a bounded text-extension tree walk so extracted release bundles and temporary audit copies are not under-scanned.
 - `config/skill-routing-policy.json` supports `not_expected` assertions for conflict checks; broad review prompts must not route directly to orchestrated reviewer-only micro-skills.
-- Release `0.3.0` is prepared at commit `bc81217` (`VERSION=0.3.0`) with changelog coverage in `CHANGELOG.md`, deterministic release manifest/SBOM validation, manual-only CI workflows, strict runtime prerequisite gates, ordered lifecycle hook behavior, and clean-runner MCP safe-call stderr classification.
+- Release `0.3.1` is prepared at commit `a9a66a2` (`VERSION=0.3.1`) with changelog coverage in `CHANGELOG.md`, deterministic release manifest/SBOM validation, manual-only CI workflows, strict runtime prerequisite gates, ordered lifecycle hook behavior, managed execpolicy rules, bounded hook smoke, CODEX_HOME-aware flow state, and clean-runner MCP safe-call stderr classification.
 - `tests/unit/test_fullrepo_sync.py` configures git identity for temporary repositories and clones before fixture commits, which keeps the unit-test matrix deterministic on GitHub-hosted runners.
+- `tests/unit/test_fullrepo_sync.py` covers `git commit-tree` fallback author/committer identity, and `tests/unit/test_flow_post_task_state.py` covers CODEX_HOME installed helper lookup and bootstrap-only `.serena` no-sync behavior.
 - `scripts/classify_ci_noise.py` allowlists `uv` package download progress lines such as `Downloading pygments (...)` and `Downloaded pygments` as deterministic setup noise.
 - `scripts/validate_marketplace.sh` skips only the live Serena freshness state check in GitHub Actions when fullrepo-managed `.serena/memories/CORE-01-INDEX.md` is not tracked in the normal-branch checkout.
 - `scripts/smoke_serena_memory_taxonomy.sh` keeps analyzer and fixture coverage when repository memories are absent or untracked in GitHub Actions, and runs index/taxonomy parity when `CORE-01-INDEX.md` is present as tracked fullrepo context.
@@ -88,6 +94,7 @@ This memory records the validation and release gates that keep the marketplace, 
 ## Contracts And Data
 
 - `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, GitHub Action SHA pin validation, strict runtime prerequisite validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, pytest/coverage, skill routing, hook feature migration smoke, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, text security scan, and release manifest checks.
+- `scripts/validate_marketplace.sh` should include Codex execpolicy rule validation when Codex CLI is present; `scripts/validate_runtime.sh --strict-runtime` must validate installed rules.
 - `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`.
 - `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
 

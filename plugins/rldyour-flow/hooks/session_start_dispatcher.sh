@@ -15,6 +15,8 @@ python3 - "$SCRIPT_DIR" "$HOOK_INPUT_FILE" <<'PY'
 from __future__ import annotations
 
 import json
+import os
+import signal
 import subprocess
 import sys
 from pathlib import Path
@@ -23,7 +25,7 @@ OUTPUT_LIMIT = 8192
 FAILURE_PREVIEW_LINES = 12
 CHILDREN = (
     ("bootstrap", "session_start_worktree_bootstrap.sh", 6),
-    ("context", "session_start_context.sh", 8),
+    ("context", "session_start_context.sh", 10),
 )
 
 
@@ -42,24 +44,31 @@ def run_child(script_name: str, timeout_seconds: int) -> tuple[int, str]:
     script_path = script_dir / script_name
     if not script_path.is_file():
         return 127, f"{script_name} missing: {script_path}"
+    proc = subprocess.Popen(
+        ["bash", str(script_path)],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        start_new_session=True,
+    )
     try:
-        proc = subprocess.run(
-            ["bash", str(script_path)],
-            input=hook_input,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            timeout=timeout_seconds,
-            check=False,
-        )
+        output, _ = proc.communicate(hook_input, timeout=timeout_seconds)
     except subprocess.TimeoutExpired as exc:
-        output = ""
-        if isinstance(exc.output, str):
-            output += exc.output
-        if isinstance(exc.stderr, str):
-            output += exc.stderr
+        try:
+            os.killpg(proc.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        try:
+            output, _ = proc.communicate(timeout=1)
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            output, _ = proc.communicate()
         return 124, cap_output(f"{script_name} timed out after {timeout_seconds}s.\n{output}".strip())
-    return proc.returncode, cap_output(proc.stdout or "")
+    return proc.returncode, cap_output(output or "")
 
 
 def preview(text: str, limit: int = FAILURE_PREVIEW_LINES) -> str:

@@ -1,0 +1,49 @@
+# Require explicit intent for release and deployment side effects.
+
+prefix_rule(
+    pattern = ["npm", "publish"],
+    decision = "prompt",
+    justification = "Package publication is a release action and must be intentional.",
+    match = ["npm publish"],
+    not_match = ["npm pack"],
+)
+
+prefix_rule(
+    pattern = ["pnpm", "publish"],
+    decision = "prompt",
+    justification = "Package publication is a release action and must be intentional.",
+    match = ["pnpm publish"],
+    not_match = ["pnpm pack"],
+)
+
+prefix_rule(
+    pattern = ["bun", "publish"],
+    decision = "prompt",
+    justification = "Package publication is a release action and must be intentional.",
+    match = ["bun publish"],
+    not_match = ["bun install"],
+)
+
+prefix_rule(
+    pattern = ["gh", "release", "create"],
+    decision = "prompt",
+    justification = "GitHub Releases publish durable artifacts and tags.",
+    match = ["gh release create v0.3.1"],
+    not_match = ["gh release view v0.3.1"],
+)
+
+prefix_rule(
+    pattern = ["vercel", "deploy", "--prod"],
+    decision = "prompt",
+    justification = "Production deploys require explicit task intent.",
+    match = ["vercel deploy --prod"],
+    not_match = ["vercel deploy"],
+)
+
+prefix_rule(
+    pattern = ["wrangler", "deploy"],
+    decision = "prompt",
+    justification = "Production edge deploys require explicit task intent.",
+    match = ["wrangler deploy"],
+    not_match = ["wrangler dev"],
+)

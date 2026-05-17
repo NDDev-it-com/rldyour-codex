@@ -54,8 +54,10 @@ else
 fi
 SYSTEM_AGENTS="$ROOT/system/AGENTS.md"
 SYSTEM_AGENT_DIR="$ROOT/system/agents"
+SYSTEM_RULE_DIR="$ROOT/system/rules"
 INSTALLED_AGENTS="$CODEX_HOME_DIR/AGENTS.md"
 INSTALLED_AGENT_DIR="$CODEX_HOME_DIR/agents"
+INSTALLED_RULE_DIR="$CODEX_HOME_DIR/rules"
 CONFIG_PATH="$CODEX_HOME_DIR/config.toml"
 CACHE_ROOT="$CODEX_HOME_DIR/plugins/cache/rldyour-codex"
 CODEX_CMD=${CODEX_BIN:-$(command -v codex 2>/dev/null || true)}
@@ -320,6 +322,35 @@ for source in sorted(system_dir.glob("*.toml")):
         else:
             print(f"fail    subagent {label} {check}", file=sys.stderr)
             errors = True
+
+raise SystemExit(1 if errors else 0)
+PY
+
+section "Execpolicy rules"
+export RLDYOUR_SYSTEM_RULE_DIR="$SYSTEM_RULE_DIR"
+export RLDYOUR_INSTALLED_RULE_DIR="$INSTALLED_RULE_DIR"
+python3 <<'PY' || FAILURES=$((FAILURES + 1))
+from __future__ import annotations
+
+import os
+import sys
+from pathlib import Path
+
+system_dir = Path(os.environ["RLDYOUR_SYSTEM_RULE_DIR"])
+installed_dir = Path(os.environ["RLDYOUR_INSTALLED_RULE_DIR"])
+errors = False
+
+for source in sorted(system_dir.glob("*.rules")):
+    target = installed_dir / source.name
+    if not target.is_file():
+        print(f"fail    execpolicy rule installed {source.name}", file=sys.stderr)
+        errors = True
+        continue
+    if source.read_text(encoding="utf-8") == target.read_text(encoding="utf-8"):
+        print(f"ok      execpolicy rule in sync {source.name}")
+    else:
+        print(f"fail    execpolicy rule differs {source.name}", file=sys.stderr)
+        errors = True
 
 raise SystemExit(1 if errors else 0)
 PY

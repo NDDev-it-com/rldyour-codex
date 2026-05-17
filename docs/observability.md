@@ -11,6 +11,7 @@ This repository uses lightweight operational observability: deterministic logs, 
 - `scripts/validate_fast.sh`: fast repository validation with both pytest entrypoints.
 - `scripts/validate_runtime.sh --strict-runtime`: temporary installed-runtime validation.
 - `scripts/validate_release.sh`: release manifest and SBOM dry-run validation.
+- `scripts/validate_execpolicy_rules.sh`: Codex execpolicy rules validation with representative blocked, prompt, and allow commands.
 - `scripts/validate_marketplace.sh`: complete local plugin, skill, MCP, hook, and policy validation.
 - `scripts/smoke_clean_bootstrap.sh`: new-machine bootstrap behavior.
 - `scripts/sync_fullrepo_branch.sh --status`: agent-only file and `fullrepo` branch state.

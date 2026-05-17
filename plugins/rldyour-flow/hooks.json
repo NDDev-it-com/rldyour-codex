@@ -6,7 +6,7 @@
           {
             "type": "command",
             "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/session_start_dispatcher.sh\"'",
-            "timeout": 15,
+            "timeout": 20,
             "statusMessage": "Loading rldyour flow session context"
           }
         ]

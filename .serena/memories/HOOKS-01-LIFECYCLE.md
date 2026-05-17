@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
-Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
+Last commit: a9a66a2 fix(codex): harden runtime determinism and execpolicy rules
+Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, system/rules/*.rules, scripts/validate_execpolicy_rules.sh
 Area: HOOKS
 -->
 
@@ -43,14 +43,14 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - Installed plugin hook declarations require both an enabled plugin and system config with `[features].hooks = true` and `[features].plugin_hooks = true`.
 - `PreToolUse` and `PostToolUse` match tool names such as `Bash`; `SessionStart` uses startup/resume/clear-style matching; `UserPromptSubmit` and `Stop` ignore matcher.
 - Multiple hooks can be registered for the same event/matcher, but Codex may launch matching command hooks concurrently. `plugins/rldyour-flow/hooks.json` therefore uses one Flow `SessionStart` command hook and one Flow Stop command hook.
-- `session_start_dispatcher.sh` serializes `session_start_worktree_bootstrap.sh` before `session_start_context.sh`, enforces 6s/8s child timeouts, caps child output, combines Codex `additionalContext`, and reports child hook failures as bounded degraded context.
+- `session_start_dispatcher.sh` serializes `session_start_worktree_bootstrap.sh` before `session_start_context.sh`, enforces 6s/10s child timeouts, starts child hooks in their own process group, terminates descendant processes on timeout, caps child output, combines Codex `additionalContext`, and reports child hook failures as bounded degraded context.
 - `stop_lifecycle_dispatcher.sh` serializes Stop ordering by running Serena `stop_memory_sync.sh` first and Flow `stop_post_task_sync.sh` second. If Serena exits non-zero, Flow does not run in that Stop cycle.
-- `scripts/smoke_hooks.sh` validates the dispatcher path and still selects hook entries by expected script path for future multi-hook events.
+- `scripts/smoke_hooks.sh` validates the dispatcher path, still selects hook entries by expected script path for future multi-hook events, and runs each hook smoke through a process-group timeout runner so one stuck hook cannot hang the whole smoke.
 - Hook command entries resolve scripts through `PLUGIN_ROOT`, the official plugin-bundled hook environment variable, and do not depend on the current project cwd or hardcoded `${CODEX_HOME}` cache paths.
 - `scripts/smoke_hooks.sh` rejects hook commands that use repo-relative `plugins/rldyour-*`, `${CODEX_HOME}`, `.codex/plugins/cache`, or `for p in` cache-search wrappers, then runs configured commands from a temporary git repo with `PLUGIN_ROOT`/`PLUGIN_DATA` set.
 - `scripts/install_system_codex.sh --apply` uses `codex app-server hooks/list` current hashes and `config/batchWrite` to keep `hooks.state` trusted after plugin cache updates. `scripts/doctor_system_codex.sh` fails if installed rldyour plugin hooks are not live, enabled, and trusted.
 - `session_start_worktree_bootstrap.sh` runs `fullrepo_sync.py --restore` only when canonical agent-only markers are missing and `origin/fullrepo` exists. It never publishes, pushes, commits, or edits non-agent files, and it says "auto-restored" only when restore exits `0`.
-- `session_start_context.sh` remains read-only and reports branch, HEAD, dirty state, worktrees, Serena freshness, fullrepo, and flow sync state.
+- `session_start_context.sh` remains read-only and reports branch, HEAD, dirty state, worktrees, Serena freshness, fullrepo, and flow sync state. `flow_post_task_state.py` resolves installed helper scripts through `CODEX_HOME` before falling back to the default home cache.
 - `flow_post_task_state.py` expands untracked directories before evaluating dirty paths and ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and runtime markers.
 - Serena `mark_sync_required.sh` emits Codex `hookSpecificOutput.additionalContext` after commit-like HEAD changes.
 - Serena `stop_memory_sync.sh` blocks with exit code `2` only when memories are stale; it delegates actual memory updates to the workflow/subagent rather than editing memories inside the hook. It is executed by Flow's ordered Stop dispatcher, not as a separate registered plugin Stop hook.

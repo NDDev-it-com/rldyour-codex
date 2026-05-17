@@ -139,7 +139,7 @@ The canonical source for this global setup is the `rldyour-codex` repository.
 
 System Codex is intentionally configured for owner-controlled YOLO execution with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, `suppress_unstable_features_warning = true`, managed subagents on `gpt-5.5`/`medium`, and `[features].hooks = true`, `[features].plugin_hooks = true`, plus `[features].multi_agent = true`. Current Codex CLI keeps plugin-bundled hooks behind `plugin_hooks`, so the flag is intentionally explicit. Deprecated config aliases such as `codex_hooks`, legacy `features.web_search*`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `memories.no_memories_if_mcp_or_web_search`, and `use_legacy_landlock` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
 
-System install and doctor checks derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP server registration from `plugins/rldyour-mcps/.mcp.json`; do not add parallel hardcoded plugin or MCP lists. The installer syncs plugin cache first, then refreshes installed rldyour plugin hook trust hashes from `codex app-server hooks/list`; doctor verifies that all installed rldyour plugin hooks are live, enabled, and trusted.
+System install and doctor checks derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP server registration from `plugins/rldyour-mcps/.mcp.json`; do not add parallel hardcoded plugin or MCP lists. The installer syncs plugin cache first, installs managed Codex execpolicy rules from `system/rules/*.rules` into `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`, then refreshes installed rldyour plugin hook trust hashes from `codex app-server hooks/list`; doctor verifies that all installed rldyour plugin hooks are live, enabled, trusted, and that managed rules are in sync.
 
 Use:
 
@@ -152,6 +152,7 @@ scripts/doctor_system_codex.sh --quick --strict-runtime
 scripts/validate_fast.sh
 scripts/validate_runtime.sh --strict-runtime
 scripts/validate_release.sh
+scripts/validate_execpolicy_rules.sh
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 scripts/smoke_hooks.sh

@@ -22,6 +22,7 @@ This repository is the owner's personal Codex marketplace and system setup sourc
 - `plugins/rldyour-serena-mcp/hooks.json`: Serena reminder and marker hooks; its Stop memory gate is invoked by Flow's ordered lifecycle dispatcher.
 - `system/AGENTS.md`: canonical global Codex instructions installed to `~/.codex/AGENTS.md`.
 - `system/agents/*.toml`: managed Codex custom subagent role configs installed to `~/.codex/agents/*.toml`.
+- `system/rules/*.rules`: managed Codex execpolicy rules installed to `~/.codex/rules/*.rules`.
 - `AGENTS.md`: Codex-native project instructions, restored from and published to `fullrepo`.
 - `.claude/CLAUDE.md`: Claude Code-native project memory, restored from and published to `fullrepo`.
 - `.serena/memories/*.md`: verified project facts.
@@ -63,6 +64,7 @@ scripts/validate_marketplace.sh
 scripts/validate_fast.sh
 scripts/validate_runtime.sh --strict-runtime
 scripts/validate_release.sh
+scripts/validate_execpolicy_rules.sh
 ```
 
 Targeted checks:
@@ -96,6 +98,7 @@ python3 scripts/validate_skill_routing.py
 python3 scripts/release_sbom.py
 python3 scripts/check_mcp_runtime_versions.py
 python3 scripts/validate_runtime_prereqs.py --strict --require-codex
+scripts/validate_execpolicy_rules.sh
 scripts/doctor_system_codex.sh
 scripts/doctor_system_codex.sh --quick --strict-runtime
 ```
@@ -114,7 +117,7 @@ scripts/doctor_system_codex.sh --quick --strict-runtime
 ## System Install
 
 - `scripts/install_system_codex.sh --dry-run` previews the system Codex install.
-- `scripts/install_system_codex.sh --apply` installs global Codex instructions, managed `~/.codex/agents/*.toml`, config sections, the official Codex config schema hint, `[features].hooks = true`, `[features].plugin_hooks = true`, `[features].multi_agent = true`, deprecated hook alias removal, marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, YOLO/model defaults, approved MCP tool overrides, marketplace registration, plugin cache, and trusted hashes for installed rldyour plugin hooks. Add `--strict-runtime` when enabled MCP launchers must be present.
-- `scripts/doctor_system_codex.sh` verifies installed state, including marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, the config schema hint, active `hooks`, `plugin_hooks`, and `multi_agent` features, managed subagent config parity, managed subagent `gpt-5.5`/`medium` settings, installed rldyour plugin hook trust/enabled state, and absence of deprecated hook aliases. Use `--quick --strict-runtime` for bounded strict runtime validation.
-- `scripts/rollback_system_codex.sh --list` and `--restore <backup>` manage installer backups for `AGENTS.md`, `config.toml`, and managed `agents/*.toml`.
+- `scripts/install_system_codex.sh --apply` installs global Codex instructions, managed `~/.codex/agents/*.toml`, managed `~/.codex/rules/*.rules`, config sections, the official Codex config schema hint, `[features].hooks = true`, `[features].plugin_hooks = true`, `[features].multi_agent = true`, deprecated hook alias removal, marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, YOLO/model defaults, approved MCP tool overrides, marketplace registration, plugin cache, and trusted hashes for installed rldyour plugin hooks. Add `--strict-runtime` when enabled MCP launchers must be present.
+- `scripts/doctor_system_codex.sh` verifies installed state, including marketplace-derived rldyour plugin enablement, `.mcp.json`-derived MCP registration, the config schema hint, active `hooks`, `plugin_hooks`, and `multi_agent` features, managed subagent config parity, managed execpolicy rule parity, managed subagent `gpt-5.5`/`medium` settings, installed rldyour plugin hook trust/enabled state, and absence of deprecated hook aliases. Use `--quick --strict-runtime` for bounded strict runtime validation.
+- `scripts/rollback_system_codex.sh --list` and `--restore <backup>` manage installer backups for `AGENTS.md`, `config.toml`, managed `agents/*.toml`, and managed `rules/*.rules`.
 - `scripts/collect_diagnostics.sh` writes ignored diagnostics bundles for failure triage.

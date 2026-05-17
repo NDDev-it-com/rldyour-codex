@@ -74,8 +74,10 @@ else
 fi
 SYSTEM_AGENTS="$ROOT/system/AGENTS.md"
 SYSTEM_AGENT_DIR="$ROOT/system/agents"
+SYSTEM_RULE_DIR="$ROOT/system/rules"
 CONFIG_PATH="$CODEX_HOME_DIR/config.toml"
 CODEX_AGENT_DIR="$CODEX_HOME_DIR/agents"
+CODEX_RULE_DIR="$CODEX_HOME_DIR/rules"
 CACHE_ROOT="$CODEX_HOME_DIR/plugins/cache/rldyour-codex"
 BACKUP_ROOT="$CODEX_HOME_DIR/backups/rldyour-codex"
 TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
@@ -105,6 +107,10 @@ if [ ! -f "$SYSTEM_AGENTS" ]; then
 fi
 if [ ! -d "$SYSTEM_AGENT_DIR" ]; then
   printf 'Missing system agent directory: %s\n' "$SYSTEM_AGENT_DIR" >&2
+  exit 1
+fi
+if [ ! -d "$SYSTEM_RULE_DIR" ]; then
+  printf 'Missing system rules directory: %s\n' "$SYSTEM_RULE_DIR" >&2
   exit 1
 fi
 
@@ -138,6 +144,16 @@ backup_agent_file() {
   printf 'backed up %s -> %s/agents/\n' "$path" "$BACKUP_DIR"
 }
 
+backup_rule_file() {
+  local path=$1
+  if [ "$APPLY" -ne 1 ] || [ ! -e "$path" ]; then
+    return 0
+  fi
+  mkdir -p "$BACKUP_DIR/rules"
+  cp -p "$path" "$BACKUP_DIR/rules/"
+  printf 'backed up %s -> %s/rules/\n' "$path" "$BACKUP_DIR"
+}
+
 print_plan() {
   cat <<EOF
 rldyour Codex system install
@@ -146,6 +162,7 @@ repo: $ROOT
 codex home: $CODEX_HOME_DIR
 system AGENTS: $CODEX_HOME_DIR/AGENTS.md
 system agents: $CODEX_AGENT_DIR
+system rules: $CODEX_RULE_DIR
 config: $CONFIG_PATH
 cache root: $CACHE_ROOT
 uvx: $UVX_CMD
@@ -866,6 +883,22 @@ sync_agent_configs() {
   done
 }
 
+sync_execpolicy_rules() {
+  local rule_file rule_name target
+  for rule_file in "$SYSTEM_RULE_DIR"/*.rules; do
+    [ -f "$rule_file" ] || continue
+    rule_name=$(basename "$rule_file")
+    target="$CODEX_RULE_DIR/$rule_name"
+    if [ "$APPLY" -eq 1 ]; then
+      mkdir -p "$CODEX_RULE_DIR"
+      install -m 0644 "$rule_file" "$target"
+      printf 'installed execpolicy rule %s\n' "$target"
+    else
+      printf 'dry-run: install %s -> %s\n' "$rule_file" "$target"
+    fi
+  done
+}
+
 print_plan
 validate_runtime_prereqs
 
@@ -878,6 +911,10 @@ backup_file "$CONFIG_PATH"
 for agent_file in "$SYSTEM_AGENT_DIR"/*.toml; do
   [ -f "$agent_file" ] || continue
   backup_agent_file "$CODEX_AGENT_DIR/$(basename "$agent_file")"
+done
+for rule_file in "$SYSTEM_RULE_DIR"/*.rules; do
+  [ -f "$rule_file" ] || continue
+  backup_rule_file "$CODEX_RULE_DIR/$(basename "$rule_file")"
 done
 
 validate_existing_config
@@ -897,6 +934,7 @@ fi
 
 patch_config
 sync_agent_configs
+sync_execpolicy_rules
 sync_plugin_cache
 trust_plugin_hooks
 
