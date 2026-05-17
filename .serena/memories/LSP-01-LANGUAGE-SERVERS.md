@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 9a1cdc2 fix(codex): harden hooks and validation gates
+Last updated: 2026-05-18
+Last commit: 037397e feat(codex): isolate subagent mcp startup
 Scope: plugins/rldyour-lsps, plugins/rldyour-lsps/scripts/check_lsps.sh, plugins/rldyour-serena-mcp, .serena/project.yml, pyrightconfig.json, README.md
 Area: LSP
 -->

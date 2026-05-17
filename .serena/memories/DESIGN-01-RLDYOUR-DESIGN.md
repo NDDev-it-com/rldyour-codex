@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last updated: 2026-05-18
+Last commit: 037397e feat(codex): isolate subagent mcp startup
 Scope: plugins/rldyour-design, plugins/rldyour-browser, config/skill-routing-policy.json, README.md
 Area: DESIGN
 -->

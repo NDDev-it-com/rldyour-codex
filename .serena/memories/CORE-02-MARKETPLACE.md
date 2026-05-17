@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
+Last updated: 2026-05-18
+Last commit: 037397e feat(codex): isolate subagent mcp startup
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, scripts/validate_plugin_versions.py, scripts/release_manifest.py
 Area: CORE
 -->
@@ -32,11 +32,11 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Marketplace name is `rldyour-codex` and all active rldyour plugins are local sources under `./plugins/<plugin>`.
 - Active plugin count is 9.
 - `rldyour-serena-mcp` version is `0.2.4`; it declares `skills` and `hooks` and owns Serena code workflow and memory sync. Its Stop script is invoked by Flow's ordered Stop dispatcher rather than registered as an independent Stop command.
-- `rldyour-flow` version is `0.3.0`; it declares `skills` and `hooks` and owns SDLC workflows, fullrepo, worktree bootstrap, instruction docs, ordered Stop lifecycle dispatch, and post-task sync.
+- `rldyour-flow` version is `0.3.1`; it declares `skills` and `hooks` and owns SDLC workflows, fullrepo, worktree bootstrap, instruction docs, ordered Stop lifecycle dispatch, and post-task sync.
 - Only `rldyour-flow` and `rldyour-serena-mcp` may declare plugin hooks in this repository.
 - `rldyour-mcps` owns MCP transport definitions only and must not contain behavior skills.
 - Curated GitHub and Gmail plugins are enabled in system Codex but are not rldyour plugin directories in this repository.
-- Repository marketplace version is `0.3.0` (from `VERSION`, committed in `2ee72cf`).
+- Repository marketplace version is `0.3.2` (from `VERSION`, committed in `037397e`).
 
 ## Contracts And Data
 
@@ -45,7 +45,8 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Manifest bundled capability paths are relative to the plugin root.
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
-- Current marketplace version is `0.3.0`; commit `2ee72cf` changes root marketplace version, plugin behavior versions, lifecycle determinism, manual CI policy, and validation/release gates.
+- Current marketplace version is `0.3.2`; commit `037397e` changes the root marketplace version, managed subagent MCP startup policy, Codex/system instructions, validation expectations, and release evidence.
+- Release `0.3.2` was published by manual release workflow run `25998372557` after the full explicit CI/CD pipeline passed on `037397e`.
 
 ## Invariants
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
+Last updated: 2026-05-18
+Last commit: 037397e feat(codex): isolate subagent mcp startup
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py
 Area: CODEX
 -->
@@ -36,6 +36,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - `SKILL.md` frontmatter should stay compact: `name` and a Russian/English `description` are the durable routing surface. Long policy belongs in the body or `references/`.
 - Claude-only skill frontmatter such as `allowed-tools`, `allowed_tools`, `disallowed-tools`, `maxTurns`, `model`, `effort`, `tools`, and `color` is rejected by `scripts/validate_agent_tools.py`.
 - Managed subagents are TOML files, not plugin-root Markdown agents. Current managed roles must have `model = "gpt-5.5"` and `model_reasoning_effort = "medium"`.
+- Managed subagents currently carry a temporary MCP startup-isolation policy. Each role keeps the lightweight inherited/core surface available (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`) and explicitly disables specialist MCP servers that have caused subagent startup fan-out or dependency friction (`semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn`).
 - `system/agents/serena-sync.toml` is the Codex-native memory-maintenance role. It may edit only `.serena/memories/` and closely related Serena metadata, not source code, plugin files, docs, configs, tests, scripts, or git history.
 - Plugin hook support is used only by `rldyour-flow` and `rldyour-serena-mcp`.
 - Plugin hook command entries use the official plugin runtime environment and call scripts through `PLUGIN_ROOT`; they must not use repo-cwd relative script paths or installed-cache search fallbacks.
@@ -48,7 +49,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 
 - Plugin manifests include `name`, `version`, `description`, bundled capability paths such as `skills`/`hooks`, and `interface` metadata.
 - Bundled hook JSON paths are relative to the plugin root, while command bodies resolve executable hook scripts through the `PLUGIN_ROOT` environment variable supplied by Codex at runtime.
-- Current hook-enabled plugin versions after `2ee72cf`: `rldyour-flow` `0.3.0` and `rldyour-serena-mcp` `0.2.4`.
+- Current hook-enabled plugin versions after `037397e`: `rldyour-flow` `0.3.1` and `rldyour-serena-mcp` `0.2.4`.
 - Marketplace entries use local `source.path` references to `./plugins/<plugin>`.
 - `plugins/rldyour-mcps/.mcp.json` defines valid MCP dependency values for `agents/openai.yaml`.
 - `scripts/validate_agent_tools.py` loads `.mcp.json`, parses YAML/TOML, and rejects unknown MCP dependency names.
@@ -69,7 +70,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - When adding a managed subagent, add a TOML file under `system/agents/`, ensure installer/doctor parity still passes, and avoid unsupported tool allowlist fields.
 - When changing Codex surfaces, update this memory and run `validate_agent_tools.py`.
 - When changing plugin hook commands, run `scripts/smoke_hooks.sh`, install into `${CODEX_HOME}`, and verify live hook trust with `scripts/doctor_system_codex.sh`.
-- `6b6dfd3` is a release-level maintenance commit (VERSION/CHANGELOG) and does not change plugin manifests, hooks, install logic, or managed-agent behavior in this memory scope.
+- `037397e` is a release-level/runtime-policy commit that bumps the marketplace to `0.3.2`, keeps `codex_apps` available to managed subagents, and validates temporary specialist-MCP isolation through `scripts/validate_agent_tools.py` and doctor checks.
 
 ## Verification
 

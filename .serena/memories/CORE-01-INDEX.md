@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: fe9b88f fix(release): repair release note extraction
+Last updated: 2026-05-18
+Last commit: 037397e feat(codex): isolate subagent mcp startup
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
@@ -36,14 +36,15 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 ## Current Behavior
 
 - Active rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- Marketplace release version is `0.2.0`.
-- `rldyour-flow` is version `0.2.6` and owns SDLC commands, fullrepo, instruction docs, worktree bootstrap, deterministic SessionStart dispatch, and post-task sync.
-- `rldyour-serena-mcp` is version `0.2.3` and owns Serena-first code workflow plus memory freshness, expanded taxonomy, sync hooks, and acknowledgement.
+- Marketplace release version is `0.3.2`.
+- `rldyour-flow` is version `0.3.1` and owns SDLC commands, fullrepo, instruction docs, worktree bootstrap, deterministic SessionStart dispatch, ordered Stop lifecycle dispatch, and post-task sync.
+- `rldyour-serena-mcp` is version `0.2.4` and owns Serena-first code workflow plus memory freshness, expanded taxonomy, sync hooks, and acknowledgement.
 - The repository currently has 38 rldyour skills, 12 MCP server definitions, and 8 managed Codex subagent TOML files validated by scripts.
-- The Python test harness has 40 unit tests and enforces an initial 70% coverage threshold through `pyproject.toml`.
+- The Python test harness enforces a 75% coverage threshold through `pyproject.toml`.
+- Managed subagents currently use temporary MCP isolation: the lightweight inherited/core surface stays available (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`), while specialist MCP servers remain parent-session tools until Codex subagent MCP startup is stable enough to widen safely.
 - Fullrepo unit-test fixtures configure local git identity inside temporary repositories and clones, so GitHub-hosted runners do not depend on global git author settings.
 - CI noise classification treats `uv` package download progress lines as known setup noise while still failing strict jobs on unrelated stderr.
-- GitHub CI has split unit-test reports, marketplace/system smoke, dependency pin checks, no-paid static security, and manual release workflows with deterministic bundle/SBOM/attestation output; release validation bootstraps `fullrepo` before requiring agent instruction docs, runs PyYAML-dependent agent-surface validation through `uv`, and extracts versioned release notes with a portable AWK expression.
+- GitHub CI/CD is manual-only for this repository's spend policy. The full explicit pipeline on commit `037397e` passed `validate.yml` with macOS parity, `security-static.yml`, `dependency-check.yml`, and `release.yml`, and published release `0.3.2` with deterministic bundle/SBOM/attestation output.
 - System install manages Codex hook runtime with `[features].hooks = true` and `[features].plugin_hooks = true`, so enabled rldyour plugin hook declarations are actually loaded.
 - Normal `main` excludes root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, and similar agent-only files through `.git/info/exclude`; `fullrepo` carries the portable agent context snapshot.
 - Normal-branch GitHub CI may run without tracked fullrepo-managed `.serena/memories`; memory taxonomy smoke still tests analyzer/fixture contracts, and the final live freshness state check is skipped until memories are present as tracked fullrepo context.

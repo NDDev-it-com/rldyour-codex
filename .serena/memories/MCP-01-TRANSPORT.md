@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 2ee72cf feat(codex): harden lifecycle and manual validation
+Last updated: 2026-05-18
+Last commit: 037397e feat(codex): isolate subagent mcp startup
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, scripts/smoke_mcp_capabilities.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/doctor_system_codex.sh, scripts/install_system_codex.sh
 Area: MCP
 -->
@@ -32,6 +32,7 @@ Area: MCP
 ## Current Behavior
 
 - Configured MCP servers: `chrome-devtools`, `context7`, `dart-flutter`, `deepwiki`, `figma`, `grep`, `openaiDeveloperDocs`, `playwright`, `semgrep`, `sequential-thinking`, `serena`, and `shadcn`.
+- Managed subagents intentionally use a temporary narrower MCP policy: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps` remain available, while specialist MCP servers are disabled in subagent TOML files to avoid eager startup fan-out and launcher friction. This is a subagent policy, not a removal from the parent-session MCP registry.
 - Current pins from `config/mcp-runtime-versions.env`: Codex CLI `0.130.0`, Node major `24`, Bun `1.3.14`, Dart SDK `3.11.0`, MCP Python SDK `1.27.1`, Serena Agent `1.3.0`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.26.0`, Context7 MCP `2.2.5`, shadcn `4.7.0`, sequential-thinking `2025.12.18`.
 - `dart-flutter` is the explicit reproducibility exception: it launches through the local Dart SDK and is declared as `DART_FLUTTER_MCP_RUNTIME=external-local-dart-sdk` instead of a package-version pin.
 - Strict runtime validation maps enabled local MCP servers to launcher prerequisites (`uvx`, `bunx`, `dart`, and optional `codex`) and fails in strict mode when a required launcher is missing.
