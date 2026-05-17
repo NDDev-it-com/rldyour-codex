@@ -14,14 +14,18 @@ def git(cwd: Path, *args: str) -> str:
     return proc.stdout.strip()
 
 
+def configure_git_identity(cwd: Path) -> None:
+    git(cwd, "config", "user.email", "test@example.test")
+    git(cwd, "config", "user.name", "Test User")
+
+
 def init_repo(tmp_path: Path) -> tuple[Path, Path]:
     remote = tmp_path / "remote.git"
     work = tmp_path / "work"
     git(tmp_path, "init", "--bare", str(remote))
     git(tmp_path, "init", str(work))
     git(work, "checkout", "-b", "main")
-    git(work, "config", "user.email", "test@example.test")
-    git(work, "config", "user.name", "Test User")
+    configure_git_identity(work)
     git(work, "remote", "add", "origin", str(remote))
     (work / "README.md").write_text("repo\n", encoding="utf-8")
     git(work, "add", "README.md")
@@ -88,6 +92,7 @@ def test_publish_status_restore_and_migrate_main(tmp_path: Path, monkeypatch) ->
 
     clone = tmp_path / "clone"
     git(tmp_path, "clone", str(remote), str(clone))
+    configure_git_identity(clone)
     monkeypatch.chdir(clone)
     git(clone, "checkout", "main")
     mod.restore("origin", "fullrepo")
