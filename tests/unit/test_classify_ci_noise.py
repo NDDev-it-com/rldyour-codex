@@ -12,10 +12,16 @@ mod = import_script("scripts/classify_ci_noise.py")
 
 def test_known_noise_is_classified_as_benign() -> None:
     benign, unknown = mod.classify_lines(
-        ['No entry for terminal type "wezterm";', "using dumb terminal settings.", "Using CPython 3.13.12"]
+        [
+            'No entry for terminal type "wezterm";',
+            "using dumb terminal settings.",
+            "Using CPython 3.13.12",
+            "Downloading pygments (1.2MiB)",
+            " Downloaded pygments",
+        ]
     )
 
-    assert len(benign) == 3
+    assert len(benign) == 5
     assert unknown == []
 
 

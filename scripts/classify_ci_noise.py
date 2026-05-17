@@ -25,7 +25,14 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
     ),
     NoiseRule(
         "uv-environment-setup",
-        re.compile(r"Using CPython \d+\.\d+\.\d+|Removed virtual environment at:|Creating virtual environment at:|Installed \d+ packages? in"),
+        re.compile(
+            r"Using CPython \d+\.\d+\.\d+|"
+            r"Removed virtual environment at:|"
+            r"Creating virtual environment at:|"
+            r"Installed \d+ packages? in|"
+            r"Downloading [A-Za-z0-9_.-]+ \([^)]+\)|"
+            r"Downloaded [A-Za-z0-9_.-]+"
+        ),
         "uv may report environment setup to stderr while preparing an isolated test runtime.",
     ),
     NoiseRule(
