@@ -36,9 +36,11 @@ The plugin includes a bounded SessionStart bootstrap hook, a read-only SessionSt
 
 `flow_post_task_state.py` includes branch-cleanup state. Merged local branches, merged remote branches, and merged workflow worktrees keep `needs_flow_sync` true until they are removed or reported as blockers. Protected branches such as `main` and `fullrepo` are excluded from cleanup candidates.
 
+Bootstrap-only `.serena` files created by tool startup, such as an untracked `.serena/project.yml` plus runtime markers, are ignored by the flow state gate. They are not enough to force `flow-post-task-sync` in an otherwise clean or unborn repository.
+
 The PostToolUse hook watches Bash `git commit` commands and emits non-blocking commit advice for conventional commit format, oversized subjects, suspicious sensitive paths, runtime markers, browser evidence, or very broad commits. It never rejects the command.
 
-The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `instruction-docs-sync` when needed and `flow-post-task-sync` for docs, git, GitHub, and fullrepo synchronization.
+The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `instruction-docs-sync` when needed and `flow-post-task-sync` for docs, git, GitHub, and fullrepo synchronization. The continuation prompt includes installed script paths so product repositories do not need to vendor this plugin.
 
 `ry-init` is read-only for Serena knowledge by default. It may bootstrap `fullrepo` context, but it reports memory candidates instead of writing `.serena` unless the user explicitly requested memory sync or a stale-memory hook requires it.
 

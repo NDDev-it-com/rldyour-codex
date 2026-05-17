@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 1132859 feat(serena): harden codex memory sync brain
+Last updated: 2026-05-17
+Last commit: 18d9e80 fix(flow): prevent bootstrap stop hook loops
 Scope: plugins/rldyour-flow, plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/*.py, plugins/rldyour-flow/scripts/*.sh, scripts/sync_fullrepo_branch.sh, scripts/worktree_add.sh, scripts/install_local_git_hooks.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/smoke_fullrepo_bootstrap_init.sh, scripts/smoke_clean_bootstrap.sh
 Area: FLOW
 -->
@@ -42,8 +42,9 @@ Area: FLOW
 - `session_start_worktree_bootstrap.sh` restores agent-only context from `origin/fullrepo` when `.serena/project.yml`, `AGENTS.md`, or `.claude/CLAUDE.md` is missing. It is additive and never publishes.
 - `scripts/worktree_add.sh` refuses to create a helper worktree if `origin/fullrepo` does not exist; it does not auto-publish from a helper script.
 - `flow_post_task_state.py` keeps flow sync pending when instruction docs are stale/missing, fullrepo is stale, git sync is pending, or merged workflow branches/worktrees need cleanup.
+- `flow_post_task_state.py` ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and flow runtime markers; those files alone must not force a Stop-hook `flow-post-task-sync` continuation.
 - `ry-init` remains read-only for Serena memories by default and may report memory candidates rather than writing `.serena`.
-- `flow-post-task-sync` runs after Serena memory sync and should finish by normal branch commit/push, fullrepo publish, and safe cleanup when applicable.
+- `flow-post-task-sync` runs after Serena memory sync and should finish by normal branch commit/push, fullrepo publish, and safe cleanup when applicable. Its skill guidance resolves helper scripts from repo-local `plugins/rldyour-flow/scripts/*` when present or from the installed plugin cache in product repositories.
 
 ## Contracts And Data
 
@@ -66,7 +67,7 @@ Area: FLOW
 
 - When fullrepo behavior changes, update `scripts/smoke_fullrepo_sync.sh`, `scripts/smoke_fullrepo_bootstrap_init.sh`, `scripts/smoke_clean_bootstrap.sh`, and this memory.
 - When branch cleanup logic changes, update `scripts/smoke_flow_branch_cleanup.sh`.
-- When SessionStart hooks change, update `scripts/smoke_hooks.sh` and `HOOKS-01-LIFECYCLE.md`.
+- When SessionStart, Stop, or hook gate logic changes, update `scripts/smoke_hooks.sh` and `HOOKS-01-LIFECYCLE.md`.
 - When instruction-doc behavior changes, run `$instruction-docs-sync` and `python3 scripts/validate_instruction_docs.py --require-agent-docs`.
 
 ## Verification
@@ -75,5 +76,6 @@ Area: FLOW
 - `scripts/smoke_fullrepo_bootstrap_init.sh`: first-run bootstrap init and current-branch AI-file index cleanup.
 - `scripts/smoke_clean_bootstrap.sh`: clean temporary install with restored fullrepo context.
 - `scripts/smoke_flow_branch_cleanup.sh`: branch/worktree cleanup pending-state contract.
+- `scripts/smoke_hooks.sh`: flow hook lifecycle, Stop loop guard, and bootstrap-only `.serena` no-sync regression.
 - `RLDYOUR_DRY_RUN=1 scripts/worktree_add.sh test/codex-memory-brain`: helper worktree command construction.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`: current flow sync state.

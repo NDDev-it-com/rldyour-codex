@@ -130,6 +130,7 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 - Standard finish order is: refresh Serena memories and durable project instructions from verified code, run matching checks, create and push atomic normal-branch commits, publish `fullrepo` from the final branch `HEAD`, then clean merged workflow branches and worktrees when safe.
 - In normal product repositories, keep agent-only files out of `main` and feature branches. Restore them from `fullrepo`, ignore them through `.git/info/exclude`, and publish the complete snapshot to `fullrepo` with safe `--force-with-lease` after normal branch sync.
 - Agent-only files include project-root `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files. Agent tooling repositories may intentionally track selected instruction templates as product artifacts.
+- Bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml` plus runtime markers, are not meaningful project work by themselves and must not force a Stop-hook post-task sync loop.
 - After meaningful project behavior, workflow, setup, validation, architecture, plugin, hook, command, or deploy changes, update Serena memories first, then update `AGENTS.md` for Codex and `.claude/CLAUDE.md` for Claude Code from verified project state before final git/GitHub/fullrepo synchronization.
 
 ## System Codex Setup

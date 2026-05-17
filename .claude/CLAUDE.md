@@ -98,6 +98,7 @@ scripts/doctor_system_codex.sh
 - Publish agent-only files after normal branch sync with `scripts/sync_fullrepo_branch.sh --publish`.
 - Install the local branch-aware pre-push guard in product repositories with `scripts/install_local_git_hooks.sh --repo <project> --apply`; it blocks agent-only files on product branches and permits them only on the configured fullrepo branch while keeping secret/runtime protection active.
 - Treat `branch_cleanup_state` from `plugins/rldyour-flow/scripts/flow_post_task_state.py` as a finish gate: merged local/remote workflow branches and merged workflow worktrees must be cleaned or explicitly reported as blockers before final delivery.
+- Treat bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml` plus runtime markers, as non-work; they must not force a Stop-hook post-task sync loop.
 - Standard finish order: Serena memories, `AGENTS.md` and `.claude/CLAUDE.md`, checks, atomic normal-branch commits, push, `fullrepo` publish, safe cleanup.
 
 ## System Install

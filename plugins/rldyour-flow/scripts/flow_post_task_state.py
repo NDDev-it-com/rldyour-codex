@@ -17,6 +17,11 @@ RUNTIME_IGNORED = {
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
 }
+UNTRACKED_BOOTSTRAP_IGNORED = {
+    ".serena/.gitignore",
+    ".serena/project.yml",
+    ".serena/project.local.yml",
+}
 
 DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md")
 PROTECTED_BRANCHES = {"main", "master", "develop", "development", "staging", "production", "prod", "fullrepo"}
@@ -31,17 +36,40 @@ def _stdout(*args: str) -> str:
     return _git(*args).stdout.strip()
 
 
+def _head_commit() -> str:
+    proc = _git("rev-parse", "--verify", "HEAD^{commit}")
+    if proc.returncode != 0:
+        return ""
+    return proc.stdout.strip()
+
+
+def _untracked_paths(path: str) -> list[str]:
+    candidate = path.rstrip("/")
+    if not candidate or not Path(candidate).is_dir():
+        return [path]
+    raw = _stdout("ls-files", "--others", "--exclude-standard", "--", path)
+    return [line for line in raw.splitlines() if line]
+
+
 def _porcelain_paths() -> list[str]:
     raw = _git("status", "--porcelain").stdout.rstrip("\n")
     paths: list[str] = []
     for line in raw.splitlines():
         if not line:
             continue
+        status = line[:2]
         path = line[3:].strip()
         if " -> " in path:
             path = path.split(" -> ", 1)[1]
-        if path and path not in RUNTIME_IGNORED:
-            paths.append(path)
+        if not path:
+            continue
+        candidates = _untracked_paths(path) if status == "??" else [path]
+        for candidate in candidates:
+            if candidate in RUNTIME_IGNORED:
+                continue
+            if status == "??" and candidate in UNTRACKED_BOOTSTRAP_IGNORED:
+                continue
+            paths.append(candidate)
     return sorted(paths)
 
 
@@ -221,7 +249,7 @@ def state() -> dict[str, Any]:
     if _git("rev-parse", "--is-inside-work-tree").returncode != 0:
         return {"is_git_repo": False, "needs_flow_sync": False, "serena_current": True}
 
-    head_full = _stdout("rev-parse", "HEAD")
+    head_full = _head_commit()
     head_sha = head_full[:7] if head_full else ""
     branch = _stdout("branch", "--show-current") or "detached"
     dirty_files = _porcelain_paths()

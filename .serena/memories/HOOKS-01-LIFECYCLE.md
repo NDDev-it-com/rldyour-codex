@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: e2f5b80 fix(codex): stabilize plugin hook execution
-Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
+Last commit: 18d9e80 fix(flow): prevent bootstrap stop hook loops
+Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh
 Area: HOOKS
 -->
 
@@ -18,6 +18,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - `plugins/rldyour-flow/hooks/session_start_context.sh`: read-only SessionStart context packet.
 - `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: non-blocking commit advice.
 - `plugins/rldyour-flow/hooks/stop_post_task_sync.sh`: post-task sync Stop continuation.
+- `plugins/rldyour-flow/scripts/flow_post_task_state.py`: flow sync state and Stop gate decision data.
 - `plugins/rldyour-serena-mcp/hooks.json`: Serena hook wiring.
 - `plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh`: Serena-first prompt advice.
 - `plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh`: pre-commit HEAD marker.
@@ -46,6 +47,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - `scripts/install_system_codex.sh --apply` uses `codex app-server hooks/list` current hashes and `config/batchWrite` to keep `hooks.state` trusted after plugin cache updates. `scripts/doctor_system_codex.sh` fails if installed rldyour plugin hooks are not live, enabled, and trusted.
 - `session_start_worktree_bootstrap.sh` runs `fullrepo_sync.py --restore` only when canonical agent-only markers are missing and `origin/fullrepo` exists. It never publishes, pushes, commits, or edits non-agent files.
 - `session_start_context.sh` remains read-only and reports branch, HEAD, dirty state, worktrees, Serena freshness, fullrepo, and flow sync state.
+- `flow_post_task_state.py` expands untracked directories before evaluating dirty paths and ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and runtime markers.
 - Serena `mark_sync_required.sh` emits Codex `hookSpecificOutput.additionalContext` after commit-like HEAD changes.
 - Serena `stop_memory_sync.sh` blocks with exit code `2` only when memories are stale; it delegates actual memory updates to the workflow/subagent rather than editing memories inside the hook.
 
@@ -62,6 +64,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - Hooks must stay fast, bounded, and safe; expensive semantic memory work happens in the main workflow or managed subagent, not inside shell hook bodies.
 - Hook output must be Codex-compatible. Do not emit Claude Code `Agent(...)` syntax or Claude-only fields as the primary path.
 - The Flow Stop hook must not duplicate Serena memory sync. It waits until Serena reports current, then handles instruction docs, git/GitHub/fullrepo, and cleanup sync.
+- The Flow Stop hook must not force `flow-post-task-sync` when the only repository changes are bootstrap-only untracked `.serena` files from tool startup.
 - SessionStart bootstrap must be additive only and must not publish `fullrepo`.
 - Do not treat `plugin_hooks` as a legacy key; it is the supported Codex opt-in for loading bundled plugin hook files.
 
@@ -74,7 +77,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 
 ## Verification
 
-- `scripts/smoke_hooks.sh`: parsed wiring, `PLUGIN_ROOT` command execution from arbitrary cwd, and direct hook lifecycle checks.
+- `scripts/smoke_hooks.sh`: parsed wiring, `PLUGIN_ROOT` command execution from arbitrary cwd, direct hook lifecycle checks, and bootstrap-only `.serena` Stop-loop regression checks.
 - `scripts/smoke_serena_memory_taxonomy.sh`: memory hook stale/advisory/loop behavior.
 - `scripts/smoke_codex_hooks_migration.sh`: installer hook feature migration.
 - `scripts/validate_marketplace.sh`: shellcheck plus hook smoke coverage.

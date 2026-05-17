@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: e2f5b80 fix(codex): stabilize plugin hook execution
+Last commit: 18d9e80 fix(flow): prevent bootstrap stop hook loops
 Scope: scripts/validate_marketplace.sh, scripts/validate_agent_tools.py, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/check_mcp_runtime_versions.py, CHANGELOG.md, VERSION, .github/workflows/validate.yml
 Area: RELEASE
 -->
@@ -40,6 +40,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py` and `scripts/validate_agent_tools.py`.
 - Marketplace validation runs `scripts/smoke_serena_memory_taxonomy.sh` after `scripts/smoke_serena_memory_freshness.sh`.
 - `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher, selects the expected hook by script path, rejects cwd/cache-search command wrappers, and runs configured hook commands from a temporary git repo with plugin runtime environment variables.
+- `scripts/smoke_hooks.sh` includes a bootstrap-only `.serena` regression scenario: an unborn git repository containing only auto-created `.serena/project.yml`, `.serena/.gitignore`, and flow runtime markers must not require Flow post-task sync.
 - `.github/workflows/validate.yml` runs `dependency-pins` on `push`, `pull_request`, and `workflow_dispatch`; this job executes `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, writes a step-summary payload, and uploads `dependency-check.json`.
 - `scripts/smoke_codex_hooks_migration.sh` now expects installer output to contain `[features].hooks = true` and `[features].plugin_hooks = true`, while removing legacy `codex_hooks` aliases.
 - `scripts/smoke_codex_hooks_migration.sh` and `scripts/doctor_system_codex.sh` keep deprecated key migration logic synchronized (including `codex_hooks`, legacy `web_search*`, unified exec/instructions/memories keys, and `use_legacy_landlock` cleanup).
@@ -66,7 +67,7 @@ This memory records the validation and release gates that keep the marketplace, 
 ## Change Rules
 
 - When adding a new validator/smoke, wire it into `scripts/validate_marketplace.sh` if it is part of the release gate.
-- When changing hook layout, update `scripts/smoke_hooks.sh`.
+- When changing hook layout or Stop gate conditions, update `scripts/smoke_hooks.sh`.
 - When changing installed hook commands, run installer apply before doctor so `hooks.state` trusted hashes match the new plugin cache.
 - When changing memory taxonomy/freshness behavior, update `scripts/smoke_serena_memory_taxonomy.sh` and `scripts/smoke_serena_memory_freshness.sh` if needed.
 - MCP runtime pin checks must stay synchronized across `validate.yml` and `dependency-check.yml`: one catches drift in evented CI and one preserves periodic/manual review cadence.
