@@ -128,6 +128,14 @@ ${SUMMARY}
 
 Continue this turn and run the \$flow-post-task-sync workflow now.
 
+Installed rldyour-flow script paths for repositories that do not vendor this plugin:
+- Flow state: ${STATE_SCRIPT}
+- Fullrepo sync: ${PLUGIN_DIR}/scripts/fullrepo_sync.py
+- Git sync audit: ${PLUGIN_DIR}/scripts/git_sync_audit.sh
+- Instruction docs state: ${PLUGIN_DIR}/scripts/instruction_docs_state.py
+
+Use repo-local scripts only when they exist; otherwise use the installed paths above.
+
 Required order:
 1. Verify Serena memories are current. Do not duplicate Serena memory sync.
 2. Run \$instruction-docs-sync when instruction docs review is needed. Keep AGENTS.md Codex-native and .claude/CLAUDE.md Claude Code-native, using only verified project rules, commands, deploy contracts, quality gates, or workflow facts.

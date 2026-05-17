@@ -12,7 +12,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
-- None.
+- Flow Stop hook state now ignores bootstrap-only untracked `.serena` files created by tool startup, preventing empty or unborn repositories from being forced into `flow-post-task-sync` loops.
+- `flow-post-task-sync` guidance now resolves rldyour-flow helper scripts from the installed plugin cache when a product repository does not vendor this plugin.
 
 ## [0.1.1] - 2026-05-16
 

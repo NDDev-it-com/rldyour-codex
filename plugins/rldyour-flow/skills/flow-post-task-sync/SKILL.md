@@ -12,20 +12,23 @@ Leave the project in a synchronized, documented, committed state. This skill run
 ## Workflow
 
 1. Confirm Serena memories are current. If stale, run `serena-memory-sync` first.
-2. Read `.serena/.flow_post_task_state.json` if present and run `plugins/rldyour-flow/scripts/flow_post_task_state.py`. Inspect `branch_cleanup_state` and run `plugins/rldyour-flow/scripts/git_sync_audit.sh` when branch/worktree cleanup is not obviously complete.
-3. Inspect uncommitted changes deeply. Separate source changes, docs, Serena knowledge, generated junk, runtime markers, and secrets.
-4. Run `instruction-docs-sync` when durable project instructions may have changed. Keep `AGENTS.md` optimized for Codex and `.claude/CLAUDE.md` optimized for Claude Code in fullrepo-managed projects.
-5. Run applicable quality checks from project scripts and `plugins/rldyour-flow/scripts/detect_project_checks.sh`.
-6. Commit atomically with Conventional Commits. Use separate commits for implementation, tests, docs/instructions, and Serena knowledge when that improves history.
-7. Push to upstream when configured. If no upstream exists, ask before creating one.
-8. Keep normal branch history clean from agent-only files. Ensure `.git/info/exclude` contains the rldyour fullrepo block and move tracked agent-only files out of the current branch with `fullrepo_sync.py --migrate-main` only when the project is ready for that migration.
-9. Publish the complete project snapshot to `fullrepo` through `plugins/rldyour-flow/scripts/fullrepo_sync.py --publish` or `scripts/sync_fullrepo_branch.sh --publish`. This uses safe `--force-with-lease`, not a blind force push.
-10. Remove merged local and remote branches/worktrees only after verifying they are merged into `main` and no open PR depends on them. Leave protected branches such as `main` and `fullrepo`; report any ambiguous branch ownership instead of deleting silently.
-11. Remove `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json` after successful sync.
+2. Resolve rldyour-flow script paths before running commands. Prefer repo-local `plugins/rldyour-flow/scripts/*` when present; otherwise use `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/*`. If the Stop hook provided absolute installed paths, use those.
+3. Read `.serena/.flow_post_task_state.json` if present and run the resolved `flow_post_task_state.py`. Inspect `branch_cleanup_state` and run the resolved `git_sync_audit.sh` when branch/worktree cleanup is not obviously complete.
+4. Inspect uncommitted changes deeply. Separate source changes, docs, Serena knowledge, generated junk, runtime markers, and secrets.
+5. Run `instruction-docs-sync` when durable project instructions may have changed. Keep `AGENTS.md` optimized for Codex and `.claude/CLAUDE.md` optimized for Claude Code in fullrepo-managed projects.
+6. Run applicable quality checks from project scripts and the resolved `detect_project_checks.sh`.
+7. Commit atomically with Conventional Commits. Use separate commits for implementation, tests, docs/instructions, and Serena knowledge when that improves history.
+8. Push to upstream when configured. If no upstream exists, ask before creating one.
+9. Keep normal branch history clean from agent-only files. Ensure `.git/info/exclude` contains the rldyour fullrepo block and move tracked agent-only files out of the current branch with `fullrepo_sync.py --migrate-main` only when the project is ready for that migration.
+10. Publish the complete project snapshot to `fullrepo` through the resolved `fullrepo_sync.py --publish` or repo-local `scripts/sync_fullrepo_branch.sh --publish`. This uses safe `--force-with-lease`, not a blind force push.
+11. Remove merged local and remote branches/worktrees only after verifying they are merged into `main` and no open PR depends on them. Leave protected branches such as `main` and `fullrepo`; report any ambiguous branch ownership instead of deleting silently.
+12. Remove `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json` after successful sync.
 
 ## Loop Guard
 
 Do not edit runtime marker files except to remove them after sync. If the Stop hook repeats for the same fingerprint, report the blocker instead of forcing new commits.
+
+Bootstrap-only `.serena` files created by tool startup, such as an untracked `.serena/project.yml` plus runtime markers, are not meaningful project work by themselves and should not force a post-task sync loop.
 
 ## Fullrepo Branch
 
