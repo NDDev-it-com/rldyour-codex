@@ -30,6 +30,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Release workflow now exports GitHub dependency graph SBOM data through the synchronous SBOM endpoint and validates that any exported artifact is SPDX JSON.
 - Release bundles now retain governance artifacts such as `CONTRIBUTING.md`, `SECURITY.md`, and `.devcontainer/`.
 - Fast validation now checks both pytest entrypoints and bootstraps fullrepo agent context in manual GitHub validation before requiring agent instruction docs.
+- MCP safe-call validation now bootstraps fullrepo agent context and classifies known first-run MCP/uv/Serena stderr, keeping strict CI noise checks deterministic on clean GitHub runners.
 - Marketplace validation now parses the strict runtime prerequisite validator and runs the non-strict runtime prerequisite policy check.
 - Skill routing policy now supports `not_expected` entries and documents that reviewer micro-skills must not be selected directly for broad `ry-review` prompts.
 - MCP runtime freshness checks now include the pinned Bun launcher version.

@@ -16,12 +16,30 @@ def test_known_noise_is_classified_as_benign() -> None:
             'No entry for terminal type "wezterm";',
             "using dumb terminal settings.",
             "Using CPython 3.13.12",
+            "Resolving dependencies",
+            "Resolved, downloaded and extracted [422]",
+            "Saved lockfile",
+            "   Building proxy-tools==0.1.0",
+            "      Built proxy-tools==0.1.0",
             "Downloading pygments (1.2MiB)",
             " Downloaded pygments",
+            "turning off usage statistics. process.env['CI'] || process.env['CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS'] is set.",
+            "chrome-devtools-mcp exposes content of the browser instance to the MCP clients allowing them to inspect,",
+            "debug, and modify any data in the browser or DevTools.",
+            "Avoid sharing sensitive or personal information that you do not want to share with MCP clients.",
+            "Context7 Documentation MCP Server v2.2.5 running on stdio",
+            "Starting Semgrep MCP server version v1.163.0",
+            "Tracing initialized",
+            "get_supported_languages succeeded",
+            "Sequential Thinking MCP Server running on stdio",
+            "INFO  2026-05-17 12:25:06,842 [MainThread] serena.cli:start_mcp_server:346 - Initializing Serena MCP server",
+            "INFO  2026-05-17 12:25:07,197 [StartLS:bash] solidlsp.language_servers.common:_run_command:115 - Running command 'npm install --prefix ./ bash-language-server@5.6.0'",
+            "INFO  2026-05-17 12:25:06,979 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution",
+            "CRITICAL: Before starting to work on a coding task, call the `initial_instructions` tool to read the 'Serena Instructions Manual'.",
         ]
     )
 
-    assert len(benign) == 5
+    assert len(benign) == 23
     assert unknown == []
 
 
