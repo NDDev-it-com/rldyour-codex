@@ -4,7 +4,7 @@ This repository keeps branch protection as documented desired state because the 
 
 ## `main`
 
-`main` should reject force pushes and deletions, prefer linear history, and use the CI checks in `.github/branch-protection/main.json` as the normal quality gate. The owner can keep admin bypass enabled to avoid blocking urgent controlled maintenance.
+`main` should reject force pushes and deletions and prefer linear history. GitHub Actions stay manual-only by owner policy, so `.github/branch-protection/main.json` keeps `required_status_checks` empty and records the current manual validation job names under `manual_validation_checks`. Run those checks only when a task explicitly asks for CI, before a release, or before applying stricter branch rules.
 
 ## `fullrepo`
 

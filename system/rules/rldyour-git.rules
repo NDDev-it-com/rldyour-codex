@@ -1,0 +1,25 @@
+# Keep dangerous Git history operations behind explicit policy.
+
+prefix_rule(
+    pattern = ["git", "push", "--force"],
+    decision = "forbidden",
+    justification = "Use --force-with-lease only when a documented workflow requires rewriting a non-main branch.",
+    match = ["git push --force origin main"],
+    not_match = ["git push origin main"],
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "prompt",
+    justification = "Hard resets can discard user work and require an explicit owner decision.",
+    match = ["git reset --hard HEAD"],
+    not_match = ["git reset --soft HEAD~1"],
+)
+
+prefix_rule(
+    pattern = ["git", "clean", "-fdx"],
+    decision = "prompt",
+    justification = "Recursive clean with ignored files can remove local runtime state.",
+    match = ["git clean -fdx"],
+    not_match = ["git clean -fd"],
+)

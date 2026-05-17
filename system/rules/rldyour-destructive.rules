@@ -1,0 +1,33 @@
+# Block commands that are too destructive for owner-controlled YOLO mode.
+
+prefix_rule(
+    pattern = ["rm", "-rf", "/"],
+    decision = "forbidden",
+    justification = "Never recursively delete the filesystem root.",
+    match = ["rm -rf /"],
+    not_match = ["rm -rf /tmp/rldyour-codex-smoke"],
+)
+
+prefix_rule(
+    pattern = ["rm", "-fr", "/"],
+    decision = "forbidden",
+    justification = "Never recursively delete the filesystem root.",
+    match = ["rm -fr /"],
+    not_match = ["rm -fr /tmp/rldyour-codex-smoke"],
+)
+
+prefix_rule(
+    pattern = ["chmod", "-R", "777", "/"],
+    decision = "forbidden",
+    justification = "Do not recursively make the filesystem root world-writable.",
+    match = ["chmod -R 777 /"],
+    not_match = ["chmod -R 777 /tmp/rldyour-codex-smoke"],
+)
+
+prefix_rule(
+    pattern = ["chown", "-R"],
+    decision = "prompt",
+    justification = "Recursive ownership changes must be intentional and scoped.",
+    match = ["chown -R user:group /var/www/example"],
+    not_match = ["chown user:group file.txt"],
+)

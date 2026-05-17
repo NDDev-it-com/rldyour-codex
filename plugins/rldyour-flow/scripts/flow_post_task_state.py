@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,14 @@ UNTRACKED_BOOTSTRAP_IGNORED = {
 DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md")
 PROTECTED_BRANCHES = {"main", "master", "develop", "development", "staging", "production", "prod", "fullrepo"}
 WORKFLOW_BRANCH_PREFIXES = ("ai/", "codex/", "ry-", "rldyour/")
+
+
+def _codex_home() -> Path:
+    return Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
+
+
+def _installed_script(plugin: str, relative_path: str) -> Path:
+    return _codex_home() / "plugins/cache/rldyour-codex" / plugin / "local" / relative_path
 
 
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
@@ -181,7 +190,7 @@ def _branch_cleanup_state(current_branch: str) -> dict[str, Any]:
 def _serena_current() -> tuple[bool, dict[str, Any]]:
     candidates = [
         Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
-        Path.home() / ".codex/plugins/cache/rldyour-codex/rldyour-serena-mcp/local/scripts/serena_memory_state.py",
+        _installed_script("rldyour-serena-mcp", "scripts/serena_memory_state.py"),
     ]
     for candidate in candidates:
         if not candidate.is_file():
@@ -200,7 +209,7 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
 def _fullrepo_state() -> dict[str, Any]:
     candidates = [
         Path("plugins/rldyour-flow/scripts/fullrepo_sync.py"),
-        Path.home() / ".codex/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/fullrepo_sync.py",
+        _installed_script("rldyour-flow", "scripts/fullrepo_sync.py"),
     ]
     for candidate in candidates:
         if not candidate.is_file():
@@ -224,7 +233,7 @@ def _fullrepo_state() -> dict[str, Any]:
 def _instruction_docs_state() -> dict[str, Any]:
     candidates = [
         Path("plugins/rldyour-flow/scripts/instruction_docs_state.py"),
-        Path.home() / ".codex/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/instruction_docs_state.py",
+        _installed_script("rldyour-flow", "scripts/instruction_docs_state.py"),
     ]
     for candidate in candidates:
         if not candidate.is_file():

@@ -1,12 +1,15 @@
 {
   "branch": "main",
   "owner_access": "owner can always administer and push intentionally",
-  "required_status_checks": [
-    "Unit tests (ubuntu-latest)",
-    "Unit tests (macos-latest)",
-    "Marketplace and system smoke (ubuntu-latest)",
-    "Marketplace and system smoke (macos-latest)",
+  "required_status_checks": [],
+  "manual_validation_checks": [
+    "Fast validation (ubuntu)",
+    "Fast validation (macos)",
+    "Runtime smoke (ubuntu)",
+    "Runtime smoke (macos)",
+    "Release dry-run",
     "MCP runtime pin freshness",
+    "MCP safe call smoke (ubuntu)",
     "No-paid static security"
   ],
   "allow_force_pushes": false,
@@ -21,6 +24,7 @@
   "notes": [
     "This file is desired state documentation, not an auto-applied policy.",
     "The owner keeps direct access to main for controlled personal workflow.",
-    "Required check names must be adjusted if GitHub renders matrix job names differently."
+    "GitHub Actions are manual-only by owner policy; run validation workflows only when a task explicitly asks for CI.",
+    "manual_validation_checks names must match current workflow job names for human and ruleset reference."
   ]
 }

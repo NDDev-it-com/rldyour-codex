@@ -12,6 +12,27 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Security
 
+## [0.3.1] - 2026-05-17
+
+### Added
+
+- Managed Codex execpolicy rules under `system/rules/*.rules`, installer sync to `${CODEX_HOME:-$HOME/.codex}/rules`, doctor parity checks, and `scripts/validate_execpolicy_rules.sh`.
+
+### Changed
+
+- Flow SessionStart dispatcher now kills timed-out child process groups instead of only the direct child process.
+- Hook smoke now runs each hook through a bounded process-group timeout runner and reports the exact hook label on timeout.
+- `flow_post_task_state.py` resolves installed plugin helper scripts through `CODEX_HOME` before falling back to the default `~/.codex` location.
+- `smoke_clean_bootstrap.sh` configures temporary git identity, and its live `codex mcp list` probe is optional unless `--require-codex` is passed.
+- `fullrepo_sync.py` supplies deterministic git author/committer fallback identity for `git commit-tree` publish operations.
+- Branch-protection desired state now matches the repository's manual-only CI policy and current workflow job names.
+- `.serena/project.yml` is no longer ignored in this repository because it is a source-of-truth Serena project config.
+- `rldyour-flow` plugin version updated to `0.3.1` for SessionStart timeout cleanup, `CODEX_HOME` helper resolution, and fullrepo identity fallback.
+
+### Security
+
+- Owner-controlled YOLO mode now has validated execpolicy rails for root deletion, direct forced pushes, private-key disclosure commands, and release/deploy side effects.
+
 ## [0.3.0] - 2026-05-17
 
 ### Added

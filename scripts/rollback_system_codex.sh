@@ -14,7 +14,7 @@ Usage:
   scripts/rollback_system_codex.sh [--codex-home DIR] --list
   scripts/rollback_system_codex.sh [--codex-home DIR] --restore BACKUP_NAME [--dry-run]
 
-Restore AGENTS.md, config.toml, and managed agents/*.toml from installer-created rldyour-codex backups.
+Restore AGENTS.md, config.toml, managed agents/*.toml, and managed rules/*.rules from installer-created rldyour-codex backups.
 EOF
 }
 
@@ -119,6 +119,12 @@ else
       cp "$agent_file" "$PRE_RESTORE_DIR/agents/"
     done
   fi
+  if [ -d "$CODEX_HOME_DIR/rules" ]; then
+    mkdir -p "$PRE_RESTORE_DIR/rules"
+    find "$CODEX_HOME_DIR/rules" -maxdepth 1 -type f -name '*.rules' -print | sort | while IFS= read -r rule_file; do
+      cp "$rule_file" "$PRE_RESTORE_DIR/rules/"
+    done
+  fi
   printf 'current state backed up to %s\n' "$PRE_RESTORE_DIR"
 fi
 
@@ -127,6 +133,21 @@ restore_file config.toml
 if [ -d "$SOURCE_DIR/agents" ]; then
   find "$SOURCE_DIR/agents" -maxdepth 1 -type f -name '*.toml' -print | sort | while IFS= read -r source; do
     target="$CODEX_HOME_DIR/agents/$(basename "$source")"
+    if [ "$DRY_RUN" = "1" ]; then
+      printf 'would restore %s -> %s\n' "$source" "$target"
+    else
+      target_dir=$(dirname "$target")
+      mkdir -p "$target_dir"
+      tmp_target=$(mktemp "$target_dir/.restore.$(basename "$target").XXXXXX")
+      install -m 0644 "$source" "$tmp_target"
+      mv -f "$tmp_target" "$target"
+      printf 'restored %s\n' "$target"
+    fi
+  done
+fi
+if [ -d "$SOURCE_DIR/rules" ]; then
+  find "$SOURCE_DIR/rules" -maxdepth 1 -type f -name '*.rules' -print | sort | while IFS= read -r source; do
+    target="$CODEX_HOME_DIR/rules/$(basename "$source")"
     if [ "$DRY_RUN" = "1" ]; then
       printf 'would restore %s -> %s\n' "$source" "$target"
     else

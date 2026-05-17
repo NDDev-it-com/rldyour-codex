@@ -3,6 +3,7 @@ set -euo pipefail
 
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 MODE="both"
+HOOK_SMOKE_TIMEOUT=${RLDYOUR_HOOK_SMOKE_TIMEOUT:-30}
 
 usage() {
   cat <<'EOF'
@@ -51,15 +52,73 @@ fail() {
   exit 1
 }
 
+run_command_with_timeout() {
+  local cwd=$1
+  local timeout_seconds=$2
+  local input=$3
+  shift 3
+
+  HOOK_SMOKE_STDIN="$input" python3 - "$cwd" "$timeout_seconds" "$@" <<'PY'
+from __future__ import annotations
+
+import os
+import signal
+import subprocess
+import sys
+
+cwd = sys.argv[1]
+timeout_seconds = float(sys.argv[2])
+command = sys.argv[3:]
+payload = os.environ.get("HOOK_SMOKE_STDIN", "")
+proc = subprocess.Popen(
+    command,
+    cwd=cwd,
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    text=True,
+    start_new_session=True,
+)
+try:
+    output, _ = proc.communicate(payload, timeout=timeout_seconds)
+except subprocess.TimeoutExpired:
+    try:
+        os.killpg(proc.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    try:
+        output, _ = proc.communicate(timeout=1)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        output, _ = proc.communicate()
+    sys.stdout.write(output or "")
+    raise SystemExit(124)
+
+sys.stdout.write(output or "")
+raise SystemExit(proc.returncode)
+PY
+}
+
 run_hook() {
   local label=$1
   local path=$2
   local input=$3
   local expected=$4
   local output
+  local status
 
   [ -f "$path" ] || fail "$label missing: $path"
-  output=$(cd "$ROOT" && printf '%s' "$input" | bash "$path")
+  set +e
+  output=$(run_command_with_timeout "$ROOT" "$HOOK_SMOKE_TIMEOUT" "$input" bash "$path")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ]; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label failed or timed out after ${HOOK_SMOKE_TIMEOUT}s (exit $status)"
+  fi
   if [ -n "$expected" ] && ! printf '%s' "$output" | grep -F "$expected" >/dev/null; then
     printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
     fail "$label did not include expected text: $expected"
@@ -72,9 +131,17 @@ run_quiet_hook() {
   local path=$2
   local input=$3
   local output
+  local status
 
   [ -f "$path" ] || fail "$label missing: $path"
-  output=$(cd "$ROOT" && printf '%s' "$input" | bash "$path")
+  set +e
+  output=$(run_command_with_timeout "$ROOT" "$HOOK_SMOKE_TIMEOUT" "$input" bash "$path")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ]; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label failed or timed out after ${HOOK_SMOKE_TIMEOUT}s (exit $status)"
+  fi
   if [ -n "$output" ]; then
     printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
     fail "$label should not emit output for this smoke input"
@@ -86,7 +153,7 @@ run_stop_hook() {
   local label=$1
   local path=$2
   [ -f "$path" ] || fail "$label missing: $path"
-  (cd "$ROOT" && printf '{}' | RLDYOUR_SKIP_STOP_GATES=1 bash "$path")
+  RLDYOUR_SKIP_STOP_GATES=1 run_command_with_timeout "$ROOT" "$HOOK_SMOKE_TIMEOUT" "{}" bash "$path" >/dev/null
   printf 'ok      %s\n' "$label"
 }
 
@@ -172,11 +239,19 @@ run_configured_hook() {
   local input=$7
   local expected=$8
   local command output plugin_root plugin_data
+  local status
 
   command=$(hook_json_command "$hooks_json" "$event" "$matcher" "$expected_script")
   plugin_root=$(plugin_root_for_hooks_json "$hooks_json")
   plugin_data="$plugin_root/.plugin-data-smoke"
-  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" bash -lc "$command")
+  set +e
+  output=$(CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" run_command_with_timeout "$cwd" "$HOOK_SMOKE_TIMEOUT" "$input" bash -lc "$command")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ]; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label failed or timed out after ${HOOK_SMOKE_TIMEOUT}s (exit $status)"
+  fi
   if [ -n "$expected" ] && ! printf '%s' "$output" | grep -F "$expected" >/dev/null; then
     printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
     fail "$label did not include expected text: $expected"
@@ -193,11 +268,19 @@ run_configured_quiet_hook() {
   local cwd=$6
   local input=$7
   local command output plugin_root plugin_data
+  local status
 
   command=$(hook_json_command "$hooks_json" "$event" "$matcher" "$expected_script")
   plugin_root=$(plugin_root_for_hooks_json "$hooks_json")
   plugin_data="$plugin_root/.plugin-data-smoke"
-  output=$(cd "$cwd" && printf '%s' "$input" | CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" bash -lc "$command")
+  set +e
+  output=$(CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" run_command_with_timeout "$cwd" "$HOOK_SMOKE_TIMEOUT" "$input" bash -lc "$command")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ]; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label failed or timed out after ${HOOK_SMOKE_TIMEOUT}s (exit $status)"
+  fi
   if [ -n "$output" ]; then
     printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
     fail "$label should not emit output for this smoke input"
@@ -212,11 +295,19 @@ run_configured_stop_hook() {
   local expected_script=$4
   local cwd=$5
   local command plugin_root plugin_data
+  local output status
 
   command=$(hook_json_command "$hooks_json" "$event" "-" "$expected_script")
   plugin_root=$(plugin_root_for_hooks_json "$hooks_json")
   plugin_data="$plugin_root/.plugin-data-smoke"
-  (cd "$cwd" && printf '{}' | CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" RLDYOUR_SKIP_STOP_GATES=1 bash -lc "$command")
+  set +e
+  output=$(CODEX_HOME="$CODEX_HOME_DIR" PLUGIN_ROOT="$plugin_root" PLUGIN_DATA="$plugin_data" CLAUDE_PLUGIN_ROOT="$plugin_root" CLAUDE_PLUGIN_DATA="$plugin_data" RLDYOUR_SKIP_STOP_GATES=1 run_command_with_timeout "$cwd" "$HOOK_SMOKE_TIMEOUT" "{}" bash -lc "$command")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ]; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label failed or timed out after ${HOOK_SMOKE_TIMEOUT}s (exit $status)"
+  fi
   printf 'ok      %s\n' "$label"
 }
 
@@ -251,9 +342,17 @@ run_hook_in_dir() {
   local input=$4
   local expected=$5
   local output
+  local status
 
   [ -f "$path" ] || fail "$label missing: $path"
-  output=$(cd "$cwd" && printf '%s' "$input" | bash "$path")
+  set +e
+  output=$(run_command_with_timeout "$cwd" "$HOOK_SMOKE_TIMEOUT" "$input" bash "$path")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ]; then
+    printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
+    fail "$label failed or timed out after ${HOOK_SMOKE_TIMEOUT}s (exit $status)"
+  fi
   if [ -n "$expected" ] && ! printf '%s' "$output" | grep -F "$expected" >/dev/null; then
     printf 'hook output for %s:\n%s\n' "$label" "$output" >&2
     fail "$label did not include expected text: $expected"
@@ -273,7 +372,7 @@ run_hook_expect_exit_in_dir() {
 
   [ -f "$path" ] || fail "$label missing: $path"
   set +e
-  output=$(cd "$cwd" && printf '%s' "$input" | bash "$path" 2>&1)
+  output=$(run_command_with_timeout "$cwd" "$HOOK_SMOKE_TIMEOUT" "$input" bash "$path")
   status=$?
   set -e
   if [ "$status" -ne "$expected_exit" ]; then

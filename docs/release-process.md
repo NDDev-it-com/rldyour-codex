@@ -26,6 +26,7 @@ This repository has two versioning layers:
 scripts/validate_fast.sh
 scripts/validate_runtime.sh --strict-runtime
 scripts/validate_release.sh
+scripts/validate_execpolicy_rules.sh
 scripts/validate_marketplace.sh
 scripts/doctor_system_codex.sh
 scripts/smoke_local_git_guard.sh
