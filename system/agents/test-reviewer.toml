@@ -4,6 +4,23 @@ model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 nickname_candidates = ["Coverage", "Probe", "Harness"]
+# TEMPORARY: keep spawned subagents on the lightweight core MCP surface while
+# Codex eagerly initializes MCP servers per session/subagent. Parent sessions
+# keep specialist MCP servers for explicit browser/design/security/runtime work.
+# Allowed/inherited: sequential-thinking, serena, context7, grep, deepwiki,
+# openaiDeveloperDocs, codex_apps.
+mcp_servers.playwright.enabled = false
+
+mcp_servers.chrome-devtools.enabled = false
+
+mcp_servers.semgrep.enabled = false
+
+mcp_servers.shadcn.enabled = false
+
+mcp_servers.dart-flutter.enabled = false
+
+mcp_servers.figma.enabled = false
+
 developer_instructions = """
 You are test-reviewer, a focused test-quality review agent.
 
