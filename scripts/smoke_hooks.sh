@@ -276,6 +276,49 @@ make_lifecycle_repo() {
   printf '%s\n' "$tmp"
 }
 
+make_unborn_bootstrap_repo() {
+  local tmp
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-hook-bootstrap.XXXXXX")
+  git -C "$tmp" init -q
+  mkdir -p "$tmp/.serena"
+  cat > "$tmp/.serena/.gitignore" <<'EOF_IGNORE'
+/cache
+/project.local.yml
+EOF_IGNORE
+  cat > "$tmp/.serena/project.yml" <<'EOF_PROJECT'
+project_name: "rldyour-hook-bootstrap"
+languages: []
+encoding: "utf-8"
+EOF_PROJECT
+  printf 'bootstrap-only\n' > "$tmp/.serena/.flow_sync_marker"
+  printf '{"needs_flow_sync":true}' > "$tmp/.serena/.flow_post_task_state.json"
+  printf '%s\n' "$tmp"
+}
+
+assert_flow_state_clean() {
+  local label=$1
+  local cwd=$2
+  local state_script=$3
+  local payload
+
+  [ -f "$state_script" ] || fail "$label missing state script: $state_script"
+  payload=$(cd "$cwd" && python3 "$state_script")
+  FLOW_STATE_PAYLOAD="$payload" python3 - "$label" <<'PY'
+import json
+import os
+import sys
+
+label = sys.argv[1]
+payload = json.loads(os.environ["FLOW_STATE_PAYLOAD"])
+if payload.get("needs_flow_sync"):
+    raise SystemExit(f"{label} unexpectedly needs sync: {json.dumps(payload, sort_keys=True)}")
+dirty = payload.get("dirty_files")
+if dirty:
+    raise SystemExit(f"{label} unexpectedly dirty: {dirty}")
+PY
+  printf 'ok      %s\n' "$label"
+}
+
 smoke_lifecycle() {
   local name=$1
   local serena_dir=$2
@@ -350,6 +393,17 @@ EOF_MEMORY
     '{"stop_hook_active":true}' \
     0 \
     "already requested"
+
+  local bootstrap_tmp
+  bootstrap_tmp=$(make_unborn_bootstrap_repo)
+  assert_flow_state_clean "$name lifecycle flow ignores bootstrap-only Serena state" \
+    "$bootstrap_tmp" "$flow_dir/scripts/flow_post_task_state.py"
+  run_hook_expect_exit_in_dir "$name lifecycle flow Stop ignores bootstrap-only Serena state" \
+    "$bootstrap_tmp" "$flow_dir/hooks/stop_post_task_sync.sh" \
+    '{"stop_hook_active":false}' \
+    0 \
+    ""
+  rm -rf "$bootstrap_tmp"
 
   git -C "$tmp" add .serena/memories/CORE_01_hook_smoke.md
   git -C "$tmp" commit -q -m "bad commit"

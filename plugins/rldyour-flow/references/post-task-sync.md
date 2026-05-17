@@ -48,6 +48,8 @@ Post-task flow:
 4. Run `fullrepo_sync.py --publish` after the normal branch is at its final `HEAD`.
 5. Verify `fullrepo_sync.py --status-json` and branch refs before final delivery.
 
+Resolve helper scripts before running them. Prefer repo-local `plugins/rldyour-flow/scripts/*` in this repository or any repo that vendors the plugin; otherwise use `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/*`. Stop-hook continuation messages include absolute installed paths for product repositories.
+
 Initialization flow:
 
 1. Run `fullrepo_sync.py --bootstrap-init` before relying on missing agent-only context.
@@ -60,6 +62,8 @@ Initialization flow:
 ## Loop Prevention
 
 The Stop hook writes `.serena/.flow_sync_marker` with a fingerprint of HEAD, dirty files, ahead/behind, branch, and Serena freshness. If the same fingerprint already requested a continuation during active Stop processing, the hook allows stop to avoid a loop.
+
+Bootstrap-only `.serena` files created by tool startup, such as an untracked `.serena/project.yml` plus runtime markers, are not meaningful work by themselves and must not trigger a post-task sync continuation.
 
 Runtime markers are ignored by git:
 
