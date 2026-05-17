@@ -88,6 +88,15 @@ def _stdout(*args: str, check: bool = True, env: dict[str, str] | None = None) -
     return _git(*args, check=check, env=env).stdout.strip()
 
 
+def git_identity_env() -> dict[str, str]:
+    env = os.environ.copy()
+    env.setdefault("GIT_AUTHOR_NAME", "rldyour-codex")
+    env.setdefault("GIT_AUTHOR_EMAIL", "rldyour-codex@example.invalid")
+    env.setdefault("GIT_COMMITTER_NAME", "rldyour-codex")
+    env.setdefault("GIT_COMMITTER_EMAIL", "rldyour-codex@example.invalid")
+    return env
+
+
 def repo_root() -> Path:
     proc = _git("rev-parse", "--show-toplevel", check=False)
     if proc.returncode != 0:
@@ -311,7 +320,7 @@ def publish(remote: str, branch: str, dry_run: bool = False) -> None:
         f"Base-branch-head: {head}\n"
         f"Agent-only-files: {len(agent_paths)}\n"
     )
-    commit = _stdout("commit-tree", tree, *parent_args, "-m", message)
+    commit = _stdout("commit-tree", tree, *parent_args, "-m", message, env=git_identity_env())
 
     if dry_run:
         print(f"dry-run: would update refs/heads/{branch} to {commit[:12]}")

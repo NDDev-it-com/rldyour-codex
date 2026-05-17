@@ -2,10 +2,11 @@
 set -euo pipefail
 
 KEEP=0
+REQUIRE_CODEX=0
 
 usage() {
   cat <<'EOF'
-Usage: scripts/smoke_clean_bootstrap.sh [--keep]
+Usage: scripts/smoke_clean_bootstrap.sh [--keep] [--require-codex]
 
 Proves a clean-machine style path with temporary state:
 1. clone the current repository;
@@ -13,6 +14,9 @@ Proves a clean-machine style path with temporary state:
 3. install into a temporary CODEX_HOME;
 4. run doctor/validation against that temporary install;
 5. verify MCP registration and plugin routing from the cloned repo.
+
+By default this smoke skips the live `codex mcp list` probe when Codex CLI is
+not installed. Use --require-codex for strict runtime environments.
 
 The repository must be clean so the cloned copy matches committed source of truth.
 EOF
@@ -22,6 +26,9 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     --keep)
       KEEP=1
+      ;;
+    --require-codex)
+      REQUIRE_CODEX=1
       ;;
     -h|--help)
       usage
@@ -71,6 +78,8 @@ if ! git clone --quiet --local "$ROOT" "$CLONE_DIR"; then
 fi
 
 cd "$CLONE_DIR"
+git config user.name "rldyour-clean-bootstrap"
+git config user.email "rldyour-clean-bootstrap@example.invalid"
 
 scripts/sync_fullrepo_branch.sh --bootstrap-init
 scripts/install_system_codex.sh --dry-run --codex-home "$CODEX_HOME_DIR"
@@ -82,7 +91,14 @@ CODEX_HOME="$CODEX_HOME_DIR" \
 SERENA_HOME="$SERENA_HOME_DIR" \
   scripts/doctor_system_codex.sh --codex-home "$CODEX_HOME_DIR"
 
-CODEX_HOME="$CODEX_HOME_DIR" codex mcp list >/dev/null
+if command -v codex >/dev/null 2>&1; then
+  CODEX_HOME="$CODEX_HOME_DIR" codex mcp list >/dev/null
+elif [ "$REQUIRE_CODEX" -eq 1 ]; then
+  printf 'codex command not found; --require-codex was requested.\n' >&2
+  exit 1
+else
+  printf 'skip    codex mcp list: codex command not found\n'
+fi
 python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json | python3 -m json.tool >/dev/null
 scripts/smoke_fullrepo_sync.sh
 scripts/smoke_fullrepo_bootstrap_init.sh

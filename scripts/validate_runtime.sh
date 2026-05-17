@@ -58,6 +58,14 @@ fi
 scripts/install_system_codex.sh --dry-run --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
 scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
 scripts/doctor_system_codex.sh --quick --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
+if command -v codex >/dev/null 2>&1; then
+  CODEX_HOME="$CODEX_HOME_DIR" scripts/validate_execpolicy_rules.sh "$CODEX_HOME_DIR/rules"
+elif [ "$STRICT_RUNTIME" -eq 1 ]; then
+  printf 'codex command not found; strict runtime execpolicy validation cannot run.\n' >&2
+  exit 1
+else
+  printf 'skip    execpolicy rules validation: codex command not found\n'
+fi
 scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
 scripts/smoke_fullrepo_sync.sh
 scripts/smoke_fullrepo_bootstrap_init.sh
