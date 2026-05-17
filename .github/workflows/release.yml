@@ -72,6 +72,7 @@ jobs:
           mkdir -p dist
           release_paths=(
             .agents
+            .devcontainer
             .github
             config
             docs
@@ -79,7 +80,9 @@ jobs:
             scripts
             system
             tests
+            CONTRIBUTING.md
             README.md
+            SECURITY.md
             CHANGELOG.md
             VERSION
             LICENSE
@@ -119,12 +122,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh api \
+          if gh api \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
-            "/repos/${GITHUB_REPOSITORY}/dependency-graph/sbom/generate-report" \
-            > dist/github-dependency-graph-sbom.spdx.json \
-            || rm -f dist/github-dependency-graph-sbom.spdx.json
+            "/repos/${GITHUB_REPOSITORY}/dependency-graph/sbom" \
+            --jq '.sbom' \
+            > dist/github-dependency-graph-sbom.spdx.json; then
+            jq -e '.spdxVersion == "SPDX-2.3" and (.packages | length > 0)' \
+              dist/github-dependency-graph-sbom.spdx.json >/dev/null
+          else
+            rm -f dist/github-dependency-graph-sbom.spdx.json
+          fi
 
       - name: Attest release bundle
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0

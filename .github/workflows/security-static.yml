@@ -1,14 +1,6 @@
 name: security-static
 
 on:
-  push:
-    branches:
-      - main
-      - fullrepo
-      - "release/**"
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:

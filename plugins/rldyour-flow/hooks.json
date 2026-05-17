@@ -30,9 +30,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/stop_post_task_sync.sh\"'",
-            "timeout": 10,
-            "statusMessage": "Checking rldyour flow post-task sync"
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/stop_lifecycle_dispatcher.sh\"'",
+            "timeout": 20,
+            "statusMessage": "Checking rldyour ordered lifecycle sync"
           }
         ]
       }

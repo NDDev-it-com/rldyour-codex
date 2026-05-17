@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests.conftest import import_script
+from tests.support.importing import import_script
 
 
 mod = import_script("scripts/release_manifest.py")

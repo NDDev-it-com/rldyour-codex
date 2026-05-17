@@ -23,6 +23,7 @@ class Pin:
 
 PINS: tuple[Pin, ...] = (
     Pin("CODEX_CLI_VERSION", "npm", "@openai/codex"),
+    Pin("BUN_VERSION", "npm", "bun"),
     Pin("MCP_PYTHON_SDK_VERSION", "pypi", "mcp"),
     Pin("SERENA_AGENT_VERSION", "pypi", "serena-agent"),
     Pin("SEMGREP_VERSION", "pypi", "semgrep"),

@@ -8,7 +8,10 @@ This repository uses lightweight operational observability: deterministic logs, 
 - `git log --oneline -20`: recent change history.
 - `codex mcp list`: registered MCP server names and transports.
 - `scripts/doctor_system_codex.sh`: installed system Codex state.
-- `scripts/validate_marketplace.sh`: repository-level plugin, skill, MCP, hook, and policy validation.
+- `scripts/validate_fast.sh`: fast repository validation with both pytest entrypoints.
+- `scripts/validate_runtime.sh --strict-runtime`: temporary installed-runtime validation.
+- `scripts/validate_release.sh`: release manifest and SBOM dry-run validation.
+- `scripts/validate_marketplace.sh`: complete local plugin, skill, MCP, hook, and policy validation.
 - `scripts/smoke_clean_bootstrap.sh`: new-machine bootstrap behavior.
 - `scripts/sync_fullrepo_branch.sh --status`: agent-only file and `fullrepo` branch state.
 - `gh run list --repo rldyourmnd/rldyour-codex --limit 10`: latest CI state.
@@ -37,8 +40,9 @@ GitHub Actions writes:
 - failure diagnostic artifacts under `diagnostics/ci`;
 - standard workflow logs for validation, doctor, bootstrap, and dependency checks.
 
-The `validate` workflow runs on Ubuntu and macOS because this setup must remain portable across the owner's Linux and macOS machines plus clean CI runners.
-On `push`, `pull_request`, and manual dispatch, `validate.yml` adds the `dependency-pins` job and uploads `dependency-check.json` for MCP pin freshness diagnostics.
+The `validate` workflow is manual-only. Ubuntu is the default runner for cost control; macOS is enabled only when the manual `include_macos` input is true because macOS runner minutes are materially more expensive. The workflow exposes `fast`, `runtime`, `release`, `mcp`, and `full` scopes so an agent can run exactly the requested gate instead of paying for every gate on every push.
+
+The manual `dependency-check` workflow and the `validate` workflow's `mcp`/`full` scopes upload `dependency-check.json` for MCP pin freshness diagnostics.
 
 ## Failure Triage Order
 

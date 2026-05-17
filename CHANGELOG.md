@@ -10,9 +10,39 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
+### Security
+
+## [0.3.0] - 2026-05-17
+
+### Added
+
+- Ordered Flow Stop lifecycle dispatcher that runs Serena memory gating before Flow post-task synchronization, eliminating cross-plugin Stop hook races.
+- Strict runtime prerequisite validation through `scripts/validate_runtime_prereqs.py`, `scripts/install_system_codex.sh --strict-runtime`, and `scripts/doctor_system_codex.sh --strict-runtime`.
+- Modular local validation gates: `scripts/validate_fast.sh`, `scripts/validate_runtime.sh`, and `scripts/validate_release.sh`.
+- No-git fallback scanning in `scripts/scan_text_security.py` so extracted release bundles and disposable source directories receive broad text security coverage.
+- Explicit Node major, Bun, and Dart SDK runtime pins in `config/mcp-runtime-versions.env`, with CI/devcontainer setup reading the shared pin source.
+- Dedicated test helper module under `tests/support/` so `pytest` and `python -m pytest` collect tests consistently.
+
+### Changed
+
+- GitHub validation, dependency-check, and no-paid security workflows are now manual-only through `workflow_dispatch`; macOS validation is opt-in to preserve quality coverage without spending macOS minutes by default.
+- Flow SessionStart dispatch now has per-child timeouts and output caps so Codex receives bounded degraded context instead of a long-running hook failure.
+- Release workflow now exports GitHub dependency graph SBOM data through the synchronous SBOM endpoint and validates that any exported artifact is SPDX JSON.
+- Release bundles now retain governance artifacts such as `CONTRIBUTING.md`, `SECURITY.md`, and `.devcontainer/`.
+- Fast validation now checks both pytest entrypoints and bootstraps fullrepo agent context in manual GitHub validation before requiring agent instruction docs.
+- Marketplace validation now parses the strict runtime prerequisite validator and runs the non-strict runtime prerequisite policy check.
+- Skill routing policy now supports `not_expected` entries and documents that reviewer micro-skills must not be selected directly for broad `ry-review` prompts.
+- MCP runtime freshness checks now include the pinned Bun launcher version.
+- Repository pytest coverage threshold increased from 70% to 75% after adding strict runtime and runtime-pin tests.
 - Updated the no-paid security workflow actionlint pin to `1.7.12`, Pyright pin to `1.1.409`, and aligned `actions/attest` SHA comments with tag `v4.1.0`.
+- `rldyour-flow` plugin version updated to `0.3.0` for bounded SessionStart dispatch, ordered Stop lifecycle dispatch, and modular validation integration.
+- `rldyour-serena-mcp` plugin version updated to `0.2.4` because Stop memory gating is now invoked by the ordered Flow lifecycle dispatcher instead of a competing plugin Stop hook.
+- `rldyour-mcps` plugin version updated to `0.1.6` for shared host runtime pinning and strict prerequisite validation.
 
 ### Security
+
+- Strict runtime mode fails enabled MCP server configurations when required launchers such as `uvx`, `bunx`, `dart`, or `codex` are unavailable.
+- Manual CI scopes separate fast, runtime, release, and MCP checks so expensive macOS validation is deliberate rather than automatic.
 
 ## [0.2.0] - 2026-05-17
 

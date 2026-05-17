@@ -1,6 +1,6 @@
 [project]
 name = "rldyour-codex"
-version = "0.2.0"
+version = "0.3.0"
 requires-python = ">=3.13,<3.14"
 
 [tool.pytest.ini_options]
@@ -11,7 +11,7 @@ addopts = [
   "--cov",
   "--cov-report=term-missing",
   "--cov-report=xml:coverage.xml",
-  "--cov-fail-under=70",
+  "--cov-fail-under=75",
   "--junitxml=pytest.xml",
 ]
 

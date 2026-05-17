@@ -7,47 +7,62 @@ unset CDPATH
 
 HOOK_INPUT=$(cat 2>/dev/null || true)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HOOK_INPUT_FILE=$(mktemp "${TMPDIR:-/tmp}/rldyour-session-start-input.XXXXXX")
+trap 'rm -f "$HOOK_INPUT_FILE"' EXIT
+printf '%s' "$HOOK_INPUT" > "$HOOK_INPUT_FILE"
 
-run_child() {
-  local script_name=$1
-  local script_path="$SCRIPT_DIR/$script_name"
-  local output
-  local status
-
-  if [ ! -f "$script_path" ]; then
-    printf '127\t%s missing: %s\n' "$script_name" "$script_path"
-    return 0
-  fi
-
-  set +e
-  output=$(printf '%s' "$HOOK_INPUT" | bash "$script_path" 2>&1)
-  status=$?
-  set -e
-
-  printf '%s\t%s' "$status" "$output"
-}
-
-BOOTSTRAP_RESULT=$(run_child session_start_worktree_bootstrap.sh)
-CONTEXT_RESULT=$(run_child session_start_context.sh)
-
-python3 - "$BOOTSTRAP_RESULT" "$CONTEXT_RESULT" <<'PY'
+python3 - "$SCRIPT_DIR" "$HOOK_INPUT_FILE" <<'PY'
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
+from pathlib import Path
+
+OUTPUT_LIMIT = 8192
+FAILURE_PREVIEW_LINES = 12
+CHILDREN = (
+    ("bootstrap", "session_start_worktree_bootstrap.sh", 6),
+    ("context", "session_start_context.sh", 8),
+)
 
 
-def split_result(raw: str) -> tuple[int, str]:
-    first, sep, rest = raw.partition("\t")
-    if not sep:
-        return 1, raw
+script_dir = Path(sys.argv[1])
+hook_input = Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
+
+
+def cap_output(text: str, limit: int = OUTPUT_LIMIT) -> str:
+    if len(text) <= limit:
+        return text
+    omitted = len(text) - limit
+    return text[:limit].rstrip() + f"\n... truncated {omitted} bytes"
+
+
+def run_child(script_name: str, timeout_seconds: int) -> tuple[int, str]:
+    script_path = script_dir / script_name
+    if not script_path.is_file():
+        return 127, f"{script_name} missing: {script_path}"
     try:
-        return int(first), rest
-    except ValueError:
-        return 1, raw
+        proc = subprocess.run(
+            ["bash", str(script_path)],
+            input=hook_input,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=timeout_seconds,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        output = ""
+        if isinstance(exc.output, str):
+            output += exc.output
+        if isinstance(exc.stderr, str):
+            output += exc.stderr
+        return 124, cap_output(f"{script_name} timed out after {timeout_seconds}s.\n{output}".strip())
+    return proc.returncode, cap_output(proc.stdout or "")
 
 
-def preview(text: str, limit: int = 12) -> str:
+def preview(text: str, limit: int = FAILURE_PREVIEW_LINES) -> str:
     lines = [line for line in text.splitlines() if line.strip()]
     shown = lines[:limit]
     if len(lines) > limit:
@@ -55,8 +70,7 @@ def preview(text: str, limit: int = 12) -> str:
     return "\n".join(shown)
 
 
-def extract_context(label: str, raw: str) -> str:
-    status, output = split_result(raw)
+def extract_context(label: str, status: int, output: str) -> str:
     trimmed = output.strip()
     if status != 0:
         details = preview(trimmed)
@@ -81,10 +95,7 @@ def extract_context(label: str, raw: str) -> str:
 
 contexts = [
     context
-    for context in (
-        extract_context("bootstrap", sys.argv[1]),
-        extract_context("context", sys.argv[2]),
-    )
+    for context in (extract_context(label, *run_child(script_name, timeout)) for label, script_name, timeout in CHILDREN)
     if context
 ]
 

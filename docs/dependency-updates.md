@@ -16,6 +16,7 @@ Pinned runtime versions keep MCP startup reproducible. Update checks are intenti
 
 ```bash
 python3 scripts/check_mcp_runtime_versions.py
+python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 ```
 
 To fail when any known pin is stale:
@@ -30,12 +31,12 @@ python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated
 2. Read upstream release notes for every changed package.
 3. Update both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`.
 4. For GitHub Actions, resolve the new tag to a full commit SHA, pin `uses:` to that SHA, and keep the tag as an inline comment for review.
-5. Reinstall into system Codex with `scripts/install_system_codex.sh --apply`.
-6. Run `scripts/validate_marketplace.sh`, `scripts/doctor_system_codex.sh`, and `scripts/smoke_clean_bootstrap.sh`.
+5. Reinstall into system Codex with `scripts/install_system_codex.sh --apply --strict-runtime`.
+6. Run `scripts/validate_fast.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, and `scripts/smoke_clean_bootstrap.sh`.
 7. Commit the runtime pin update separately from unrelated workflow changes.
 
 ## CI
 
-The `dependency-check` workflow runs weekly and through manual dispatch. It reports stale pinned MCP packages before they silently drift away from current upstream releases.
+The `dependency-check` workflow is manual-only. Run it when a task explicitly asks for CI/dependency validation or before a release that changes runtime pins.
 
-`validate.yml` now also runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated --json` in the `dependency-pins` job on `push`, `pull_request`, and manual dispatch, so MCP pin drift is detected during normal CI as well.
+`validate.yml` also runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated --json` in the `dependency-pins` job for the manual `mcp` and `full` scopes. This keeps pin drift visible without spending GitHub Actions minutes on every push.
