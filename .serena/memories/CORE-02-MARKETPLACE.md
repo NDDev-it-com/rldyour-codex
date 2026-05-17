@@ -46,7 +46,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
 - Current marketplace version is `0.3.4`; commit `cdad168` changes the root marketplace version, updates `rldyour-flow` to `0.3.2`, makes SessionStart local-only/offline, adds `fullrepo_sync.py --restore-local`, and adds fake-network hook smoke coverage against `git fetch`/`git ls-remote` startup regressions.
-- Release `0.3.2` was published by manual release workflow run `25998372557` after the full explicit CI/CD pipeline passed on `037397e`.
+- Release `0.3.4` was published by manual release workflow run `25999559947` after the full explicit CI/CD pipeline passed on `cdad168`.
 
 ## Invariants
 
