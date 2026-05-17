@@ -12,6 +12,18 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Security
 
+## [0.3.4] - 2026-05-18
+
+### Added
+
+- Hook smoke now includes a fake-network regression case proving Flow `SessionStart` does not call `git fetch` or `git ls-remote` during startup.
+- `fullrepo_sync.py` now provides `--restore-local`, a local-only restore mode for existing `origin/fullrepo` tracking refs.
+
+### Changed
+
+- Flow `SessionStart` is now fast and offline: worktree bootstrap uses local fullrepo refs only, and context generation no longer calls deep Serena/fullrepo/Flow state analyzers in the startup hook.
+- `rldyour-flow` plugin version updated to `0.3.2` for offline SessionStart behavior and local-only bootstrap restore.
+
 ## [0.3.3] - 2026-05-18
 
 ### Changed

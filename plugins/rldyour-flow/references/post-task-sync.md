@@ -14,7 +14,7 @@ Post-task sync is the last phase of meaningful work. It prevents forgotten chang
 
 ## Session And Commit Advice
 
-The flow SessionStart hook gives Codex a compact repository state packet before work starts or resumes. Treat it as an input to planning: inspect dirty files, ahead/behind state, worktree count, docs, and Serena freshness before making assumptions.
+The flow SessionStart hook gives Codex a compact offline repository state packet before work starts or resumes. Treat it as an input to planning: inspect tracked dirty files, local ahead/behind state, worktree count, docs, local fullrepo hints, and Serena sync-marker state before making assumptions. Deep Serena freshness, fullrepo network state, and branch cleanup are intentionally left to `ry-init`, Stop, doctor, or explicit validation.
 
 The flow PostToolUse hook emits commit advice after Bash `git commit` commands. Advice is informational and should be reviewed before pushing or final delivery, but it must not be treated as a hard failure by itself.
 

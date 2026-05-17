@@ -2,9 +2,9 @@
 # session_start_worktree_bootstrap.sh — restore agent-only files into a fresh
 # git worktree on first SessionStart.
 #
-# This hook runs fullrepo_sync.py --restore only when canonical agent-only
-# markers are missing and origin/fullrepo exists. It never publishes, never
-# pushes, and never edits non-agent project files.
+# This hook runs a local-only fullrepo restore only when canonical agent-only
+# markers are missing and a local origin/fullrepo ref already exists. It never
+# fetches, publishes, pushes, commits, or edits non-agent project files.
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -41,29 +41,14 @@ if [ "$need_bootstrap" = "0" ]; then
   exit 0
 fi
 
-STATUS_JSON=$(python3 "$FULLREPO_SCRIPT" --status-json 2>/dev/null || true)
-if [ -z "$STATUS_JSON" ]; then
-  exit 0
-fi
-
-remote_present=$(printf "%s" "$STATUS_JSON" | python3 -c '
-import json
-import sys
-
-try:
-    state = json.load(sys.stdin)
-except Exception:
-    print("false")
-    raise SystemExit(0)
-print("true" if state.get("remote_fullrepo_exists") else "false")
-' 2>/dev/null || echo "false")
-
-if [ "$remote_present" != "true" ]; then
+FULLREPO_REMOTE=${RLDYOUR_FULLREPO_REMOTE:-origin}
+FULLREPO_BRANCH=${RLDYOUR_FULLREPO_BRANCH:-fullrepo}
+if ! git show-ref --verify --quiet "refs/remotes/${FULLREPO_REMOTE}/${FULLREPO_BRANCH}"; then
   exit 0
 fi
 
 set +e
-RESTORE_OUT=$(python3 "$FULLREPO_SCRIPT" --restore 2>&1)
+RESTORE_OUT=$(python3 "$FULLREPO_SCRIPT" --remote "$FULLREPO_REMOTE" --branch "$FULLREPO_BRANCH" --restore-local 2>&1)
 RESTORE_STATUS=$?
 set -e
 
@@ -82,12 +67,12 @@ trailing = max(len(lines) - len(preview), 0)
 
 if restore_status == 0:
     advisory_lines = [
-        "rldyour-flow worktree bootstrap (auto-restored from origin/fullrepo):",
+        "rldyour-flow worktree bootstrap (auto-restored from local fullrepo ref):",
         f"- Worktree root: {root}.",
         "- A canonical agent-only marker (.serena/project.yml / AGENTS.md / .claude/CLAUDE.md) was missing,",
-        "  so plugins/rldyour-flow/scripts/fullrepo_sync.py --restore ran to install the .git/info/exclude",
-        "  block for this worktree and check out agent-only paths from origin/fullrepo.",
-        "- This restore is additive: no commits, no pushes, no fullrepo --publish.",
+        "  so plugins/rldyour-flow/scripts/fullrepo_sync.py --restore-local ran to install the .git/info/exclude",
+        "  block for this worktree and check out agent-only paths from the existing local origin/fullrepo ref.",
+        "- This restore is additive and offline: no fetch, no commits, no pushes, no fullrepo --publish.",
         "- Set RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1 before starting Codex to disable this hook.",
         "- Output:",
     ]
@@ -96,9 +81,9 @@ else:
         "rldyour-flow worktree bootstrap (restore failed):",
         f"- Worktree root: {root}.",
         "- A canonical agent-only marker (.serena/project.yml / AGENTS.md / .claude/CLAUDE.md) was missing,",
-        "  but plugins/rldyour-flow/scripts/fullrepo_sync.py --restore exited non-zero.",
+        "  but plugins/rldyour-flow/scripts/fullrepo_sync.py --restore-local exited non-zero.",
         "- Codex continues with the current worktree state; run scripts/sync_fullrepo_branch.sh --bootstrap-init manually if agent context is missing.",
-        "- This hook did not publish, push, commit, or edit non-agent files.",
+        "- This hook did not fetch, publish, push, commit, or edit non-agent files.",
         f"- Exit status: {restore_status}.",
         "- Output:",
     ]
