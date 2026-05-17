@@ -74,7 +74,14 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
     ),
     NoiseRule(
         "serena-lsp-configuration",
-        re.compile(r"workspace/configuration|taplo.*catalog|language server.*configuration", re.IGNORECASE),
+        re.compile(
+            r"workspace/configuration|"
+            r"taplo.*catalog|"
+            r"language server.*configuration|"
+            r"failed to fetch configuration|"
+            r"invalid configuration response",
+            re.IGNORECASE,
+        ),
         "Known LSP capability warning from third-party language servers.",
     ),
     NoiseRule(
