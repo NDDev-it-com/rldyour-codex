@@ -32,6 +32,7 @@ def test_known_noise_is_classified_as_benign() -> None:
             "Tracing initialized",
             "get_supported_languages succeeded",
             "Sequential Thinking MCP Server running on stdio",
+            "ERROR 2026-05-17 12:30:55,789 [LSP-stderr-reader:toml] solidlsp.ls_process:_read_ls_process_stderr:600 - ERROR taplo:update_configuration: failed to fetch configuration error=invalid configuration response",
             "INFO  2026-05-17 12:25:06,842 [MainThread] serena.cli:start_mcp_server:346 - Initializing Serena MCP server",
             "INFO  2026-05-17 12:25:07,197 [StartLS:bash] solidlsp.language_servers.common:_run_command:115 - Running command 'npm install --prefix ./ bash-language-server@5.6.0'",
             "INFO  2026-05-17 12:25:06,979 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution",
@@ -39,7 +40,7 @@ def test_known_noise_is_classified_as_benign() -> None:
         ]
     )
 
-    assert len(benign) == 23
+    assert len(benign) == 24
     assert unknown == []
 
 
