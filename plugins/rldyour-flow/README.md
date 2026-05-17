@@ -30,9 +30,9 @@ Normal branches keep product history clean. Agent-only files such as root `AGENT
 
 The plugin includes a bounded SessionStart bootstrap hook, a read-only SessionStart context hook, advisory PostToolUse hooks, and a Stop hook.
 
-`session_start_worktree_bootstrap.sh` is the only mutating SessionStart hook. It runs `fullrepo_sync.py --restore` when canonical agent-only markers are missing and `origin/fullrepo` exists. It never publishes, pushes, commits, or edits non-agent project files.
+`session_start_worktree_bootstrap.sh` is the only mutating SessionStart hook. It runs `fullrepo_sync.py --restore-local` only when canonical agent-only markers are missing and an existing local `origin/fullrepo` ref is already present. It never fetches, publishes, pushes, commits, or edits non-agent project files.
 
-`session_start_context.sh` is read-only. It adds a compact repository context packet to the session: branch, HEAD, upstream drift, dirty files, worktree count, Serena memory freshness, fullrepo state, and whether flow sync is pending. It tells Codex to run scoped `ry-init` when context is insufficient, but it does not mutate files or block execution.
+`session_start_context.sh` is read-only, fast, and offline. It adds a compact local repository context packet to the session: branch, HEAD, local upstream drift, tracked dirty files, worktree count, Serena sync-marker state, local fullrepo ref/exclude state, and whether startup markers suggest follow-up sync. It deliberately does not fetch, run deep Serena/fullrepo scans, or call `flow_post_task_state.py`; scoped `ry-init`, Stop, doctor, and explicit validation own the deeper checks.
 
 `flow_post_task_state.py` includes branch-cleanup state. Merged local branches, merged remote branches, and merged workflow worktrees keep `needs_flow_sync` true until they are removed or reported as blockers. Protected branches such as `main` and `fullrepo` are excluded from cleanup candidates.
 

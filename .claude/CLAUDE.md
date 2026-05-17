@@ -50,7 +50,7 @@ This repository is the owner's personal Codex marketplace and system setup sourc
 
 - `rldyour-mcps` owns MCP transport definitions only.
 - `rldyour-serena-mcp` owns Serena-first code workflow and memory sync. Its Stop script is an ordered child of the Flow lifecycle dispatcher, not a competing plugin Stop hook.
-- `rldyour-flow` owns `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, bounded SessionStart dispatch, ordered Stop lifecycle dispatch, instruction docs sync, post-task sync, and fullrepo sync orchestration.
+- `rldyour-flow` owns `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, fast offline/local-only SessionStart dispatch, ordered Stop lifecycle dispatch, instruction docs sync, post-task sync, and fullrepo sync orchestration.
 - `rldyour-rules` owns quality, architecture, dependency, verification, project-instruction, agent-only file, and ADR policy.
 - `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
 - Other domain plugins own their workflows: explore, browser, security, and LSP.

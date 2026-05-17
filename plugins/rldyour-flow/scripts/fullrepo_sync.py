@@ -357,6 +357,29 @@ def restore(remote: str, branch: str, dry_run: bool = False) -> None:
     print(f"restored {len(remote_paths)} agent-only files from {remote}/{branch}")
 
 
+def restore_local(remote: str, branch: str, dry_run: bool = False) -> None:
+    install_exclude(dry_run=dry_run)
+    ref = f"refs/remotes/{remote}/{branch}"
+    if _git("show-ref", "--verify", "--quiet", ref, check=False).returncode != 0:
+        print(f"local fullrepo ref {remote}/{branch} does not exist; restore skipped")
+        return
+
+    remote_paths = tracked_agent_paths(ref)
+    if not remote_paths:
+        print(f"local fullrepo ref {remote}/{branch} has no agent-only files")
+        return
+
+    if dry_run:
+        print(f"dry-run: would restore {len(remote_paths)} agent-only files from local {remote}/{branch}")
+        return
+
+    for index in range(0, len(remote_paths), 64):
+        chunk = remote_paths[index : index + 64]
+        _git("restore", "--source", ref, "--worktree", "--", *chunk)
+
+    print(f"restored {len(remote_paths)} agent-only files from local {remote}/{branch}")
+
+
 def migrate_main(dry_run: bool = False) -> None:
     install_exclude(dry_run=dry_run)
     paths = tracked_agent_paths_in_index()
@@ -446,6 +469,7 @@ def parse_args() -> argparse.Namespace:
     actions.add_argument("--status-json", action="store_true")
     actions.add_argument("--install-exclude", action="store_true")
     actions.add_argument("--restore", action="store_true")
+    actions.add_argument("--restore-local", action="store_true")
     actions.add_argument("--publish", action="store_true")
     actions.add_argument("--migrate-main", action="store_true")
     actions.add_argument("--bootstrap-init", action="store_true")
@@ -462,6 +486,8 @@ def main() -> int:
             install_exclude(dry_run=args.dry_run)
         elif args.restore:
             restore(args.remote, args.branch, dry_run=args.dry_run)
+        elif args.restore_local:
+            restore_local(args.remote, args.branch, dry_run=args.dry_run)
         elif args.publish:
             publish(args.remote, args.branch, dry_run=args.dry_run)
         elif args.migrate_main:

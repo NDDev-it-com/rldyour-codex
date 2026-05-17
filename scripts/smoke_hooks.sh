@@ -418,6 +418,39 @@ EOF_PROJECT
   printf '%s\n' "$tmp"
 }
 
+make_session_start_repo() {
+  local tmp
+  tmp=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-session-start-offline.XXXXXX")
+  git -C "$tmp" init -q
+  git -C "$tmp" config user.email "hook-smoke@example.invalid"
+  git -C "$tmp" config user.name "Hook Smoke"
+  printf '# SessionStart offline smoke\n' > "$tmp/README.md"
+  git -C "$tmp" add README.md
+  git -C "$tmp" commit -q -m "chore: initial fixture"
+  git -C "$tmp" remote add origin "https://example.invalid/rldyour/session-start.git"
+  printf '%s\n' "$tmp"
+}
+
+make_fake_git_bin() {
+  local fake_dir=$1
+  local real_git=$2
+
+  mkdir -p "$fake_dir"
+  cat > "$fake_dir/git" <<EOF_FAKE_GIT
+#!/usr/bin/env bash
+set -euo pipefail
+case "\${1:-}" in
+  fetch|ls-remote)
+    printf '%s\\n' "\${1:-}" >> "\${RLDYOUR_FAKE_GIT_NETWORK_LOG:?}"
+    sleep 20
+    exit 99
+    ;;
+esac
+exec "$real_git" "\$@"
+EOF_FAKE_GIT
+  chmod +x "$fake_dir/git"
+}
+
 assert_flow_state_clean() {
   local label=$1
   local cwd=$2
@@ -442,6 +475,50 @@ PY
   printf 'ok      %s\n' "$label"
 }
 
+smoke_session_start_offline() {
+  local name=$1
+  local flow_dir=$2
+  local tmp
+  local fake_dir
+  local network_log
+  local output
+  local status
+  local real_git
+
+  tmp=$(make_session_start_repo)
+  fake_dir=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-fake-git.XXXXXX")
+  network_log=$(mktemp "${TMPDIR:-/tmp}/rldyour-session-start-network.XXXXXX")
+  real_git=$(command -v git)
+  make_fake_git_bin "$fake_dir" "$real_git"
+
+  set +e
+  output=$(PATH="$fake_dir:$PATH" RLDYOUR_FAKE_GIT_NETWORK_LOG="$network_log" run_command_with_timeout "$tmp" 5 '{"source":"startup"}' bash "$flow_dir/hooks/session_start_dispatcher.sh")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ]; then
+    printf 'hook output for %s SessionStart offline:\n%s\n' "$name" "$output" >&2
+    rm -rf "$tmp" "$fake_dir"
+    rm -f "$network_log"
+    fail "$name SessionStart offline failed or timed out after 5s (exit $status)"
+  fi
+  if ! printf '%s' "$output" | grep -F "rldyour-flow session context (fast, offline, read-only)" >/dev/null; then
+    printf 'hook output for %s SessionStart offline:\n%s\n' "$name" "$output" >&2
+    rm -rf "$tmp" "$fake_dir"
+    rm -f "$network_log"
+    fail "$name SessionStart offline did not emit fast offline context"
+  fi
+  if [ -s "$network_log" ]; then
+    printf 'network git calls during %s SessionStart offline:\n' "$name" >&2
+    sed -n '1,20p' "$network_log" >&2
+    rm -rf "$tmp" "$fake_dir"
+    rm -f "$network_log"
+    fail "$name SessionStart must not call git fetch or git ls-remote"
+  fi
+  rm -rf "$tmp" "$fake_dir"
+  rm -f "$network_log"
+  printf 'ok      %s lifecycle flow SessionStart offline/no-network\n' "$name"
+}
+
 smoke_lifecycle() {
   local name=$1
   local serena_dir=$2
@@ -460,6 +537,8 @@ smoke_lifecycle() {
     "$tmp" "$flow_dir/hooks/session_start_dispatcher.sh" \
     '{"source":"startup"}' \
     "rldyour-flow session context"
+
+  smoke_session_start_offline "$name" "$flow_dir"
 
   run_hook_in_dir "$name lifecycle serena UserPromptSubmit" \
     "$tmp" "$serena_dir/hooks/user_prompt_submit.sh" \

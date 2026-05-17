@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
+Last commit: cdad168 fix(flow): make SessionStart offline and fast
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/validate_runtime_prereqs.py, scripts/validate_execpolicy_rules.sh, scripts/worktree_add.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, plugins/rldyour-flow/hooks/session_start_dispatcher.sh, plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/scripts/fullrepo_sync.py, system/rules/*.rules, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->
@@ -68,6 +68,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `037397e` closed the immediate managed-subagent MCP startup fan-out gap by keeping the lightweight core MCP surface plus built-in `codex_apps` available to subagents and explicitly disabling specialist MCP servers in every managed subagent role until Codex subagent MCP startup behavior is widened deliberately.
 - `037397e` closed the release-evidence drift for version `0.3.2`: full manual `validate.yml` with macOS parity, `security-static.yml`, `dependency-check.yml`, and `release.yml` passed before the `0.3.2` GitHub Release was published.
 - `66070a8` closed the managed-subagent `invalid transport` startup regression: standalone agent TOML files now include complete disabled MCP transport metadata copied from `.mcp.json`, `codex_apps` remains inherited rather than declared as a transport, and validator/doctor checks reject partial disabled tables or transport drift.
+- `cdad168` closed the remaining SessionStart timeout regression for slow projects: `session_start_worktree_bootstrap.sh` now uses only local fullrepo refs through `fullrepo_sync.py --restore-local`, `session_start_context.sh` no longer calls deep Flow/Serena/fullrepo analyzers, and `scripts/smoke_hooks.sh` uses a fake `git` wrapper to fail if startup calls `git fetch` or `git ls-remote`.
 - Semgrep's global `IFS` tampering rule is intentionally excluded in `security-static` because this repository uses `IFS=$'\n\t'` as a strict shell prologue and validates shell scripts with ShellCheck.
 
 ## Contracts And Data
