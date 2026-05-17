@@ -12,6 +12,14 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Security
 
+## [0.3.3] - 2026-05-18
+
+### Changed
+
+- Managed Codex subagent TOML files now include complete disabled MCP transport metadata for temporarily disabled specialist MCP servers, preventing Codex from ignoring custom agents with `invalid transport` warnings at CLI startup.
+- `codex_apps` stays available as an inherited built-in Apps/connectors surface and is no longer allowed as a synthetic `[mcp_servers.codex_apps]` custom-agent transport table.
+- `validate_agent_tools.py` and `doctor_system_codex.sh` now reject partial disabled MCP overrides and transport drift against `plugins/rldyour-mcps/.mcp.json`.
+
 ## [0.3.2] - 2026-05-18
 
 ### Changed

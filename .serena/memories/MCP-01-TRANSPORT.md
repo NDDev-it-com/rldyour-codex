@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, scripts/smoke_mcp_capabilities.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/doctor_system_codex.sh, scripts/install_system_codex.sh
 Area: MCP
 -->
@@ -33,6 +33,8 @@ Area: MCP
 
 - Configured MCP servers: `chrome-devtools`, `context7`, `dart-flutter`, `deepwiki`, `figma`, `grep`, `openaiDeveloperDocs`, `playwright`, `semgrep`, `sequential-thinking`, `serena`, and `shadcn`.
 - Managed subagents intentionally use a temporary narrower MCP policy: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps` remain available, while specialist MCP servers are disabled in subagent TOML files to avoid eager startup fan-out and launcher friction. This is a subagent policy, not a removal from the parent-session MCP registry.
+- A disabled managed-agent MCP table is still a declared MCP server table to Codex. It must include a valid transport (`command` or `url`) and registry-matching transport fields from `plugins/rldyour-mcps/.mcp.json`; otherwise Codex can reject the entire standalone role file with `invalid transport`.
+- `codex_apps` is an Apps/connectors capability, not a transport definition in `plugins/rldyour-mcps/.mcp.json`, so managed agents leave it inherited instead of declaring `[mcp_servers.codex_apps]`.
 - Current pins from `config/mcp-runtime-versions.env`: Codex CLI `0.130.0`, Node major `24`, Bun `1.3.14`, Dart SDK `3.11.0`, MCP Python SDK `1.27.1`, Serena Agent `1.3.0`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `0.26.0`, Context7 MCP `2.2.5`, shadcn `4.7.0`, sequential-thinking `2025.12.18`.
 - `dart-flutter` is the explicit reproducibility exception: it launches through the local Dart SDK and is declared as `DART_FLUTTER_MCP_RUNTIME=external-local-dart-sdk` instead of a package-version pin.
 - Strict runtime validation maps enabled local MCP servers to launcher prerequisites (`uvx`, `bunx`, `dart`, and optional `codex`) and fails in strict mode when a required launcher is missing.
@@ -48,10 +50,12 @@ Area: MCP
 - If `dart-flutter` uses command `dart`, marketplace validation requires `DART_FLUTTER_MCP_RUNTIME=external-local-dart-sdk`.
 - Environment variable references in `.mcp.json` are names only; do not commit secret values.
 - `rldyour-mcps` must not add behavior skills. Domain behavior belongs to the domain plugins.
+- Managed subagent disabled MCP overrides must copy transport fields from `.mcp.json`; validator and doctor reject drift.
 
 ## Invariants
 
 - Do not duplicate MCP server lists in installer/doctor/skills; derive from `.mcp.json`.
+- Do not treat built-in Apps/connectors such as `codex_apps` as `.mcp.json` transport entries.
 - Do not store credentials or tokens in `.mcp.json`, memories, docs, or diagnostics.
 - Use official/current documentation MCPs before general web search for technical product facts.
 

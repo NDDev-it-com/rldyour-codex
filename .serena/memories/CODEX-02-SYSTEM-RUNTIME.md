@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/rules/*.rules, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, system/rules/*.rules, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_execpolicy_rules.sh, plugins/rldyour-mcps/.mcp.json
 Area: CODEX
 -->
@@ -44,6 +44,8 @@ This memory records the installed system Codex runtime state owned by this repos
 - `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true` are managed. `hooks` enables lifecycle hooks, `plugin_hooks` opts into bundled hooks from enabled plugins, and `multi_agent` enables Codex subagent tools.
 - Managed subagents are installed from `system/agents/*.toml`; all rldyour-managed roles use `gpt-5.5` with `medium` reasoning.
 - Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight inherited core surface (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`) while specialist MCP servers (`semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, `shadcn`) remain parent-session tools.
+- Since `66070a8`, disabled specialist MCP overrides in managed subagent TOML files include complete transport metadata copied from `plugins/rldyour-mcps/.mcp.json`. This prevents Codex from ignoring standalone custom-agent role files with `invalid transport` warnings when an override disables a server but still declares an MCP table.
+- `codex_apps` is not represented as an `mcp_servers` table in managed agents. It remains available through the inherited Apps/connectors surface.
 - Active managed roles are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Installer/doctor derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP registration from `plugins/rldyour-mcps/.mcp.json`.
 - Installer refreshes installed rldyour plugin hook trust after cache sync by reading `currentHash` from the app-server RPC method `hooks/list` over `codex app-server --listen stdio://` and upserting `hooks.state` through `config/batchWrite`.
@@ -56,7 +58,7 @@ This memory records the installed system Codex runtime state owned by this repos
 - `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` is generated from `system/AGENTS.md`.
 - `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` must match `system/agents/*.toml` exactly.
 - `${CODEX_HOME:-$HOME/.codex}/rules/*.rules` must match `system/rules/*.rules` exactly.
-- `scripts/doctor_system_codex.sh` checks config schema hint, `hooks`/`plugin_hooks`/`multi_agent` feature flags, model defaults, managed agents, managed subagent temporary MCP isolation, managed execpolicy rules, marketplace-derived plugin enablement, MCP registration, plugin cache parity, installed rldyour plugin hook trust, and fullrepo current-state.
+- `scripts/doctor_system_codex.sh` checks config schema hint, `hooks`/`plugin_hooks`/`multi_agent` feature flags, model defaults, managed agents, managed subagent temporary MCP isolation with complete disabled transport metadata, managed execpolicy rules, marketplace-derived plugin enablement, MCP registration, plugin cache parity, installed rldyour plugin hook trust, and fullrepo current-state.
 - `${CODEX_HOME:-$HOME/.codex}/config.toml` stores `hooks.state.<hook key>.trusted_hash` values that must match the installed hook definitions after plugin cache changes.
 - Plugin cache parity matters for runtime because installed hooks and skills execute from `${CODEX_HOME}` in normal Codex sessions.
 
@@ -68,6 +70,8 @@ This memory records the installed system Codex runtime state owned by this repos
 - Do not hardcode parallel plugin/MCP lists in installer or doctor scripts.
 - Do not change YOLO permission defaults without explicit owner request.
 - Do not remove managed execpolicy rules while `approval_policy = "never"` and `sandbox_mode = "danger-full-access"` remain the owner-selected defaults.
+- Do not add synthetic `[mcp_servers.codex_apps]` entries to managed agent TOML files.
+- Do not leave disabled managed-agent MCP tables without `command` or `url`; copy transport metadata from `plugins/rldyour-mcps/.mcp.json`.
 - Restart Codex after changing global `AGENTS.md`, `config.toml`, managed agents, installed plugins, hooks, skills, or MCP runtime definitions.
 
 ## Change Rules

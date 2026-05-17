@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, system/agents/serena-sync.toml, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->
@@ -48,8 +48,8 @@ Area: SERENA
 
 - Runtime files are not durable knowledge and must not be committed or published as memory content: `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`, `.serena/cache/`, `.serena/project.local.yml`.
 - Every touched memory starts with the metadata block from the skill and includes `Last commit: <sha> <message>`.
-- Memory targets for commit `037397e` include `CODEX-01-PLUGIN-CANON.md`, `CODEX-02-SYSTEM-RUNTIME.md`, `CORE-01-INDEX.md`, `CORE-02-MARKETPLACE.md`, `MCP-01-TRANSPORT.md`, `RELEASE-01-VALIDATION.md`, `SERENA-01-MEMORY-SYNC.md`, and `TECHDEBT-01-NOW.md`.
-- The 2026-05-18 memory audit synchronized all numbered memories to the current head and recorded the full explicit GitHub CI/CD evidence for `037397e` before publishing the agent-only snapshot through `fullrepo`.
+- Memory targets for commit `66070a8` include `CODEX-01-PLUGIN-CANON.md`, `CODEX-02-SYSTEM-RUNTIME.md`, `CORE-01-INDEX.md`, `CORE-02-MARKETPLACE.md`, `MCP-01-TRANSPORT.md`, `RELEASE-01-VALIDATION.md`, `SERENA-01-MEMORY-SYNC.md`, and `TECHDEBT-01-NOW.md`.
+- The 2026-05-18 memory audit synchronized the managed-subagent disabled MCP transport fix to the current head and recorded local validation evidence for `66070a8` before publishing the agent-only snapshot through `fullrepo`.
 - The managed `serena-sync` subagent verifies claims from current code/config/tests at HEAD, then recent git history, then diff, then old memories.
 
 ## Invariants

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
@@ -36,12 +36,12 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 ## Current Behavior
 
 - Active rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- Marketplace release version is `0.3.2`.
+- Marketplace release version is `0.3.3`.
 - `rldyour-flow` is version `0.3.1` and owns SDLC commands, fullrepo, instruction docs, worktree bootstrap, deterministic SessionStart dispatch, ordered Stop lifecycle dispatch, and post-task sync.
 - `rldyour-serena-mcp` is version `0.2.4` and owns Serena-first code workflow plus memory freshness, expanded taxonomy, sync hooks, and acknowledgement.
 - The repository currently has 38 rldyour skills, 12 MCP server definitions, and 8 managed Codex subagent TOML files validated by scripts.
 - The Python test harness enforces a 75% coverage threshold through `pyproject.toml`.
-- Managed subagents currently use temporary MCP isolation: the lightweight inherited/core surface stays available (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`), while specialist MCP servers remain parent-session tools until Codex subagent MCP startup is stable enough to widen safely.
+- Managed subagents currently use temporary MCP isolation: the lightweight inherited/core surface stays available (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`), while specialist MCP servers remain parent-session tools until Codex subagent MCP startup is stable enough to widen safely. Disabled specialist MCP overrides include full transport metadata from `plugins/rldyour-mcps/.mcp.json`, and `codex_apps` stays inherited from Apps/connectors rather than declared as an `mcp_servers` transport.
 - Fullrepo unit-test fixtures configure local git identity inside temporary repositories and clones, so GitHub-hosted runners do not depend on global git author settings.
 - CI noise classification treats `uv` package download progress lines as known setup noise while still failing strict jobs on unrelated stderr.
 - GitHub CI/CD is manual-only for this repository's spend policy. The full explicit pipeline on commit `037397e` passed `validate.yml` with macOS parity, `security-static.yml`, `dependency-check.yml`, and `release.yml`, and published release `0.3.2` with deterministic bundle/SBOM/attestation output.
@@ -56,6 +56,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 - `Last commit` should mention the current normal-branch commit when a memory is updated for a code/config change.
 - Codex skills must not use Claude-only frontmatter keys such as `allowed-tools`; Codex dependencies live in `agents/openai.yaml`.
 - Codex managed subagents live in `system/agents/*.toml`; plugin-root `plugins/rldyour-*/agents/*.md` is a rejected Claude Code surface.
+- Disabled MCP overrides in managed subagent TOML files must include `command` or `url` transport metadata copied from `.mcp.json`; `scripts/validate_agent_tools.py` and `scripts/doctor_system_codex.sh` reject partial disabled tables and transport drift.
 - `plugin_hooks` is an official Codex feature flag and is managed as enabled here; `codex_hooks` is the deprecated alias that must be removed.
 
 ## Invariants

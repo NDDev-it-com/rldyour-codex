@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/validate_runtime_prereqs.py, scripts/validate_execpolicy_rules.sh, scripts/worktree_add.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, plugins/rldyour-flow/hooks/session_start_dispatcher.sh, plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/scripts/fullrepo_sync.py, system/rules/*.rules, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->
@@ -67,6 +67,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `a9a66a2` closed the branch-protection drift gap for current spend policy by documenting manual validation checks instead of impossible automatic required checks.
 - `037397e` closed the immediate managed-subagent MCP startup fan-out gap by keeping the lightweight core MCP surface plus built-in `codex_apps` available to subagents and explicitly disabling specialist MCP servers in every managed subagent role until Codex subagent MCP startup behavior is widened deliberately.
 - `037397e` closed the release-evidence drift for version `0.3.2`: full manual `validate.yml` with macOS parity, `security-static.yml`, `dependency-check.yml`, and `release.yml` passed before the `0.3.2` GitHub Release was published.
+- `66070a8` closed the managed-subagent `invalid transport` startup regression: standalone agent TOML files now include complete disabled MCP transport metadata copied from `.mcp.json`, `codex_apps` remains inherited rather than declared as a transport, and validator/doctor checks reject partial disabled tables or transport drift.
 - Semgrep's global `IFS` tampering rule is intentionally excluded in `security-static` because this repository uses `IFS=$'\n\t'` as a strict shell prologue and validates shell scripts with ShellCheck.
 
 ## Contracts And Data
@@ -77,6 +78,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `scripts/classify_ci_noise.py` and the pytest/coverage harness are release-gate guardrails and should stay in `scripts/validate_marketplace.sh` or visible CI jobs.
 - `RLDYOUR_DRY_RUN=1 scripts/worktree_add.sh <branch>` must show one git command and one fullrepo restore command without side effects.
 - Fullrepo-managed memory acknowledgement is allowed only after `serena_memory_state.py` reports current or a memory directly mentions HEAD.
+- Managed subagent MCP isolation must be validated against actual Codex startup, not only TOML parseability, because Codex deserializes standalone role files before parent config layering can supply missing transport fields.
 
 ## Invariants
 

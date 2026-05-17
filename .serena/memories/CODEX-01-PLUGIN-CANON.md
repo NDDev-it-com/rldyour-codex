@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py
 Area: CODEX
 -->
@@ -37,6 +37,8 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Claude-only skill frontmatter such as `allowed-tools`, `allowed_tools`, `disallowed-tools`, `maxTurns`, `model`, `effort`, `tools`, and `color` is rejected by `scripts/validate_agent_tools.py`.
 - Managed subagents are TOML files, not plugin-root Markdown agents. Current managed roles must have `model = "gpt-5.5"` and `model_reasoning_effort = "medium"`.
 - Managed subagents currently carry a temporary MCP startup-isolation policy. Each role keeps the lightweight inherited/core surface available (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`) and explicitly disables specialist MCP servers that have caused subagent startup fan-out or dependency friction (`semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn`).
+- Disabled specialist MCP overrides in standalone `system/agents/*.toml` files must include complete disabled transport metadata copied from `plugins/rldyour-mcps/.mcp.json` (`command` or `url`, args, and timeouts where defined). Codex deserializes standalone agent configs before any parent-layer merge, so partial disabled tables such as `mcp_servers.semgrep.enabled = false` can still produce `invalid transport` startup warnings.
+- Built-in `codex_apps` is inherited from Codex Apps/connectors and must not be declared as a synthetic `[mcp_servers.codex_apps]` custom-agent transport table.
 - `system/agents/serena-sync.toml` is the Codex-native memory-maintenance role. It may edit only `.serena/memories/` and closely related Serena metadata, not source code, plugin files, docs, configs, tests, scripts, or git history.
 - Plugin hook support is used only by `rldyour-flow` and `rldyour-serena-mcp`.
 - Plugin hook command entries use the official plugin runtime environment and call scripts through `PLUGIN_ROOT`; they must not use repo-cwd relative script paths or installed-cache search fallbacks.
@@ -52,7 +54,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Current hook-enabled plugin versions after `037397e`: `rldyour-flow` `0.3.1` and `rldyour-serena-mcp` `0.2.4`.
 - Marketplace entries use local `source.path` references to `./plugins/<plugin>`.
 - `plugins/rldyour-mcps/.mcp.json` defines valid MCP dependency values for `agents/openai.yaml`.
-- `scripts/validate_agent_tools.py` loads `.mcp.json`, parses YAML/TOML, and rejects unknown MCP dependency names.
+- `scripts/validate_agent_tools.py` loads `.mcp.json`, parses YAML/TOML, rejects unknown MCP dependency names, rejects partial disabled managed-agent MCP overrides, rejects disabled transport drift from `.mcp.json`, and rejects explicit `mcp_servers.codex_apps` tables.
 - Managed agent TOML field `name` must match the filename stem.
 
 ## Invariants
@@ -70,7 +72,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - When adding a managed subagent, add a TOML file under `system/agents/`, ensure installer/doctor parity still passes, and avoid unsupported tool allowlist fields.
 - When changing Codex surfaces, update this memory and run `validate_agent_tools.py`.
 - When changing plugin hook commands, run `scripts/smoke_hooks.sh`, install into `${CODEX_HOME}`, and verify live hook trust with `scripts/doctor_system_codex.sh`.
-- `037397e` is a release-level/runtime-policy commit that bumps the marketplace to `0.3.2`, keeps `codex_apps` available to managed subagents, and validates temporary specialist-MCP isolation through `scripts/validate_agent_tools.py` and doctor checks.
+- `66070a8` bumps the marketplace to `0.3.3` and closes the Codex startup warning where all installed managed subagent role files were ignored with `invalid transport`; the fix is complete disabled transport metadata in source and installed agent TOML files plus validator/doctor anti-regression checks.
 
 ## Verification
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, scripts/validate_plugin_versions.py, scripts/release_manifest.py
 Area: CORE
 -->
@@ -36,7 +36,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Only `rldyour-flow` and `rldyour-serena-mcp` may declare plugin hooks in this repository.
 - `rldyour-mcps` owns MCP transport definitions only and must not contain behavior skills.
 - Curated GitHub and Gmail plugins are enabled in system Codex but are not rldyour plugin directories in this repository.
-- Repository marketplace version is `0.3.2` (from `VERSION`, committed in `037397e`).
+- Repository marketplace version is `0.3.3` (from `VERSION`, committed in `66070a8`).
 
 ## Contracts And Data
 
@@ -45,7 +45,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Manifest bundled capability paths are relative to the plugin root.
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
-- Current marketplace version is `0.3.2`; commit `037397e` changes the root marketplace version, managed subagent MCP startup policy, Codex/system instructions, validation expectations, and release evidence.
+- Current marketplace version is `0.3.3`; commit `66070a8` changes the root marketplace version, repairs managed subagent disabled MCP transport overrides, updates Codex/system instructions, and extends validation/doctor anti-regression checks.
 - Release `0.3.2` was published by manual release workflow run `25998372557` after the full explicit CI/CD pipeline passed on `037397e`.
 
 ## Invariants

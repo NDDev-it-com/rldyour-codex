@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 66070a8 fix(codex): repair subagent MCP transport overrides
 Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_runtime_prereqs.py, scripts/validate_runtime.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml, pyproject.toml, scripts/validate_marketplace.sh
 Area: CODEX
 -->
@@ -46,6 +46,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 - Installer refuses malformed existing `config.toml` instead of silently falling back to an empty config model.
 - Rollback restores backed-up files through temporary files before renaming them into place.
 - Doctor supports quick, strict-runtime, and full modes. Quick mode validates installed config/cache/hook trust without the full marketplace path; full mode includes repository marketplace validation.
+- Doctor validates that installed managed subagent TOML files match source, preserve the temporary MCP isolation policy, include complete disabled transport metadata copied from `.mcp.json`, and do not declare built-in `codex_apps` under `mcp_servers`.
 - Doctor's fullrepo current-state gate is strict locally and advisory only in GitHub Actions `main` context.
 - Doctor intentionally fails the local fullrepo current-state gate while normal-branch code/config changes are dirty; rerun after normal commit/push/fullrepo publish for final green state.
 - `scripts/collect_diagnostics.sh` writes local ignored artifacts; do not commit diagnostics bundles.
@@ -70,6 +71,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 - When installer output shape changes, update doctor and relevant smoke tests in the same commit.
 - When official Codex feature flags change, update installer, doctor, migration smoke, global/project instructions, and this memory from source-backed docs.
 - When adding managed agents, update installer, doctor, `validate_agent_tools.py`, and system templates if needed.
+- When changing managed agent MCP policy, run installer apply, quick strict doctor, agent-tool validation, and a Codex startup smoke to catch standalone role deserialization warnings.
 - When changing fullrepo or clean bootstrap behavior, update `scripts/smoke_clean_bootstrap.sh` and fullrepo memories.
 
 ## Verification
