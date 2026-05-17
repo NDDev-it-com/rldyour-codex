@@ -1,0 +1,58 @@
+name: setup-codex-runtime
+description: Install the rldyour Codex validation runtime.
+
+inputs:
+  install-codex:
+    description: Install pinned @openai/codex globally.
+    required: false
+    default: "true"
+  install-dart:
+    description: Install Dart SDK for dart-flutter MCP checks.
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      with:
+        python-version: "3.13"
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      with:
+        enable-cache: true
+
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
+    - name: Set up Dart
+      if: inputs.install-dart == 'true'
+      uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
+
+    - name: Install system packages
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ "$RUNNER_OS" = "Linux" ]; then
+          sudo apt-get update
+          sudo apt-get install -y jq ripgrep shellcheck
+        elif [ "$RUNNER_OS" = "macOS" ]; then
+          command -v jq >/dev/null 2>&1 || brew install jq
+          command -v rg >/dev/null 2>&1 || brew install ripgrep
+          command -v shellcheck >/dev/null 2>&1 || brew install shellcheck
+        else
+          echo "Unsupported runner OS: $RUNNER_OS" >&2
+          exit 1
+        fi
+
+    - name: Install pinned Codex CLI
+      if: inputs.install-codex == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        # shellcheck source=config/mcp-runtime-versions.env
+        . config/mcp-runtime-versions.env
+        npm install -g "@openai/codex@${CODEX_CLI_VERSION}"
+        codex --version

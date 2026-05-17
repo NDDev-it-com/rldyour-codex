@@ -8,9 +8,27 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Added
 
+### Changed
+
+### Security
+
+## [0.2.0] - 2026-05-17
+
+### Added
+
 - `docs/adr/0001-codex-marketplace-operating-model.md` records the core plugin, hook, fullrepo, CI, MCP, and ADR operating decisions.
+- ADRs for testing/CI gates, release SBOM and attestations, governance/branch policy, and runtime-noise classification.
+- `pytest`/`pytest-cov` harness with JUnit and coverage XML artifacts, enforced at a 70% initial threshold.
 - GitHub Actions full-SHA pin validation through `scripts/validate_action_pins.py`.
 - Repository text security scan for secret-like patterns and hidden Unicode controls through `scripts/scan_text_security.py`.
+- Runtime-noise classifier through `scripts/classify_ci_noise.py` for strict stderr checks without hiding known benign third-party chatter.
+- Generated SPDX 2.3 release SBOM support through `scripts/release_sbom.py`.
+- GitHub Actions release workflow for deterministic bundles, release manifests, generated SBOMs, optional GitHub dependency graph SBOM export, GitHub artifact attestations, and GitHub Releases.
+- No-paid `security-static` workflow with action pin validation, actionlint, text security scan, ShellCheck, Pyright, and Semgrep CLI.
+- Shared `.github/actions/setup-codex-runtime` composite action for CI runtime setup.
+- Devcontainer for reproducible marketplace validation with Python, uv, Node/npm, Bun, Dart, shellcheck, jq, ripgrep, and pinned Codex CLI.
+- Contributor governance files: `CONTRIBUTING.md`, `SECURITY.md`, CODEOWNERS, PR template, and issue templates.
+- Desired-state branch protection specs for owner-accessible `main` and `fullrepo` workflows.
 
 ### Changed
 
@@ -22,8 +40,19 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Rollback restore now writes backed-up files through temporary files before renaming them into place.
 - GitHub Actions workflows now pin external actions to full commit SHAs.
 - `dart-flutter` MCP runtime is documented and validated as an explicit external local Dart SDK exception.
+- Marketplace validation now runs action SHA-pin validation and Python unit coverage tests.
+- Skill routing policy now has explicit routing classes for all 38 skills and requires deterministic cases for callable implicit/explicit/finalization skills.
+- GitHub validation now splits unit-test reports from marketplace/system smoke while preserving the full local acceptance gate.
+- Dependency freshness workflows now share the CI runtime setup action and keep retention limits on generated reports.
+- Python project metadata now pins the validation runtime to Python 3.13.x for local/CI parity.
 - `rldyour-flow` plugin version updated to `0.2.6` for deterministic SessionStart dispatch and hook prologue hardening.
 - `rldyour-serena-mcp` plugin version updated to `0.2.3` for expanded memory taxonomy coverage.
+
+### Security
+
+- External GitHub Actions are required to use full 40-character commit SHA pins, including nested composite action steps.
+- Release bundles and generated SBOMs are attested with GitHub artifact attestations on GitHub Enterprise Cloud.
+- Private-repo CodeQL/code scanning remains optional unless GitHub Code Security is available without extra paid add-ons; baseline security uses no-paid CI checks.
 
 ## [0.1.1] - 2026-05-16
 

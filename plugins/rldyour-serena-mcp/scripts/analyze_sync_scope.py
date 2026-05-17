@@ -290,18 +290,21 @@ def analyze(paths: list[str]) -> dict[str, Any]:
     for files in scope.values():
         files.sort()
 
-    areas_sorted = sorted(
-        (
-            {
-                "area": area,
-                "count": len(files),
-                "files": files,
-                "priority": _priority_for_area(area),
-            }
-            for area, files in scope.items()
-        ),
-        key=lambda item: (-item["count"], item["area"]),
-    )
+    area_items: list[dict[str, object]] = [
+        {
+            "area": area,
+            "count": len(files),
+            "files": files,
+            "priority": _priority_for_area(area),
+        }
+        for area, files in scope.items()
+    ]
+
+    def area_sort_key(item: dict[str, object]) -> tuple[int, str]:
+        count = item.get("count")
+        return (-(count if isinstance(count, int) else 0), str(item.get("area", "")))
+
+    areas_sorted = sorted(area_items, key=area_sort_key)
 
     changed_areas = set(scope.keys())
     high_impact_areas = sorted(area for area in changed_areas if _priority_for_area(area) == "high")
