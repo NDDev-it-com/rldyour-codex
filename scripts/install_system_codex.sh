@@ -28,6 +28,7 @@ Managed state:
 - rldyour MCP server definitions
 - rldyour MCP tool approval overrides
 - active rldyour plugin cache copies
+- trusted hashes for installed rldyour plugin hooks
 
 Secrets are not installed. Keep Context7, Figma, GitHub, Gmail, and other auth outside this repository.
 EOF
@@ -669,6 +670,139 @@ sync_plugin_cache() {
   done
 }
 
+trust_plugin_hooks() {
+  if [ "$APPLY" -ne 1 ]; then
+    printf 'dry-run: refresh trusted hashes for installed rldyour plugin hooks\n'
+    return 0
+  fi
+  if [ -z "$CODEX_CMD" ]; then
+    printf 'warning: codex command not found; hook trust refresh skipped\n' >&2
+    return 0
+  fi
+
+  export RLDYOUR_CODEX_CMD="$CODEX_CMD"
+  export RLDYOUR_CODEX_HOME="$CODEX_HOME_DIR"
+  export RLDYOUR_REPO_ROOT="$ROOT"
+  python3 <<'PY'
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+from pathlib import Path
+
+codex_cmd = os.environ["RLDYOUR_CODEX_CMD"]
+codex_home = os.environ["RLDYOUR_CODEX_HOME"]
+repo_root = os.environ["RLDYOUR_REPO_ROOT"]
+
+proc = subprocess.Popen(
+    [codex_cmd, "app-server", "--listen", "stdio://"],
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,
+    bufsize=1,
+    env={**os.environ, "CODEX_HOME": codex_home},
+)
+assert proc.stdin is not None
+assert proc.stdout is not None
+
+
+def send(payload: dict[str, object]) -> None:
+    proc.stdin.write(json.dumps(payload) + "\n")
+    proc.stdin.flush()
+
+
+def recv(target_id: int) -> dict[str, object]:
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            stderr = proc.stderr.read() if proc.stderr is not None else ""
+            raise RuntimeError(f"codex app-server exited before response {target_id}: {stderr}")
+        payload = json.loads(line)
+        if payload.get("id") == target_id:
+            return payload
+
+
+def checked_response(target_id: int) -> dict[str, object]:
+    payload = recv(target_id)
+    if "error" in payload:
+        raise RuntimeError(json.dumps(payload["error"], ensure_ascii=False))
+    return payload
+
+
+try:
+    send(
+        {
+            "id": 1,
+            "method": "initialize",
+            "params": {
+                "clientInfo": {
+                    "name": "rldyour_codex_installer",
+                    "title": "rldyour Codex installer",
+                    "version": "0.0.0",
+                },
+                "capabilities": {"experimentalApi": True},
+            },
+        }
+    )
+    checked_response(1)
+
+    send({"id": 2, "method": "hooks/list", "params": {"cwds": [repo_root]}})
+    response = checked_response(2)
+    data = response.get("result", {}).get("data", [])  # type: ignore[union-attr]
+    hooks = data[0].get("hooks", []) if data else []
+    state: dict[str, dict[str, object]] = {}
+    for hook in hooks:
+        if not isinstance(hook, dict):
+            continue
+        plugin_id = hook.get("pluginId")
+        key = hook.get("key")
+        current_hash = hook.get("currentHash")
+        if not (
+            isinstance(plugin_id, str)
+            and plugin_id.startswith("rldyour-")
+            and plugin_id.endswith("@rldyour-codex")
+            and isinstance(key, str)
+            and isinstance(current_hash, str)
+        ):
+            continue
+        state[key] = {
+            "trusted_hash": current_hash,
+            "enabled": bool(hook.get("enabled", True)),
+        }
+
+    if not state:
+        print("warning: codex hooks/list returned no rldyour plugin hooks; hook trust refresh skipped")
+        raise SystemExit(0)
+
+    send(
+        {
+            "id": 3,
+            "method": "config/batchWrite",
+            "params": {
+                "edits": [
+                    {
+                        "keyPath": "hooks.state",
+                        "value": state,
+                        "mergeStrategy": "upsert",
+                    }
+                ],
+                "reloadUserConfig": True,
+            },
+        }
+    )
+    checked_response(3)
+    print(f"trusted rldyour plugin hooks: {len(state)}")
+finally:
+    proc.terminate()
+    try:
+        proc.wait(timeout=3)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+PY
+}
+
 sync_agent_configs() {
   local agent_file agent_name target
   for agent_file in "$SYSTEM_AGENT_DIR"/*.toml; do
@@ -714,6 +848,7 @@ fi
 patch_config
 sync_agent_configs
 sync_plugin_cache
+trust_plugin_hooks
 
 cat <<EOF
 
