@@ -1,30 +1,94 @@
 # Contributing
 
-This repository is an owner-controlled Codex marketplace. Changes should preserve the plugin boundaries, runtime pins, validation gates, and agent-only `fullrepo` workflow.
+This repository is a personal Codex marketplace maintained by [@rldyourmnd](https://github.com/rldyourmnd). Contributions are welcome under the project's AGPL-3.0-or-later license, but the maintainer keeps final authority on direction, plugin boundaries, runtime pins, validation gates, and the agent-only `fullrepo` workflow.
+
+By submitting a pull request, you certify that you have the right to license the contribution under AGPL-3.0-or-later.
+
+Participants must follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 or later. See [LICENSE](LICENSE). Contributions are accepted under the same license; downstream operators that run modified versions over a network must comply with AGPL-3.0 Section 13.
 
 ## Local Setup
 
-Required tools: Git, Python 3.13, uv, Node/npm, Bun, Dart, jq, ripgrep, shellcheck, and Codex CLI.
+Required tools: Git, Python 3.13, uv, Node.js (major 24), Bun (pinned in `config/mcp-runtime-versions.env`), Dart (pinned), jq, ripgrep, shellcheck, and Codex CLI.
 
 ```bash
 uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
 python3 scripts/validate_action_pins.py
 python3 scripts/scan_text_security.py
+scripts/validate_fast.sh
 scripts/validate_marketplace.sh
 ```
 
-Use the devcontainer when you need a clean, production-like local validation environment.
-
-## Change Rules
-
-- Keep repository artifacts in English.
-- Do not commit secrets, tokens, cookies, private keys, browser artifacts, diagnostics, or runtime caches.
-- Keep `rldyour-mcps` transport-only.
-- Keep external GitHub Actions pinned to full commit SHAs.
-- Add or update ADRs for non-trivial architecture, release, CI, hook, MCP, or governance decisions.
-- Update `VERSION` and `CHANGELOG.md` for release behavior changes.
-- Update Serena memories and instruction docs from verified code/config facts after durable workflow changes.
+Use the devcontainer in `.devcontainer/` when you need a clean, production-like local validation environment.
 
 ## Branches
 
-Use feature or release branches for implementation. `main` remains the normal source branch. `fullrepo` carries portable agent-only context and is published with `--force-with-lease` by the repository tooling.
+- `main`: primary integration branch. Auto-running CI gates fast/runtime/release/MCP smoke on every push and pull request.
+- `feat/<topic>`, `fix/<topic>`, `chore/<topic>`: feature/fix/chore branches. Open a pull request targeting `main`.
+- `fullrepo`: portable agent-only context branch. Maintained by repository tooling with `--force-with-lease`. Do not push to it manually.
+
+## Pull Requests
+
+- Open a pull request against `main` with a clear, scope-limited change.
+- Title format: Conventional Commits (`type(scope): description`). Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`, `ci`, `build`. Scope is the plugin or area, lowercase.
+- Description must include intent, surface touched, evidence (validation logs, screenshots when relevant), and risks.
+- Keep commits atomic. Squash trivial fixups before review.
+- Reference any related ADR under `docs/adr/` or open one when the change is architectural.
+- Sign-off is not required.
+
+## CI Expectations
+
+All pull requests run the following workflows automatically:
+
+- `validate`: fast and runtime smoke run on both Ubuntu and macOS; release dry-run and MCP runtime pin freshness run on Ubuntu only.
+- `security-static` (action pins, actionlint, text security scan, ShellCheck, Pyright, Semgrep CLI). Also runs on a weekly schedule.
+- `codeql` (GitHub CodeQL analysis for Python and GitHub Actions). Also runs on a weekly schedule.
+- `dependency-check` (MCP runtime pin freshness) runs on a daily schedule and on push to MCP pin sources; it does not block pull requests.
+
+A pull request is mergeable only when these checks complete and pass. Maintainers may dispatch additional scoped runs through `workflow_dispatch`.
+
+## Change Rules
+
+- Keep repository artifacts in English. Maintainer-facing conversation in issues/PRs may be in Russian or English.
+- Do not commit credentials, tokens, cookies, private keys, browser artifacts, diagnostics, or runtime caches. `scripts/scan_text_security.py` enforces this.
+- Keep `rldyour-mcps` transport-only. Do not move behavior policy or skills into it.
+- Keep external GitHub Actions pinned to full commit SHAs. `scripts/validate_action_pins.py` enforces this.
+- Add or update an ADR under `docs/adr/` for non-trivial architecture, release, CI, hook, MCP, or governance decisions.
+- Update `VERSION` and `CHANGELOG.md` for release behavior changes. Use Keep a Changelog format.
+- Update Serena memories under `.serena/memories/` and instruction docs (`AGENTS.md`, `.claude/CLAUDE.md`) from verified code/config facts after durable workflow changes. These files are agent-only and live on the `fullrepo` branch, not on `main`.
+- Conventional Commit messages are required: `type(scope): description`, imperative mood, lowercase, no trailing period, 72-char max.
+
+## Releases
+
+Releases use Semantic Versioning (`X.Y.Z[-pre]`). To prepare a release:
+
+1. Bump `VERSION`.
+2. Add a new `## [X.Y.Z] - YYYY-MM-DD` section to `CHANGELOG.md` with `Added`, `Changed`, `Fixed`, `Security` subsections as needed.
+3. Run `scripts/validate_release.sh` locally.
+4. Open a pull request, merge to `main` after CI passes.
+5. Push a SemVer tag matching `X.Y.Z[-pre]`. The `release.yml` workflow triggers automatically, builds a deterministic bundle, generates the SPDX SBOM, attaches artifact attestations, and publishes the GitHub Release.
+
+`workflow_dispatch` of `release.yml` is available as a fallback when manual control is required.
+
+## Validation Quick Reference
+
+```bash
+scripts/validate_fast.sh
+scripts/validate_runtime.sh --strict-runtime
+scripts/validate_release.sh
+scripts/validate_marketplace.sh
+python3 scripts/scan_text_security.py
+python3 scripts/validate_action_pins.py
+python3 scripts/validate_plugin_versions.py
+python3 scripts/validate_skill_routing.py
+python3 scripts/validate_instruction_docs.py --require-agent-docs
+uv run --with pyyaml python scripts/validate_agent_tools.py
+uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
+```
+
+## Reporting Issues
+
+Open a GitHub issue using one of the provided templates under `.github/ISSUE_TEMPLATE/`. For private vulnerability reports, see [SECURITY.md](SECURITY.md).
