@@ -3,6 +3,7 @@
 [![validate](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/validate.yml)
 [![security-static](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/security-static.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/security-static.yml)
 [![CodeQL](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/NDDev-it-com/rldyour-codex/badge)](https://scorecard.dev/viewer/?uri=github.com/NDDev-it-com/rldyour-codex)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Latest Release](https://img.shields.io/github/v/release/NDDev-it-com/rldyour-codex)](https://github.com/NDDev-it-com/rldyour-codex/releases/latest)
 
@@ -156,8 +157,11 @@ GitHub Actions run automatically on this public repository:
 - `validate.yml`: on every push to `main` and every pull request targeting `main`, runs fast validation on Ubuntu and macOS, runtime smoke on Ubuntu and macOS, release dry-run, MCP runtime pin freshness, and MCP safe-call smoke. `workflow_dispatch` is available for narrower scopes.
 - `security-static.yml`: on push to `main`, pull requests, and weekly schedule, runs action pin validation, actionlint, repository text security scan, ShellCheck, Pyright, and Semgrep CLI without paid GitHub Code Security.
 - `codeql.yml`: on push to `main`, pull requests, and weekly schedule, runs GitHub CodeQL analysis with `security-and-quality` queries for Python and GitHub Actions.
-- `dependency-check.yml`: on daily schedule and on push to MCP runtime pin sources, checks pinned MCP runtime versions through `scripts/check_mcp_runtime_versions.py --fail-on-outdated`.
+- `dependency-check.yml`: on daily schedule and on push to MCP runtime pin sources, checks pinned MCP runtime versions through `scripts/check_mcp_runtime_versions.py --fail-on-outdated`. Surfaces stale pins as a maintainer-visible signal without blocking pull requests.
 - `release.yml`: on push of a SemVer tag matching `X.Y.Z[-pre]`, validates `VERSION` and `CHANGELOG.md`, builds a deterministic bundle, generates a release manifest and SPDX 2.3 SBOM, exports the GitHub dependency-graph SBOM when available, attaches artifact attestations, and publishes the GitHub Release. `workflow_dispatch` remains available as a fallback.
+- `scorecard.yml`: weekly OSSF Scorecard analysis, also on push to `main` and branch protection rule changes. Uploads SARIF to the GitHub Security tab and publishes results to `scorecard.dev`.
+- `dependency-review.yml`: on pull requests, blocks merges that introduce dependencies with known high-severity vulnerabilities or licenses outside the allow-list (AGPL-3.0-or-later compatible).
+- `labeler.yml`: on pull requests, applies area labels (ci-cd / scripts / plugin / docs / tests / release / security) based on changed paths defined in `.github/labeler.yml`.
 
 All external GitHub Actions are pinned by full commit SHA, with the human-readable tag kept as an inline comment. Pin enforcement is checked by `scripts/validate_action_pins.py` and gated in CI.
 
