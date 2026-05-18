@@ -1,0 +1,83 @@
+area/ci-cd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/workflows/**
+          - .github/actions/**
+          - .github/dependabot.yml
+          - .github/branch-protection/**
+
+area/scripts:
+  - changed-files:
+      - any-glob-to-any-file:
+          - scripts/**
+
+area/plugin/rldyour-flow:
+  - changed-files:
+      - any-glob-to-any-file:
+          - plugins/rldyour-flow/**
+
+area/plugin/rldyour-serena-mcp:
+  - changed-files:
+      - any-glob-to-any-file:
+          - plugins/rldyour-serena-mcp/**
+
+area/plugin/rldyour-mcps:
+  - changed-files:
+      - any-glob-to-any-file:
+          - plugins/rldyour-mcps/**
+
+area/plugin/other:
+  - changed-files:
+      - any-glob-to-any-file:
+          - plugins/rldyour-browser/**
+          - plugins/rldyour-design/**
+          - plugins/rldyour-explore/**
+          - plugins/rldyour-lsps/**
+          - plugins/rldyour-rules/**
+          - plugins/rldyour-security/**
+
+area/system:
+  - changed-files:
+      - any-glob-to-any-file:
+          - system/**
+
+area/docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**
+          - README.md
+          - CONTRIBUTING.md
+          - SECURITY.md
+          - CODE_OF_CONDUCT.md
+          - CHANGELOG.md
+
+area/tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - tests/**
+
+area/serena-memories:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .serena/memories/**
+
+area/release:
+  - changed-files:
+      - any-glob-to-any-file:
+          - VERSION
+          - CHANGELOG.md
+          - LICENSE
+          - pyproject.toml
+          - scripts/release_*.py
+          - scripts/validate_release.sh
+
+area/security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - SECURITY.md
+          - system/rules/**
+          - scripts/scan_text_security.py
+          - .github/workflows/security-static.yml
+          - .github/workflows/codeql.yml
+          - .github/workflows/scorecard.yml
+          - .github/workflows/dependency-review.yml
