@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: cdad168 fix(flow): make SessionStart offline and fast
+Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
 Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, system/rules/*.rules, scripts/validate_execpolicy_rules.sh
 Area: HOOKS
 -->
@@ -18,6 +18,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - `plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh`: ordered Stop dispatcher for Serena memory gate before Flow sync gate.
 - `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh`: bounded mutating SessionStart bootstrap.
 - `plugins/rldyour-flow/hooks/session_start_context.sh`: read-only SessionStart context packet.
+- `plugins/rldyour-flow/hooks/pre_tool_use_cwd_guard.sh`: Bash PreToolUse guard that blocks commands which would rename or delete the active Codex cwd or repository root.
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`: fullrepo restore and local-only restore implementation used by startup bootstrap.
 - `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: non-blocking commit advice.
 - `plugins/rldyour-flow/hooks/stop_post_task_sync.sh`: Flow post-task sync Stop continuation called by the lifecycle dispatcher.
@@ -46,6 +47,10 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - Multiple hooks can be registered for the same event/matcher, but Codex may launch matching command hooks concurrently. `plugins/rldyour-flow/hooks.json` therefore uses one Flow `SessionStart` command hook and one Flow Stop command hook.
 - `session_start_dispatcher.sh` serializes `session_start_worktree_bootstrap.sh` before `session_start_context.sh`, enforces child timeouts, starts child hooks in their own process group, terminates descendant processes on timeout, caps child output, combines Codex `additionalContext`, and reports child hook failures as bounded degraded context.
 - `stop_lifecycle_dispatcher.sh` serializes Stop ordering by running Serena `stop_memory_sync.sh` first and Flow `stop_post_task_sync.sh` second. If Serena exits non-zero, Flow does not run in that Stop cycle.
+- `stop_lifecycle_dispatcher.sh` drains hook stdin once to a temp file and runs child Stop hooks in separate process groups with explicit child timeouts. On timeout it kills descendants and returns a targeted continuation message with exit code `2` instead of relying on Codex's outer Stop timeout.
+- `stop_post_task_sync.sh` runs Flow state in local-only mode. It must not call `git fetch` or `git ls-remote`; full remote reconciliation belongs to explicit validation or the final workflow, not a synchronous Stop hook.
+- Serena and Flow early-exit hooks drain stdin before returning so Codex does not hit `failed to write hook stdin: Broken pipe` when writing a larger hook payload.
+- `pre_tool_use_cwd_guard.sh` blocks common `mv`, `rm`, and `rmdir` commands targeting the current session cwd or repository root, including `$PWD`, `$(pwd)`, and backtick-pwd forms. It is a proactive guard; if the directory is renamed externally before Codex invokes a hook, Codex must be restarted from a valid cwd or the old path must be restored.
 - `scripts/smoke_hooks.sh` validates the dispatcher path, still selects hook entries by expected script path for future multi-hook events, and runs each hook smoke through a process-group timeout runner so one stuck hook cannot hang the whole smoke.
 - Hook command entries resolve scripts through `PLUGIN_ROOT`, the official plugin-bundled hook environment variable, and do not depend on the current project cwd or hardcoded `${CODEX_HOME}` cache paths.
 - `scripts/smoke_hooks.sh` rejects hook commands that use repo-relative `plugins/rldyour-*`, `${CODEX_HOME}`, `.codex/plugins/cache`, or `for p in` cache-search wrappers, then runs configured commands from a temporary git repo with `PLUGIN_ROOT`/`PLUGIN_DATA` set.
@@ -68,6 +73,8 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 ## Invariants
 
 - Hooks must stay fast, bounded, and safe; expensive semantic memory work happens in the main workflow or managed subagent, not inside shell hook bodies.
+- Hook scripts must either consume all stdin or explicitly drain it before early exit. This is required because Codex sends hook JSON on stdin.
+- Hook scripts cannot repair a missing session cwd after an external directory rename because Codex starts command hooks with the session cwd. Guard only commands that pass through Codex before the cwd disappears.
 - Hook output must be Codex-compatible. Do not emit Claude Code `Agent(...)` syntax or Claude-only fields as the primary path.
 - The Flow ordered Stop lifecycle must not duplicate Serena memory writing. It runs Serena freshness gating first, then handles instruction docs, git/GitHub/fullrepo, and cleanup sync only when Serena is current.
 - The Flow Stop hook must not force `flow-post-task-sync` when the only repository changes are bootstrap-only untracked `.serena` files from tool startup.
@@ -83,7 +90,7 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 
 ## Verification
 
-- `scripts/smoke_hooks.sh`: parsed wiring, `PLUGIN_ROOT` command execution from arbitrary cwd, direct hook lifecycle checks, fake-network SessionStart no-fetch/no-ls-remote regression, and bootstrap-only `.serena` Stop-loop regression checks.
+- `scripts/smoke_hooks.sh`: parsed wiring, `PLUGIN_ROOT` command execution from arbitrary cwd, direct hook lifecycle checks, large-stdin drain regression checks, Flow PreToolUse cwd-rename blocking, fake-network SessionStart/Stop no-fetch/no-ls-remote regressions, and bootstrap-only `.serena` Stop-loop regression checks.
 - `scripts/smoke_serena_memory_taxonomy.sh`: memory hook stale/advisory/loop behavior.
 - `scripts/smoke_codex_hooks_migration.sh`: installer hook feature migration.
 - `scripts/validate_marketplace.sh`: shellcheck plus hook smoke coverage.

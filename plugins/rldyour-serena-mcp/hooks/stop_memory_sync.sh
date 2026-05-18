@@ -16,6 +16,8 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+HOOK_INPUT=$(cat 2>/dev/null || true)
+
 if [ "${RLDYOUR_SKIP_STOP_GATES:-0}" = "1" ] || [ "${RLDYOUR_SKIP_SERENA_SYNC:-0}" = "1" ]; then
   exit 0
 fi
@@ -32,7 +34,6 @@ PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 STATE_SCRIPT="$PLUGIN_DIR/scripts/serena_memory_state.py"
 COMMIT_SCRIPT="$PLUGIN_DIR/scripts/commit_serena_knowledge.sh"
 SYNC_MARKER=".serena/.sync_marker"
-HOOK_INPUT=$(cat 2>/dev/null || true)
 
 if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: cdad168 fix(flow): make SessionStart offline and fast
+Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py
 Area: CODEX
 -->
@@ -43,7 +43,9 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Plugin hook support is used only by `rldyour-flow` and `rldyour-serena-mcp`.
 - Plugin hook command entries use the official plugin runtime environment and call scripts through `PLUGIN_ROOT`; they must not use repo-cwd relative script paths or installed-cache search fallbacks.
 - Flow `SessionStart` uses one plugin hook entry for `session_start_dispatcher.sh`, which serializes bootstrap and context because official Codex hook semantics allow concurrent execution of multiple matching command hooks. Its child scripts are intentionally fast/offline: bootstrap can use only an existing local fullrepo tracking ref, and context generation cannot call network or deep repository analyzers.
-- Flow `Stop` uses one plugin hook entry for `stop_lifecycle_dispatcher.sh`; it invokes the Serena Stop memory gate first and invokes Flow post-task sync only after Serena exits cleanly. `rldyour-serena-mcp/hooks.json` intentionally does not register its own Stop hook to avoid cross-plugin Stop races.
+- Flow `PreToolUse` registers `pre_tool_use_cwd_guard.sh` for `Bash`. It denies common commands that would rename or remove the active Codex session cwd or repository root before Codex can lose its hook working directory.
+- Flow `Stop` uses one plugin hook entry for `stop_lifecycle_dispatcher.sh`; it drains stdin to a temp file, invokes the Serena Stop memory gate first, invokes Flow post-task sync only after Serena exits cleanly, runs children in separate process groups with explicit timeouts, and surfaces timeout continuation instructions instead of letting the outer Codex hook timeout hide the cause. `rldyour-serena-mcp/hooks.json` intentionally does not register its own Stop hook to avoid cross-plugin Stop races.
+- Serena and Flow hooks that may early-exit now drain Codex hook stdin before returning, preventing `Broken pipe` failures when Codex writes a larger hook payload.
 - Official Codex docs verified for this implementation: Codex plugin manifests live at `.codex-plugin/plugin.json`; plugin hooks can point to `hooks.json`; Codex skills use `skills/`; Codex config uses `[features].hooks` for lifecycle hooks and `[features].plugin_hooks` to opt into bundled hooks from enabled plugins.
 - Legacy config aliases (`codex_hooks`, `use_legacy_landlock`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, and deprecated `features.web_search*`) are migrated by installer/doctor/smoke into canonical equivalents.
 
@@ -51,7 +53,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 
 - Plugin manifests include `name`, `version`, `description`, bundled capability paths such as `skills`/`hooks`, and `interface` metadata.
 - Bundled hook JSON paths are relative to the plugin root, while command bodies resolve executable hook scripts through the `PLUGIN_ROOT` environment variable supplied by Codex at runtime.
-- Current hook-enabled plugin versions after `cdad168`: `rldyour-flow` `0.3.2` and `rldyour-serena-mcp` `0.2.4`.
+- Current hook-enabled plugin versions after `6ec3fb9`: `rldyour-flow` `0.3.3` and `rldyour-serena-mcp` `0.2.4`.
 - Marketplace entries use local `source.path` references to `./plugins/<plugin>`.
 - `plugins/rldyour-mcps/.mcp.json` defines valid MCP dependency values for `agents/openai.yaml`.
 - `scripts/validate_agent_tools.py` loads `.mcp.json`, parses YAML/TOML, rejects unknown MCP dependency names, rejects partial disabled managed-agent MCP overrides, rejects disabled transport drift from `.mcp.json`, and rejects explicit `mcp_servers.codex_apps` tables.
@@ -74,6 +76,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - When changing plugin hook commands, run `scripts/smoke_hooks.sh`, install into `${CODEX_HOME}`, and verify live hook trust with `scripts/doctor_system_codex.sh`.
 - `66070a8` bumps the marketplace to `0.3.3` and closes the Codex startup warning where all installed managed subagent role files were ignored with `invalid transport`; the fix is complete disabled transport metadata in source and installed agent TOML files plus validator/doctor anti-regression checks.
 - `cdad168` bumps the marketplace to `0.3.4` and makes Flow `SessionStart` offline and local-only so slow remotes or deep state analyzers cannot produce startup hook timeout context.
+- `6ec3fb9` bumps the marketplace to `0.3.5` and hardens lifecycle execution: Flow PreToolUse blocks active cwd/repo-root rename or deletion through Codex Bash, Stop checks are local-only and process-group bounded, hook stdin is drained before early exits, and hook smoke covers large stdin, cwd rename blocking, and no-network Stop regressions.
 
 ## Verification
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: cdad168 fix(flow): make SessionStart offline and fast
+Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
@@ -36,15 +36,15 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 ## Current Behavior
 
 - Active rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- Marketplace release version is `0.3.4`.
-- `rldyour-flow` is version `0.3.2` and owns SDLC commands, fullrepo, instruction docs, fast offline/local-only SessionStart dispatch, ordered Stop lifecycle dispatch, and post-task sync.
+- Marketplace release version is `0.3.5`.
+- `rldyour-flow` is version `0.3.3` and owns SDLC commands, fullrepo, instruction docs, fast offline/local-only SessionStart dispatch, cwd-safe PreToolUse guardrails, ordered local-only Stop lifecycle dispatch, and post-task sync.
 - `rldyour-serena-mcp` is version `0.2.4` and owns Serena-first code workflow plus memory freshness, expanded taxonomy, sync hooks, and acknowledgement.
 - The repository currently has 38 rldyour skills, 12 MCP server definitions, and 8 managed Codex subagent TOML files validated by scripts.
 - The Python test harness enforces a 75% coverage threshold through `pyproject.toml`.
 - Managed subagents currently use temporary MCP isolation: the lightweight inherited/core surface stays available (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`), while specialist MCP servers remain parent-session tools until Codex subagent MCP startup is stable enough to widen safely. Disabled specialist MCP overrides include full transport metadata from `plugins/rldyour-mcps/.mcp.json`, and `codex_apps` stays inherited from Apps/connectors rather than declared as an `mcp_servers` transport.
 - Fullrepo unit-test fixtures configure local git identity inside temporary repositories and clones, so GitHub-hosted runners do not depend on global git author settings.
 - CI noise classification treats `uv` package download progress lines as known setup noise while still failing strict jobs on unrelated stderr.
-- GitHub CI/CD is manual-only for this repository's spend policy. The latest full explicit pipeline on commit `cdad168` passed `validate.yml` run `25999559961` with macOS parity, `security-static.yml` run `25999559930`, `dependency-check.yml` run `25999559948`, and `release.yml` run `25999559947`, and published release `0.3.4` with deterministic bundle/SBOM/attestation output.
+- GitHub CI/CD is manual-only for this repository's spend policy. The latest full explicit GitHub pipeline on commit `cdad168` passed `validate.yml` run `25999559961` with macOS parity, `security-static.yml` run `25999559930`, `dependency-check.yml` run `25999559948`, and `release.yml` run `25999559947`, and published release `0.3.4` with deterministic bundle/SBOM/attestation output. Local validation for `6ec3fb9` / version `0.3.5` passed before memory sync and main push; GitHub Actions for `0.3.5` should be launched only on explicit owner request.
 - System install manages Codex hook runtime with `[features].hooks = true` and `[features].plugin_hooks = true`, so enabled rldyour plugin hook declarations are actually loaded.
 - Normal `main` excludes root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, and similar agent-only files through `.git/info/exclude`; `fullrepo` carries the portable agent context snapshot.
 - Normal-branch GitHub CI may run without tracked fullrepo-managed `.serena/memories`; memory taxonomy smoke still tests analyzer/fixture contracts, and the final live freshness state check is skipped until memories are present as tracked fullrepo context.

@@ -3,6 +3,8 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+HOOK_INPUT=$(cat 2>/dev/null || true)
+
 if [ "${RLDYOUR_SKIP_STOP_GATES:-0}" = "1" ] || [ "${RLDYOUR_SKIP_FLOW_SYNC:-0}" = "1" ]; then
   exit 0
 fi
@@ -18,13 +20,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 STATE_SCRIPT="$PLUGIN_DIR/scripts/flow_post_task_state.py"
 SYNC_MARKER=".serena/.flow_sync_marker"
-HOOK_INPUT=$(cat 2>/dev/null || true)
 
 if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
 fi
 
-STATE_JSON=$(python3 "$STATE_SCRIPT" 2>/dev/null || true)
+STATE_JSON=$(RLDYOUR_FLOW_STATE_LOCAL_ONLY=1 RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1 python3 "$STATE_SCRIPT" 2>/dev/null || true)
 if [ -z "$STATE_JSON" ]; then
   exit 0
 fi

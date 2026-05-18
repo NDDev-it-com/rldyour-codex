@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: cdad168 fix(flow): make SessionStart offline and fast
+Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
 Scope: plugins/rldyour-flow, plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/*.py, plugins/rldyour-flow/scripts/*.sh, scripts/sync_fullrepo_branch.sh, scripts/worktree_add.sh, scripts/install_local_git_hooks.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/smoke_fullrepo_bootstrap_init.sh, scripts/smoke_clean_bootstrap.sh
 Area: FLOW
 -->
@@ -13,7 +13,7 @@ Area: FLOW
 
 ## Source Of Truth
 
-- `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin version `0.3.2`, capabilities, hook/skill links.
+- `plugins/rldyour-flow/.codex-plugin/plugin.json`: plugin version `0.3.3`, capabilities, hook/skill links.
 - `plugins/rldyour-flow/skills/ry-start/SKILL.md`: full implementation lifecycle.
 - `plugins/rldyour-flow/skills/ry-init/SKILL.md`: scoped read-only initialization.
 - `plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md`: final sync workflow.
@@ -22,6 +22,7 @@ Area: FLOW
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py`: post-task sync state and cleanup candidates.
 - `plugins/rldyour-flow/scripts/git_sync_audit.sh`: git/GitHub branch state audit.
 - `plugins/rldyour-flow/hooks/session_start_dispatcher.sh`: serialized SessionStart dispatch for bootstrap before context.
+- `plugins/rldyour-flow/hooks/pre_tool_use_cwd_guard.sh`: Bash command guard for active cwd and repository-root rename/delete prevention.
 - `plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh`: ordered Stop dispatcher that runs Serena memory state before Flow post-task state.
 - `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh`: auto-restore missing agent-only context in fresh worktrees.
 - `plugins/rldyour-flow/hooks/session_start_context.sh`: read-only context packet.
@@ -44,7 +45,9 @@ Area: FLOW
 - Flow `SessionStart` wiring uses `session_start_dispatcher.sh` as a single hook entry so worktree bootstrap runs before session context under Codex hook concurrency semantics. The dispatcher runs children with bounded timeouts, uses temp-file input, starts children in their own process group, kills descendants on timeout, caps child output, and emits degraded context instead of relying only on the outer Codex timeout.
 - `session_start_worktree_bootstrap.sh` restores agent-only context only from an already present local `origin/fullrepo` tracking ref when `.serena/project.yml`, `AGENTS.md`, or `.claude/CLAUDE.md` is missing. It calls `fullrepo_sync.py --restore-local`, is additive, never fetches, never publishes, and reports restore failure honestly instead of success-like wording.
 - `session_start_context.sh` is a fast offline startup packet. It reports only bounded local state such as branch, HEAD, local ahead/behind, tracked dirty files, worktree count, Serena sync marker presence, local fullrepo ref/exclude state, tracked agent-only count, and project instruction docs. It does not call deep Serena/fullrepo/Flow analyzers; those belong to `ry-init`, Stop, doctor, or explicit validation.
+- Flow `PreToolUse` protects active Codex session paths before Bash runs: common commands that would rename or delete the active cwd or repository root are denied with a Codex permission decision. External/manual directory renames cannot be recovered by hook code because Codex starts hooks with the session cwd.
 - Flow `Stop` wiring uses `stop_lifecycle_dispatcher.sh` as the only registered Stop command. The dispatcher invokes `rldyour-serena-mcp/hooks/stop_memory_sync.sh` first and invokes `stop_post_task_sync.sh` only when Serena exits cleanly, so cross-plugin Stop ordering no longer depends on Codex concurrent hook execution.
+- Flow Stop state is local-only and bounded. `stop_lifecycle_dispatcher.sh` uses process-group timeouts for Serena and Flow children, and `stop_post_task_sync.sh` sets `RLDYOUR_FLOW_STATE_LOCAL_ONLY=1` plus `RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1` so synchronous Stop checks do not call remote fullrepo operations.
 - `scripts/worktree_add.sh` refuses to create a helper worktree if `origin/fullrepo` does not exist; it does not auto-publish from a helper script.
 - `flow_post_task_state.py` keeps flow sync pending when instruction docs are stale/missing, fullrepo is stale, git sync is pending, or merged workflow branches/worktrees need cleanup. Installed helper lookup honors `CODEX_HOME` before the default `~/.codex` cache so temp installs and CI smoke runs inspect the intended runtime.
 - `flow_post_task_state.py` ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and flow runtime markers; those files alone must not force a Stop-hook `flow-post-task-sync` continuation.
@@ -59,6 +62,8 @@ Area: FLOW
 - `branch_cleanup_state` excludes protected branches such as `main` and `fullrepo`.
 - `RLDYOUR_FULLREPO_BRANCH` controls the fullrepo branch name; default is `fullrepo`.
 - `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1` disables the SessionStart bootstrap hook.
+- `RLDYOUR_FLOW_STATE_LOCAL_ONLY=1` makes Flow post-task state use local fullrepo refs and avoid network checks; Stop hooks set it automatically.
+- `RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1` makes instruction-doc/fullrepo status helpers avoid remote fetch/ls-remote calls; Stop hooks set it automatically.
 - `RLDYOUR_WORKTREE_BASE_REF` and `RLDYOUR_DRY_RUN=1` control `scripts/worktree_add.sh`.
 
 ## Invariants
@@ -82,6 +87,6 @@ Area: FLOW
 - `scripts/smoke_fullrepo_bootstrap_init.sh`: first-run bootstrap init and current-branch AI-file index cleanup.
 - `scripts/smoke_clean_bootstrap.sh`: clean temporary install with restored fullrepo context.
 - `scripts/smoke_flow_branch_cleanup.sh`: branch/worktree cleanup pending-state contract.
-- `scripts/smoke_hooks.sh`: flow hook lifecycle, fake-network SessionStart no-fetch/no-ls-remote regression, Stop loop guard, and bootstrap-only `.serena` no-sync regression.
+- `scripts/smoke_hooks.sh`: flow hook lifecycle, large-stdin drain checks, PreToolUse cwd-rename blocking, fake-network SessionStart/Stop no-fetch/no-ls-remote regressions, Stop loop guard, and bootstrap-only `.serena` no-sync regression.
 - `RLDYOUR_DRY_RUN=1 scripts/worktree_add.sh test/codex-memory-brain`: helper worktree command construction.
 - `plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool`: current flow sync state.

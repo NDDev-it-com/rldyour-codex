@@ -3,6 +3,8 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+INPUT=$(cat 2>/dev/null || true)
+
 emit_additional_context() {
   python3 - "$1" <<'PY'
 import json
@@ -43,7 +45,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-INPUT=$(cat 2>/dev/null || true)
 COMMAND=$(printf "%s" "$INPUT" | python3 -c '
 import json
 import sys

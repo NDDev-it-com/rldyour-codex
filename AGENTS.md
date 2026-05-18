@@ -33,7 +33,7 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 
 - `rldyour-mcps` owns MCP transport definitions only. It must not contain behavior policy or skills.
 - `rldyour-serena-mcp` owns Serena-first code workflow, memory sync, and Serena lifecycle hook scripts. Its Stop memory gate is invoked by the ordered Flow lifecycle dispatcher, not registered as a competing plugin Stop hook.
-- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, fast offline/local-only SessionStart worktree bootstrap/context dispatcher hooks, advisory commit hooks, ordered Stop lifecycle dispatch, and post-task synchronization hooks.
+- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, fast offline/local-only SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, ordered local-only Stop lifecycle dispatch, and post-task synchronization hooks.
 - `rldyour-rules` owns quality, architecture, dependency, verification, Codex/Claude project-instruction, and ADR policy.
 - `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
 - `rldyour-explore`, `rldyour-browser`, `rldyour-security`, and `rldyour-lsps` own their domain workflows and must not duplicate MCP transports.
