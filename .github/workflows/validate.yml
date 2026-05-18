@@ -1,12 +1,16 @@
 name: validate
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       scope:
         description: Validation scope to run.
         required: true
-        default: fast
+        default: full
         type: choice
         options:
           - fast
@@ -15,22 +19,24 @@ on:
           - mcp
           - full
       include_macos:
-        description: Also run the selected validation scope on macOS. macOS is intentionally opt-in for cost control.
+        description: Also run the selected validation scope on macOS.
         required: true
-        default: false
+        default: true
         type: boolean
 
 permissions:
   contents: read
 
 concurrency:
-  group: validate-${{ github.ref }}-${{ inputs.scope }}-${{ inputs.include_macos }}
-  cancel-in-progress: true
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   fast-ubuntu:
     name: Fast validation (ubuntu)
-    if: inputs.scope == 'fast' || inputs.scope == 'runtime' || inputs.scope == 'release' || inputs.scope == 'full'
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      inputs.scope == 'fast' || inputs.scope == 'runtime' || inputs.scope == 'release' || inputs.scope == 'mcp' || inputs.scope == 'full'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -68,9 +74,11 @@ jobs:
 
   fast-macos:
     name: Fast validation (macos)
-    if: inputs.include_macos && (inputs.scope == 'fast' || inputs.scope == 'runtime' || inputs.scope == 'release' || inputs.scope == 'full')
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      (inputs.include_macos && (inputs.scope == 'fast' || inputs.scope == 'runtime' || inputs.scope == 'release' || inputs.scope == 'mcp' || inputs.scope == 'full'))
     runs-on: macos-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -106,7 +114,9 @@ jobs:
 
   runtime-ubuntu:
     name: Runtime smoke (ubuntu)
-    if: inputs.scope == 'runtime' || inputs.scope == 'full'
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      inputs.scope == 'runtime' || inputs.scope == 'full'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -149,9 +159,11 @@ jobs:
 
   runtime-macos:
     name: Runtime smoke (macos)
-    if: inputs.include_macos && (inputs.scope == 'runtime' || inputs.scope == 'full')
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      (inputs.include_macos && (inputs.scope == 'runtime' || inputs.scope == 'full'))
     runs-on: macos-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     env:
       CODEX_HOME: /tmp/rldyour-codex-home
       RLDYOUR_MCP_CAPABILITY_LIST_ONLY: "1"
@@ -192,7 +204,9 @@ jobs:
 
   release:
     name: Release dry-run
-    if: inputs.scope == 'release' || inputs.scope == 'full'
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      inputs.scope == 'release' || inputs.scope == 'full'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -220,7 +234,9 @@ jobs:
 
   dependency-pins:
     name: MCP runtime pin freshness
-    if: inputs.scope == 'mcp' || inputs.scope == 'full'
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      inputs.scope == 'mcp' || inputs.scope == 'full'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -261,7 +277,9 @@ jobs:
 
   mcp-safe-calls:
     name: MCP safe call smoke (ubuntu)
-    if: inputs.scope == 'mcp' || inputs.scope == 'full'
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && (inputs.scope == 'mcp' || inputs.scope == 'full'))
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
