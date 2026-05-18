@@ -249,14 +249,20 @@ jobs:
           install-codex: "false"
           install-dart: "false"
 
-      - name: Check pinned MCP runtime versions
-        run: python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json > dependency-check.json
+      - name: Check pinned MCP runtime versions (advisory)
+        run: |
+          python3 scripts/check_mcp_runtime_versions.py --json > dependency-check.json || true
 
       - name: Write dependency summary
         if: always()
         run: |
           {
-            echo "## MCP runtime pin freshness"
+            echo "## MCP runtime pin freshness (advisory on pull requests)"
+            echo ""
+            echo "This job runs without --fail-on-outdated so a stale pin does not"
+            echo "block pull request merges. The dependency-check.yml workflow on a"
+            echo "daily schedule runs with --fail-on-outdated and surfaces stale"
+            echo "pins as a separate signal for the maintainer to act on."
             echo ""
             if [ -f dependency-check.json ]; then
               echo '```json'
