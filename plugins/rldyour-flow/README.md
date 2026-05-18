@@ -28,7 +28,7 @@ Normal branches keep product history clean. Agent-only files such as root `AGENT
 
 ## Hook Strategy
 
-The plugin includes a bounded SessionStart bootstrap hook, a read-only SessionStart context hook, advisory PostToolUse hooks, and a Stop hook.
+The plugin includes a bounded SessionStart bootstrap hook, a read-only SessionStart context hook, a cwd-safety PreToolUse guard, advisory PostToolUse hooks, and a Stop hook.
 
 `session_start_worktree_bootstrap.sh` is the only mutating SessionStart hook. It runs `fullrepo_sync.py --restore-local` only when canonical agent-only markers are missing and an existing local `origin/fullrepo` ref is already present. It never fetches, publishes, pushes, commits, or edits non-agent project files.
 
@@ -40,7 +40,9 @@ Bootstrap-only `.serena` files created by tool startup, such as an untracked `.s
 
 The PostToolUse hook watches Bash `git commit` commands and emits non-blocking commit advice for conventional commit format, oversized subjects, suspicious sensitive paths, runtime markers, browser evidence, or very broad commits. It never rejects the command.
 
-The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `instruction-docs-sync` when needed and `flow-post-task-sync` for docs, git, GitHub, and fullrepo synchronization. The continuation prompt includes installed script paths so product repositories do not need to vendor this plugin.
+The PreToolUse cwd guard blocks Bash commands that would rename or remove the active Codex session directory or repository root. Codex runs hook commands with the session cwd; if that path is removed or renamed outside the active session, later hook processes may fail before their scripts start.
+
+The Stop hook does not duplicate Serena memory sync. Serena owns `.serena/memories`, `.serena/plans`, and `.serena/research` freshness. The flow Stop hook waits until Serena is current, then asks Codex to run `instruction-docs-sync` when needed and `flow-post-task-sync` for docs, git, GitHub, and fullrepo synchronization. Stop-state checks use local-only fullrepo status and child process-group timeouts; network fullrepo sync stays in explicit post-task sync, doctor, or validation commands. The continuation prompt includes installed script paths so product repositories do not need to vendor this plugin.
 
 `ry-init` is read-only for Serena knowledge by default. It may bootstrap `fullrepo` context, but it reports memory candidates instead of writing `.serena` unless the user explicitly requested memory sync or a stale-memory hook requires it.
 

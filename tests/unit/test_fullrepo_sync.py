@@ -127,6 +127,32 @@ def test_restore_local_uses_existing_tracking_ref_without_fetch(tmp_path: Path, 
     assert (clone / "AGENTS.md").read_text(encoding="utf-8") == "agent docs\n"
 
 
+def test_status_local_only_uses_existing_tracking_ref_without_network(tmp_path: Path, monkeypatch) -> None:
+    remote, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+    mod.publish("origin", "fullrepo")
+
+    clone = tmp_path / "clone-status-local"
+    git(tmp_path, "clone", str(remote), str(clone))
+    configure_git_identity(clone)
+    monkeypatch.chdir(clone)
+    git(clone, "checkout", "main")
+    (clone / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+
+    def fail_network(*_args, **_kwargs):
+        raise AssertionError("local-only status must not fetch or query the network")
+
+    monkeypatch.setattr(mod, "fetch_fullrepo", fail_network)
+    monkeypatch.setattr(mod, "remote_branch_sha", fail_network)
+
+    payload = mod.status("origin", "fullrepo", local_only=True)
+
+    assert payload["network_checked"] is False
+    assert payload["remote_fullrepo_exists"] is True
+    assert payload["fullrepo_matches_worktree"] is True
+
+
 def test_publish_uses_identity_env_fallback(tmp_path: Path, monkeypatch) -> None:
     _, work = init_repo(tmp_path)
     monkeypatch.chdir(work)

@@ -12,6 +12,26 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Security
 
+## [0.3.5] - 2026-05-18
+
+### Added
+
+- Flow PreToolUse now includes a cwd guard that blocks Bash commands which would rename or remove the active Codex session directory or repository root.
+- Hook smoke now includes large-stdin drain regressions for PreToolUse, PostToolUse, and Stop hooks, Stop offline/no-network regression coverage, and cwd-rename guard coverage.
+- Unit tests now cover `fullrepo_sync.py --status-json --local-only` without fetch or remote inspection.
+
+### Changed
+
+- Stop lifecycle dispatcher now runs Serena and Flow children with internal process-group timeouts and actionable continuation messages instead of relying only on Codex's outer hook timeout.
+- Flow Stop state now uses local-only fullrepo status in the hook hot path, avoiding `git fetch` and `git ls-remote` during Stop checks.
+- Flow state script resolution now prefers sibling scripts next to the running plugin file before project-local or `${CODEX_HOME}` fallbacks, preventing stale installed-cache helpers from reintroducing old network behavior.
+- Repository version updated to `0.3.5`.
+- `rldyour-flow` plugin version updated to `0.3.3` for stdin-safe lifecycle hooks, local-only Stop state, and active-cwd rename protection.
+
+### Fixed
+
+- Flow and Serena lifecycle hooks now drain hook stdin before early exits, preventing Codex `Broken pipe` failures when `PostToolUse` or `PreToolUse` payloads include large tool responses.
+
 ## [0.3.4] - 2026-05-18
 
 ### Added
