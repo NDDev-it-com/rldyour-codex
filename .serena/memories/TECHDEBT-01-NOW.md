@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 756c23e test(hooks): cover registered lifecycle commands
+Last updated: 2026-05-19
+Last commit: 8c11c76 chore(release): bump to 0.4.0
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/validate_runtime_prereqs.py, scripts/validate_execpolicy_rules.sh, scripts/worktree_add.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, plugins/rldyour-flow/hooks/session_start_dispatcher.sh, plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/scripts/fullrepo_sync.py, system/rules/*.rules, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->
@@ -74,6 +74,7 @@ This memory stores durable mistakes, edge cases, and anti-regression rules disco
 - `6ec3fb9` closed the active-cwd rename/delete regression for commands routed through Codex Bash by adding `pre_tool_use_cwd_guard.sh` and smoke coverage. A directory renamed externally still requires restarting Codex from a valid cwd or restoring the old path because Codex starts hooks with the session cwd.
 - `756c23e` closed the residual hook-smoke coverage gap: `scripts/smoke_hooks.sh` now fails when `hooks.json` registers a new Serena/Flow hook script that is not in the smoke manifest, and large-stdin BrokenPipe regression coverage now exercises every registered command hook plus ordered Stop child scripts.
 - `756c23e` closed the large-stdin smoke self-hang gap by redirecting hook output to a temporary file and applying the timeout before reading output.
+- `8c11c76` closed the public-OSS-readiness debt by relicensing from MIT to AGPL-3.0-or-later with canonical FSF text in `LICENSE`, switching CI/CD from manual-only to auto-triggered on push to main / pull requests / weekly schedule / daily dependency schedule / SemVer tag push, adding `codeql.yml` with `security-and-quality` query suite for Python and GitHub Actions, adding `CODE_OF_CONDUCT.md` referencing Contributor Covenant 2.1, declaring AGPL-3.0-or-later in the SBOM with regression tests, fixing the SBOM `documentNamespace` to the canonical `NDDev-it-com` organization, populating `branch-protection/main.json` `required_status_checks` with the exact CI job names, and adding public packaging metadata to `pyproject.toml`. Tag glob `[0-9]+.[0-9]+.[0-9]+` was corrected to `[0-9]*.[0-9]*.[0-9]*` so multi-digit SemVer tags trigger `release.yml`. Job `MCP runtime pin freshness` in `dependency-check.yml` was renamed to `MCP runtime pin freshness (scheduled)` to avoid collision with the same-named job in `validate.yml`.
 - Semgrep's global `IFS` tampering rule is intentionally excluded in `security-static` because this repository uses `IFS=$'\n\t'` as a strict shell prologue and validates shell scripts with ShellCheck.
 
 ## Contracts And Data

@@ -2,7 +2,13 @@
 
 ## Project Purpose
 
-This repository is the owner's personal Codex marketplace. It owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, and Serena project knowledge for the local Codex runtime.
+This repository is the maintainer's personal Codex marketplace, published publicly under the GNU AGPL-3.0-or-later license at https://github.com/NDDev-it-com/rldyour-codex. Maintainer: Danil Silantyev (`@rldyourmnd`), CEO of NDDev. The repository owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, and Serena project knowledge for the local Codex runtime.
+
+## License
+
+- Code, configs, scripts, and tests in this repository are licensed under GNU AGPL-3.0-or-later. The canonical FSF text lives in `LICENSE`.
+- AGPL-3.0 Section 13 (Remote Network Interaction) applies to modified versions served over a network.
+- Contributions are accepted under the same license (inbound = outbound).
 
 ## Language And Documentation
 
@@ -19,8 +25,12 @@ This repository is the owner's personal Codex marketplace. It owns rldyour plugi
 - `plugins/rldyour-mcps/.mcp.json`: repository MCP runtime definitions.
 - `config/mcp-runtime-versions.env`: pinned local MCP launcher, host runtime, and Codex CLI versions used by scripts and manual CI.
 - `VERSION` and `CHANGELOG.md`: marketplace release version and human-readable change history.
-- `.github/workflows/validate.yml`: manual Ubuntu validation with opt-in macOS parity for fast, runtime, release, MCP, and full scopes.
-- `.github/workflows/dependency-check.yml`: manual MCP runtime pin freshness check.
+- `.github/workflows/validate.yml`: auto-running validation on push to main, pull requests, and workflow_dispatch. Fast and runtime jobs run on Ubuntu and macOS automatically on push/PR; release dry-run, dependency-pins, and mcp-safe-calls run on Ubuntu only.
+- `.github/workflows/security-static.yml`: auto-running no-paid static security on push, pull_request, weekly schedule, and workflow_dispatch.
+- `.github/workflows/codeql.yml`: auto-running GitHub CodeQL analysis on push, pull_request, weekly schedule. Matrix: Python and GitHub Actions. Pinned `github/codeql-action@458d36d7d4f47d0dd16ca424c1d3cda0060f1360 # v3`.
+- `.github/workflows/release.yml`: auto-running on push of SemVer tags matching `[0-9]*.[0-9]*.[0-9]*` and prereleases `[0-9]*.[0-9]*.[0-9]*-*`, plus workflow_dispatch as a fallback.
+- `.github/workflows/dependency-check.yml`: auto-running MCP runtime pin freshness on daily schedule, push to MCP pin sources, and workflow_dispatch. Job exported as `MCP runtime pin freshness (scheduled)`.
+- `.github/branch-protection/main.json`: desired branch protection for the public `main` branch with required CI status checks.
 - `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
 - `system/agents/*.toml`: managed Codex custom subagent role configs installed to `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`.
 - `system/rules/*.rules`: managed Codex execpolicy rules installed to `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`.

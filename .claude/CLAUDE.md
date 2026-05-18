@@ -2,7 +2,13 @@
 
 ## Project Purpose
 
-This repository is the owner's personal Codex marketplace and system setup source. It owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
+This repository is the maintainer's personal Codex marketplace and system setup source, published publicly under the GNU AGPL-3.0-or-later license at https://github.com/NDDev-it-com/rldyour-codex. Maintainer: Danil Silantyev (`@rldyourmnd`), CEO of NDDev. It owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
+
+## License
+
+- All code, configs, scripts, and tests are licensed under GNU AGPL-3.0-or-later. Canonical FSF text in `LICENSE`.
+- AGPL-3.0 Section 13 (Remote Network Interaction) applies to modified versions served over a network.
+- Contributions are accepted under the same license (inbound = outbound).
 
 ## Language
 
@@ -23,6 +29,8 @@ This repository is the owner's personal Codex marketplace and system setup sourc
 - `system/AGENTS.md`: canonical global Codex instructions installed to `~/.codex/AGENTS.md`.
 - `system/agents/*.toml`: managed Codex custom subagent role configs installed to `~/.codex/agents/*.toml`, with temporary specialist-MCP isolation for spawned subagents. Disabled specialist MCP overrides must include full `command` or `url` transport metadata copied from `plugins/rldyour-mcps/.mcp.json`; built-in `codex_apps` stays inherited from Apps/connectors and must not be declared as a synthetic `[mcp_servers.codex_apps]` table.
 - `system/rules/*.rules`: managed Codex execpolicy rules installed to `~/.codex/rules/*.rules`.
+- `.github/workflows/*.yml`: auto-running CI/CD. `validate.yml` on push/PR/dispatch (macOS parity automatic). `security-static.yml` on push/PR/weekly schedule. `codeql.yml` on push/PR/weekly schedule with security-and-quality queries. `release.yml` on SemVer tag push and workflow_dispatch. `dependency-check.yml` on daily schedule and push to MCP pin sources.
+- `.github/branch-protection/main.json`: desired branch protection state for the public `main` branch with required status checks (auto-applied job names).
 - `AGENTS.md`: Codex-native project instructions, restored from and published to `fullrepo`.
 - `.claude/CLAUDE.md`: Claude Code-native project memory, restored from and published to `fullrepo`.
 - `.serena/memories/*.md`: verified project facts.

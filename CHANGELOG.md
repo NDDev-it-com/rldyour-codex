@@ -12,6 +12,31 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Security
 
+## [0.4.0] - 2026-05-19
+
+### Added
+
+- Public open-source release under the GNU Affero General Public License v3.0 or later. `LICENSE` now contains the canonical AGPL-3.0 text verbatim, sourced from the Free Software Foundation.
+- `CODE_OF_CONDUCT.md` referencing Contributor Covenant 2.1 with a private reporting channel through GitHub Security Advisories.
+- `.github/workflows/codeql.yml` running GitHub CodeQL with the `security-and-quality` query suite for Python and GitHub Actions on every push to `main`, every pull request, and on a weekly schedule.
+- Maintainer attribution to Danil Silantyev (`@rldyourmnd`), CEO of NDDev, in `README.md`.
+- `pyproject.toml` now declares SPDX license identifier `AGPL-3.0-or-later`, project authors, project URLs, classifiers, and keywords for public packaging metadata.
+
+### Changed
+
+- License switched from MIT to GNU AGPL-3.0-or-later. Downstream operators that run modified versions over a network must comply with AGPL-3.0 Section 13.
+- `.github/workflows/validate.yml` now triggers automatically on push to `main` and on pull requests targeting `main` for fast, runtime, release, MCP, and dry-run jobs, with macOS parity included by default for push and pull-request events. `workflow_dispatch` remains available for narrower scopes and macOS opt-out.
+- `.github/workflows/security-static.yml` now triggers automatically on push to `main`, on pull requests, and on a weekly schedule, in addition to the existing `workflow_dispatch` fallback.
+- `.github/workflows/dependency-check.yml` now runs on a daily schedule, on push to MCP runtime pin sources (`config/mcp-runtime-versions.env`, `plugins/rldyour-mcps/.mcp.json`, `scripts/check_mcp_runtime_versions.py`, the workflow file itself), and through `workflow_dispatch`.
+- `.github/workflows/release.yml` now triggers automatically on push of SemVer tags matching `X.Y.Z` or `X.Y.Z-pre`. The version validation step accepts both the tag ref and the manual `workflow_dispatch` input, enforces a SemVer pattern, and requires `VERSION` and `CHANGELOG.md` to match.
+- `.github/branch-protection/main.json` now lists auto-running CI job names as desired required status checks for the public `main` branch, with strict_required_status_checks enabled and a maintainer-administrative note.
+- `README.md`, `CONTRIBUTING.md`, and `SECURITY.md` rewritten for a public open-source audience with AGPL-3.0 messaging, badge row, automated CI description, private vulnerability disclosure flow, supported version policy, and explicit out-of-scope statements.
+- Repository version updated to `0.4.0`. No plugin behavior versions changed; this release covers licensing, OSS posture, and CI automation only.
+
+### Security
+
+- GitHub CodeQL added as a continuous static analysis layer at no extra cost for the public repository, complementing existing Semgrep CLI, Pyright, ShellCheck, action pin validation, and `scripts/scan_text_security.py`.
+
 ## [0.3.5] - 2026-05-18
 
 ### Added

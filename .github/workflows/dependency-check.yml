@@ -1,18 +1,27 @@
 name: dependency-check
 
 on:
+  schedule:
+    - cron: "30 5 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/mcp-runtime-versions.env"
+      - "plugins/rldyour-mcps/.mcp.json"
+      - "scripts/check_mcp_runtime_versions.py"
+      - ".github/workflows/dependency-check.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: dependency-check-${{ github.ref }}
+  group: dependency-check-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   mcp-runtime-pins:
-    name: MCP runtime pin freshness
+    name: MCP runtime pin freshness (scheduled)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

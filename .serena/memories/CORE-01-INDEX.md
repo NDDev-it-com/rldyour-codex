@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
+Last updated: 2026-05-19
+Last commit: 8c11c76 chore(release): bump to 0.4.0
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
@@ -36,7 +36,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 ## Current Behavior
 
 - Active rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- Marketplace release version is `0.3.5`.
+- Marketplace release version is `0.4.0`. Repository is licensed under GNU AGPL-3.0-or-later (`LICENSE` is the canonical FSF text). Public CI/CD runs automatically on push to `main`, pull requests, weekly schedules for security/CodeQL, daily schedule for dependency-check, and SemVer tag pushes for release.
 - `rldyour-flow` is version `0.3.3` and owns SDLC commands, fullrepo, instruction docs, fast offline/local-only SessionStart dispatch, cwd-safe PreToolUse guardrails, ordered local-only Stop lifecycle dispatch, and post-task sync.
 - `rldyour-serena-mcp` is version `0.2.4` and owns Serena-first code workflow plus memory freshness, expanded taxonomy, sync hooks, and acknowledgement.
 - The repository currently has 38 rldyour skills, 12 MCP server definitions, and 8 managed Codex subagent TOML files validated by scripts.
