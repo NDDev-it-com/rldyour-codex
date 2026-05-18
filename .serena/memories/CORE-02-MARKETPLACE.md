@@ -46,7 +46,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
 - Current marketplace version is `0.3.5`; commit `6ec3fb9` changes the root marketplace version, updates `rldyour-flow` to `0.3.3`, adds the Flow PreToolUse cwd guard, makes Stop checks local-only/bounded, drains hook stdin before early exits, and adds hook smoke coverage for large stdin, cwd-rename blocking, and no-network Stop behavior.
-- Release `0.3.4` was published by manual release workflow run `25999559947` after the full explicit CI/CD pipeline passed on `cdad168`. Version `0.3.5` is pushed to `main`; publish its GitHub release only after an explicit owner-requested GitHub CI/CD run.
+- Release `0.3.5` was published by manual release workflow run `26006831237` after the full explicit CI/CD pipeline passed on `6ec3fb9`. The release includes `release-manifest.json`, `release-notes.md`, `rldyour-codex-0.3.5.tar.gz`, `sbom.spdx.json`, and `SHA256SUMS`.
 
 ## Invariants
 
