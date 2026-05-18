@@ -43,10 +43,16 @@ Use the devcontainer in `.devcontainer/` when you need a clean, production-like 
 
 All pull requests run the following workflows automatically:
 
-- `validate`: fast and runtime smoke run on both Ubuntu and macOS; release dry-run and MCP runtime pin freshness run on Ubuntu only.
-- `security-static` (action pins, actionlint, text security scan, ShellCheck, Pyright, Semgrep CLI). Also runs on a weekly schedule.
-- `codeql` (GitHub CodeQL analysis for Python and GitHub Actions). Also runs on a weekly schedule.
-- `dependency-check` (MCP runtime pin freshness) runs on a daily schedule and on push to MCP pin sources; it does not block pull requests.
+- `validate`: fast and runtime smoke on Ubuntu and macOS; release dry-run, MCP runtime pin freshness (advisory only on pull requests), and MCP safe-call smoke on Ubuntu.
+- `security-static`: action pins, actionlint, text security scan, ShellCheck, Pyright, Semgrep CLI. Also runs on a weekly schedule.
+- `codeql`: GitHub CodeQL analysis for Python and GitHub Actions with `security-and-quality` queries. Also runs on a weekly schedule.
+- `dependency-review`: blocks merges that introduce dependencies with high-severity vulnerabilities or licenses outside the AGPL-3.0-or-later compatible allow-list.
+- `labeler`: applies area labels based on changed paths.
+
+In addition, on push to `main` and on a weekly schedule:
+
+- `scorecard`: OpenSSF Scorecard analysis (uploads SARIF to GitHub Security tab and publishes the badge result to `scorecard.dev`).
+- `dependency-check` (`MCP runtime pin freshness (scheduled)`): runs daily and on push to MCP pin sources; fails loudly when pins are stale so the maintainer can bump them intentionally.
 
 A pull request is mergeable only when these checks complete and pass. Maintainers may dispatch additional scoped runs through `workflow_dispatch`.
 

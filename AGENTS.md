@@ -30,7 +30,10 @@ This repository is the maintainer's personal Codex marketplace, published public
 - `.github/workflows/codeql.yml`: auto-running GitHub CodeQL analysis on push, pull_request, weekly schedule. Matrix: Python and GitHub Actions. Pinned `github/codeql-action@458d36d7d4f47d0dd16ca424c1d3cda0060f1360 # v3`.
 - `.github/workflows/release.yml`: auto-running on push of SemVer tags matching `[0-9]*.[0-9]*.[0-9]*` and prereleases `[0-9]*.[0-9]*.[0-9]*-*`, plus workflow_dispatch as a fallback.
 - `.github/workflows/dependency-check.yml`: auto-running MCP runtime pin freshness on daily schedule, push to MCP pin sources, and workflow_dispatch. Job exported as `MCP runtime pin freshness (scheduled)`.
-- `.github/branch-protection/main.json`: desired branch protection for the public `main` branch with required CI status checks.
+- `.github/workflows/scorecard.yml`: OpenSSF Scorecard analysis on push to main, weekly schedule, branch protection rule changes, and workflow_dispatch. Pinned `ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3`.
+- `.github/workflows/dependency-review.yml`: pull-request-only gate with `fail-on-severity: high` and AGPL-3.0-compatible license allow-list. Pinned `actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0`.
+- `.github/workflows/labeler.yml`: pull_request_target labeler applying area labels from `.github/labeler.yml`. Pinned `actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0`.
+- `.github/branch-protection/main.json`: desired branch protection for the public `main` branch with required CI status checks; applied to the live repository via GitHub API.
 - `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
 - `system/agents/*.toml`: managed Codex custom subagent role configs installed to `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`.
 - `system/rules/*.rules`: managed Codex execpolicy rules installed to `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`.

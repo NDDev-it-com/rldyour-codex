@@ -12,6 +12,27 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Security
 
+## [0.4.1] - 2026-05-19
+
+### Added
+
+- `.github/workflows/scorecard.yml`: OpenSSF Scorecard analysis on weekly schedule, on push to `main`, on branch protection rule changes, and on `workflow_dispatch`. Uploads SARIF to the GitHub Security tab and publishes results to `scorecard.dev`. Pinned `ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3`.
+- `.github/workflows/dependency-review.yml`: blocks pull requests that introduce dependencies with high-severity vulnerabilities or licenses outside the AGPL-3.0-or-later compatible allow-list. Pinned `actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0`.
+- `.github/workflows/labeler.yml` and `.github/labeler.yml`: PR auto-labeling by changed paths for ci-cd / scripts / plugin / docs / tests / serena-memories / release / security / system areas. Pinned `actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0`.
+- README badge for OpenSSF Scorecard.
+- Public-repo settings applied via GitHub API: repository visibility public, `admin:org`-level branch protection on `main` with 9 required status checks, repository tag ruleset blocking deletion/update/non-fast-forward push of SemVer release tags (admin bypass), repository description, homepage, topics, merge policy (squash + rebase, no merge commits, delete branch on merge, allow update branch), Dependabot vulnerability alerts, and Dependabot automated security updates.
+
+### Changed
+
+- `validate.yml` MCP runtime pin freshness job now runs without `--fail-on-outdated` so a stale pin produces an advisory step summary instead of blocking pull request merges. The `dependency-check.yml` workflow continues to fail on stale pins, providing a maintainer-visible signal without coupling it to the pull request gate.
+- `README.md`, `CONTRIBUTING.md`, and `SECURITY.md` describe the OpenSSF Scorecard, Dependency Review, Labeler, gitleaks history scan, branch protection state, and tag ruleset.
+
+### Security
+
+- Full git history scanned with `gitleaks` 8.30.1 prior to the public visibility switch: 190 commits, 0 leaks found.
+- GitHub branch protection on `main` enforces strict required status checks (9 jobs), linear history, no force pushes, no deletions, and requires conversation resolution. Maintainer keeps admin access (`enforce_admins: false`).
+- GitHub tag ruleset protects `[0-9]*.[0-9]*.[0-9]*` and `[0-9]*.[0-9]*.[0-9]*-*` tags from deletion, update, and non-fast-forward push.
+
 ## [0.4.0] - 2026-05-19
 
 ### Added
