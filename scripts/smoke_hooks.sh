@@ -224,6 +224,80 @@ print(command)
 PY
 }
 
+assert_registered_hook_scripts_covered() {
+  local label=$1
+  local serena_hooks_json=$2
+  local flow_hooks_json=$3
+
+  python3 - "$label" "$serena_hooks_json" "$flow_hooks_json" <<'PY'
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+label, serena_hooks_json, flow_hooks_json = sys.argv[1:4]
+expected = {
+    "serena": {
+        "hooks/user_prompt_submit.sh",
+        "hooks/prepare_auto_sync.sh",
+        "hooks/mark_sync_required.sh",
+    },
+    "flow": {
+        "hooks/session_start_dispatcher.sh",
+        "hooks/pre_tool_use_cwd_guard.sh",
+        "hooks/post_tool_use_commit_advice.sh",
+        "hooks/stop_lifecycle_dispatcher.sh",
+    },
+}
+
+
+def registered_scripts(path: str) -> set[str]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    hooks = payload.get("hooks")
+    if not isinstance(hooks, dict):
+        raise SystemExit(f"{path}: missing hooks object")
+    scripts: set[str] = set()
+    for groups in hooks.values():
+        if not isinstance(groups, list):
+            continue
+        for group in groups:
+            if not isinstance(group, dict):
+                continue
+            entries = group.get("hooks")
+            if not isinstance(entries, list):
+                continue
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                command = entry.get("command")
+                if not isinstance(command, str):
+                    continue
+                match = re.search(r"/hooks/([A-Za-z0-9_.-]+\.sh)", command)
+                if match:
+                    scripts.add(f"hooks/{match.group(1)}")
+    return scripts
+
+
+actual = {
+    "serena": registered_scripts(serena_hooks_json),
+    "flow": registered_scripts(flow_hooks_json),
+}
+errors: list[str] = []
+for plugin_name in ("serena", "flow"):
+    missing = sorted(expected[plugin_name] - actual[plugin_name])
+    extra = sorted(actual[plugin_name] - expected[plugin_name])
+    if missing:
+        errors.append(f"{plugin_name} registered hooks missing from smoke manifest: {missing}")
+    if extra:
+        errors.append(f"{plugin_name} registered hooks not covered by smoke manifest: {extra}")
+if errors:
+    raise SystemExit("\n".join(errors))
+print(f"ok      {label} registered hook script coverage")
+PY
+}
+
 plugin_root_for_hooks_json() {
   local hooks_json=$1
   cd -- "$(dirname -- "$hooks_json")" && pwd
@@ -400,6 +474,7 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
 
 label, cwd, path, timeout_raw = sys.argv[1:5]
 timeout_seconds = float(timeout_raw)
@@ -410,35 +485,47 @@ payload = json.dumps(
         "tool_response": "x" * (4 * 1024 * 1024),
     }
 )
-proc = subprocess.Popen(
-    ["bash", path],
-    cwd=cwd,
-    stdin=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.STDOUT,
-    text=True,
-    start_new_session=True,
-)
-try:
-    assert proc.stdin is not None
-    proc.stdin.write(payload)
-    proc.stdin.close()
-except BrokenPipeError as exc:
+with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as output_file:
+    proc = subprocess.Popen(
+        ["bash", path],
+        cwd=cwd,
+        stdin=subprocess.PIPE,
+        stdout=output_file,
+        stderr=subprocess.STDOUT,
+        text=True,
+        start_new_session=True,
+    )
     try:
-        os.killpg(proc.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
-    raise SystemExit(f"{label} closed stdin early and caused BrokenPipe: {exc}")
+        assert proc.stdin is not None
+        proc.stdin.write(payload)
+        proc.stdin.close()
+    except BrokenPipeError as exc:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        raise SystemExit(f"{label} closed stdin early and caused BrokenPipe: {exc}")
 
-try:
-    output = proc.stdout.read() if proc.stdout is not None else ""
-    status = proc.wait(timeout=timeout_seconds)
-except subprocess.TimeoutExpired:
     try:
-        os.killpg(proc.pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
-    raise SystemExit(f"{label} timed out while draining large stdin")
+        status = proc.wait(timeout=timeout_seconds)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        try:
+            status = proc.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            status = proc.wait(timeout=1)
+        output_file.seek(0)
+        output = output_file.read()
+        raise SystemExit(f"{label} timed out while draining large stdin:\n{output}")
+    output_file.seek(0)
+    output = output_file.read()
 
 if status not in (0, 2):
     raise SystemExit(f"{label} exited {status} while draining large stdin:\n{output}")
@@ -785,22 +872,27 @@ smoke_root() {
 
   check_hook_strict_prologue "$name serena" "$serena_dir"
   check_hook_strict_prologue "$name flow" "$flow_dir"
+  assert_registered_hook_scripts_covered "$name" "$serena_dir/hooks.json" "$flow_dir/hooks.json"
 
   local non_git_cwd
   non_git_cwd=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-hook-stdin.XXXXXX")
-  assert_hook_drains_large_stdin "$name serena PreToolUse early-exit" \
+  assert_hook_drains_large_stdin "$name serena UserPromptSubmit registered hook" \
+    "$non_git_cwd" "$serena_dir/hooks/user_prompt_submit.sh"
+  assert_hook_drains_large_stdin "$name serena PreToolUse registered hook" \
     "$non_git_cwd" "$serena_dir/hooks/prepare_auto_sync.sh"
-  assert_hook_drains_large_stdin "$name serena PostToolUse early-exit" \
+  assert_hook_drains_large_stdin "$name serena PostToolUse registered hook" \
     "$non_git_cwd" "$serena_dir/hooks/mark_sync_required.sh"
-  assert_hook_drains_large_stdin "$name serena Stop early-exit" \
+  assert_hook_drains_large_stdin "$name serena Stop dispatcher child" \
     "$non_git_cwd" "$serena_dir/hooks/stop_memory_sync.sh"
-  assert_hook_drains_large_stdin "$name flow PostToolUse early-exit" \
-    "$non_git_cwd" "$flow_dir/hooks/post_tool_use_commit_advice.sh"
-  assert_hook_drains_large_stdin "$name flow PreToolUse cwd guard early-exit" \
+  assert_hook_drains_large_stdin "$name flow SessionStart registered hook" \
+    "$non_git_cwd" "$flow_dir/hooks/session_start_dispatcher.sh"
+  assert_hook_drains_large_stdin "$name flow PreToolUse registered hook" \
     "$non_git_cwd" "$flow_dir/hooks/pre_tool_use_cwd_guard.sh"
-  assert_hook_drains_large_stdin "$name flow Stop dispatcher early-exit" \
+  assert_hook_drains_large_stdin "$name flow PostToolUse registered hook" \
+    "$non_git_cwd" "$flow_dir/hooks/post_tool_use_commit_advice.sh"
+  assert_hook_drains_large_stdin "$name flow Stop registered hook" \
     "$non_git_cwd" "$flow_dir/hooks/stop_lifecycle_dispatcher.sh"
-  assert_hook_drains_large_stdin "$name flow Stop child early-exit" \
+  assert_hook_drains_large_stdin "$name flow Stop dispatcher child" \
     "$non_git_cwd" "$flow_dir/hooks/stop_post_task_sync.sh"
   rm -rf "$non_git_cwd"
 
