@@ -3,11 +3,12 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+INPUT=$(cat 2>/dev/null || true)
+
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 0
 fi
 
-INPUT=$(cat 2>/dev/null || true)
 COMMAND=$(printf "%s" "$INPUT" | python3 -c '
 import json
 import sys

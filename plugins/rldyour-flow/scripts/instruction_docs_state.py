@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -135,15 +136,20 @@ def is_durable_candidate(path: str) -> bool:
 
 
 def fullrepo_state(root: Path) -> dict[str, Any]:
+    codex_home = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
     candidates = [
+        Path(__file__).resolve().parent / "fullrepo_sync.py",
         root / "plugins/rldyour-flow/scripts/fullrepo_sync.py",
-        Path.home() / ".codex/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/fullrepo_sync.py",
+        codex_home / "plugins/cache/rldyour-codex/rldyour-flow/local/scripts/fullrepo_sync.py",
     ]
     for candidate in candidates:
         if not candidate.is_file():
             continue
+        args = ["python3", str(candidate), "--status-json"]
+        if os.environ.get("RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY") == "1":
+            args.append("--local-only")
         proc = subprocess.run(
-            ["python3", str(candidate), "--status-json"],
+            args,
             cwd=root,
             check=False,
             capture_output=True,

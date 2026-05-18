@@ -16,7 +16,7 @@ Post-task sync is the last phase of meaningful work. It prevents forgotten chang
 
 The flow SessionStart hook gives Codex a compact offline repository state packet before work starts or resumes. Treat it as an input to planning: inspect tracked dirty files, local ahead/behind state, worktree count, docs, local fullrepo hints, and Serena sync-marker state before making assumptions. Deep Serena freshness, fullrepo network state, and branch cleanup are intentionally left to `ry-init`, Stop, doctor, or explicit validation.
 
-The flow PostToolUse hook emits commit advice after Bash `git commit` commands. Advice is informational and should be reviewed before pushing or final delivery, but it must not be treated as a hard failure by itself.
+The flow PreToolUse cwd guard blocks Bash commands that would rename or remove the active Codex session directory or repository root. The flow PostToolUse hook emits commit advice after Bash `git commit` commands. Advice is informational and should be reviewed before pushing or final delivery, but it must not be treated as a hard failure by itself.
 
 ## Serena Interaction
 
@@ -61,7 +61,7 @@ Initialization flow:
 
 ## Loop Prevention
 
-The Stop hook writes `.serena/.flow_sync_marker` with a fingerprint of HEAD, dirty files, ahead/behind, branch, and Serena freshness. If the same fingerprint already requested a continuation during active Stop processing, the hook allows stop to avoid a loop.
+The Stop hook writes `.serena/.flow_sync_marker` with a fingerprint of HEAD, dirty files, ahead/behind, branch, and Serena freshness. If the same fingerprint already requested a continuation during active Stop processing, the hook allows stop to avoid a loop. Stop-state checks use local-only fullrepo status; network fetch/push/publish checks belong to explicit sync and validation commands.
 
 Bootstrap-only `.serena` files created by tool startup, such as an untracked `.serena/project.yml` plus runtime markers, are not meaningful work by themselves and must not trigger a post-task sync continuation.
 

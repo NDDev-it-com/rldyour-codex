@@ -386,6 +386,66 @@ run_hook_expect_exit_in_dir() {
   printf 'ok      %s\n' "$label"
 }
 
+assert_hook_drains_large_stdin() {
+  local label=$1
+  local cwd=$2
+  local path=$3
+
+  [ -f "$path" ] || fail "$label missing: $path"
+  python3 - "$label" "$cwd" "$path" "$HOOK_SMOKE_TIMEOUT" <<'PY'
+from __future__ import annotations
+
+import json
+import os
+import signal
+import subprocess
+import sys
+
+label, cwd, path, timeout_raw = sys.argv[1:5]
+timeout_seconds = float(timeout_raw)
+payload = json.dumps(
+    {
+        "tool_name": "Bash",
+        "tool_input": {"command": "git status"},
+        "tool_response": "x" * (4 * 1024 * 1024),
+    }
+)
+proc = subprocess.Popen(
+    ["bash", path],
+    cwd=cwd,
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    text=True,
+    start_new_session=True,
+)
+try:
+    assert proc.stdin is not None
+    proc.stdin.write(payload)
+    proc.stdin.close()
+except BrokenPipeError as exc:
+    try:
+        os.killpg(proc.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    raise SystemExit(f"{label} closed stdin early and caused BrokenPipe: {exc}")
+
+try:
+    output = proc.stdout.read() if proc.stdout is not None else ""
+    status = proc.wait(timeout=timeout_seconds)
+except subprocess.TimeoutExpired:
+    try:
+        os.killpg(proc.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    raise SystemExit(f"{label} timed out while draining large stdin")
+
+if status not in (0, 2):
+    raise SystemExit(f"{label} exited {status} while draining large stdin:\n{output}")
+PY
+  printf 'ok      %s drains large hook stdin\n' "$label"
+}
+
 make_lifecycle_repo() {
   local tmp
   tmp=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-hook-smoke.XXXXXX")
@@ -519,6 +579,45 @@ smoke_session_start_offline() {
   printf 'ok      %s lifecycle flow SessionStart offline/no-network\n' "$name"
 }
 
+smoke_stop_offline() {
+  local name=$1
+  local flow_dir=$2
+  local tmp
+  local fake_dir
+  local network_log
+  local output
+  local status
+  local real_git
+
+  tmp=$(make_session_start_repo)
+  (cd "$tmp" && python3 "$flow_dir/scripts/fullrepo_sync.py" --install-exclude >/dev/null)
+  fake_dir=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-fake-git.XXXXXX")
+  network_log=$(mktemp "${TMPDIR:-/tmp}/rldyour-stop-network.XXXXXX")
+  real_git=$(command -v git)
+  make_fake_git_bin "$fake_dir" "$real_git"
+
+  set +e
+  output=$(PATH="$fake_dir:$PATH" RLDYOUR_FAKE_GIT_NETWORK_LOG="$network_log" RLDYOUR_SKIP_SERENA_SYNC=1 run_command_with_timeout "$tmp" 5 '{"stop_hook_active":false}' bash "$flow_dir/hooks/stop_lifecycle_dispatcher.sh")
+  status=$?
+  set -e
+  if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then
+    printf 'hook output for %s Stop offline:\n%s\n' "$name" "$output" >&2
+    rm -rf "$tmp" "$fake_dir"
+    rm -f "$network_log"
+    fail "$name Stop offline failed or timed out after 5s (exit $status)"
+  fi
+  if [ -s "$network_log" ]; then
+    printf 'network git calls during %s Stop offline:\n' "$name" >&2
+    sed -n '1,20p' "$network_log" >&2
+    rm -rf "$tmp" "$fake_dir"
+    rm -f "$network_log"
+    fail "$name Stop must not call git fetch or git ls-remote"
+  fi
+  rm -rf "$tmp" "$fake_dir"
+  rm -f "$network_log"
+  printf 'ok      %s lifecycle flow Stop offline/no-network\n' "$name"
+}
+
 smoke_lifecycle() {
   local name=$1
   local serena_dir=$2
@@ -539,6 +638,7 @@ smoke_lifecycle() {
     "rldyour-flow session context"
 
   smoke_session_start_offline "$name" "$flow_dir"
+  smoke_stop_offline "$name" "$flow_dir"
 
   run_hook_in_dir "$name lifecycle serena UserPromptSubmit" \
     "$tmp" "$serena_dir/hooks/user_prompt_submit.sh" \
@@ -549,6 +649,12 @@ smoke_lifecycle() {
     "$tmp" "$serena_dir/hooks/prepare_auto_sync.sh" \
     '{"tool_name":"Bash","tool_input":{"command":"git commit -m docs"}}' \
     ""
+
+  run_hook_expect_exit_in_dir "$name lifecycle flow PreToolUse blocks cwd rename" \
+    "$tmp" "$flow_dir/hooks/pre_tool_use_cwd_guard.sh" \
+    "{\"tool_name\":\"Bash\",\"cwd\":\"$tmp\",\"tool_input\":{\"command\":\"mv '$tmp' '$tmp-renamed'\"}}" \
+    0 \
+    "permissionDecision"
 
   printf '\nChanged during lifecycle smoke.\n' >> "$tmp/README.md"
   git -C "$tmp" add README.md
@@ -635,6 +741,10 @@ smoke_hook_wiring() {
     "$serena_hooks_json" PreToolUse Bash "hooks/prepare_auto_sync.sh" "$cwd" \
     '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
 
+  run_configured_quiet_hook "$name wiring flow PreToolUse cwd guard safe command" \
+    "$flow_hooks_json" PreToolUse Bash "hooks/pre_tool_use_cwd_guard.sh" "$cwd" \
+    '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
+
   run_configured_quiet_hook "$name wiring serena PostToolUse no marker" \
     "$serena_hooks_json" PostToolUse Bash "hooks/mark_sync_required.sh" "$cwd" \
     '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
@@ -676,6 +786,24 @@ smoke_root() {
   check_hook_strict_prologue "$name serena" "$serena_dir"
   check_hook_strict_prologue "$name flow" "$flow_dir"
 
+  local non_git_cwd
+  non_git_cwd=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-hook-stdin.XXXXXX")
+  assert_hook_drains_large_stdin "$name serena PreToolUse early-exit" \
+    "$non_git_cwd" "$serena_dir/hooks/prepare_auto_sync.sh"
+  assert_hook_drains_large_stdin "$name serena PostToolUse early-exit" \
+    "$non_git_cwd" "$serena_dir/hooks/mark_sync_required.sh"
+  assert_hook_drains_large_stdin "$name serena Stop early-exit" \
+    "$non_git_cwd" "$serena_dir/hooks/stop_memory_sync.sh"
+  assert_hook_drains_large_stdin "$name flow PostToolUse early-exit" \
+    "$non_git_cwd" "$flow_dir/hooks/post_tool_use_commit_advice.sh"
+  assert_hook_drains_large_stdin "$name flow PreToolUse cwd guard early-exit" \
+    "$non_git_cwd" "$flow_dir/hooks/pre_tool_use_cwd_guard.sh"
+  assert_hook_drains_large_stdin "$name flow Stop dispatcher early-exit" \
+    "$non_git_cwd" "$flow_dir/hooks/stop_lifecycle_dispatcher.sh"
+  assert_hook_drains_large_stdin "$name flow Stop child early-exit" \
+    "$non_git_cwd" "$flow_dir/hooks/stop_post_task_sync.sh"
+  rm -rf "$non_git_cwd"
+
   wiring_cwd=$(make_lifecycle_repo)
   cleanup_wiring_cwd="$wiring_cwd"
   smoke_hook_wiring "$name" "$serena_dir/hooks.json" "$flow_dir/hooks.json" "$wiring_cwd"
@@ -703,6 +831,10 @@ smoke_root() {
     "$flow_dir/hooks/session_start_dispatcher.sh" \
     '{"source":"smoke"}' \
     "rldyour-flow session context"
+
+  run_quiet_hook "$name flow PreToolUse cwd guard safe command" \
+    "$flow_dir/hooks/pre_tool_use_cwd_guard.sh" \
+    '{"tool_name":"Bash","tool_input":{"command":"git status"}}'
 
   run_quiet_hook "$name flow PostToolUse non-commit" \
     "$flow_dir/hooks/post_tool_use_commit_advice.sh" \

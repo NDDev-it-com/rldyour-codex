@@ -59,6 +59,10 @@ The SessionStart hook is advisory, fast, offline, and read-only except for the l
 
 The PostToolUse commit advice hook is advisory and read-only. It checks recently created commits for conventional commit format, suspicious sensitive paths, runtime markers, browser evidence, and broad commit scope. It informs the next model step without rejecting the command.
 
+The PreToolUse cwd guard blocks Bash commands that would rename or remove the active Codex session directory or repository root. This is a runtime safety boundary: Codex hook commands run with the session cwd, so a manually renamed or deleted cwd can prevent future hook processes from starting with `No such file or directory` before any hook script can recover.
+
+The Stop lifecycle dispatcher drains stdin before any early exit, runs Serena and Flow children with bounded process-group timeouts, and uses local-only fullrepo status for the hook hot path. Stop must not fetch, push, publish, or perform remote fullrepo checks; those operations belong to explicit `flow-post-task-sync`, doctor, or validation commands.
+
 ## Fullrepo Branch Standard
 
 Normal project branches such as `main` should contain product source, tests, public docs, CI, and deployable configuration. Agent-only files that reveal or preserve AI workflow state should live locally and in the `fullrepo` branch, not in normal branch history.

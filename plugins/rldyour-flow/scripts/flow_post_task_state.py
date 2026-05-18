@@ -37,6 +37,14 @@ def _installed_script(plugin: str, relative_path: str) -> Path:
     return _codex_home() / "plugins/cache/rldyour-codex" / plugin / "local" / relative_path
 
 
+def _flow_plugin_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def _sibling_plugin_script(plugin: str, relative_path: str) -> Path:
+    return _flow_plugin_root().parent / plugin / relative_path
+
+
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(["git", *args], check=False, capture_output=True, text=True)
 
@@ -189,6 +197,7 @@ def _branch_cleanup_state(current_branch: str) -> dict[str, Any]:
 
 def _serena_current() -> tuple[bool, dict[str, Any]]:
     candidates = [
+        _sibling_plugin_script("rldyour-serena-mcp", "scripts/serena_memory_state.py"),
         Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
         _installed_script("rldyour-serena-mcp", "scripts/serena_memory_state.py"),
     ]
@@ -208,14 +217,18 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
 
 def _fullrepo_state() -> dict[str, Any]:
     candidates = [
+        _flow_plugin_root() / "scripts/fullrepo_sync.py",
         Path("plugins/rldyour-flow/scripts/fullrepo_sync.py"),
         _installed_script("rldyour-flow", "scripts/fullrepo_sync.py"),
     ]
     for candidate in candidates:
         if not candidate.is_file():
             continue
+        args = ["python3", str(candidate), "--status-json"]
+        if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
+            args.append("--local-only")
         proc = subprocess.run(
-            ["python3", str(candidate), "--status-json"],
+            args,
             check=False,
             capture_output=True,
             text=True,
@@ -232,17 +245,22 @@ def _fullrepo_state() -> dict[str, Any]:
 
 def _instruction_docs_state() -> dict[str, Any]:
     candidates = [
+        _flow_plugin_root() / "scripts/instruction_docs_state.py",
         Path("plugins/rldyour-flow/scripts/instruction_docs_state.py"),
         _installed_script("rldyour-flow", "scripts/instruction_docs_state.py"),
     ]
     for candidate in candidates:
         if not candidate.is_file():
             continue
+        env = os.environ.copy()
+        if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
+            env["RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY"] = "1"
         proc = subprocess.run(
             ["python3", str(candidate), "--json"],
             check=False,
             capture_output=True,
             text=True,
+            env=env,
         )
         if proc.returncode != 0 or not proc.stdout.strip():
             continue
@@ -274,8 +292,17 @@ def state() -> dict[str, Any]:
     worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
     if not isinstance(worktree_agent_paths, list):
         worktree_agent_paths = []
+    tracked_agent_paths = fullrepo_state.get("tracked_agent_paths")
+    if not isinstance(tracked_agent_paths, list):
+        tracked_agent_paths = []
+    has_fullrepo_context = bool(
+        worktree_agent_paths
+        or tracked_agent_paths
+        or fullrepo_state.get("remote_fullrepo_exists")
+        or fullrepo_state.get("local_fullrepo_sha")
+    )
     fullrepo_needs_attention = bool(fullrepo_state) and (
-        not bool(fullrepo_state.get("exclude_installed", True))
+        (has_fullrepo_context and not bool(fullrepo_state.get("exclude_installed", True)))
         or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("remote_fullrepo_exists", False)))
         or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("fullrepo_matches_worktree", True)))
     )
