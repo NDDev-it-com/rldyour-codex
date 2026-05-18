@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
+Last commit: 756c23e test(hooks): cover registered lifecycle commands
 Scope: plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/fullrepo_sync.py, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, system/rules/*.rules, scripts/validate_execpolicy_rules.sh
 Area: HOOKS
 -->
@@ -52,6 +52,9 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 - Serena and Flow early-exit hooks drain stdin before returning so Codex does not hit `failed to write hook stdin: Broken pipe` when writing a larger hook payload.
 - `pre_tool_use_cwd_guard.sh` blocks common `mv`, `rm`, and `rmdir` commands targeting the current session cwd or repository root, including `$PWD`, `$(pwd)`, and backtick-pwd forms. It is a proactive guard; if the directory is renamed externally before Codex invokes a hook, Codex must be restarted from a valid cwd or the old path must be restored.
 - `scripts/smoke_hooks.sh` validates the dispatcher path, still selects hook entries by expected script path for future multi-hook events, and runs each hook smoke through a process-group timeout runner so one stuck hook cannot hang the whole smoke.
+- `scripts/smoke_hooks.sh` has an explicit registered-hook script manifest for current Serena and Flow hook commands. If a new hook script is registered in `hooks.json`, the smoke fails until the manifest and coverage are updated.
+- `scripts/smoke_hooks.sh` sends a large hook payload through every registered command hook: Serena `UserPromptSubmit`, `PreToolUse`, and `PostToolUse`; Flow `SessionStart`, `PreToolUse`, `PostToolUse`, and `Stop`; plus the Stop child scripts called by the ordered dispatcher.
+- The large-stdin regression writes hook output to a temporary file, waits with an explicit timeout, then reads output. This keeps the BrokenPipe regression check itself bounded and prevents a blocked stdout pipe from hanging validation.
 - Hook command entries resolve scripts through `PLUGIN_ROOT`, the official plugin-bundled hook environment variable, and do not depend on the current project cwd or hardcoded `${CODEX_HOME}` cache paths.
 - `scripts/smoke_hooks.sh` rejects hook commands that use repo-relative `plugins/rldyour-*`, `${CODEX_HOME}`, `.codex/plugins/cache`, or `for p in` cache-search wrappers, then runs configured commands from a temporary git repo with `PLUGIN_ROOT`/`PLUGIN_DATA` set.
 - `scripts/install_system_codex.sh --apply` uses current hashes from the app-server RPC method `hooks/list` over `codex app-server --listen stdio://` and `config/batchWrite` to keep `hooks.state` trusted after plugin cache updates. `scripts/doctor_system_codex.sh` fails if installed rldyour plugin hooks are not live, enabled, and trusted.
@@ -83,14 +86,14 @@ This memory records the Codex lifecycle hook contracts used by the rldyour plugi
 
 ## Change Rules
 
-- When adding another hook entry under an existing matcher, update `scripts/smoke_hooks.sh` expectations so the smoke selects by script path.
+- When adding, removing, or renaming a registered hook script, update `scripts/smoke_hooks.sh` registered-hook manifest, configured-command wiring smoke, and large-stdin drain coverage in the same change.
 - When changing hook payload/output shape, verify against official Codex hook docs and run smoke tests.
 - When changing hook scripts, run `shellcheck` through `scripts/validate_marketplace.sh`.
 - When changing hook commands or installed hook trust behavior, run `scripts/install_system_codex.sh --apply`, `scripts/smoke_hooks.sh`, a live app-server RPC `hooks/list` trust check, and `scripts/doctor_system_codex.sh` after the normal branch is clean.
 
 ## Verification
 
-- `scripts/smoke_hooks.sh`: parsed wiring, `PLUGIN_ROOT` command execution from arbitrary cwd, direct hook lifecycle checks, large-stdin drain regression checks, Flow PreToolUse cwd-rename blocking, fake-network SessionStart/Stop no-fetch/no-ls-remote regressions, and bootstrap-only `.serena` Stop-loop regression checks.
+- `scripts/smoke_hooks.sh`: parsed wiring, registered-hook script coverage, `PLUGIN_ROOT` command execution from arbitrary cwd, direct hook lifecycle checks, large-stdin drain regression checks for every registered command hook and Stop child scripts, Flow PreToolUse cwd-rename blocking, fake-network SessionStart/Stop no-fetch/no-ls-remote regressions, and bootstrap-only `.serena` Stop-loop regression checks.
 - `scripts/smoke_serena_memory_taxonomy.sh`: memory hook stale/advisory/loop behavior.
 - `scripts/smoke_codex_hooks_migration.sh`: installer hook feature migration.
 - `scripts/validate_marketplace.sh`: shellcheck plus hook smoke coverage.

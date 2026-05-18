@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
+Last commit: 756c23e test(hooks): cover registered lifecycle commands
 Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, system/agents/*.toml, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
@@ -67,7 +67,9 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher, selects the expected hook by script path, rejects cwd/cache-search command wrappers, and runs configured hook commands from a temporary git repo with plugin runtime environment variables.
 - `scripts/smoke_hooks.sh` includes a fake-network Flow SessionStart regression: a fake `git` sleeps/fails on `fetch` and `ls-remote`, and the smoke requires fast offline context without any network git calls.
 - `scripts/smoke_hooks.sh` includes a fake-network Flow Stop regression: a fake `git` sleeps/fails on `fetch` and `ls-remote`, and the smoke requires local-only Stop state without network git calls.
-- `scripts/smoke_hooks.sh` sends a large hook payload to early-exit Serena/Flow hooks to prove they drain stdin and do not trigger Codex broken-pipe failures.
+- `scripts/smoke_hooks.sh` fails if a registered Serena or Flow hook script in `hooks.json` is not covered by its smoke manifest.
+- `scripts/smoke_hooks.sh` sends a large hook payload to every registered Serena/Flow command hook plus Stop dispatcher child scripts to prove they drain stdin and do not trigger Codex broken-pipe failures.
+- `scripts/smoke_hooks.sh` writes large-stdin hook output to a temporary file and waits with an explicit timeout before reading output, so the BrokenPipe regression check stays bounded even if a hook stalls.
 - `scripts/smoke_hooks.sh` verifies the Flow PreToolUse cwd guard blocks common commands that would rename or delete the active Codex cwd.
 - `scripts/smoke_hooks.sh` includes a bootstrap-only `.serena` regression scenario: an unborn git repository containing only auto-created `.serena/project.yml`, `.serena/.gitignore`, and flow runtime markers must not require Flow post-task sync.
 - `scripts/smoke_hooks.sh` runs each hook smoke through a process-group timeout wrapper controlled by `RLDYOUR_HOOK_SMOKE_TIMEOUT` so a stuck hook reports a labeled timeout instead of hanging validation.
@@ -103,6 +105,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `validate.yml` run `26006788123` passed Release dry-run, Fast validation on Ubuntu and macOS, Runtime smoke on Ubuntu and macOS, MCP runtime pin freshness, and MCP safe call smoke on Ubuntu.
 - `security-static.yml` run `26006788232` passed action pin validation, actionlint, text security scan, ShellCheck, Pyright, and Semgrep CLI without paid GitHub Code Security.
 - Release `0.3.5` is published from commit `6ec3fb9` through manual release run `26006831237`. The GitHub Release tag is `0.3.5`, published at `2026-05-18T00:14:24Z`, with `release-manifest.json`, `release-notes.md`, `rldyour-codex-0.3.5.tar.gz`, `sbom.spdx.json`, and `SHA256SUMS` assets. The only GitHub Actions annotations observed were setup-uv cache reservation warnings; all workflow conclusions were `success`.
+- Local validation for `756c23e` / version `0.3.5` passed on 2026-05-18: `scripts/smoke_hooks.sh --repo-only`, `scripts/validate_fast.sh` (70 tests, 76.43% coverage, 261-file text security scan), `scripts/validate_marketplace.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, and `git diff --check`. GitHub CI/CD was not triggered for this follow-up because repository Actions remain explicit-run only.
 - `tests/unit/test_fullrepo_sync.py` configures git identity for temporary repositories and clones before fixture commits, which keeps the unit-test matrix deterministic on GitHub-hosted runners.
 - `tests/unit/test_fullrepo_sync.py` covers `git commit-tree` fallback author/committer identity, and `tests/unit/test_flow_post_task_state.py` covers CODEX_HOME installed helper lookup and bootstrap-only `.serena` no-sync behavior.
 - `scripts/classify_ci_noise.py` allowlists `uv` package download progress lines such as `Downloading pygments (...)` and `Downloaded pygments` as deterministic setup noise.
@@ -116,6 +119,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_marketplace.sh` should include Codex execpolicy rule validation when Codex CLI is present; `scripts/validate_runtime.sh --strict-runtime` must validate installed rules.
 - `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`; it is the source-tree gate for managed-agent model/reasoning settings, temporary subagent MCP isolation, and complete disabled MCP transport overrides.
 - `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
+- `scripts/smoke_hooks.sh` must fail on any newly registered hook script until that script is added to the smoke manifest and large-stdin/wiring coverage.
 
 ## Invariants
 
