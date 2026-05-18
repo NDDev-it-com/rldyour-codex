@@ -22,15 +22,22 @@ def spdx_id(value: str) -> str:
     return f"SPDXRef-{normalized or 'package'}"
 
 
-def package(name: str, version: str | None = None, *, supplier: str = "Organization: rldyour") -> dict[str, object]:
+def package(
+    name: str,
+    version: str | None = None,
+    *,
+    supplier: str = "Organization: NDDev",
+    license_declared: str = "NOASSERTION",
+    copyright_text: str = "NOASSERTION",
+) -> dict[str, object]:
     result: dict[str, object] = {
         "name": name,
         "SPDXID": spdx_id(name),
         "downloadLocation": "NOASSERTION",
         "filesAnalyzed": False,
-        "licenseConcluded": "NOASSERTION",
-        "licenseDeclared": "NOASSERTION",
-        "copyrightText": "NOASSERTION",
+        "licenseConcluded": license_declared,
+        "licenseDeclared": license_declared,
+        "copyrightText": copyright_text,
         "supplier": supplier,
     }
     if version:
@@ -45,16 +52,29 @@ def runtime_package_name(key: str) -> str:
 def generate_sbom() -> dict[str, object]:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     created = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    namespace = f"https://github.com/rldyour/rldyour-codex/releases/{version}/sbom-{created}"
+    # Repository URL must match the project.urls.Repository entry in pyproject.toml
+    # and any future renaming under the NDDev-it-com GitHub organization.
+    namespace = f"https://github.com/NDDev-it-com/rldyour-codex/releases/{version}/sbom-{created}"
 
-    root_package = package("rldyour-codex", version)
+    root_package = package(
+        "rldyour-codex",
+        version,
+        license_declared="AGPL-3.0-or-later",
+        copyright_text="Copyright (C) 2026 Danil Silantyev (rldyourmnd) / NDDev",
+    )
     root_spdx_id = str(root_package["SPDXID"])
     packages = [root_package]
     relationships: list[dict[str, str]] = []
 
     for manifest in release_manifest.plugin_manifests():
         name = str(manifest["name"])
-        packages.append(package(name, str(manifest.get("version") or "")))
+        packages.append(
+            package(
+                name,
+                str(manifest.get("version") or ""),
+                license_declared="AGPL-3.0-or-later",
+            )
+        )
         relationships.append(
             {
                 "spdxElementId": root_spdx_id,
@@ -83,7 +103,11 @@ def generate_sbom() -> dict[str, object]:
         "documentDescribes": [root_spdx_id],
         "creationInfo": {
             "created": created,
-            "creators": ["Tool: scripts/release_sbom.py"],
+            "creators": [
+                "Tool: scripts/release_sbom.py",
+                "Organization: NDDev",
+                "Person: Danil Silantyev (rldyourmnd)",
+            ],
         },
         "packages": packages,
         "relationships": relationships,
