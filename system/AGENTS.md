@@ -140,7 +140,7 @@ The canonical source for this global setup is the `rldyour-codex` repository.
 
 System Codex is intentionally configured for owner-controlled YOLO execution with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, `suppress_unstable_features_warning = true`, managed subagents on `gpt-5.5`/`medium` with temporary specialist-MCP isolation, and `[features].hooks = true`, `[features].plugin_hooks = true`, plus `[features].multi_agent = true`. Current Codex documentation treats `sandbox_mode` as the active older sandbox model when present, so do not migrate this owner profile to beta permission profiles without an explicit policy decision. Current Codex CLI keeps plugin-bundled hooks behind `plugin_hooks`, so the flag is intentionally explicit. Deprecated config aliases such as `codex_hooks`, legacy `features.web_search*`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `memories.no_memories_if_mcp_or_web_search`, and `use_legacy_landlock` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
 
-System install and doctor checks derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP server registration from `plugins/rldyour-mcps/.mcp.json`; do not add parallel hardcoded plugin or MCP lists. The installer syncs plugin cache first, installs managed Codex execpolicy rules from `system/rules/*.rules` into `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`, then refreshes installed rldyour plugin hook trust hashes through the app-server RPC method `hooks/list` over `codex app-server --listen stdio://`; doctor verifies that all installed rldyour plugin hooks are live, enabled, trusted, and that managed rules are in sync.
+System install and doctor checks derive rldyour plugin enablement from `.agents/plugins/marketplace.json`, the Codex adapter surface from `config/rldyour-contract.json`, and MCP server registration from `plugins/rldyour-mcps/.mcp.json`; do not add parallel hardcoded plugin or MCP lists. The installer syncs plugin cache into versioned `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/<version>` directories first, installs managed Codex execpolicy rules from `system/rules/*.rules` into `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`, then refreshes installed rldyour plugin hook trust hashes through the app-server RPC method `hooks/list` over `codex app-server --listen stdio://`; doctor and runtime smoke verify that all installed rldyour plugin hooks are live, enabled, trusted, and that managed rules are in sync.
 
 Use:
 
@@ -156,6 +156,7 @@ scripts/validate_release.sh
 scripts/validate_execpolicy_rules.sh
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
+python3 scripts/smoke_codex_hook_listing.py
 scripts/smoke_hooks.sh
 scripts/smoke_codex_hooks_migration.sh
 scripts/smoke_serena_memory_freshness.sh
@@ -171,6 +172,7 @@ python3 scripts/check_serena_memory_freshness.py
 python3 scripts/validate_agent_tools.py
 python3 scripts/validate_action_pins.py
 python3 scripts/validate_runtime_prereqs.py --strict --require-codex
+python3 scripts/validate_contract.py
 python3 scripts/scan_text_security.py
 uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
 python3 scripts/release_manifest.py

@@ -19,6 +19,7 @@ jq empty .agents/plugins/marketplace.json config/skill-routing-policy.json plugi
 
 step "Release metadata"
 python3 scripts/validate_plugin_versions.py
+python3 scripts/validate_contract.py
 python3 scripts/release_manifest.py >/dev/null
 python3 scripts/release_sbom.py >/dev/null
 

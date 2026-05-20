@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import re
+import sys
+import tomllib
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CONTRACT_PATH = ROOT / "config/rldyour-contract.json"
+
+
+def load_json(path: Path) -> Any:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def skill_name(path: Path) -> str | None:
+    text = path.read_text(encoding="utf-8")
+    match = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+    if not match:
+        return None
+    name = re.search(r"^name:\s*(.+)$", match.group(1), re.M)
+    if not name:
+        return None
+    return name.group(1).strip().strip("\"'")
+
+
+def iter_hook_handlers(hooks_json: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
+    handlers: list[tuple[str, dict[str, Any]]] = []
+    events = hooks_json.get("hooks")
+    if not isinstance(events, dict):
+        return handlers
+    for event, groups in events.items():
+        if not isinstance(groups, list):
+            continue
+        for group in groups:
+            if not isinstance(group, dict):
+                continue
+            group_handlers = group.get("hooks")
+            if not isinstance(group_handlers, list):
+                continue
+            for handler in group_handlers:
+                if isinstance(handler, dict):
+                    handlers.append((event, handler))
+    return handlers
+
+
+def hook_manifest(plugin: str) -> dict[str, Any]:
+    path = ROOT / "plugins" / plugin / "hooks.json"
+    if not path.is_file():
+        return {}
+    data = load_json(path)
+    return data if isinstance(data, dict) else {}
+
+
+def command_for_event(plugin: str, event: str, needle: str) -> bool:
+    for handler_event, handler in iter_hook_handlers(hook_manifest(plugin)):
+        if handler_event != event:
+            continue
+        command = handler.get("command")
+        if isinstance(command, str) and needle in command:
+            return True
+    return False
+
+
+def main() -> int:
+    errors: list[str] = []
+    contract = load_json(CONTRACT_PATH)
+    if not isinstance(contract, dict):
+        print(f"{CONTRACT_PATH.relative_to(ROOT)}: expected JSON object", file=sys.stderr)
+        return 1
+
+    if contract.get("adapter") != "codex":
+        errors.append("config/rldyour-contract.json: adapter must be codex")
+    if contract.get("schema_version") != 1:
+        errors.append("config/rldyour-contract.json: schema_version must be 1")
+
+    marketplace = load_json(ROOT / ".agents/plugins/marketplace.json")
+    marketplace_plugins = marketplace.get("plugins") if isinstance(marketplace, dict) else None
+    actual_plugins = sorted(
+        entry.get("name")
+        for entry in marketplace_plugins or []
+        if isinstance(entry, dict) and isinstance(entry.get("name"), str)
+    )
+    expected_plugins = sorted(contract.get("plugins") or [])
+    if actual_plugins != expected_plugins:
+        errors.append(f"plugins: expected {expected_plugins}, got {actual_plugins}")
+
+    expected_license = contract.get("license")
+    expected_repo = contract.get("public_repository")
+    for plugin in actual_plugins:
+        manifest = load_json(ROOT / "plugins" / plugin / ".codex-plugin/plugin.json")
+        if not isinstance(manifest, dict):
+            errors.append(f"{plugin}: manifest must be an object")
+            continue
+        if manifest.get("license") != expected_license:
+            errors.append(f"{plugin}: manifest license must be {expected_license}")
+        for key in ("homepage", "repository"):
+            if manifest.get(key) != expected_repo:
+                errors.append(f"{plugin}: manifest {key} must be {expected_repo}")
+
+    actual_skills = sorted(
+        name
+        for name in (skill_name(path) for path in sorted((ROOT / "plugins").glob("rldyour-*/skills/*/SKILL.md")))
+        if name
+    )
+    skills_contract = contract.get("skills")
+    if not isinstance(skills_contract, dict):
+        errors.append("skills: expected object")
+        expected_skills: list[str] = []
+    else:
+        expected_skills = sorted(skills_contract.get("names") or [])
+        if skills_contract.get("count") != len(actual_skills):
+            errors.append(f"skills.count: expected {len(actual_skills)}, got {skills_contract.get('count')!r}")
+    if actual_skills != expected_skills:
+        errors.append("skills.names: contract does not match discovered SKILL.md names")
+
+    slash_contract = contract.get("slash_commands")
+    if isinstance(slash_contract, dict) and slash_contract.get("count") == 0:
+        command_dirs = [
+            path.relative_to(ROOT)
+            for path in ROOT.glob("**/commands")
+            if path.is_dir() and ".git" not in path.parts
+        ]
+        if command_dirs:
+            errors.append(f"slash_commands: expected none, found {command_dirs}")
+    else:
+        errors.append("slash_commands.count must be 0 for Codex adapter")
+
+    actual_agents: set[str] = set()
+    for path in sorted((ROOT / "system/agents").glob("*.toml")):
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+        name = data.get("name")
+        actual_agents.add(name if isinstance(name, str) else path.stem)
+    agents = contract.get("agents")
+    role_values = []
+    if isinstance(agents, dict) and isinstance(agents.get("roles"), dict):
+        role_values = list(agents["roles"].values())
+    else:
+        errors.append("agents.roles: expected object")
+    missing_agents = sorted(set(role_values) - actual_agents)
+    extra_agents = sorted(actual_agents - set(role_values))
+    if missing_agents:
+        errors.append(f"agents.roles: missing managed agents {missing_agents}")
+    if extra_agents:
+        errors.append(f"agents.roles: unmanaged agents not in contract {extra_agents}")
+
+    hooks = contract.get("hooks")
+    if not isinstance(hooks, dict):
+        errors.append("hooks: expected object")
+    else:
+        if hooks.get("plugin_hooks_required") is not True:
+            errors.append("hooks.plugin_hooks_required must be true")
+        for script in ("scripts/install_system_codex.sh", "scripts/doctor_system_codex.sh"):
+            if "plugin_hooks" not in (ROOT / script).read_text(encoding="utf-8"):
+                errors.append(f"{script}: must enforce/check features.plugin_hooks")
+        expected_handler_type = hooks.get("handler_type")
+        for plugin in ("rldyour-flow", "rldyour-serena-mcp"):
+            for event, handler in iter_hook_handlers(hook_manifest(plugin)):
+                if handler.get("type") != expected_handler_type:
+                    errors.append(f"{plugin} {event}: hook handler type must be {expected_handler_type}")
+                command = handler.get("command")
+                if not isinstance(command, str) or "PLUGIN_ROOT" not in command:
+                    errors.append(f"{plugin} {event}: command must resolve via PLUGIN_ROOT")
+        lifecycles = hooks.get("lifecycles")
+        if not isinstance(lifecycles, dict):
+            errors.append("hooks.lifecycles: expected object")
+        else:
+            for lifecycle_id, mapping in lifecycles.items():
+                if not isinstance(mapping, dict):
+                    errors.append(f"hooks.lifecycles.{lifecycle_id}: expected object")
+                    continue
+                dispatched_by = mapping.get("dispatched_by")
+                if dispatched_by:
+                    dispatcher = lifecycles.get(dispatched_by)
+                    if not isinstance(dispatcher, dict):
+                        errors.append(f"hooks.lifecycles.{lifecycle_id}: unknown dispatcher {dispatched_by!r}")
+                    continue
+                plugin = mapping.get("plugin")
+                event = mapping.get("event")
+                needle = mapping.get("command_contains")
+                if not all(isinstance(item, str) for item in (plugin, event, needle)):
+                    errors.append(f"hooks.lifecycles.{lifecycle_id}: plugin/event/command_contains must be strings")
+                    continue
+                if not command_for_event(plugin, event, needle):
+                    errors.append(f"hooks.lifecycles.{lifecycle_id}: {plugin} {event} missing command {needle}")
+
+    mcp_contract = contract.get("mcp")
+    expected_servers = sorted(mcp_contract.get("servers") if isinstance(mcp_contract, dict) else [])
+    mcp_data = load_json(ROOT / "plugins/rldyour-mcps/.mcp.json")
+    actual_servers = sorted((mcp_data.get("mcpServers") or {}).keys()) if isinstance(mcp_data, dict) else []
+    if actual_servers != expected_servers:
+        errors.append(f"mcp.servers: expected {expected_servers}, got {actual_servers}")
+
+    security = contract.get("security")
+    if isinstance(security, dict) and security.get("forbid_repo_local_yolo_defaults") is True:
+        for path in (ROOT / ".codex/config.toml", ROOT / "config.toml"):
+            if not path.exists():
+                continue
+            text = path.read_text(encoding="utf-8")
+            if "danger-full-access" in text or 'approval_policy = "never"' in text:
+                errors.append(f"{path.relative_to(ROOT)}: repo-local YOLO defaults are forbidden")
+
+    if errors:
+        print("\n".join(errors), file=sys.stderr)
+        return 1
+
+    print(
+        "validated Codex contract: "
+        f"{len(actual_plugins)} plugins, {len(actual_skills)} skills, {len(actual_agents)} agents, "
+        f"{len(actual_servers)} MCP servers"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

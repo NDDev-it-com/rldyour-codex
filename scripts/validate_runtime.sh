@@ -60,6 +60,7 @@ scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME_DIR" "${strict
 scripts/doctor_system_codex.sh --quick --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
 if command -v codex >/dev/null 2>&1; then
   CODEX_HOME="$CODEX_HOME_DIR" scripts/validate_execpolicy_rules.sh "$CODEX_HOME_DIR/rules"
+  CODEX_HOME="$CODEX_HOME_DIR" python3 scripts/smoke_codex_hook_listing.py --codex-home "$CODEX_HOME_DIR"
 elif [ "$STRICT_RUNTIME" -eq 1 ]; then
   printf 'codex command not found; strict runtime execpolicy validation cannot run.\n' >&2
   exit 1

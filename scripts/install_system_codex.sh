@@ -719,19 +719,16 @@ PY
 }
 
 sync_plugin_cache() {
-  local plugin_dir plugin_name cache_dir
-  for plugin_dir in "$ROOT"/plugins/rldyour-*; do
-    [ -d "$plugin_dir" ] || continue
-    plugin_name=$(basename "$plugin_dir")
-    cache_dir="$CACHE_ROOT/$plugin_name/local"
+  local plugin_name plugin_version plugin_dir cache_dir
+  while IFS=$'\t' read -r plugin_name plugin_version plugin_dir cache_dir; do
     if [ "$APPLY" -eq 1 ]; then
       mkdir -p "$cache_dir"
       rsync -a --delete "$plugin_dir/" "$cache_dir/"
-      printf 'synced plugin cache %s\n' "$plugin_name"
+      printf 'synced plugin cache %s@%s\n' "$plugin_name" "$plugin_version"
     else
       printf 'dry-run: sync %s -> %s\n' "$plugin_dir/" "$cache_dir/"
     fi
-  done
+  done < <(python3 "$ROOT/scripts/plugin_cache_contract.py" --cache-root "$CACHE_ROOT" list --format tsv)
 }
 
 trust_plugin_hooks() {

@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "adapter": "codex",
+  "public_repository": "https://github.com/NDDev-it-com/rldyour-codex",
+  "license": "AGPL-3.0-or-later",
+  "plugins": [
+    "rldyour-browser",
+    "rldyour-design",
+    "rldyour-explore",
+    "rldyour-flow",
+    "rldyour-lsps",
+    "rldyour-mcps",
+    "rldyour-rules",
+    "rldyour-security",
+    "rldyour-serena-mcp"
+  ],
+  "skills": {
+    "count": 38,
+    "names": [
+      "architecture-boundaries",
+      "browser-debug",
+      "browser-tool-routing",
+      "browser-validation",
+      "dependency-compatibility-policy",
+      "design-system-implementation",
+      "design-validation",
+      "figma-to-code",
+      "flow-architecture-review",
+      "flow-consistency-review",
+      "flow-integration-review",
+      "flow-post-task-sync",
+      "flow-quality-review",
+      "flow-security-review",
+      "flow-verification-review",
+      "fsd-frontend-architecture",
+      "implementation-discipline",
+      "instruction-docs-sync",
+      "lsp-health-check",
+      "lsp-routing",
+      "lsp-setup",
+      "owasp-top-10-implementation",
+      "project-instructions-policy",
+      "quality-first-engineering",
+      "ry-deploy",
+      "ry-design",
+      "ry-init",
+      "ry-newp",
+      "ry-review",
+      "ry-rules-review",
+      "ry-sec-review",
+      "ry-start",
+      "serena-code-workflow",
+      "serena-lsp-integration",
+      "serena-memory-sync",
+      "tech-research",
+      "verification-quality-gates",
+      "web-research"
+    ],
+    "reviewer_track_skills": [
+      "flow-architecture-review",
+      "flow-consistency-review",
+      "flow-integration-review",
+      "flow-quality-review",
+      "flow-security-review",
+      "flow-verification-review"
+    ]
+  },
+  "slash_commands": {
+    "count": 0,
+    "policy": "Codex uses skills and managed subagents as the public invocation surface; slash commands are intentionally absent."
+  },
+  "agents": {
+    "roles": {
+      "agent.explore.research": "research-explorer",
+      "agent.review.architecture": "architecture-reviewer",
+      "agent.review.browser": "browser-tester",
+      "agent.review.consistency": "consistency-reviewer",
+      "agent.review.quality": "quality-reviewer",
+      "agent.review.security": "security-audit",
+      "agent.review.verification": "test-reviewer",
+      "agent.sync.serena-memory": "serena-sync"
+    }
+  },
+  "hooks": {
+    "plugin_hooks_required": true,
+    "handler_type": "command",
+    "lifecycles": {
+      "prompt.submit.sync-required": {
+        "plugin": "rldyour-serena-mcp",
+        "event": "UserPromptSubmit",
+        "command_contains": "hooks/user_prompt_submit.sh"
+      },
+      "session.start.context": {
+        "plugin": "rldyour-flow",
+        "event": "SessionStart",
+        "command_contains": "hooks/session_start_dispatcher.sh"
+      },
+      "task.stop.memory-sync": {
+        "plugin": "rldyour-serena-mcp",
+        "event": "Stop",
+        "command_contains": "hooks/stop_memory_sync.sh",
+        "dispatched_by": "task.stop.sync"
+      },
+      "task.stop.sync": {
+        "plugin": "rldyour-flow",
+        "event": "Stop",
+        "command_contains": "hooks/stop_lifecycle_dispatcher.sh"
+      },
+      "tool.post.commit-advice": {
+        "plugin": "rldyour-flow",
+        "event": "PostToolUse",
+        "command_contains": "hooks/post_tool_use_commit_advice.sh"
+      },
+      "tool.post.sync-marker": {
+        "plugin": "rldyour-serena-mcp",
+        "event": "PostToolUse",
+        "command_contains": "hooks/mark_sync_required.sh"
+      },
+      "tool.pre.env-protection": {
+        "plugin": "rldyour-flow",
+        "event": "PreToolUse",
+        "command_contains": "hooks/pre_tool_use_cwd_guard.sh"
+      },
+      "tool.pre.git-policy": {
+        "plugin": "rldyour-serena-mcp",
+        "event": "PreToolUse",
+        "command_contains": "hooks/prepare_auto_sync.sh"
+      }
+    }
+  },
+  "mcp": {
+    "profile": "rldyour-mcps",
+    "servers": [
+      "chrome-devtools",
+      "context7",
+      "dart-flutter",
+      "deepwiki",
+      "figma",
+      "grep",
+      "openaiDeveloperDocs",
+      "playwright",
+      "semgrep",
+      "sequential-thinking",
+      "serena",
+      "shadcn"
+    ]
+  },
+  "security": {
+    "owner_yolo_profile": "owner-local-only",
+    "forbid_repo_local_yolo_defaults": true
+  },
+  "cache": {
+    "layout": "versioned",
+    "path_template": "${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>"
+  }
+}

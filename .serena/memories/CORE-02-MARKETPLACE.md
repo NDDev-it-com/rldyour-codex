@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-19
-Last commit: 94cced2 chore(release): bump to 0.4.1
-Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, scripts/validate_plugin_versions.py, scripts/release_manifest.py
+Last updated: 2026-05-21
+Last commit: 2da696d fix(codex): harden runtime contract validation
+Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, config/rldyour-contract.json, docs/contract-matrix.md, scripts/validate_plugin_versions.py, scripts/validate_contract.py, scripts/release_manifest.py
 Area: CORE
 -->
 
@@ -19,11 +19,14 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - `CHANGELOG.md`: human-readable release notes.
 - `VERSION`: marketplace release version.
 - `scripts/validate_plugin_versions.py`: manifest, marketplace, policy, and version validation.
+- `scripts/validate_contract.py`: adapter-surface validation that also enforces owned plugin license and canonical repository URLs.
+- `config/rldyour-contract.json`: canonical plugin list, license, public repository URL, and adapter surface.
 - `scripts/release_manifest.py`: generated release/runtime inventory.
 
 ## Entry Points
 
 - `python3 scripts/validate_plugin_versions.py`: plugin metadata validation.
+- `python3 scripts/validate_contract.py`: plugin set, manifest license/URL, skill, agent, hook, MCP, cache, and security contract validation.
 - `python3 scripts/release_manifest.py`: current marketplace and runtime manifest.
 - `scripts/validate_marketplace.sh`: full validation gate.
 
@@ -37,12 +40,14 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - `rldyour-mcps` owns MCP transport definitions only and must not contain behavior skills.
 - Curated GitHub and Gmail plugins are enabled in system Codex but are not rldyour plugin directories in this repository.
 - Repository marketplace version is `0.4.1` (from `VERSION`, committed in `94cced2`). The repository is licensed under GNU AGPL-3.0-or-later; the canonical FSF license text lives in `LICENSE` (SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`). `pyproject.toml` declares `license = "AGPL-3.0-or-later"`, `license-files = ["LICENSE"]`, public packaging metadata (authors, maintainers, classifiers, keywords), and project URLs pointing to `https://github.com/NDDev-it-com/rldyour-codex`.
+- Owned plugin manifests declare `license = "AGPL-3.0-or-later"` and use `https://github.com/NDDev-it-com/rldyour-codex` for `homepage`, `repository`, `interface.websiteURL`, `interface.privacyPolicyURL`, and `interface.termsOfServiceURL`.
 
 ## Contracts And Data
 
 - Plugin manifests use `.codex-plugin/plugin.json`, not `.claude-plugin/plugin.json`.
 - Manifest `interface.brandColor` must use valid hex format.
 - Manifest bundled capability paths are relative to the plugin root.
+- Manifest owned license and repository URL values are enforced by both `scripts/validate_plugin_versions.py` and `scripts/validate_contract.py`.
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
 - Current marketplace version is `0.4.1`; commit `94cced2` bumps the marketplace version. The `0.4.1` hardening release adds OpenSSF Scorecard, Dependency Review, and PR Labeler workflows, makes MCP pin freshness advisory on pull requests, and applies the public-repo GitHub settings (visibility public, branch protection on `main`, SemVer tag ruleset, Dependabot updates). The `0.4.0` release covered the AGPL-3.0-or-later relicense, public-OSS CI/CD auto-trigger model, new CodeQL workflow, Code of Conduct, public packaging metadata, branch-protection desired state for public `main`, and AGPL declaration in the generated SBOM. No plugin behavior versions changed in either release.
@@ -65,5 +70,6 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 ## Verification
 
 - `python3 scripts/validate_plugin_versions.py`: manifest and marketplace validation.
+- `python3 scripts/validate_contract.py`: adapter contract and manifest license/URL validation.
 - `python3 scripts/release_manifest.py`: generated inventory includes plugin versions and runtime state.
 - `scripts/validate_marketplace.sh`: repository-wide marketplace validation.

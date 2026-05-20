@@ -859,16 +859,8 @@ smoke_root() {
 
   printf '\n== Hook smoke: %s ==\n' "$name"
   [ -d "$base" ] || fail "$name hook root missing: $base"
-  if [ -d "$base/rldyour-serena-mcp/local" ]; then
-    serena_dir="$base/rldyour-serena-mcp/local"
-  else
-    serena_dir="$base/rldyour-serena-mcp"
-  fi
-  if [ -d "$base/rldyour-flow/local" ]; then
-    flow_dir="$base/rldyour-flow/local"
-  else
-    flow_dir="$base/rldyour-flow"
-  fi
+  serena_dir=$(resolve_plugin_root "$base" "rldyour-serena-mcp")
+  flow_dir=$(resolve_plugin_root "$base" "rldyour-flow")
 
   check_hook_strict_prologue "$name serena" "$serena_dir"
   check_hook_strict_prologue "$name flow" "$flow_dir"
@@ -936,6 +928,31 @@ smoke_root() {
     "$flow_dir/hooks/stop_lifecycle_dispatcher.sh"
 
   smoke_lifecycle "$name" "$serena_dir" "$flow_dir"
+}
+
+resolve_plugin_root() {
+  local base=$1
+  local plugin=$2
+  local direct="$base/$plugin"
+  local selected=""
+  if [ -f "$direct/hooks.json" ]; then
+    printf '%s\n' "$direct"
+    return
+  fi
+  if [ -f "$direct/local/hooks.json" ]; then
+    printf '%s\n' "$direct/local"
+    return
+  fi
+  for candidate in "$direct"/*; do
+    if [ -f "$candidate/hooks.json" ]; then
+      selected="$candidate"
+    fi
+  done
+  if [ -n "$selected" ]; then
+    printf '%s\n' "$selected"
+    return
+  fi
+  printf '%s\n' "$direct"
 }
 
 if [ "$MODE" = "repo" ] || [ "$MODE" = "both" ]; then

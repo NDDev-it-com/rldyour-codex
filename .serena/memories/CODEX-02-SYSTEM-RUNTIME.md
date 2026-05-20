@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-20
-Last commit: c399c75 fix(ci): stabilize serena capability smoke
-Scope: ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/rules/*.rules, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, system/rules/*.rules, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_execpolicy_rules.sh, plugins/rldyour-mcps/.mcp.json
+Last updated: 2026-05-21
+Last commit: 2da696d fix(codex): harden runtime contract validation
+Scope: ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/rules/*.rules, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, system/rules/*.rules, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_execpolicy_rules.sh, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py, config/rldyour-contract.json, plugins/rldyour-mcps/.mcp.json
 Area: CODEX
 -->
 
@@ -18,6 +18,9 @@ This memory records the installed system Codex runtime state owned by this repos
 - `system/rules/*.rules`: canonical managed Codex execpolicy rule files.
 - `scripts/install_system_codex.sh`: writes global config, AGENTS, agents, execpolicy rules, marketplace registration, MCP servers, approved tool overrides, plugin cache, and trusted hook hashes.
 - `scripts/doctor_system_codex.sh`: verifies installed runtime state.
+- `scripts/plugin_cache_contract.py`: derives installed cache paths from plugin manifest versions and verifies cache parity.
+- `scripts/smoke_codex_hook_listing.py`: verifies live Codex app-server `hooks/list` output for installed rldyour bundled plugin hooks.
+- `config/rldyour-contract.json`: declares versioned cache layout and owner-local YOLO boundary.
 - `scripts/validate_execpolicy_rules.sh`: validates managed rule decisions with `codex execpolicy check`.
 - `plugins/rldyour-mcps/.mcp.json`: MCP server definitions.
 - `.agents/plugins/marketplace.json`: enabled rldyour plugin set.
@@ -25,7 +28,7 @@ This memory records the installed system Codex runtime state owned by this repos
 - `${CODEX_HOME:-$HOME/.codex}/config.toml`: active system Codex config.
 - `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`: installed managed agent configs.
 - `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`: installed managed execpolicy rules.
-- `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local`: installed plugin cache used by Codex.
+- `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/<version>`: installed plugin cache used by Codex.
 
 ## Entry Points
 
@@ -33,6 +36,8 @@ This memory records the installed system Codex runtime state owned by this repos
 - `scripts/install_system_codex.sh --apply`: apply managed system state.
 - `scripts/doctor_system_codex.sh`: verify active system state and plugin cache parity.
 - `scripts/validate_execpolicy_rules.sh`: verify destructive, secrets, git, release, and allow examples for managed rules.
+- `python3 scripts/plugin_cache_contract.py verify`: verify installed plugin cache parity.
+- `python3 scripts/smoke_codex_hook_listing.py`: verify live installed hook trust, enabled state, hash presence, and versioned source paths.
 - `codex mcp list`: inspect registered MCP servers.
 
 ## Current Behavior
@@ -50,8 +55,10 @@ This memory records the installed system Codex runtime state owned by this repos
 - `codex_apps` is not represented as an `mcp_servers` table in managed agents. It remains available through the inherited Apps/connectors surface.
 - Active managed roles are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Installer/doctor derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP registration from `plugins/rldyour-mcps/.mcp.json`.
+- Installer and doctor derive cache paths from `scripts/plugin_cache_contract.py`, which uses each plugin manifest `version` and writes/verifies `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>`.
 - Installer refreshes installed rldyour plugin hook trust after cache sync by reading `currentHash` from the app-server RPC method `hooks/list` over `codex app-server --listen stdio://` and upserting `hooks.state` through `config/batchWrite`.
 - Doctor includes a live hook trust gate: all installed rldyour plugin hooks returned by the `hooks/list` app-server RPC method must be present, enabled, and `trustStatus = trusted`.
+- Runtime validation also runs `scripts/smoke_codex_hook_listing.py` after temporary install, proving bundled hooks are visible to Codex before hook script smoke runs.
 - Doctor verifies installed managed execpolicy rules exactly match `system/rules/*.rules`.
 - After plugin/hook/skill/agent changes, plugin cache must be synced through `scripts/install_system_codex.sh --apply`, and Codex should be restarted for runtime reload.
 
@@ -63,6 +70,7 @@ This memory records the installed system Codex runtime state owned by this repos
 - `scripts/doctor_system_codex.sh` checks config schema hint, `hooks`/`plugin_hooks`/`multi_agent` feature flags, model defaults, managed agents, managed subagent temporary MCP isolation with complete disabled transport metadata, managed execpolicy rules, marketplace-derived plugin enablement, MCP registration, plugin cache parity, installed rldyour plugin hook trust, and fullrepo current-state.
 - `${CODEX_HOME:-$HOME/.codex}/config.toml` stores `hooks.state.<hook key>.trusted_hash` values that must match the installed hook definitions after plugin cache changes.
 - Plugin cache parity matters for runtime because installed hooks and skills execute from `${CODEX_HOME}` in normal Codex sessions.
+- Legacy `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/local` paths are compatibility fallbacks only; active install and verification use versioned paths.
 
 ## Invariants
 
@@ -70,6 +78,7 @@ This memory records the installed system Codex runtime state owned by this repos
 - Do not remove `[features].plugin_hooks = true`; without it, enabled rldyour plugin hook declarations can remain installed but not loaded as bundled plugin hooks.
 - Do not leave installed rldyour plugin hooks in `modified` or `untrusted` trust state after cache sync; run installer apply and doctor to refresh and verify `hooks.state`.
 - Do not hardcode parallel plugin/MCP lists in installer or doctor scripts.
+- Do not hardcode installed plugin cache as `<plugin>/local`; use manifest-derived versioned cache paths.
 - Do not change YOLO permission defaults without explicit owner request.
 - Do not migrate the owner profile from `sandbox_mode = "danger-full-access"` to beta permission profiles without an explicit owner policy decision.
 - Do not remove managed execpolicy rules while `approval_policy = "never"` and `sandbox_mode = "danger-full-access"` remain the owner-selected defaults.
@@ -80,6 +89,7 @@ This memory records the installed system Codex runtime state owned by this repos
 ## Change Rules
 
 - After editing `system/AGENTS.md`, `system/agents/*.toml`, `system/rules/*.rules`, plugin manifests, hooks, or skills, run installer apply, then doctor.
+- After editing plugin manifests or plugin contents, run installer apply, `python3 scripts/plugin_cache_contract.py verify`, and `python3 scripts/smoke_codex_hook_listing.py`.
 - If doctor fails only on fullrepo current-state while normal branch is dirty or unpublished, finish normal branch and fullrepo sync before treating it as a real runtime failure.
 - Keep managed agent model, reasoning settings, and temporary MCP isolation aligned with repository policy unless the owner explicitly changes them.
 
@@ -88,7 +98,9 @@ This memory records the installed system Codex runtime state owned by this repos
 - `scripts/install_system_codex.sh --dry-run`: preview install.
 - `scripts/install_system_codex.sh --apply`: sync active system runtime and plugin cache.
 - `scripts/doctor_system_codex.sh`: installed-state verification.
+- `python3 scripts/plugin_cache_contract.py verify`: installed versioned plugin cache parity.
+- `python3 scripts/smoke_codex_hook_listing.py`: live Codex hook listing/trust verification.
 - `python3 scripts/validate_agent_tools.py`: source-tree managed agent, skill, and temporary subagent MCP policy verification.
 - `scripts/validate_execpolicy_rules.sh`: managed execpolicy rule decision validation.
 - App-server RPC method `hooks/list` over `codex app-server --listen stdio://`: live source of current hook keys, hashes, enabled flags, and trust status.
-- `diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local"`: targeted plugin cache parity check.
+- `python3 scripts/plugin_cache_contract.py verify`: targeted plugin cache parity check for every rldyour plugin.

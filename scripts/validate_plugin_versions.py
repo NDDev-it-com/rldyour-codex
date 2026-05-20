@@ -16,6 +16,8 @@ SEMVER_RE = re.compile(
 HEX_COLOR_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 ALLOWED_INSTALLATION = {"AVAILABLE", "INSTALLED_BY_DEFAULT", "NOT_AVAILABLE"}
 ALLOWED_AUTHENTICATION = {"ON_USE", "ON_INSTALL"}
+EXPECTED_PLUGIN_LICENSE = "AGPL-3.0-or-later"
+EXPECTED_REPOSITORY_URL = "https://github.com/NDDev-it-com/rldyour-codex"
 MANIFEST_PATH_FIELDS = {
     "skills": "directory",
     "mcpServers": "file",
@@ -60,6 +62,11 @@ def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, man
         require_non_empty_string(author.get("name"), f"{plugin_name}: author.name", errors)
     for key in ("homepage", "repository", "license"):
         require_non_empty_string(manifest.get(key), f"{plugin_name}: {key}", errors)
+    if manifest.get("license") != EXPECTED_PLUGIN_LICENSE:
+        errors.append(f"{plugin_name}: license must be {EXPECTED_PLUGIN_LICENSE}")
+    for key in ("homepage", "repository"):
+        if manifest.get(key) != EXPECTED_REPOSITORY_URL:
+            errors.append(f"{plugin_name}: {key} must be {EXPECTED_REPOSITORY_URL}")
     require_string_list(manifest.get("keywords"), f"{plugin_name}: keywords", errors)
 
     interface = manifest.get("interface")
@@ -68,6 +75,10 @@ def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, man
         return
     for key in ("displayName", "shortDescription", "longDescription", "developerName", "category"):
         require_non_empty_string(interface.get(key), f"{plugin_name}: interface.{key}", errors)
+    for key in ("websiteURL", "privacyPolicyURL", "termsOfServiceURL"):
+        value = interface.get(key)
+        if value is not None and value != EXPECTED_REPOSITORY_URL:
+            errors.append(f"{plugin_name}: interface.{key} must be {EXPECTED_REPOSITORY_URL}")
     require_string_list(interface.get("capabilities"), f"{plugin_name}: interface.capabilities", errors)
 
     default_prompt = require_string_list(

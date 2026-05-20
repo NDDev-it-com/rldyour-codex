@@ -12,6 +12,7 @@ fi
 
 mkdir -p dist/validation
 python3 scripts/validate_plugin_versions.py
+python3 scripts/validate_contract.py
 python3 scripts/release_manifest.py > dist/validation/release-manifest.json
 python3 scripts/release_sbom.py > dist/validation/sbom.spdx.json
 python3 -m json.tool dist/validation/release-manifest.json >/dev/null

@@ -61,7 +61,7 @@ This repository is the maintainer's personal Codex marketplace, published public
 - Use Serena-first code inspection where supported; use `rg` and direct reads for docs, JSON, shell scripts, and other text-level work.
 - After meaningful changes, update `.serena/memories` with verified facts only.
 - After meaningful project behavior, workflow, setup, validation, architecture, plugin, hook, or command changes, update `AGENTS.md` for Codex and `.claude/CLAUDE.md` for Claude Code from verified code state.
-- After plugin changes that affect runtime behavior, sync changed plugin directories into `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local` and restart Codex.
+- After plugin changes that affect runtime behavior, sync changed plugin directories into `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/<version>` with `scripts/install_system_codex.sh --apply` and restart Codex.
 - `fullrepo` is the standard branch for portable agent-only context. Normal project branches should exclude project-root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files through `.git/info/exclude`; publish them with `scripts/sync_fullrepo_branch.sh --publish` after normal branch sync. This repository may intentionally track selected instruction templates that are product artifacts, such as `system/AGENTS.md`.
 
 ## Validation
@@ -82,6 +82,7 @@ Additional targeted checks:
 codex mcp list
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
+python3 scripts/smoke_codex_hook_listing.py
 scripts/smoke_hooks.sh
 scripts/smoke_codex_hooks_migration.sh
 scripts/smoke_serena_memory_freshness.sh
@@ -105,6 +106,7 @@ plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.
 python3 scripts/validate_instruction_docs.py --require-agent-docs
 plugins/rldyour-lsps/scripts/check_lsps.sh
 python3 scripts/validate_plugin_versions.py
+python3 scripts/validate_contract.py
 python3 scripts/validate_skill_routing.py
 python3 scripts/release_manifest.py
 python3 scripts/release_sbom.py
@@ -117,7 +119,7 @@ scripts/doctor_system_codex.sh --quick --strict-runtime
 For plugin cache verification:
 
 ```bash
-diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/local"
+python3 scripts/plugin_cache_contract.py verify
 ```
 
 ## Git And Sync
@@ -137,7 +139,7 @@ diff -qr plugins/<plugin> "${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-cod
 
 - `system/AGENTS.md` is the canonical template for the owner's global `~/.codex/AGENTS.md`.
 - `scripts/install_system_codex.sh --dry-run` shows what would be installed.
-- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, installs managed `agents/*.toml`, installs managed Codex execpolicy rules from `system/rules/*.rules`, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`, removes deprecated hook aliases such as `codex_hooks`, derives rldyour plugin enablement from `.agents/plugins/marketplace.json`, derives MCP server registration from `plugins/rldyour-mcps/.mcp.json`, applies owner-requested YOLO/model defaults, writes approved MCP tool overrides, registers the marketplace, syncs plugin cache, and refreshes trusted hashes for installed rldyour plugin hooks through the app-server RPC method `hooks/list` over `codex app-server --listen stdio://`. Add `--strict-runtime` when missing launchers for enabled MCP servers must fail instead of warn.
+- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, installs managed `agents/*.toml`, installs managed Codex execpolicy rules from `system/rules/*.rules`, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`, removes deprecated hook aliases such as `codex_hooks`, derives rldyour plugin enablement from `.agents/plugins/marketplace.json`, derives MCP server registration from `plugins/rldyour-mcps/.mcp.json`, applies owner-requested YOLO/model defaults, writes approved MCP tool overrides, registers the marketplace, syncs plugin cache into versioned `<plugin>/<version>` directories, and refreshes trusted hashes for installed rldyour plugin hooks through the app-server RPC method `hooks/list` over `codex app-server --listen stdio://`. Add `--strict-runtime` when missing launchers for enabled MCP servers must fail instead of warn.
 - `scripts/validate_execpolicy_rules.sh` validates managed rules with `codex execpolicy check`.
 - `scripts/doctor_system_codex.sh` verifies the installed system Codex state, including marketplace-derived rldyour plugin enablement, MCP registration from `.mcp.json`, the config schema hint, active `hooks`, `plugin_hooks`, and `multi_agent` features, managed subagent config parity, managed subagent `gpt-5.5`/`medium` settings, managed subagent temporary MCP isolation with complete disabled transport metadata, installed rldyour plugin hook trust/enabled state, and absence of deprecated hook aliases. Use `--quick --strict-runtime` for a bounded strict runtime smoke and `--strict-runtime` for full strict prerequisite enforcement.
 - `scripts/rollback_system_codex.sh --list` lists installer backups; `--restore <backup>` restores backed up `AGENTS.md`, `config.toml`, managed `agents/*.toml`, and managed `rules/*.rules`.

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-20
-Last commit: c399c75 fix(ci): stabilize serena capability smoke
-Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, system/agents/*.toml, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
+Last updated: 2026-05-21
+Last commit: 2da696d fix(codex): harden runtime contract validation
+Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_contract.py, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, config/rldyour-contract.json, docs/contract-matrix.md, system/agents/*.toml, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
 
@@ -17,6 +17,9 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_fast.sh`: fast local/CI validation slice for static checks, routing, security text scan, and unit coverage.
 - `scripts/validate_runtime.sh`: installer, hook, fullrepo, and runtime prerequisite validation slice.
 - `scripts/validate_release.sh`: release manifest, SBOM, plugin version, and release artifact dry-run slice.
+- `scripts/validate_contract.py`: Codex adapter contract validator for plugin/skill/agent/hook/MCP/cache/security surface.
+- `scripts/plugin_cache_contract.py`: versioned installed plugin cache parity validator.
+- `scripts/smoke_codex_hook_listing.py`: live Codex app-server hook listing/trust smoke.
 - `scripts/validate_agent_tools.py`: Codex-native agent/skill surface validation.
 - `scripts/validate_plugin_versions.py`: plugin manifest and marketplace metadata validation.
 - `scripts/validate_skill_routing.py`: deterministic prompt-to-skill routing checks.
@@ -49,6 +52,9 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_fast.sh`: run the fast local CI slice.
 - `scripts/validate_runtime.sh --strict-runtime`: run installer/runtime/hook/fullrepo gates with strict prerequisite checks.
 - `scripts/validate_release.sh`: run release manifest/SBOM/version gates.
+- `python3 scripts/validate_contract.py`: run source-tree Codex adapter contract gate.
+- `python3 scripts/plugin_cache_contract.py verify`: run installed cache parity check.
+- `python3 scripts/smoke_codex_hook_listing.py`: run live installed hook listing/trust check.
 - `scripts/doctor_system_codex.sh`: run after installing changed global config/plugins/hooks/agents.
 - `python3 scripts/release_manifest.py`: inspect release inventory.
 - `python3 scripts/release_sbom.py`: inspect generated SBOM inventory.
@@ -62,11 +68,15 @@ This memory records the validation and release gates that keep the marketplace, 
 ## Current Behavior
 
 - Marketplace validation now runs `uv run --with pyyaml python scripts/validate_agent_tools.py` before shell/Python/smoke checks.
+- Marketplace validation now runs `python3 scripts/validate_contract.py` after release metadata validation.
+- Marketplace validation now batches skill frontmatter checks in one `uv run --with pyyaml python` process instead of invoking a Python process per skill.
 - `scripts/validate_agent_tools.py` verifies the temporary managed-subagent MCP isolation policy from the current `.mcp.json` registry. Every current non-core MCP server must be explicitly disabled in each managed agent TOML, each disabled MCP override must include registry-matching transport metadata, and the lightweight core inherited surface plus built-in `codex_apps` remain allowed without declaring `codex_apps` as an `mcp_servers` table.
 - Marketplace validation now runs `python3 scripts/validate_action_pins.py` before skill checks.
 - Marketplace validation now runs the Python unit/coverage harness and requires at least 75% coverage.
 - Marketplace validation runs `scripts/validate_execpolicy_rules.sh` when Codex CLI is available, and runtime validation enforces it after temporary installation.
-- Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`, `scripts/validate_agent_tools.py`, `scripts/validate_action_pins.py`, `scripts/scan_text_security.py`, `scripts/classify_ci_noise.py`, and `scripts/release_sbom.py`.
+- Runtime validation now runs `scripts/smoke_codex_hook_listing.py` after temporary install and execpolicy validation, proving bundled plugin hooks are loaded/trusted by Codex.
+- Release validation now includes `python3 scripts/validate_contract.py`, so adapter surface drift blocks release dry-run.
+- Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`, `scripts/plugin_cache_contract.py`, `scripts/smoke_codex_hook_listing.py`, `scripts/validate_contract.py`, `scripts/validate_agent_tools.py`, `scripts/validate_action_pins.py`, `scripts/scan_text_security.py`, `scripts/classify_ci_noise.py`, and `scripts/release_sbom.py`.
 - Marketplace validation runs `scripts/smoke_serena_memory_taxonomy.sh` after `scripts/smoke_serena_memory_freshness.sh`.
 - `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher, selects the expected hook by script path, rejects cwd/cache-search command wrappers, and runs configured hook commands from a temporary git repo with plugin runtime environment variables.
 - `scripts/smoke_hooks.sh` includes a fake-network Flow SessionStart regression: a fake `git` sleeps/fails on `fetch` and `ls-remote`, and the smoke requires fast offline context without any network git calls.
@@ -86,6 +96,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/smoke_codex_hooks_migration.sh` and `scripts/doctor_system_codex.sh` keep deprecated key migration logic synchronized (including `codex_hooks`, legacy `web_search*`, unified exec/instructions/memories keys, and `use_legacy_landlock` cleanup).
 - `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
 - `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to the app-server RPC method `hooks/list`.
+- `scripts/smoke_codex_hook_listing.py` additionally verifies live hook source paths include the versioned installed cache path `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>/hooks.json`.
 - `scripts/doctor_system_codex.sh` also verifies that installed managed subagent TOML files match source, preserve the temporary specialist-MCP isolation policy, include complete disabled transport metadata, and do not declare built-in `codex_apps` under `mcp_servers`.
 - GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
 - `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
@@ -125,11 +136,15 @@ This memory records the validation and release gates that keep the marketplace, 
 - Local validation for `697f44d` / version `0.4.1` passed on 2026-05-20: `scripts/validate_fast.sh` (72 tests, 76.55% coverage, 267-file text security scan), `scripts/validate_release.sh`, `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, `python3 scripts/validate_runtime_prereqs.py --strict --require-codex`, `uv run --with pyyaml python scripts/validate_agent_tools.py`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `codex mcp list`, `codex --version`, `scripts/smoke_mcp_capabilities.sh --server serena --retries 1 --timeout 30`, `scripts/validate_marketplace.sh`, and `git diff --check`. GitHub `validate.yml` later failed only the MCP safe-call job because the `get_current_config` safe call logged variable multi-line Serena configuration output that strict CI noise classification did not allow; the follow-up fix changes the safe call to `list_memories`.
 - Local validation for `c399c75` / version `0.4.1` passed on 2026-05-20: CI-repro `scripts/smoke_mcp_capabilities.sh --server serena --retries 1 --timeout 30` with stderr classified by `python3 scripts/classify_ci_noise.py --strict`, `scripts/validate_marketplace.sh`, `scripts/validate_release.sh`, and `git diff --check`.
 - Validation contracts still include pinned runtime checks and smoke coverage in `dependency-check.yml` and `validate.yml`; `validate.yml` does not fail PR/push builds on stale upstream pins, while `dependency-check.yml` is the scheduled/pin-source freshness gate that fails stale pins.
+- Local validation for `2da696d` / version `0.4.1` passed on 2026-05-21: `scripts/validate_fast.sh` (77 tests, 76.30% coverage), `scripts/validate_marketplace.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `python3 scripts/plugin_cache_contract.py verify`, `python3 scripts/smoke_codex_hook_listing.py`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, `python3 scripts/validate_contract.py`, `python3 scripts/validate_plugin_versions.py`, `python3 scripts/validate_action_pins.py`, and `git diff --check`.
 
 ## Contracts And Data
 
 - `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, GitHub Action SHA pin validation, strict runtime prerequisite validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, pytest/coverage, skill routing, hook feature migration smoke, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, text security scan, and release manifest checks.
+- `scripts/validate_marketplace.sh` must include the Codex adapter contract gate and installed versioned plugin cache parity gate.
+- `scripts/validate_release.sh` must include the Codex adapter contract gate before writing release artifacts.
 - `scripts/validate_marketplace.sh` should include Codex execpolicy rule validation when Codex CLI is present; `scripts/validate_runtime.sh --strict-runtime` must validate installed rules.
+- `scripts/validate_runtime.sh --strict-runtime` must validate live Codex `hooks/list` through `scripts/smoke_codex_hook_listing.py`.
 - `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`; it is the source-tree gate for managed-agent model/reasoning settings, temporary subagent MCP isolation, and complete disabled MCP transport overrides.
 - `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
 - `scripts/smoke_hooks.sh` must fail on any newly registered hook script until that script is added to the smoke manifest and large-stdin/wiring coverage.
@@ -146,6 +161,7 @@ This memory records the validation and release gates that keep the marketplace, 
 ## Change Rules
 
 - When adding a new validator/smoke, wire it into `scripts/validate_marketplace.sh` if it is part of the release gate.
+- When changing Codex adapter surface, update `config/rldyour-contract.json`, `docs/contract-matrix.md`, and `scripts/validate_contract.py` in the same change.
 - When changing hook layout or Stop gate conditions, update `scripts/smoke_hooks.sh`.
 - When changing installed hook commands, run installer apply before doctor so `hooks.state` trusted hashes match the new plugin cache.
 - When changing memory taxonomy/freshness behavior, update `scripts/smoke_serena_memory_taxonomy.sh` and `scripts/smoke_serena_memory_freshness.sh` if needed.
@@ -158,6 +174,9 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_fast.sh`: fast static/unit validation slice.
 - `scripts/validate_runtime.sh --strict-runtime`: strict runtime/install/hook/fullrepo validation slice.
 - `scripts/validate_release.sh`: release manifest/SBOM validation slice.
+- `python3 scripts/validate_contract.py`: Codex adapter contract validation.
+- `python3 scripts/plugin_cache_contract.py verify`: installed versioned plugin cache parity validation.
+- `python3 scripts/smoke_codex_hook_listing.py`: live Codex hook listing/trust validation.
 - `scripts/doctor_system_codex.sh`: installed runtime validation after cache/config install.
 - App-server RPC method `hooks/list` over `codex app-server --listen stdio://`: live hook trust/hash verification used by installer and doctor.
 - `python3 scripts/release_manifest.py`: generated manifest includes expected plugin versions.
