@@ -40,9 +40,9 @@ def test_manifest_metadata_accepts_valid_plugin_shape(tmp_path: Path) -> None:
         errors: list[str] = []
         manifest = {
             "author": {"name": "rldyour"},
-            "homepage": "https://example.test",
-            "repository": "https://example.test/repo",
-            "license": "MIT",
+            "homepage": mod.EXPECTED_REPOSITORY_URL,
+            "repository": mod.EXPECTED_REPOSITORY_URL,
+            "license": mod.EXPECTED_PLUGIN_LICENSE,
             "keywords": ["codex"],
             "skills": "./skills",
             "interface": {
@@ -54,6 +54,9 @@ def test_manifest_metadata_accepts_valid_plugin_shape(tmp_path: Path) -> None:
                 "capabilities": ["skills"],
                 "defaultPrompt": ["$demo"],
                 "brandColor": "#123ABC",
+                "websiteURL": mod.EXPECTED_REPOSITORY_URL,
+                "privacyPolicyURL": mod.EXPECTED_REPOSITORY_URL,
+                "termsOfServiceURL": mod.EXPECTED_REPOSITORY_URL,
             },
         }
         mod.require_manifest_metadata(manifest, "rldyour-demo", manifest_path, errors)
@@ -74,6 +77,45 @@ def test_manifest_metadata_rejects_parent_path(tmp_path: Path) -> None:
         errors: list[str] = []
         mod.require_manifest_metadata({"skills": "./../outside", "interface": {}}, "rldyour-demo", manifest_path, errors)
         assert any("parent-directory" in error for error in errors)
+    finally:
+        mod.ROOT = old_root
+
+
+def test_manifest_metadata_rejects_license_and_url_drift(tmp_path: Path) -> None:
+    plugin_dir = tmp_path / "plugins/rldyour-demo"
+    manifest_dir = plugin_dir / ".codex-plugin"
+    manifest_dir.mkdir(parents=True)
+    (plugin_dir / "skills").mkdir()
+    manifest_path = manifest_dir / "plugin.json"
+    manifest_path.write_text("{}", encoding="utf-8")
+    old_root = mod.ROOT
+    mod.ROOT = tmp_path
+    try:
+        errors: list[str] = []
+        manifest = {
+            "author": {"name": "rldyour"},
+            "homepage": "https://example.test",
+            "repository": "https://example.test/repo",
+            "license": "MIT",
+            "keywords": ["codex"],
+            "skills": "./skills",
+            "interface": {
+                "displayName": "Demo",
+                "shortDescription": "Short",
+                "longDescription": "Long enough",
+                "developerName": "rldyour",
+                "category": "Development",
+                "capabilities": ["skills"],
+                "defaultPrompt": ["$demo"],
+                "brandColor": "#123ABC",
+                "websiteURL": "https://example.test",
+            },
+        }
+        mod.require_manifest_metadata(manifest, "rldyour-demo", manifest_path, errors)
+        assert "rldyour-demo: license must be AGPL-3.0-or-later" in errors
+        assert "rldyour-demo: homepage must be https://github.com/NDDev-it-com/rldyour-codex" in errors
+        assert "rldyour-demo: repository must be https://github.com/NDDev-it-com/rldyour-codex" in errors
+        assert "rldyour-demo: interface.websiteURL must be https://github.com/NDDev-it-com/rldyour-codex" in errors
     finally:
         mod.ROOT = old_root
 

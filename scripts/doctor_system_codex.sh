@@ -535,20 +535,11 @@ else
 fi
 
 section "Plugin cache"
-for plugin_dir in "$ROOT"/plugins/rldyour-*; do
-  [ -d "$plugin_dir" ] || continue
-  plugin_name=$(basename "$plugin_dir")
-  cache_dir="$CACHE_ROOT/$plugin_name/local"
-  if [ ! -d "$cache_dir" ]; then
-    fail "missing cache $cache_dir"
-    continue
-  fi
-  if diff -qr -x __pycache__ -x '*.pyc' "$plugin_dir" "$cache_dir" >/dev/null; then
-    pass "cache in sync $plugin_name"
-  else
-    fail "cache differs $plugin_name"
-  fi
-done
+if python3 "$ROOT/scripts/plugin_cache_contract.py" --cache-root "$CACHE_ROOT" verify; then
+  :
+else
+  fail "plugin cache parity"
+fi
 
 section "Hook trust"
 if [ -n "$CODEX_CMD" ]; then

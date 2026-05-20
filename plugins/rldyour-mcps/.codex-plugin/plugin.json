@@ -7,9 +7,9 @@
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
-  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
-  "repository": "https://github.com/rldyourmnd/rldyour-codex",
-  "license": "MIT",
+  "homepage": "https://github.com/NDDev-it-com/rldyour-codex",
+  "repository": "https://github.com/NDDev-it-com/rldyour-codex",
+  "license": "AGPL-3.0-or-later",
   "keywords": [
     "codex",
     "mcp",
@@ -41,9 +41,9 @@
       "Russian user-facing workflow",
       "Controlled MCP connectivity"
     ],
-    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
-    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
-    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "websiteURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "defaultPrompt": [
       "Show my MCP servers.",
       "Choose the right MCP for this task.",
