@@ -12,6 +12,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 - Runtime pins updated to current stable upstream versions: Codex CLI `0.132.0`, Serena Agent `1.5.1`, and Chrome DevTools MCP `1.0.1`.
 - System Codex docs now clarify that the owner-selected `sandbox_mode = "danger-full-access"` remains the active runtime policy while `plugin_hooks` stays an explicit official Codex opt-in.
+- Serena MCP capability smoke now uses the deterministic `list_memories` safe call for Serena Agent `1.5.1` to avoid classifying variable configuration output as CI noise.
 
 ### Security
 
