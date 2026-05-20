@@ -3,7 +3,7 @@
   "version": "0.1.3",
   "description": "Quality-first engineering rules for Codex: clean architecture, implementation discipline, dependency compatibility, verification gates, agent-only file policy, ADRs, and ry-rules-review.",
   "author": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
@@ -29,7 +29,7 @@
     "displayName": "rldyour Rules",
     "shortDescription": "Quality-first project rules for Codex",
     "longDescription": "This plugin defines the owner's engineering rules for Codex. It provides automatic skills for quality-first implementation, architecture boundaries, implementation discipline, dependency and compatibility policy, verification gates, project instruction documentation for Codex AGENTS.md and Claude Code .claude/CLAUDE.md, agent-only file policy, and explicit ry-rules-review. The rules are advisory-first but non-negotiable for hard bans such as hacks, temporary workarounds, swallowed errors, secrets, and fake checks. User-facing conversation stays Russian; repository artifacts stay English.",
-    "developerName": "rldyourmnd",
+    "developerName": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
     "category": "Developer Tools",
     "capabilities": [
       "Automatic rule routing",

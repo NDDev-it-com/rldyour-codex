@@ -60,7 +60,7 @@ def generate_sbom() -> dict[str, object]:
         "rldyour-codex",
         version,
         license_declared="AGPL-3.0-or-later",
-        copyright_text="Copyright (C) 2026 Danil Silantyev (rldyourmnd) / NDDev",
+        copyright_text="Copyright (C) 2026 Danil Silantyev (rldyourmnd), CEO & Engineer NDDev",
     )
     root_spdx_id = str(root_package["SPDXID"])
     packages = [root_package]

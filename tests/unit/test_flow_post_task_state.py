@@ -94,3 +94,63 @@ def test_state_ignores_bootstrap_only_serena_files(monkeypatch, tmp_path: Path) 
     assert payload["is_git_repo"] is True
     assert payload["dirty_files"] == []
     assert payload["needs_flow_sync"] is False
+
+
+def test_state_does_not_loop_on_local_only_fullrepo_without_remote(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
+    init_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    monkeypatch.setattr(mod, "_serena_current", lambda: (True, {}))
+    monkeypatch.setattr(mod, "_instruction_docs_state", lambda: {})
+    monkeypatch.setattr(mod, "_branch_cleanup_state", lambda _branch: {"needs_cleanup": False})
+    monkeypatch.setattr(
+        mod,
+        "_fullrepo_state",
+        lambda: {
+            "exclude_installed": True,
+            "network_checked": False,
+            "remote_configured": False,
+            "remote_fullrepo_exists": False,
+            "local_fullrepo_sha": "abc123",
+            "fullrepo_matches_worktree": True,
+            "local_fullrepo_matches_worktree": True,
+            "tracked_agent_paths": [],
+            "worktree_agent_paths": ["AGENTS.md", ".serena/memories/CORE-01-INDEX.md"],
+        },
+    )
+
+    payload = mod.state()
+
+    assert payload["fullrepo_needs_attention"] is False
+    assert payload["needs_flow_sync"] is False
+
+
+def test_state_requires_remote_fullrepo_when_network_remote_is_configured(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
+    init_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    monkeypatch.setattr(mod, "_serena_current", lambda: (True, {}))
+    monkeypatch.setattr(mod, "_instruction_docs_state", lambda: {})
+    monkeypatch.setattr(mod, "_branch_cleanup_state", lambda _branch: {"needs_cleanup": False})
+    monkeypatch.setattr(
+        mod,
+        "_fullrepo_state",
+        lambda: {
+            "exclude_installed": True,
+            "network_checked": True,
+            "remote_configured": True,
+            "remote_fullrepo_exists": False,
+            "local_fullrepo_sha": "abc123",
+            "fullrepo_matches_worktree": True,
+            "local_fullrepo_matches_worktree": True,
+            "tracked_agent_paths": [],
+            "worktree_agent_paths": ["AGENTS.md"],
+        },
+    )
+
+    payload = mod.state()
+
+    assert payload["fullrepo_needs_attention"] is True
+    assert payload["needs_flow_sync"] is True
