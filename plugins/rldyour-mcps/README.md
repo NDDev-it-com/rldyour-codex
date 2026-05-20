@@ -124,7 +124,7 @@ After plugin installation, browser/OAuth authorization may be required. If Codex
 Serena is configured without starting or opening the web dashboard:
 
 ```text
-uvx --from serena-agent==1.3.0 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --enable-web-dashboard False --open-web-dashboard False
+uvx --from serena-agent==1.5.1 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=codex --enable-web-dashboard False --open-web-dashboard False
 ```
 
 If the dashboard is needed manually, change this runtime policy intentionally and re-run the system installer.

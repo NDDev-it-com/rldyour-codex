@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-19
-Last commit: 94cced2 chore(release): bump to 0.4.1
+Last updated: 2026-05-20
+Last commit: 697f44d chore(codex): refresh system runtime pins
 Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, system/agents/*.toml, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
@@ -89,9 +89,9 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/doctor_system_codex.sh` also verifies that installed managed subagent TOML files match source, preserve the temporary specialist-MCP isolation policy, include complete disabled transport metadata, and do not declare built-in `codex_apps` under `mcp_servers`.
 - GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
 - `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
-- `.github/workflows/security-static.yml` is manual-only and runs action pin validation, actionlint `1.7.12`, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
-- `.github/workflows/dependency-check.yml` is manual-only and keeps MCP/runtime freshness available without scheduled spend.
-- `.github/workflows/release.yml` manually publishes exact SemVer tags without a `v` prefix, bootstraps `fullrepo` agent context before requiring agent docs, runs `validate_agent_tools.py` through `uv --with pyyaml`, extracts versioned release notes with a portable AWK expression, and produces deterministic `tar.gz` bundles, release manifests, generated SPDX SBOMs, GitHub dependency graph SBOM export via `/dependency-graph/sbom`, artifact attestations, and GitHub Releases.
+- `.github/workflows/security-static.yml` runs on push to `main`, pull requests, weekly schedule, and workflow_dispatch; it runs action pin validation, actionlint `1.7.12`, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
+- `.github/workflows/dependency-check.yml` runs on daily schedule, on push to MCP pin sources, and workflow_dispatch; it is the maintainer signal that fails on stale MCP/runtime pins.
+- `.github/workflows/release.yml` publishes exact SemVer tags without a `v` prefix on tag push or workflow_dispatch, bootstraps `fullrepo` agent context before requiring agent docs, runs `validate_agent_tools.py` through `uv --with pyyaml`, extracts versioned release notes with a portable AWK expression, and produces deterministic `tar.gz` bundles, release manifests, generated SPDX SBOMs, GitHub dependency graph SBOM export via `/dependency-graph/sbom`, artifact attestations, and GitHub Releases.
 - `scripts/classify_ci_noise.py` keeps known benign third-party stderr documented while failing targeted strict jobs on unknown lines.
 - `config/skill-routing-policy.json` version 2 assigns routing classes to all 38 skills and requires cases for implicit, explicit-only, and finalization skills.
 - Text security scan covers tracked text plus agent-only instruction/memory/research paths and rejects secret-like values, BIDI controls, and zero-width controls. When `.git` is absent, it falls back to a bounded text-extension tree walk so extracted release bundles and temporary audit copies are not under-scanned.
@@ -122,7 +122,8 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/classify_ci_noise.py` allowlists `uv` package download progress lines such as `Downloading pygments (...)` and `Downloaded pygments` as deterministic setup noise.
 - `scripts/validate_marketplace.sh` skips only the live Serena freshness state check in GitHub Actions when fullrepo-managed `.serena/memories/CORE-01-INDEX.md` is not tracked in the normal-branch checkout.
 - `scripts/smoke_serena_memory_taxonomy.sh` keeps analyzer and fixture coverage when repository memories are absent or untracked in GitHub Actions, and runs index/taxonomy parity when `CORE-01-INDEX.md` is present as tracked fullrepo context.
-- Validation contracts still include pinned runtime checks and smoke coverage defined in manual `dependency-check.yml` and `validate.yml`.
+- Local validation for `697f44d` / version `0.4.1` passed on 2026-05-20: `scripts/validate_fast.sh` (72 tests, 76.55% coverage, 267-file text security scan), `scripts/validate_release.sh`, `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, `python3 scripts/validate_runtime_prereqs.py --strict --require-codex`, `uv run --with pyyaml python scripts/validate_agent_tools.py`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `codex mcp list`, `codex --version`, `scripts/smoke_mcp_capabilities.sh --server serena --retries 1 --timeout 30`, `scripts/validate_marketplace.sh`, and `git diff --check`.
+- Validation contracts still include pinned runtime checks and smoke coverage in `dependency-check.yml` and `validate.yml`; `validate.yml` does not fail PR/push builds on stale upstream pins, while `dependency-check.yml` is the scheduled/pin-source freshness gate that fails stale pins.
 
 ## Contracts And Data
 
@@ -147,7 +148,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - When changing hook layout or Stop gate conditions, update `scripts/smoke_hooks.sh`.
 - When changing installed hook commands, run installer apply before doctor so `hooks.state` trusted hashes match the new plugin cache.
 - When changing memory taxonomy/freshness behavior, update `scripts/smoke_serena_memory_taxonomy.sh` and `scripts/smoke_serena_memory_freshness.sh` if needed.
-- MCP runtime pin checks must stay synchronized across manual `validate.yml` and `dependency-check.yml`; neither should run on push/schedule unless the owner explicitly changes the spend policy.
+- MCP runtime pin checks must stay synchronized across `validate.yml` and `dependency-check.yml`: validate keeps runtime parity visible without blocking on upstream staleness, while dependency-check fails stale pins on the daily and pin-source paths.
 - In docs, this contract must be described consistently in `docs/dependency-updates.md`, `docs/observability.md`, and `README.md` whenever validate/dependency-check behavior changes.
 
 ## Verification

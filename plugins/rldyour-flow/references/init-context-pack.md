@@ -17,14 +17,15 @@ If the scope is ambiguous, ask the owner in Russian with 2-3 concrete options. I
 
 Use Serena first for supported code:
 
-1. `check_onboarding_performed`.
+1. `initial_instructions`.
 2. `list_memories`.
 3. `read_memory` for relevant memories.
-4. `get_symbols_overview` for entry files and important modules before reading bodies.
-5. `find_symbol` with body disabled to discover children and public surface.
-6. `find_symbol` with body enabled only for implementation that must be understood.
-7. `find_referencing_symbols` to trace callers, data flow, and impact.
-8. `search_for_pattern` for cross-cutting names, routes, schemas, config keys, DB fields, migrations, generated artifacts, tests, and unsupported file types.
+4. Use `onboarding` only when a project has no usable Serena memory/context yet.
+5. `get_symbols_overview` for entry files and important modules before reading bodies.
+6. `find_symbol` with body disabled to discover children and public surface.
+7. `find_symbol` with body enabled only for implementation that must be understood.
+8. `find_referencing_symbols` to trace callers, data flow, and impact.
+9. `search_for_pattern` for cross-cutting names, routes, schemas, config keys, DB fields, migrations, generated artifacts, tests, and unsupported file types.
 
 Use raw `rg` or direct reads only for manifests, Markdown, config files, shell scripts, generated metadata, unsupported language files, or broad text sweeps.
 

@@ -167,7 +167,7 @@ Preferred path — delegate to the managed Codex subagent role 'serena-sync' whe
 The 'serena-sync' role is a managed Codex TOML agent installed from system/agents/serena-sync.toml. It is Codex-native; do not use Claude Code Agent(...) syntax in this repository.
 
 Fallback path (if the subagent is not available — e.g. plugin not yet reloaded):
-1. Use Serena MCP for code inspection: check_onboarding_performed -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only where needed) -> find_referencing_symbols -> search_for_pattern.
+1. Use Serena MCP for code inspection: initial_instructions -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only where needed) -> find_referencing_symbols -> search_for_pattern.
 2. Update .serena/memories with high-signal fact-only English content. Use numbered topic files (AREA-01-SLUG.md) and update CORE-01-INDEX.md when adding, renaming, or splitting memories. Code, git diff, and tests are the source of truth.
 3. Each touched memory must contain a 'Last commit: ${HEAD_SHA}' line so the state script recognises sync via direct-head-reference.
 4. Run ${COMMIT_SCRIPT} to acknowledge sync state and clear runtime markers.

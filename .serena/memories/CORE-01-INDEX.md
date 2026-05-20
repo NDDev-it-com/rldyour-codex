@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-19
-Last commit: 94cced2 chore(release): bump to 0.4.1
+Last updated: 2026-05-20
+Last commit: 697f44d chore(codex): refresh system runtime pins
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->
@@ -44,7 +44,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 - Managed subagents currently use temporary MCP isolation: the lightweight inherited/core surface stays available (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`), while specialist MCP servers remain parent-session tools until Codex subagent MCP startup is stable enough to widen safely. Disabled specialist MCP overrides include full transport metadata from `plugins/rldyour-mcps/.mcp.json`, and `codex_apps` stays inherited from Apps/connectors rather than declared as an `mcp_servers` transport.
 - Fullrepo unit-test fixtures configure local git identity inside temporary repositories and clones, so GitHub-hosted runners do not depend on global git author settings.
 - CI noise classification treats `uv` package download progress lines as known setup noise while still failing strict jobs on unrelated stderr.
-- GitHub CI/CD is manual-only for this repository's spend policy. The latest full explicit pipeline on commit `6ec3fb9` passed `validate.yml` run `26006788123` with macOS parity, `security-static.yml` run `26006788232`, `dependency-check.yml` run `26006788102`, and `release.yml` run `26006831237`, and published release `0.3.5` with deterministic bundle/SBOM/attestation output.
+- Public GitHub CI/CD is automatic for the current public-repo posture: validate and security workflows run on push/PR, CodeQL and Scorecard run on push/schedule, dependency freshness runs on a daily schedule and relevant pin-source pushes, and release packaging runs on SemVer tag pushes.
 - System install manages Codex hook runtime with `[features].hooks = true` and `[features].plugin_hooks = true`, so enabled rldyour plugin hook declarations are actually loaded.
 - Normal `main` excludes root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, and similar agent-only files through `.git/info/exclude`; `fullrepo` carries the portable agent context snapshot.
 - Normal-branch GitHub CI may run without tracked fullrepo-managed `.serena/memories`; memory taxonomy smoke still tests analyzer/fixture contracts, and the final live freshness state check is skipped until memories are present as tracked fullrepo context.
