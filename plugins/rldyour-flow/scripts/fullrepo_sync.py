@@ -90,10 +90,10 @@ def _stdout(*args: str, check: bool = True, env: dict[str, str] | None = None) -
 
 def git_identity_env() -> dict[str, str]:
     env = os.environ.copy()
-    env.setdefault("GIT_AUTHOR_NAME", "rldyour-codex")
-    env.setdefault("GIT_AUTHOR_EMAIL", "rldyour-codex@example.invalid")
-    env.setdefault("GIT_COMMITTER_NAME", "rldyour-codex")
-    env.setdefault("GIT_COMMITTER_EMAIL", "rldyour-codex@example.invalid")
+    env.setdefault("GIT_AUTHOR_NAME", "Danil Silantyev")
+    env.setdefault("GIT_AUTHOR_EMAIL", "rldyourmnd@users.noreply.github.com")
+    env.setdefault("GIT_COMMITTER_NAME", "Danil Silantyev")
+    env.setdefault("GIT_COMMITTER_EMAIL", "rldyourmnd@users.noreply.github.com")
     return env
 
 
@@ -212,6 +212,10 @@ def remote_branch_sha(remote: str, branch: str) -> str:
     if not raw:
         return ""
     return raw.split()[0]
+
+
+def remote_configured(remote: str) -> bool:
+    return _git("remote", "get-url", remote, check=False).returncode == 0
 
 
 def local_ref_sha(ref: str) -> str:
@@ -424,6 +428,7 @@ def bootstrap_init(remote: str, branch: str, dry_run: bool = False) -> None:
 def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, object]:
     root = repo_root()
     remote_ref = f"refs/remotes/{remote}/{branch}"
+    has_remote = remote_configured(remote)
     remote_sha = local_ref_sha(remote_ref) if local_only else remote_branch_sha(remote, branch)
     local_sha = local_ref_sha(f"refs/heads/{branch}")
     remote_tree = ""
@@ -441,6 +446,7 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
         "branch": _stdout("branch", "--show-current", check=False) or "detached",
         "head": _stdout("rev-parse", "--short=12", "HEAD", check=False),
         "remote": remote,
+        "remote_configured": has_remote,
         "fullrepo_branch": branch,
         "network_checked": not local_only,
         "remote_fullrepo_exists": bool(remote_sha),

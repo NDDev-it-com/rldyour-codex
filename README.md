@@ -7,7 +7,7 @@
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Latest Release](https://img.shields.io/github/v/release/NDDev-it-com/rldyour-codex)](https://github.com/NDDev-it-com/rldyour-codex/releases/latest)
 
-`rldyour-codex` is a personal Codex marketplace and system setup source maintained by Danil Silantyev ([@rldyourmnd](https://github.com/rldyourmnd)), CEO of NDDev. It owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
+`rldyour-codex` is a personal Codex marketplace and system setup source maintained by Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev. It owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
 
 It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog where nothing is treated as enabled or correct unless explicitly decided by the maintainer.
 
@@ -225,11 +225,11 @@ See [SECURITY.md](SECURITY.md) for supported surface, private disclosure procedu
 
 ## Maintainer
 
-Danil Silantyev ([@rldyourmnd](https://github.com/rldyourmnd)), CEO of NDDev.
+Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev.
 
 ## Copyright
 
-Copyright (C) 2026 Danil Silantyev (rldyourmnd) / NDDev.
+Copyright (C) 2026 Danil Silantyev (rldyourmnd), CEO & Engineer NDDev.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

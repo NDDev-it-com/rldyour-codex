@@ -11,6 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_PATH = ROOT / "config/rldyour-contract.json"
+EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"
 
 
 def load_json(path: Path) -> Any:
@@ -98,6 +99,9 @@ def main() -> int:
             continue
         if manifest.get("license") != expected_license:
             errors.append(f"{plugin}: manifest license must be {expected_license}")
+        author = manifest.get("author")
+        if not isinstance(author, dict) or author.get("name") != EXPECTED_AUTHOR:
+            errors.append(f"{plugin}: manifest author.name must be {EXPECTED_AUTHOR}")
         for key in ("homepage", "repository"):
             if manifest.get(key) != expected_repo:
                 errors.append(f"{plugin}: manifest {key} must be {expected_repo}")

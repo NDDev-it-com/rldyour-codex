@@ -15,6 +15,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ### Changed
 
 - Runtime pins updated to current stable upstream versions: Codex CLI `0.132.0`, Serena Agent `1.5.1`, and Chrome DevTools MCP `1.0.1`.
+- Plugin manifests now carry canonical authorship for Danil Silantyev
+  (`github:rldyourmnd`), CEO & Engineer NDDev, and validators enforce that
+  author/developer attribution together with AGPL-3.0-or-later licensing.
+- Generated `fullrepo` commits now default to Danil Silantyev
+  (`rldyourmnd@users.noreply.github.com`) as author and committer when no Git
+  identity is already provided by the environment.
 - System Codex docs now clarify that the owner-selected `sandbox_mode = "danger-full-access"` remains the active runtime policy while `plugin_hooks` stays an explicit official Codex opt-in.
 - Serena MCP capability smoke now uses the deterministic `list_memories` safe call for Serena Agent `1.5.1` to avoid classifying variable configuration output as CI noise.
 - Installer, doctor, marketplace validation, hook smoke, local Git hook fallback, fullrepo fallback, and Flow post-task state now use the Codex versioned plugin cache layout `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>` while retaining legacy `local` fallback where needed.
@@ -25,6 +31,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ### Security
 
 - The Codex adapter contract forbids repo-local YOLO defaults in `.codex/config.toml` or `config.toml`; the owner YOLO profile remains install-time, owner-local-only policy.
+
+### Fixed
+
+- `rldyour-flow` Stop state no longer loops on local-only `fullrepo` sync when
+  the repository has no configured remote and the local `fullrepo` snapshot
+  already matches the worktree agent context.
 
 ## [0.4.1] - 2026-05-19
 
@@ -54,7 +66,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Public open-source release under the GNU Affero General Public License v3.0 or later. `LICENSE` now contains the canonical AGPL-3.0 text verbatim, sourced from the Free Software Foundation.
 - `CODE_OF_CONDUCT.md` referencing Contributor Covenant 2.1 with a private reporting channel through GitHub Security Advisories.
 - `.github/workflows/codeql.yml` running GitHub CodeQL with the `security-and-quality` query suite for Python and GitHub Actions on every push to `main`, every pull request, and on a weekly schedule.
-- Maintainer attribution to Danil Silantyev (`@rldyourmnd`), CEO of NDDev, in `README.md`.
+- Maintainer attribution to Danil Silantyev (`github:rldyourmnd`), CEO & Engineer NDDev, in `README.md`.
 - `pyproject.toml` now declares SPDX license identifier `AGPL-3.0-or-later`, project authors, project URLs, classifiers, and keywords for public packaging metadata.
 
 ### Changed

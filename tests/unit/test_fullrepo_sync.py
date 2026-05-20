@@ -149,8 +149,25 @@ def test_status_local_only_uses_existing_tracking_ref_without_network(tmp_path: 
     payload = mod.status("origin", "fullrepo", local_only=True)
 
     assert payload["network_checked"] is False
+    assert payload["remote_configured"] is True
     assert payload["remote_fullrepo_exists"] is True
     assert payload["fullrepo_matches_worktree"] is True
+
+
+def test_status_reports_missing_remote_without_treating_local_ref_as_network(tmp_path: Path, monkeypatch) -> None:
+    git(tmp_path, "init")
+    git(tmp_path, "checkout", "-b", "main")
+    configure_git_identity(tmp_path)
+    (tmp_path / "README.md").write_text("repo\n", encoding="utf-8")
+    git(tmp_path, "add", "README.md")
+    git(tmp_path, "commit", "-m", "init")
+    monkeypatch.chdir(tmp_path)
+
+    payload = mod.status("origin", "fullrepo", local_only=True)
+
+    assert payload["network_checked"] is False
+    assert payload["remote_configured"] is False
+    assert payload["remote_fullrepo_exists"] is False
 
 
 def test_publish_uses_identity_env_fallback(tmp_path: Path, monkeypatch) -> None:
@@ -172,8 +189,8 @@ def test_publish_uses_identity_env_fallback(tmp_path: Path, monkeypatch) -> None
     commit = git(work, "rev-parse", "refs/heads/fullrepo")
     identity = git(work, "show", "-s", "--format=%an <%ae>|%cn <%ce>", commit)
     assert identity == (
-        "rldyour-codex <rldyour-codex@example.invalid>|"
-        "rldyour-codex <rldyour-codex@example.invalid>"
+        "Danil Silantyev <rldyourmnd@users.noreply.github.com>|"
+        "Danil Silantyev <rldyourmnd@users.noreply.github.com>"
     )
 
 
