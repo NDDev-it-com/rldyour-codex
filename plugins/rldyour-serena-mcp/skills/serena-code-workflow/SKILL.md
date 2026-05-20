@@ -34,9 +34,9 @@ If Serena is unavailable, continue with Codex-native tools and state the fallbac
 For reading code, follow this order unless the task is trivial or the current session lacks a listed tool:
 
 1. `activate_project` when the active project is unclear.
-2. `check_onboarding_performed` to verify whether Serena project onboarding exists.
-3. `list_memories` to discover durable project knowledge.
-4. `read_memory` only for relevant memories inferred from names.
+2. `list_memories` to discover durable project knowledge.
+3. `read_memory` only for relevant memories inferred from names.
+4. Use `onboarding` only when a project has no usable Serena memory/context yet.
 5. `get_symbols_overview` to map top-level file structure without reading full files.
 6. `find_symbol` with `include_body=false` to discover children, overloads, and symbol paths.
 7. `find_symbol` with `include_body=true` only for the exact implementation needed.

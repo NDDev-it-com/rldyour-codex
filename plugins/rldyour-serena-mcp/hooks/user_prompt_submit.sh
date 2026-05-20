@@ -25,7 +25,7 @@ if ! printf "%s" "$PROMPT" | grep -qiE 'код|code|repo|repository|project|пр
   exit 0
 fi
 
-CONTEXT="Serena-first code workflow: for repository/project/directory/file code inspection, use Serena MCP before raw text reads when available: check_onboarding_performed -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only for needed symbols) -> find_referencing_symbols -> search_for_pattern. Use raw rg/read only as fallback, broad text sweep, or tiny known-location edit."
+CONTEXT="Serena-first code workflow: for repository/project/directory/file code inspection, use Serena MCP before raw text reads when available: initial_instructions -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only for needed symbols) -> find_referencing_symbols -> search_for_pattern. Use raw rg/read only as fallback, broad text sweep, or tiny known-location edit."
 
 python3 - "$CONTEXT" <<'PY'
 import json
