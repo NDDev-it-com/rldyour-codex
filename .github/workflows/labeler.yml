@@ -1,7 +1,7 @@
 name: labeler
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened, edited]
 
 permissions:
@@ -14,6 +14,9 @@ concurrency:
 jobs:
   label:
     name: Auto-label pull request
+    # Keep public PR CI unprivileged. Fork PRs skip auto-labeling instead of
+    # using pull_request_target with a write-scoped token.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
