@@ -29,7 +29,7 @@ Use `.serena/project.local.yml` for machine-local executable paths. Use committe
 
 For supported code files, use the existing Serena-first workflow:
 
-1. `check_onboarding_performed`
+1. `initial_instructions`
 2. `list_memories`
 3. relevant `read_memory`
 4. `get_symbols_overview`
