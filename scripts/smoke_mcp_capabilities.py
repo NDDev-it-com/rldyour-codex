@@ -18,7 +18,7 @@ from mcp.client.streamable_http import streamablehttp_client
 
 
 EXPECTED_TOOLS: dict[str, set[str]] = {
-    "serena": {"initial_instructions", "get_current_config", "get_symbols_overview", "find_symbol", "read_memory"},
+    "serena": {"initial_instructions", "onboarding", "list_memories", "get_symbols_overview", "find_symbol", "read_memory"},
     "sequential-thinking": {"sequentialthinking"},
     "playwright": {"browser_navigate", "browser_close", "browser_console_messages"},
     "chrome-devtools": {"new_page", "list_console_messages", "take_screenshot"},
@@ -79,10 +79,10 @@ def _content_len(result: Any) -> int:
 
 async def _safe_call(name: str, session: ClientSession, missing_env: list[str]) -> str | None:
     if name == "serena":
-        result = await session.call_tool("get_current_config", {})
+        result = await session.call_tool("list_memories", {})
         if result.isError:
-            raise ProbeFailure("get_current_config returned isError=true")
-        return "get_current_config"
+            raise ProbeFailure("list_memories returned isError=true")
+        return "list_memories"
 
     if name == "sequential-thinking":
         result = await session.call_tool(

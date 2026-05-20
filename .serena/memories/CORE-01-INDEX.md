@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-20
-Last commit: 697f44d chore(codex): refresh system runtime pins
+Last commit: c399c75 fix(ci): stabilize serena capability smoke
 Scope: .serena/memories, .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh
 Area: CORE
 -->

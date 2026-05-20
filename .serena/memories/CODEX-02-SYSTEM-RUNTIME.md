@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-20
-Last commit: 697f44d chore(codex): refresh system runtime pins
+Last commit: c399c75 fix(ci): stabilize serena capability smoke
 Scope: ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/rules/*.rules, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, system/rules/*.rules, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_execpolicy_rules.sh, plugins/rldyour-mcps/.mcp.json
 Area: CODEX
 -->

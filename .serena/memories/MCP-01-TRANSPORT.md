@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-20
-Last commit: 697f44d chore(codex): refresh system runtime pins
+Last commit: c399c75 fix(ci): stabilize serena capability smoke
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, scripts/smoke_mcp_capabilities.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/doctor_system_codex.sh, scripts/install_system_codex.sh
 Area: MCP
 -->
@@ -40,7 +40,7 @@ Area: MCP
 - Strict runtime validation maps enabled local MCP servers to launcher prerequisites (`uvx`, `bunx`, `dart`, and optional `codex`) and fails in strict mode when a required launcher is missing.
 - Remote URL MCP smoke uses Streamable HTTP JSON-RPC `initialize` POST preflight; auth-gated `401`/`403` may pass, but unsupported POST behavior fails.
 - Serena MCP is started with `--project-from-cwd`, `--context=codex`, web dashboard disabled, and Python `3.13` through `uvx`.
-- Serena Agent `1.5.1` exposes `initial_instructions`, `onboarding`, and `get_current_config` in the Codex context; `check_onboarding_performed` is no longer an exposed active tool in the installed Codex context. Capability smoke uses `get_current_config` as the safe Serena call.
+- Serena Agent `1.5.1` exposes `initial_instructions`, `onboarding`, `list_memories`, and `get_current_config` in the Codex context; `check_onboarding_performed` is no longer an exposed active tool in the installed Codex context. Capability smoke uses `list_memories` as the deterministic safe Serena call because `get_current_config` logs a variable multi-line configuration block in CI.
 - OpenAI docs are available through `openaiDeveloperDocs` and should be preferred over general web search for OpenAI/Codex product facts.
 
 ## Contracts And Data
