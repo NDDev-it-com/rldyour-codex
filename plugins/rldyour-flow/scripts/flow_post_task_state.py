@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -33,8 +34,39 @@ def _codex_home() -> Path:
     return Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
 
 
+def _semver_key(value: str) -> tuple[int, int, int, str]:
+    match = re.match(r"^(\d+)\.(\d+)\.(\d+)(.*)$", value)
+    if not match:
+        return (0, 0, 0, value)
+    return (int(match.group(1)), int(match.group(2)), int(match.group(3)), match.group(4))
+
+
+def _installed_plugin_root(plugin: str) -> Path:
+    base = _codex_home() / "plugins/cache/rldyour-codex" / plugin
+    candidates: list[tuple[tuple[int, int, int, str], Path]] = []
+    if base.is_dir():
+        for child in base.iterdir():
+            if not child.is_dir() or child.name == "local":
+                continue
+            manifest_path = child / ".codex-plugin/plugin.json"
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (FileNotFoundError, json.JSONDecodeError):
+                continue
+            if not isinstance(manifest, dict):
+                continue
+            if manifest.get("name") != plugin:
+                continue
+            version = manifest.get("version")
+            if isinstance(version, str):
+                candidates.append((_semver_key(version), child))
+    if candidates:
+        return max(candidates, key=lambda item: item[0])[1]
+    return base / "local"
+
+
 def _installed_script(plugin: str, relative_path: str) -> Path:
-    return _codex_home() / "plugins/cache/rldyour-codex" / plugin / "local" / relative_path
+    return _installed_plugin_root(plugin) / relative_path
 
 
 def _flow_plugin_root() -> Path:

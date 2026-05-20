@@ -9,7 +9,6 @@ if [ -z "$UV_BIN" ]; then
   printf 'uv command not found\n' >&2
   exit 1
 fi
-QUICK_VALIDATE=${QUICK_VALIDATE:-"$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py"}
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 CACHE_ROOT=${CACHE_ROOT:-"$CODEX_HOME_DIR/plugins/cache/rldyour-codex"}
 
@@ -24,38 +23,50 @@ step "Release metadata"
 python3 scripts/validate_plugin_versions.py
 python3 scripts/release_manifest.py >/dev/null
 
+step "Codex contract"
+python3 scripts/validate_contract.py
+
 step "GitHub Actions pinning"
 python3 scripts/validate_action_pins.py
 
 step "Skill frontmatter"
-skill_count=0
-while IFS= read -r skill_md; do
-  skill_dir=$(dirname "$skill_md")
-  if [ -f "$QUICK_VALIDATE" ]; then
-    "$UV_BIN" run --with pyyaml python "$QUICK_VALIDATE" "$skill_dir" >/dev/null
-  else
-    python3 - "$skill_md" <<'PY' >/dev/null
+"$UV_BIN" run --with pyyaml python - <<'PY'
 from pathlib import Path
 import re
 import sys
+import yaml
 
-path = Path(sys.argv[1])
-text = path.read_text(encoding="utf-8")
-match = re.match(r"^---\n(.*?)\n---\n", text, re.S)
-if not match:
-    raise SystemExit(f"{path}: missing YAML frontmatter")
-frontmatter = match.group(1)
-for field in ("name", "description"):
-    if not re.search(rf"^{field}:\s*.+$", frontmatter, re.M):
-        raise SystemExit(f"{path}: missing {field}")
-if not re.search(r"^#\s+", text, re.M):
-    raise SystemExit(f"{path}: missing markdown title")
+errors = []
+count = 0
+for path in sorted(Path("plugins").glob("rldyour-*/skills/*/SKILL.md")):
+    text = path.read_text(encoding="utf-8")
+    match = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+    if not match:
+        errors.append(f"{path}: missing YAML frontmatter")
+        continue
+    try:
+        frontmatter = yaml.safe_load(match.group(1)) or {}
+    except Exception as exc:
+        errors.append(f"{path}: frontmatter parse failed: {exc}")
+        continue
+    if not isinstance(frontmatter, dict):
+        errors.append(f"{path}: frontmatter must be a YAML object")
+        continue
+    for field in ("name", "description"):
+        value = frontmatter.get(field)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{path}: missing {field}")
+    if not re.search(r"^#\s+", text, re.M):
+        errors.append(f"{path}: missing markdown title")
+    print(f"valid {path.parent}")
+    count += 1
+
+if errors:
+    print("\n".join(errors), file=sys.stderr)
+    raise SystemExit(1)
+
+print(f"validated skills: {count}")
 PY
-  fi
-  printf 'valid %s\n' "$skill_dir"
-  skill_count=$((skill_count + 1))
-done < <(find plugins -path '*/skills/*/SKILL.md' -print | sort)
-printf 'validated skills: %s\n' "$skill_count"
 
 step "Skill routing descriptions"
 python3 - <<'PY'
@@ -297,6 +308,9 @@ paths = [
     Path("scripts/release_sbom.py"),
     Path("scripts/check_mcp_runtime_versions.py"),
     Path("scripts/check_serena_memory_freshness.py"),
+    Path("scripts/plugin_cache_contract.py"),
+    Path("scripts/smoke_codex_hook_listing.py"),
+    Path("scripts/validate_contract.py"),
     Path("scripts/validate_agent_tools.py"),
     Path("scripts/validate_action_pins.py"),
     Path("scripts/scan_text_security.py"),
@@ -550,21 +564,11 @@ fi
 scripts/smoke_mcp_capabilities.sh "${capability_args[@]}"
 
 step "Plugin cache sync"
-if [ -d "$CACHE_ROOT" ]; then
-  for plugin_dir in plugins/rldyour-*; do
-    plugin_name=$(basename "$plugin_dir")
-    cache_dir="$CACHE_ROOT/$plugin_name/local"
-    if [ ! -d "$cache_dir" ]; then
-      printf 'missing cache directory: %s\n' "$cache_dir" >&2
-      exit 1
-    fi
-    diff -qr -x __pycache__ -x '*.pyc' "$plugin_dir" "$cache_dir" >/dev/null
-    printf 'cache in sync %s\n' "$plugin_name"
-  done
-else
+if [ ! -d "$CACHE_ROOT" ]; then
   printf 'cache root missing: %s\n' "$CACHE_ROOT" >&2
   exit 1
 fi
+python3 scripts/plugin_cache_contract.py --cache-root "$CACHE_ROOT" verify
 
 step "Hook smoke"
 scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"

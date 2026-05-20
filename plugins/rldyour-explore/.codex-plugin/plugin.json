@@ -7,9 +7,9 @@
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
-  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
-  "repository": "https://github.com/rldyourmnd/rldyour-codex",
-  "license": "MIT",
+  "homepage": "https://github.com/NDDev-it-com/rldyour-codex",
+  "repository": "https://github.com/NDDev-it-com/rldyour-codex",
+  "license": "AGPL-3.0-or-later",
   "keywords": [
     "codex",
     "research",
@@ -40,9 +40,9 @@
       "Web research",
       "Russian user-facing workflow"
     ],
-    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
-    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
-    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "websiteURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "defaultPrompt": [
       "Use $tech-research to research the technical scope before implementation.",
       "Use $web-research to research this online with authoritative source links.",

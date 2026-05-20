@@ -98,6 +98,7 @@ ROOT=\$(git rev-parse --show-toplevel)
 for guard in \\
   "\$ROOT/plugins/rldyour-flow/scripts/local_git_ai_guard.sh" \\
   "$SOURCE_GUARD" \\
+  "\${CODEX_HOME:-\$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow"/*/scripts/local_git_ai_guard.sh \\
   "\${CODEX_HOME:-\$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/local_git_ai_guard.sh"; do
   if [ -f "\$guard" ]; then
     exec bash "\$guard" "\$@"

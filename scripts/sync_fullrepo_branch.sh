@@ -9,15 +9,17 @@ else
 fi
 
 PLUGIN_SCRIPT="$ROOT/plugins/rldyour-flow/scripts/fullrepo_sync.py"
-CACHE_SCRIPT="${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/fullrepo_sync.py"
+CACHE_PLUGIN_BASE="${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow"
 
 if [ -f "$PLUGIN_SCRIPT" ]; then
   exec python3 "$PLUGIN_SCRIPT" "$@"
 fi
 
-if [ -f "$CACHE_SCRIPT" ]; then
-  exec python3 "$CACHE_SCRIPT" "$@"
-fi
+for cache_script in "$CACHE_PLUGIN_BASE"/*/scripts/fullrepo_sync.py "$CACHE_PLUGIN_BASE"/local/scripts/fullrepo_sync.py; do
+  if [ -f "$cache_script" ]; then
+    exec python3 "$cache_script" "$@"
+  fi
+done
 
 printf 'fullrepo sync script not found in repository or Codex plugin cache\n' >&2
 exit 1

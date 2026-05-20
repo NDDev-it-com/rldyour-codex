@@ -27,6 +27,21 @@ def init_repo(path: Path) -> None:
 def test_installed_script_uses_codex_home(monkeypatch, tmp_path: Path) -> None:
     codex_home = tmp_path / "codex-home"
     monkeypatch.setenv("CODEX_HOME", str(codex_home))
+    plugin_root = codex_home / "plugins/cache/rldyour-codex/rldyour-flow/0.3.3"
+    (plugin_root / ".codex-plugin").mkdir(parents=True)
+    (plugin_root / ".codex-plugin/plugin.json").write_text(
+        '{"name":"rldyour-flow","version":"0.3.3"}',
+        encoding="utf-8",
+    )
+
+    assert mod._installed_script("rldyour-flow", "scripts/fullrepo_sync.py") == (
+        plugin_root / "scripts/fullrepo_sync.py"
+    )
+
+
+def test_installed_script_uses_legacy_local_when_versioned_cache_missing(monkeypatch, tmp_path: Path) -> None:
+    codex_home = tmp_path / "codex-home"
+    monkeypatch.setenv("CODEX_HOME", str(codex_home))
 
     assert mod._installed_script("rldyour-flow", "scripts/fullrepo_sync.py") == (
         codex_home / "plugins/cache/rldyour-codex/rldyour-flow/local/scripts/fullrepo_sync.py"
