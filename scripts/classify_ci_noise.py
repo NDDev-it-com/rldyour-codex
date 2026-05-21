@@ -63,6 +63,16 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         "MCP servers print startup banners and successful safe-call traces to stderr.",
     ),
     NoiseRule(
+        "github-mcp-server-runtime",
+        re.compile(
+            r"GitHub MCP Server running on stdio|"
+            r'time=\d{4}-\d{2}-\d{2}T[0-9:.]+Z level=INFO msg="'
+            r"(starting server|server run start|server connecting|server session connected|"
+            r"session initialized|server session disconnected|server session ended)"
+        ),
+        "GitHub MCP server prints bounded lifecycle lines during deterministic capability smoke.",
+    ),
+    NoiseRule(
         "chrome-devtools-localstorage",
         re.compile(r"chrome-devtools.*localstorage|localstorage-file", re.IGNORECASE),
         "Chrome DevTools MCP warns about optional local storage in ephemeral CI.",

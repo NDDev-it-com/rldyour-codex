@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-05-21
+
+### Fixed
+
+- Strict CI runtime-noise classification now treats the bounded official
+  `github-mcp-server` `1.0.5` lifecycle stderr lines as known benign startup
+  output after the deterministic MCP capability smoke already passed.
+
 ## [0.4.3] - 2026-05-21
 
 ### Changed

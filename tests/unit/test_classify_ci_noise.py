@@ -32,6 +32,14 @@ def test_known_noise_is_classified_as_benign() -> None:
             "Tracing initialized",
             "get_supported_languages succeeded",
             "Sequential Thinking MCP Server running on stdio",
+            'time=2026-05-21T12:18:51.376Z level=INFO msg="starting server" version=1.0.5 host="" dynamicToolsets=false readOnly=false lockdownEnabled=false',
+            "GitHub MCP Server running on stdio",
+            'time=2026-05-21T12:18:51.378Z level=INFO msg="server run start"',
+            'time=2026-05-21T12:18:51.378Z level=INFO msg="server connecting"',
+            'time=2026-05-21T12:18:51.378Z level=INFO msg="server session connected" session_id=""',
+            'time=2026-05-21T12:18:51.379Z level=INFO msg="session initialized"',
+            'time=2026-05-21T12:18:51.386Z level=INFO msg="server session disconnected" session_id=""',
+            'time=2026-05-21T12:18:51.386Z level=INFO msg="server session ended"',
             "ERROR 2026-05-17 12:30:55,789 [LSP-stderr-reader:toml] solidlsp.ls_process:_read_ls_process_stderr:600 - ERROR taplo:update_configuration: failed to fetch configuration error=invalid configuration response",
             "INFO  2026-05-17 12:25:06,842 [MainThread] serena.cli:start_mcp_server:346 - Initializing Serena MCP server",
             "INFO  2026-05-17 12:25:07,197 [StartLS:bash] solidlsp.language_servers.common:_run_command:115 - Running command 'npm install --prefix ./ bash-language-server@5.6.0'",
@@ -40,7 +48,7 @@ def test_known_noise_is_classified_as_benign() -> None:
         ]
     )
 
-    assert len(benign) == 24
+    assert len(benign) == 32
     assert unknown == []
 
 
