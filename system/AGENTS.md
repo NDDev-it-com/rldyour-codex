@@ -121,6 +121,11 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 ## Git And Delivery
 
 - Prefer atomic Conventional Commits.
+- Keep history logical and inspectable: split unrelated implementation,
+  tests/validators, docs/instructions, license/metadata, generated artifacts,
+  and Serena/fullrepo sync when independently reviewable. Do not rewrite
+  already-pushed history without explicit owner approval; use a follow-up commit
+  for published branches.
 - Do not force push `main`.
 - Do not revert user changes unless explicitly requested.
 - Before final delivery, run the checks that match the touched scope and report exact commands.
