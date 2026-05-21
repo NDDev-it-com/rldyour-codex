@@ -12,13 +12,13 @@ Synchronize local repository, GitHub, and server, then deploy safely with eviden
 ## Workflow
 
 1. Read deploy contract from `AGENTS.md`, then `CLAUDE.md`, then `.serena/deploy/*.md`.
-2. Run `plugins/rldyour-flow/scripts/deploy_readiness.sh <server>` when available.
+2. Run `plugins/rldyour-flow/scripts/deploy_readiness.sh <server>` when available as the deploy preflight.
 3. Verify local git state, open PR, checks, Serena memories, docs, and GitHub sync.
 4. Inspect server baseline: git status, current commit, disk, logs before restart, process manager.
 5. Sync code to server.
 6. Run migrations only when readiness is clear.
 7. Restart/build services.
-8. Verify logs, tests, health checks, and critical behavior.
+8. Run postflight verification: logs, tests, health checks, and critical behavior.
 9. If anything fails, perform root cause analysis using server logs, code, and internet research. Fix-forward and redeploy. Ask the user with options for risky or ambiguous decisions.
 10. DB rollback only when explicit rollback command and backup/restore point are verified.
 11. Finish with `flow-post-task-sync`.
