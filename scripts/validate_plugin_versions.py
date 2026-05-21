@@ -18,6 +18,7 @@ ALLOWED_INSTALLATION = {"AVAILABLE", "INSTALLED_BY_DEFAULT", "NOT_AVAILABLE"}
 ALLOWED_AUTHENTICATION = {"ON_USE", "ON_INSTALL"}
 EXPECTED_PLUGIN_LICENSE = "AGPL-3.0-or-later"
 EXPECTED_REPOSITORY_URL = "https://github.com/NDDev-it-com/rldyour-codex"
+EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO NDDev"
 MANIFEST_PATH_FIELDS = {
     "skills": "directory",
     "mcpServers": "file",
@@ -60,6 +61,8 @@ def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, man
         errors.append(f"{plugin_name}: author metadata must be an object")
     else:
         require_non_empty_string(author.get("name"), f"{plugin_name}: author.name", errors)
+        if author.get("name") != EXPECTED_AUTHOR:
+            errors.append(f"{plugin_name}: author.name must be {EXPECTED_AUTHOR}")
     for key in ("homepage", "repository", "license"):
         require_non_empty_string(manifest.get(key), f"{plugin_name}: {key}", errors)
     if manifest.get("license") != EXPECTED_PLUGIN_LICENSE:
@@ -75,6 +78,8 @@ def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, man
         return
     for key in ("displayName", "shortDescription", "longDescription", "developerName", "category"):
         require_non_empty_string(interface.get(key), f"{plugin_name}: interface.{key}", errors)
+    if interface.get("developerName") != EXPECTED_AUTHOR:
+        errors.append(f"{plugin_name}: interface.developerName must be {EXPECTED_AUTHOR}")
     for key in ("websiteURL", "privacyPolicyURL", "termsOfServiceURL"):
         value = interface.get(key)
         if value is not None and value != EXPECTED_REPOSITORY_URL:

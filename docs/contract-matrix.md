@@ -50,10 +50,12 @@ handlers are command handlers and resolve plugin-owned scripts through
 
 ## Security Contract
 
-The maintainer YOLO profile is owner-local only. Public repository defaults must
-not add repo-local `.codex/config.toml` or `config.toml` files that set
-`danger-full-access` or `approval_policy = "never"`. The system installer may
-write those values only through the explicit owner apply flow.
+The maintainer standard profile is full-auto / YOLO:
+`profile = "rldyour-yolo"`, `approval_policy = "never"`,
+`sandbox_mode = "danger-full-access"`, and
+`default_permissions = ":danger-no-sandbox"`. This is the default installer and
+doctor contract. `--safe-mode` remains available only as an explicit
+conservative override.
 
 ## Validation
 
@@ -65,4 +67,4 @@ python3 scripts/validate_contract.py
 
 The validator compares this adapter contract against the real marketplace,
 plugin manifests, skills, managed agents, hooks, MCP server profile, slash
-command absence, and repo-local YOLO guard.
+command absence, and owner-standard full-auto policy.

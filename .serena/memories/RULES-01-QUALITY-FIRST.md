@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 761e03f chore(release): 0.4.2
 Scope: plugins/rldyour-rules, AGENTS.md, system/AGENTS.md, scripts/validate_marketplace.sh, scripts/validate_instruction_docs.py
 Area: RULES
 -->

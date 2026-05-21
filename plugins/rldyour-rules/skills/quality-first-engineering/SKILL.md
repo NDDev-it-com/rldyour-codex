@@ -31,4 +31,12 @@ Apply the owner's default engineering standard: correctness, clean architecture,
 
 Fix quality issues inside the touched scope and affected integration path. If serious technical debt is found outside scope, stop expanding and ask the user in Russian with 2-3 concrete options.
 
+## Clean Git History
+
+Use Conventional Commits. Keep history logical and inspectable: split unrelated
+implementation, tests, validators, docs/instructions, license/metadata,
+generated artifacts, and Serena/fullrepo sync into separate commits when they
+are independently reviewable. Do not rewrite already-pushed history without
+explicit owner approval; use a follow-up commit for published branches.
+
 Read `references/rules-policy.md` when a task requires the full policy.

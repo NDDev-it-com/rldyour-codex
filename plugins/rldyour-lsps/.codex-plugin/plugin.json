@@ -1,9 +1,9 @@
 {
   "name": "rldyour-lsps",
   "version": "0.1.1",
-  "description": "Auto-invoked LSP workflow layer for Codex: language server routing, health checks, setup policy, and Serena LSP integration guidance.",
+  "description": "Auto-invoked LSP workflow layer for Codex: language server routing, health checks, setup policy, and Serena LSP integration guidance. RU: маршрутизация language servers, диагностики, setup-policy и связка Serena/LSP.",
   "author": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
@@ -39,9 +39,9 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour LSPs",
-    "shortDescription": "Auto LSP routing, setup, and Serena integration",
+    "shortDescription": "Auto LSP routing/setup / RU: LSP и Serena",
     "longDescription": "This skills-only plugin defines the rldyour language server workflow for Codex. It should be selected automatically when work involves language servers, diagnostics, type checking, code intelligence, symbol navigation, semantic refactors, or project setup for Python, Rust, Dart and Flutter, TypeScript, JavaScript, Go, C, C++, Qt and QML, YAML, Docker, HTML, CSS, Shell, JSON, TOML, or Markdown. The plugin does not declare MCP servers and does not start LSPs as MCP transports. It documents stable LSP executables, health checks, install profiles, project prerequisites, and how Serena MCP should use LSP-backed language keys where Serena supports them. Runtime LSP commands should be stable local executables; first-run package managers such as bunx or uvx are reserved for setup and checks, not long-lived stdio language server sessions. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
-    "developerName": "rldyourmnd",
+    "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [
       "Automatic LSP skill routing",

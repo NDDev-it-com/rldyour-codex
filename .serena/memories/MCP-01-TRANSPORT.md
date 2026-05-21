@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-20
-Last commit: c399c75 fix(ci): stabilize serena capability smoke
+Last commit: 761e03f chore(release): 0.4.2
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, scripts/smoke_mcp_capabilities.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/doctor_system_codex.sh, scripts/install_system_codex.sh
 Area: MCP
 -->

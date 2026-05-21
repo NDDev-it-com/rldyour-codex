@@ -39,7 +39,11 @@ def test_manifest_metadata_accepts_valid_plugin_shape(tmp_path: Path) -> None:
     try:
         errors: list[str] = []
         manifest = {
-            "author": {"name": "rldyour"},
+            "author": {
+                "name": mod.EXPECTED_AUTHOR,
+                "email": "rldyourmnd@users.noreply.github.com",
+                "url": "https://github.com/rldyourmnd",
+            },
             "homepage": mod.EXPECTED_REPOSITORY_URL,
             "repository": mod.EXPECTED_REPOSITORY_URL,
             "license": mod.EXPECTED_PLUGIN_LICENSE,
@@ -49,7 +53,7 @@ def test_manifest_metadata_accepts_valid_plugin_shape(tmp_path: Path) -> None:
                 "displayName": "Demo",
                 "shortDescription": "Short",
                 "longDescription": "Long enough",
-                "developerName": "rldyour",
+                "developerName": mod.EXPECTED_AUTHOR,
                 "category": "Development",
                 "capabilities": ["skills"],
                 "defaultPrompt": ["$demo"],

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-19
-Last commit: 8c11c76 chore(release): bump to 0.4.0
+Last commit: 761e03f chore(release): 0.4.2
 Scope: AGENTS.md, .claude/CLAUDE.md, system/AGENTS.md, plugins/rldyour-flow/skills/instruction-docs-sync/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py
 Area: DOCS
 -->
@@ -36,7 +36,7 @@ This memory records how durable project instruction docs are kept aligned for Co
 - `.claude/CLAUDE.md` remains Claude Code-native and should not be reduced to `@AGENTS.md`; shared facts may overlap, but CLI-specific commands and concepts stay separate.
 - Instruction docs state that system Codex manages `[features].hooks = true`, `[features].plugin_hooks = true`, and `[features].multi_agent = true`; only `codex_hooks` remains a deprecated hook alias.
 - Instruction docs now describe temporary managed-subagent MCP isolation: subagents keep the lightweight inherited core surface (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`) while specialist MCP servers remain parent-session tools. Disabled specialist MCP overrides must include full transport metadata copied from `.mcp.json`; `codex_apps` stays inherited from Apps/connectors and must not be declared as an `mcp_servers` transport table.
-- Project instruction docs reflect the AGPL-3.0-or-later license, the public OSS posture (NDDev / Danil Silantyev (rldyourmnd) attribution), and the auto-running CI/CD model on the public `main` branch (push/PR/schedule/tag triggers). Project instruction docs do not include the AGPL license text itself; `LICENSE` carries the canonical FSF text.
+- Project instruction docs reflect the AGPL-3.0-or-later license, the public OSS posture (NDDev / Danil Silantyev (github:rldyourmnd) attribution), and the auto-running CI/CD model on the public `main` branch (push/PR/schedule/tag triggers). Project instruction docs do not include the AGPL license text itself; `LICENSE` carries the canonical FSF text.
 - Public-facing documentation (`README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`) lives on `main` (not on `fullrepo`) and is rewritten for an OSS audience. Internal Codex/Claude agent docs (`AGENTS.md`, `.claude/CLAUDE.md`) remain agent-only and live on `fullrepo`.
 
 ## Contracts And Data

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 037397e feat(codex): isolate subagent mcp startup
+Last commit: 761e03f chore(release): 0.4.2
 Scope: plugins/rldyour-explore, plugins/rldyour-browser, plugins/rldyour-security, plugins/rldyour-design, plugins/rldyour-lsps, plugins/rldyour-rules, config/skill-routing-policy.json, README.md
 Area: CORE
 -->

@@ -60,7 +60,7 @@ def generate_sbom() -> dict[str, object]:
         "rldyour-codex",
         version,
         license_declared="AGPL-3.0-or-later",
-        copyright_text="Copyright (C) 2026 Danil Silantyev (rldyourmnd) / NDDev",
+        copyright_text="Copyright (C) 2026 Danil Silantyev (github:rldyourmnd), CEO NDDev",
     )
     root_spdx_id = str(root_package["SPDXID"])
     packages = [root_package]
@@ -106,7 +106,7 @@ def generate_sbom() -> dict[str, object]:
             "creators": [
                 "Tool: scripts/release_sbom.py",
                 "Organization: NDDev",
-                "Person: Danil Silantyev (rldyourmnd)",
+                "Person: Danil Silantyev (github:rldyourmnd)",
             ],
         },
         "packages": packages,

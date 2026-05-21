@@ -11,6 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_PATH = ROOT / "config/rldyour-contract.json"
+EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO NDDev"
 
 
 def load_json(path: Path) -> Any:
@@ -98,6 +99,9 @@ def main() -> int:
             continue
         if manifest.get("license") != expected_license:
             errors.append(f"{plugin}: manifest license must be {expected_license}")
+        author = manifest.get("author")
+        if not isinstance(author, dict) or author.get("name") != EXPECTED_AUTHOR:
+            errors.append(f"{plugin}: manifest author.name must be {EXPECTED_AUTHOR}")
         for key in ("homepage", "repository"):
             if manifest.get(key) != expected_repo:
                 errors.append(f"{plugin}: manifest {key} must be {expected_repo}")
@@ -196,13 +200,29 @@ def main() -> int:
         errors.append(f"mcp.servers: expected {expected_servers}, got {actual_servers}")
 
     security = contract.get("security")
-    if isinstance(security, dict) and security.get("forbid_repo_local_yolo_defaults") is True:
-        for path in (ROOT / ".codex/config.toml", ROOT / "config.toml"):
-            if not path.exists():
-                continue
-            text = path.read_text(encoding="utf-8")
-            if "danger-full-access" in text or 'approval_policy = "never"' in text:
-                errors.append(f"{path.relative_to(ROOT)}: repo-local YOLO defaults are forbidden")
+    if isinstance(security, dict):
+        if security.get("default_profile") != "rldyour-yolo":
+            errors.append("security.default_profile must be rldyour-yolo")
+        if security.get("default_sandbox_mode") != "danger-full-access":
+            errors.append("security.default_sandbox_mode must be danger-full-access")
+        if security.get("default_approval_policy") != "never":
+            errors.append("security.default_approval_policy must be never")
+        if security.get("default_permissions") != ":danger-no-sandbox":
+            errors.append("security.default_permissions must be :danger-no-sandbox")
+        if security.get("full_auto_standard") is not True:
+            errors.append("security.full_auto_standard must be true")
+        if security.get("safe_profile") != "rldyour-safe":
+            errors.append("security.safe_profile must be rldyour-safe")
+        if security.get("safe_profile_flag") != "--safe-mode":
+            errors.append("security.safe_profile_flag must be --safe-mode")
+        install_text = (ROOT / "scripts/install_system_codex.sh").read_text(encoding="utf-8")
+        doctor_text = (ROOT / "scripts/doctor_system_codex.sh").read_text(encoding="utf-8")
+        if 'OWNER_MODE=1' not in install_text or 'profile = "rldyour-yolo"' not in install_text:
+            errors.append("scripts/install_system_codex.sh must default to rldyour-yolo full-auto mode")
+        if "--safe-mode" not in install_text:
+            errors.append("scripts/install_system_codex.sh must keep --safe-mode as an explicit override")
+        if 'OWNER_MODE=1' not in doctor_text or "owner mode yolo profile selected" not in doctor_text:
+            errors.append("scripts/doctor_system_codex.sh must validate full-auto mode by default")
 
     if errors:
         print("\n".join(errors), file=sys.stderr)

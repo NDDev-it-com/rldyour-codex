@@ -119,9 +119,23 @@ def main() -> int:
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     parser.add_argument("--codex", default=os.environ.get("CODEX_BIN", "codex"))
+    parser.add_argument(
+        "--static",
+        action="store_true",
+        help="Validate repository hook manifests without starting codex app-server.",
+    )
     args = parser.parse_args()
 
     expected = expected_hooks(args.repo_root)
+    if args.static:
+        if not expected:
+            print("no rldyour command hooks found in repository manifests", file=sys.stderr)
+            return 1
+        for plugin in sorted(set(expected.values())):
+            manifest_version(args.repo_root, plugin)
+        print(f"validated static Codex hook manifests: {len(expected)} rldyour hooks")
+        return 0
+
     hooks = hook_listing(args.codex, args.codex_home, args.repo_root)
     rldyour_hooks = [
         hook

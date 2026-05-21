@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-19
-Last commit: 94cced2 chore(release): bump to 0.4.1
+Last commit: 761e03f chore(release): 0.4.2
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh, plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, scripts/validate_agent_tools.py, scripts/validate_runtime_prereqs.py, scripts/validate_execpolicy_rules.sh, scripts/worktree_add.sh, scripts/smoke_hooks.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_serena_memory_taxonomy.sh, plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh, plugins/rldyour-flow/hooks/session_start_dispatcher.sh, plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh, plugins/rldyour-flow/scripts/flow_post_task_state.py, plugins/rldyour-flow/scripts/fullrepo_sync.py, system/rules/*.rules, pyproject.toml, tests/, .github/workflows/*.yml, docs/adr/*.md
 Area: TECHDEBT
 -->

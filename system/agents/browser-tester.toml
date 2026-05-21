@@ -1,5 +1,5 @@
 name = "browser-tester"
-description = "Browser QA agent for screenshots, console/network checks, and evidence-backed UI validation."
+description = "Browser QA agent for screenshots, console/network checks, and evidence-backed UI validation. RU: браузерный QA для скриншотов, консоли/сети и UI-доказательств."
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
@@ -44,6 +44,13 @@ mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 mcp_servers.figma.startup_timeout_sec = 60
 mcp_servers.figma.tool_timeout_sec = 120
 
+mcp_servers.github.enabled = false
+mcp_servers.github.command = "github-mcp-server"
+mcp_servers.github.args = ["stdio", "--toolsets", "context,repos,issues,pull_requests,users"]
+mcp_servers.github.env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+mcp_servers.github.startup_timeout_sec = 90
+mcp_servers.github.tool_timeout_sec = 180
+
 developer_instructions = """
 You are browser-tester, a focused browser validation agent.
 
@@ -56,6 +63,7 @@ Rules:
 - Write only the artifacts needed for testing, such as screenshots or traces. Do not edit application source files.
 
 Output:
+- If the parent or user wrote in Russian, answer in Russian; keep file paths and source terms unchanged.
 - Summarize findings by severity.
 - Include the tested URL or flow, captured evidence, and any artifact filenames.
 - If the page passes the requested checks, say so explicitly.

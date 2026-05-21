@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-This repository is the maintainer's personal Codex marketplace and system setup source, published publicly under the GNU AGPL-3.0-or-later license at https://github.com/NDDev-it-com/rldyour-codex. Maintainer: Danil Silantyev (`@rldyourmnd`), CEO of NDDev. It owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
+This repository is the maintainer's personal Codex marketplace and system setup source, published publicly under the GNU AGPL-3.0-or-later license at https://github.com/NDDev-it-com/rldyour-codex. Maintainer: Danil Silantyev (`@rldyourmnd`), CEO NDDev. It owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
 
 ## License
 
@@ -120,7 +120,12 @@ scripts/doctor_system_codex.sh --quick --strict-runtime
 - Install the local branch-aware pre-push guard in product repositories with `scripts/install_local_git_hooks.sh --repo <project> --apply`; it blocks agent-only files on product branches and permits them only on the configured fullrepo branch while keeping secret/runtime protection active.
 - Treat `branch_cleanup_state` from `plugins/rldyour-flow/scripts/flow_post_task_state.py` as a finish gate: merged local/remote workflow branches and merged workflow worktrees must be cleaned or explicitly reported as blockers before final delivery.
 - Treat bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml` plus runtime markers, as non-work; they must not force a Stop-hook post-task sync loop.
-- Standard finish order: Serena memories, `AGENTS.md` and `.claude/CLAUDE.md`, checks, atomic normal-branch commits, push, `fullrepo` publish, safe cleanup.
+- Standard finish order: Serena memories, `AGENTS.md` and `.claude/CLAUDE.md`,
+  checks, atomic normal-branch commits, push, `fullrepo` publish, safe cleanup.
+  Split unrelated implementation, tests/validators, docs/instructions,
+  license/metadata, generated artifacts, and Serena/fullrepo sync when
+  independently reviewable. Do not rewrite already-pushed history without
+  explicit owner approval.
 
 ## System Install
 

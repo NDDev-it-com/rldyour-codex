@@ -7,7 +7,7 @@
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Latest Release](https://img.shields.io/github/v/release/NDDev-it-com/rldyour-codex)](https://github.com/NDDev-it-com/rldyour-codex/releases/latest)
 
-`rldyour-codex` is a personal Codex marketplace and system setup source maintained by Danil Silantyev ([@rldyourmnd](https://github.com/rldyourmnd)), CEO of NDDev. It owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
+`rldyour-codex` is a personal Codex marketplace and system setup source maintained by Danil Silantyev (github:rldyourmnd), CEO NDDev. It owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
 
 It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog where nothing is treated as enabled or correct unless explicitly decided by the maintainer.
 
@@ -38,7 +38,7 @@ The active marketplace currently contains:
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation gates.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
+- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-repair`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, Codex and Claude Code project instructions, ADR policy, and `ry-rules-review`.
 
 Resolved architecture decisions:
@@ -69,6 +69,17 @@ scripts/install_system_codex.sh --apply
 scripts/doctor_system_codex.sh
 ```
 
+The default install posture is owner-standard full-auto:
+`profile = "rldyour-yolo"`, `approval_policy = "never"`,
+`sandbox_mode = "danger-full-access"`, and
+`default_permissions = ":danger-no-sandbox"`.
+The optional conservative override is explicit:
+
+```bash
+scripts/install_system_codex.sh --apply --safe-mode
+scripts/doctor_system_codex.sh --safe-mode
+```
+
 ## System Codex Installation
 
 This repository also stores the canonical global Codex setup for the maintainer.
@@ -85,11 +96,18 @@ Apply to the active Codex home:
 scripts/install_system_codex.sh --apply
 ```
 
+Apply the owner-standard full-access profile:
+
+```bash
+scripts/install_system_codex.sh --apply
+```
+
 Verify the installed system state:
 
 ```bash
 scripts/doctor_system_codex.sh
 scripts/doctor_system_codex.sh --quick --strict-runtime
+scripts/doctor_system_codex.sh --safe-mode
 ```
 
 Run the full bootstrap smoke flow on a new or resynced machine:
@@ -98,9 +116,9 @@ Run the full bootstrap smoke flow on a new or resynced machine:
 scripts/bootstrap_check.sh --apply
 ```
 
-The installer writes `~/.codex/AGENTS.md`, managed `~/.codex/agents/*.toml` subagent role configs, installs managed Codex execpolicy rules from `system/rules/*.rules`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies the maintainer-requested permission defaults, sets the maintainer-selected parent and subagent model defaults, writes approved MCP tool overrides, and synchronizes the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing `~/.codex/AGENTS.md`, managed subagent configs, managed rule files, and `~/.codex/config.toml` are backed up before write operations. Credentials and OAuth tokens are never written by this repository.
+The installer writes `~/.codex/AGENTS.md`, managed `~/.codex/agents/*.toml` subagent role configs, installs managed Codex execpolicy rules from `system/rules/*.rules`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies the owner-standard full-auto permission defaults unless `--safe-mode` is supplied, sets the maintainer-selected parent and subagent model defaults, writes approved MCP tool overrides, and synchronizes the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing `~/.codex/AGENTS.md`, managed subagent configs, managed rule files, and `~/.codex/config.toml` are backed up before write operations. Credentials and OAuth tokens are never written by this repository.
 
-The Codex adapter contract lives in `config/rldyour-contract.json` and is documented in `docs/contract-matrix.md`. It records the intended Codex surface: 9 plugins, 38 skills, no slash commands by design, 8 managed subagents, command-only plugin hook lifecycle mappings, versioned plugin cache layout, and the owner-local-only YOLO profile boundary. Validate it with `python3 scripts/validate_contract.py`.
+The Codex adapter contract lives in `config/rldyour-contract.json` and is documented in `docs/contract-matrix.md`. It records the intended Codex surface: 9 plugins, 38 skills, no slash commands by design, 8 managed subagents, command-only plugin hook lifecycle mappings, versioned plugin cache layout, and the owner-standard full-auto profile boundary. Validate it with `python3 scripts/validate_contract.py`.
 
 `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
 
@@ -112,11 +130,25 @@ Strict runtime mode is available when the environment must be fully reproducible
 
 ```bash
 scripts/install_system_codex.sh --apply --strict-runtime
+scripts/install_system_codex.sh --apply --safe-mode --strict-runtime
 scripts/doctor_system_codex.sh --strict-runtime
+scripts/doctor_system_codex.sh --safe-mode --strict-runtime
 python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 ```
 
-System Codex is intentionally configured for unattended maintainer-controlled execution on a trusted machine: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. Current Codex documentation treats `sandbox_mode` as the active older sandbox model when it is present, so this repository does not migrate the owner profile to beta permission profiles without an explicit policy decision. Managed subagent roles in `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`. This is a maintainer-required operating mode for trusted local machines; downstream operators should review their own permission posture before applying these defaults.
+System Codex installs owner-standard full-auto defaults:
+`profile = "rldyour-yolo"`, `approval_policy = "never"`,
+`sandbox_mode = "danger-full-access"`,
+`default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`,
+and `model_reasoning_effort = "xhigh"`. The optional conservative override is
+available through `--safe-mode`, which selects `profile = "rldyour-safe"`,
+`approval_policy = "on-request"`, and `sandbox_mode = "workspace-write"`.
+Current Codex documentation treats
+`sandbox_mode` as the active older sandbox model when it is present, so this
+repository does not migrate the owner full-auto profile to beta permission profiles
+without an explicit policy decision. Managed subagent roles in
+`system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
+`model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
 
 Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit security, design, browser, Flutter, or shadcn work.
 
@@ -225,11 +257,11 @@ See [SECURITY.md](SECURITY.md) for supported surface, private disclosure procedu
 
 ## Maintainer
 
-Danil Silantyev ([@rldyourmnd](https://github.com/rldyourmnd)), CEO of NDDev.
+Danil Silantyev (github:rldyourmnd), CEO NDDev.
 
 ## Copyright
 
-Copyright (C) 2026 Danil Silantyev (rldyourmnd) / NDDev.
+Copyright (C) 2026 Danil Silantyev (github:rldyourmnd), CEO NDDev.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

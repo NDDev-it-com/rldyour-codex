@@ -56,6 +56,7 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | `context7` | Current library documentation | `bunx`, `CONTEXT7_API_KEY` |
 | `deepwiki` | Repository documentation and explanations | remote URL |
 | `grep` | Search across public GitHub repositories | remote URL |
+| `github` | GitHub repositories, issues, pull requests, users, and context | `github-mcp-server stdio`, `GITHUB_PERSONAL_ACCESS_TOKEN` |
 | `semgrep` | Static analysis and security checks | `uvx --from semgrep==1.163.0 semgrep mcp` |
 | `shadcn` | shadcn/ui registry work | `bunx` |
 | `dart-flutter` | Dart/Flutter MCP for Dart and Flutter projects | `dart` |
@@ -73,6 +74,17 @@ export CONTEXT7_API_KEY="ctx7sk_..."
 ```
 
 The owner's current key is intentionally not stored in this repository.
+
+GitHub MCP requires the official `github-mcp-server` binary on `PATH` and this
+environment variable:
+
+```bash
+export GITHUB_PERSONAL_ACCESS_TOKEN="<github-token>"
+```
+
+The server is restricted to `context,repos,issues,pull_requests,users` so
+repository, issue, and PR workflows have parity without exposing every GitHub
+toolset by default.
 
 ## Codex Verification
 
@@ -107,6 +119,7 @@ uvx --version
 bun --version
 bunx --help
 dart --version
+github-mcp-server --help
 ```
 
 ## Figma

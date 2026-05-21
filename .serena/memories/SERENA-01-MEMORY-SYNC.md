@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 6ec3fb9 fix(hooks): harden lifecycle execution
+Last commit: 761e03f chore(release): 0.4.2
 Scope: plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, system/agents/serena-sync.toml, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->

@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-This repository is the maintainer's personal Codex marketplace, published publicly under the GNU AGPL-3.0-or-later license at https://github.com/NDDev-it-com/rldyour-codex. Maintainer: Danil Silantyev (`@rldyourmnd`), CEO of NDDev. The repository owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, and Serena project knowledge for the local Codex runtime.
+This repository is the maintainer's personal Codex marketplace, published publicly under the GNU AGPL-3.0-or-later license at https://github.com/NDDev-it-com/rldyour-codex. Maintainer: Danil Silantyev (`@rldyourmnd`), CEO NDDev. The repository owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, and Serena project knowledge for the local Codex runtime.
 
 ## License
 
@@ -126,6 +126,10 @@ python3 scripts/plugin_cache_contract.py verify
 
 - Keep `main` synchronized with `origin/main` unless working on an explicit branch or worktree workflow.
 - Prefer atomic commits with Conventional Commits.
+- Keep history logical and inspectable: split unrelated implementation,
+  tests/validators, docs/instructions, license/metadata, generated artifacts,
+  and Serena/fullrepo sync when independently reviewable. Do not rewrite
+  already-pushed history without explicit owner approval.
 - Use `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` for knowledge-only Serena updates.
 - Use `$instruction-docs-sync` after Serena memory sync when durable project instruction facts changed.
 - Use `scripts/sync_fullrepo_branch.sh --bootstrap-init` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push. Bootstrap restores existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs excludes, and removes tracked agent-only files from the current branch index when migration is needed. Use `scripts/worktree_add.sh <branch> [path]` for parallel Codex worktrees that should immediately restore agent-only context from `fullrepo`.

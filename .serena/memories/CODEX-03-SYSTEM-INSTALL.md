@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 2da696d fix(codex): harden runtime contract validation
+Last commit: 761e03f chore(release): 0.4.2
 Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py, scripts/validate_contract.py, scripts/validate_runtime_prereqs.py, scripts/validate_runtime.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml, pyproject.toml, scripts/validate_marketplace.sh, config/rldyour-contract.json
 Area: CODEX
 -->

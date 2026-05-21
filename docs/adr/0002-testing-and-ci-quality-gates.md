@@ -21,11 +21,21 @@ The repository had a strong smoke/static validation gate but no conventional uni
 - Split manual CI into fast, runtime, release, MCP, and full scopes with Ubuntu as the default runner and opt-in macOS parity.
 - Keep the no-paid static security workflow manual-only, using ShellCheck, Pyright, Semgrep CLI, action SHA-pin validation, and text security scanning.
 - Exclude Semgrep's global `IFS` tampering rule from the no-paid gate because the repository intentionally uses `IFS=$'\n\t'` as part of its strict shell prologue and relies on ShellCheck plus project validators for shell safety.
+- Keep the upstream repository public and standard-runner-only so normal push,
+  PR, scheduled, CodeQL, Scorecard, and dependency-review workflows stay in the
+  free public-repository GitHub Actions policy.
+- Avoid `pull_request_target`; the labeler runs only on same-repository
+  `pull_request` events and skips fork PRs rather than using a privileged
+  write-scoped token for untrusted public contributions.
 
 ## Consequences
 
 - Local failures should usually be diagnosable from targeted unit tests before reaching smoke checks.
-- CI spends minutes only when the owner or agent explicitly requests a workflow run. macOS coverage remains available but opt-in because it is much more expensive than Ubuntu.
+- Public upstream CI does not consume paid private-repository Actions minutes
+  while it uses standard runners. macOS coverage remains opt-in for manual
+  dispatch scopes because it is slower and more resource-heavy than Ubuntu.
+- Private forks must review the workflow set before enabling Actions because
+  private-repository usage is billed to the repository owner.
 - Coverage threshold can rise again after the highest-risk shell/Python boundaries have dedicated tests.
 
 ## Verification

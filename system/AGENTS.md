@@ -121,6 +121,11 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 ## Git And Delivery
 
 - Prefer atomic Conventional Commits.
+- Keep history logical and inspectable: split unrelated implementation,
+  tests/validators, docs/instructions, license/metadata, generated artifacts,
+  and Serena/fullrepo sync when independently reviewable. Do not rewrite
+  already-pushed history without explicit owner approval; use a follow-up commit
+  for published branches.
 - Do not force push `main`.
 - Do not revert user changes unless explicitly requested.
 - Before final delivery, run the checks that match the touched scope and report exact commands.
@@ -138,7 +143,7 @@ For edits, prefer Serena symbol tools when supported. Use `apply_patch` for manu
 
 The canonical source for this global setup is the `rldyour-codex` repository.
 
-System Codex is intentionally configured for owner-controlled YOLO execution with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, `suppress_unstable_features_warning = true`, managed subagents on `gpt-5.5`/`medium` with temporary specialist-MCP isolation, and `[features].hooks = true`, `[features].plugin_hooks = true`, plus `[features].multi_agent = true`. Current Codex documentation treats `sandbox_mode` as the active older sandbox model when present, so do not migrate this owner profile to beta permission profiles without an explicit policy decision. Current Codex CLI keeps plugin-bundled hooks behind `plugin_hooks`, so the flag is intentionally explicit. Deprecated config aliases such as `codex_hooks`, legacy `features.web_search*`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `memories.no_memories_if_mcp_or_web_search`, and `use_legacy_landlock` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
+System Codex installs the owner-standard full-auto profile by default with the official Codex config schema hint, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `profile = "rldyour-yolo"`, `model = "gpt-5.5"`, `model_reasoning_effort = "xhigh"`, `suppress_unstable_features_warning = true`, managed subagents on `gpt-5.5`/`medium` with temporary specialist-MCP isolation, and `[features].hooks = true`, `[features].plugin_hooks = true`, plus `[features].multi_agent = true`. The owner-standard mode is also referred to as YOLO mode, full-auto mode, and dangerously-skip-permissions mode. `scripts/install_system_codex.sh --apply --safe-mode` is the explicit conservative override and selects `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`, and `profile = "rldyour-safe"` only when the owner intentionally asks for that posture. Current Codex documentation treats `sandbox_mode` as the active older sandbox model when present, so do not migrate this owner profile to beta permission profiles without an explicit policy decision. Current Codex CLI keeps plugin-bundled hooks behind `plugin_hooks`, so the flag is intentionally explicit. Deprecated config aliases such as `codex_hooks`, legacy `features.web_search*`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `memories.no_memories_if_mcp_or_web_search`, and `use_legacy_landlock` must not be present. Continue to avoid destructive actions unless the owner explicitly requests them.
 
 System install and doctor checks derive rldyour plugin enablement from `.agents/plugins/marketplace.json`, the Codex adapter surface from `config/rldyour-contract.json`, and MCP server registration from `plugins/rldyour-mcps/.mcp.json`; do not add parallel hardcoded plugin or MCP lists. The installer syncs plugin cache into versioned `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/<version>` directories first, installs managed Codex execpolicy rules from `system/rules/*.rules` into `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`, then refreshes installed rldyour plugin hook trust hashes through the app-server RPC method `hooks/list` over `codex app-server --listen stdio://`; doctor and runtime smoke verify that all installed rldyour plugin hooks are live, enabled, trusted, and that managed rules are in sync.
 
@@ -147,8 +152,10 @@ Use:
 ```bash
 scripts/install_system_codex.sh --dry-run
 scripts/install_system_codex.sh --apply
+scripts/install_system_codex.sh --apply --safe-mode
 scripts/install_system_codex.sh --apply --strict-runtime
 scripts/doctor_system_codex.sh
+scripts/doctor_system_codex.sh --safe-mode
 scripts/doctor_system_codex.sh --quick --strict-runtime
 scripts/validate_fast.sh
 scripts/validate_runtime.sh --strict-runtime

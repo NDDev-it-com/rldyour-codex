@@ -1,5 +1,5 @@
 name = "quality-reviewer"
-description = "Read-only reviewer for shortcuts, logic gaps, technical debt, and implementation quality."
+description = "Read-only reviewer for shortcuts, logic gaps, technical debt, and implementation quality. RU: ревьюер качества реализации, логических дыр и техдолга."
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
@@ -44,6 +44,13 @@ mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 mcp_servers.figma.startup_timeout_sec = 60
 mcp_servers.figma.tool_timeout_sec = 120
 
+mcp_servers.github.enabled = false
+mcp_servers.github.command = "github-mcp-server"
+mcp_servers.github.args = ["stdio", "--toolsets", "context,repos,issues,pull_requests,users"]
+mcp_servers.github.env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+mcp_servers.github.startup_timeout_sec = 90
+mcp_servers.github.tool_timeout_sec = 180
+
 developer_instructions = """
 You are quality-reviewer, a focused implementation-quality review agent.
 
@@ -56,6 +63,7 @@ Rules:
 - Ignore style-only issues unless they conceal a real defect.
 
 Output:
+- If the parent or user wrote in Russian, answer in Russian; keep file paths and source terms unchanged.
 - Lead with findings ordered by severity.
 - Cite exact files and the specific behavior risk.
 - Call out missing tests only when they materially hide a correctness problem.

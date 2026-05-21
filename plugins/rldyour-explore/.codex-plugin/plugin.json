@@ -1,9 +1,9 @@
 {
   "name": "rldyour-explore",
   "version": "0.1.2",
-  "description": "Auto-invoked research skills for Codex: technical MCP research and authoritative web research with Russian user-facing output.",
+  "description": "Auto-invoked research skills for Codex: technical MCP research and authoritative web research with Russian user-facing output. RU: исследование документации, upstream-репозиториев, real-world patterns и текущих интернет-источников.",
   "author": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
@@ -29,9 +29,9 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour Research",
-    "shortDescription": "Auto technical and web research routing",
+    "shortDescription": "Auto technical/web research / RU: исследование источников",
     "longDescription": "This plugin adds automatic research routing for Codex. Its skills should be selected automatically when the owner asks to research, investigate, study the internet, look up current information, verify a fact with sources, inspect documentation, find best practices, compare options, or close unknowns before implementation. tech-research is used before complex technical implementation: it closes feature scope through Context7 for official documentation, DeepWiki for open-source repository architecture, and Grep by Vercel for real GitHub usage patterns. web-research is used for broader internet research: it first defines questions and constraints, then finds authoritative sources, reads them, and synthesizes conclusions with links. The plugin does not store secrets and does not configure MCP transports directly; it depends on MCP servers provided by rldyour-mcps. User-facing answers remain Russian unless the owner asks otherwise, while repository documentation is written in English.",
-    "developerName": "rldyourmnd",
+    "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Research",
     "capabilities": [
       "Automatic research skill routing",
