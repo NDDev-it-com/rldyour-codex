@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.7] - 2026-05-21
+
+### Fixed
+
+- Codex runtime baseline metadata and test fixtures now match the `0.133.0`
+  runtime pin, keeping root `validate_runtime_baselines.py` aligned with the
+  adapter release.
+
 ## [0.4.6] - 2026-05-21
 
 ### Changed
