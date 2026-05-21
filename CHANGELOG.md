@@ -6,6 +6,19 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.9] - 2026-05-22
+
+### Changed
+
+- Product release tags remain numeric-only (`X.Y.Z`) and the release workflow
+  now rejects prerelease tag forms for this owner-standard configuration pack.
+- `rldyour-flow` `ry-start` now routes explicit deploy/server rollout intent
+  into `ry-deploy` after implementation validation and sync.
+- `rldyour-flow` `ry-review` now defines time-window, PR, issue, branch, and
+  last-deploy target parsing before reviewer dispatch.
+- `rldyour-flow` `ry-newp` now explicitly seeds `CONTEXT-01-CORE.md` and
+  `FUTURE-01-VISION.md` after approved scaffold commits.
+
 ## [0.4.8] - 2026-05-22
 
 ### Changed
