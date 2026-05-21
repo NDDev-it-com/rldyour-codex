@@ -201,29 +201,28 @@ def main() -> int:
 
     security = contract.get("security")
     if isinstance(security, dict):
-        if security.get("default_profile") != "rldyour-safe":
-            errors.append("security.default_profile must be rldyour-safe")
-        if security.get("default_sandbox_mode") != "workspace-write":
-            errors.append("security.default_sandbox_mode must be workspace-write")
-        if security.get("default_approval_policy") != "on-request":
-            errors.append("security.default_approval_policy must be on-request")
-        if security.get("owner_yolo_profile") != "owner-local-only":
-            errors.append("security.owner_yolo_profile must be owner-local-only")
-        if security.get("owner_yolo_flag") != "--owner-mode":
-            errors.append("security.owner_yolo_flag must be --owner-mode")
+        if security.get("default_profile") != "rldyour-yolo":
+            errors.append("security.default_profile must be rldyour-yolo")
+        if security.get("default_sandbox_mode") != "danger-full-access":
+            errors.append("security.default_sandbox_mode must be danger-full-access")
+        if security.get("default_approval_policy") != "never":
+            errors.append("security.default_approval_policy must be never")
+        if security.get("default_permissions") != ":danger-no-sandbox":
+            errors.append("security.default_permissions must be :danger-no-sandbox")
+        if security.get("full_auto_standard") is not True:
+            errors.append("security.full_auto_standard must be true")
+        if security.get("safe_profile") != "rldyour-safe":
+            errors.append("security.safe_profile must be rldyour-safe")
+        if security.get("safe_profile_flag") != "--safe-mode":
+            errors.append("security.safe_profile_flag must be --safe-mode")
         install_text = (ROOT / "scripts/install_system_codex.sh").read_text(encoding="utf-8")
         doctor_text = (ROOT / "scripts/doctor_system_codex.sh").read_text(encoding="utf-8")
-        if "--owner-mode" not in install_text or 'profile = "rldyour-safe"' not in install_text:
-            errors.append("scripts/install_system_codex.sh must default to rldyour-safe and require --owner-mode for YOLO")
-        if "--owner-mode" not in doctor_text or "safe profile selected" not in doctor_text:
-            errors.append("scripts/doctor_system_codex.sh must validate safe mode by default and owner mode explicitly")
-        if security.get("forbid_repo_local_yolo_defaults") is True:
-            for path in (ROOT / ".codex/config.toml", ROOT / "config.toml"):
-                if not path.exists():
-                    continue
-                text = path.read_text(encoding="utf-8")
-                if "danger-full-access" in text or 'approval_policy = "never"' in text:
-                    errors.append(f"{path.relative_to(ROOT)}: repo-local YOLO defaults are forbidden")
+        if 'OWNER_MODE=1' not in install_text or 'profile = "rldyour-yolo"' not in install_text:
+            errors.append("scripts/install_system_codex.sh must default to rldyour-yolo full-auto mode")
+        if "--safe-mode" not in install_text:
+            errors.append("scripts/install_system_codex.sh must keep --safe-mode as an explicit override")
+        if 'OWNER_MODE=1' not in doctor_text or "owner mode yolo profile selected" not in doctor_text:
+            errors.append("scripts/doctor_system_codex.sh must validate full-auto mode by default")
 
     if errors:
         print("\n".join(errors), file=sys.stderr)

@@ -4,12 +4,12 @@ set -euo pipefail
 APPLY=0
 TRUST_HOME=0
 STRICT_RUNTIME=0
-OWNER_MODE=0
+OWNER_MODE=1
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 
 usage() {
   cat <<'EOF'
-Usage: scripts/install_system_codex.sh [--dry-run] [--apply] [--codex-home PATH] [--trust-home] [--strict-runtime] [--owner-mode]
+Usage: scripts/install_system_codex.sh [--dry-run] [--apply] [--codex-home PATH] [--trust-home] [--strict-runtime] [--owner-mode|--safe-mode]
 
 Installs the current rldyour Codex system state into CODEX_HOME.
 
@@ -24,8 +24,8 @@ Managed state:
 - plugin hooks feature flag
 - multi-agent feature flag
 - Codex config deprecated-key migration for managed global setup
-- safe public permission defaults by default
-- owner-requested YOLO permission defaults only with --owner-mode
+- owner-standard YOLO/full-auto permission defaults by default
+- optional safe permission override only with --safe-mode
 - owner-selected model defaults
 - owner-selected subagent model defaults
 - rldyour MCP server definitions
@@ -179,7 +179,7 @@ dart: $DART_CMD
 codex: ${CODEX_CMD:-not found}
 trust home: $TRUST_HOME
 strict runtime: $STRICT_RUNTIME
-owner mode: $OWNER_MODE
+full-auto standard mode: $OWNER_MODE
 EOF
 }
 
