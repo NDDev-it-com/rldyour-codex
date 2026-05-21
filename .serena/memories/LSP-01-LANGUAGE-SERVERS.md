@@ -1,58 +1,37 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 761e03f chore(release): 0.4.2
-Scope: plugins/rldyour-lsps, plugins/rldyour-lsps/scripts/check_lsps.sh, plugins/rldyour-serena-mcp, .serena/project.yml, pyrightconfig.json, README.md
+Last updated: 2026-05-22
+Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Scope: language-server setup and diagnostic proof
 Area: LSP
 -->
 
-# LSP-01-LANGUAGE-SERVERS
+# Language Server Quality Gates
 
-## Purpose
+## Scope
+language-server setup and diagnostic proof
 
-`rldyour-lsps` owns language-server routing, setup policy, health checks, and Serena LSP integration guidance for code understanding and refactors.
+## Current source of truth
+- `path:plugins/rldyour-lsps`
+- `path:README.md`
 
-## Source Of Truth
+## Last verified
+- date: 2026-05-22
+- commit: `86b2555935f4c2185658417a3aff82d225d25392`
+- checked by: Codex ry-start memory-domain normalization
 
-- `plugins/rldyour-lsps/skills/lsp-routing/SKILL.md`: language-server usage routing.
-- `plugins/rldyour-lsps/skills/lsp-health-check/SKILL.md`: diagnostics and prerequisite checks.
-- `plugins/rldyour-lsps/skills/lsp-setup/SKILL.md`: install/update/repair policy.
-- `plugins/rldyour-lsps/skills/serena-lsp-integration/SKILL.md`: Serena project language settings.
-- `plugins/rldyour-lsps/scripts/check_lsps.sh`: health-check script.
-- `pyrightconfig.json`: Python type-check configuration for repository scripts.
-- `.serena/project.yml`: project-local Serena LSP language list published through `fullrepo`.
+## Facts
+- LSP memories record language-server coverage and diagnostic proof requirements.
 
-## Entry Points
+## Evidence
+- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `path:plugins/rldyour-lsps`
+- `path:README.md`
 
-- `$lsp-routing`: choose LSP-backed diagnostics/symbol flow during implementation.
-- `$lsp-health-check`: check installed LSP health and Serena prerequisites.
-- `$lsp-setup`: install or repair language servers when explicitly requested.
-- `$serena-lsp-integration`: configure Serena project language settings.
-- `plugins/rldyour-lsps/scripts/check_lsps.sh`: local LSP health command.
+## Known pitfalls
+- Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
 
-## Current Behavior
+## Update policy
+Update after verified changes to the referenced source-of-truth files.
 
-- Serena symbolic tools are preferred for supported code structure and references.
-- `.serena/project.yml` starts Serena LSPs for `bash`, `python`, `json`, `yaml`, `toml`, and `markdown`, matching the repository's script/config/documentation surfaces.
-- Direct `rg`/file reads are still appropriate for shell, Markdown, JSON, YAML, TOML, and other text/config surfaces where LSP tools are not useful.
-- LSP setup is brew-first where applicable, with toolchain fallbacks documented by the skill.
-
-## Contracts And Data
-
-- LSP setup should not silently install broad toolchains without explicit need.
-- Serena project settings should match actual repository languages and generated/source boundaries.
-- Diagnostics are evidence; they do not replace targeted source inspection.
-
-## Invariants
-
-- Prefer semantic tools for code symbols and relationships before broad file reads when supported.
-- Do not perform risky semantic refactors without reference tracing or matching tests.
-
-## Change Rules
-
-- When adding a language profile, update the corresponding skill and `check_lsps.sh` if it has executable health checks.
-- When changing Serena LSP integration behavior, update `SERENA-01-MEMORY-SYNC.md` only if it affects memory/code workflow contracts.
-
-## Verification
-
-- `plugins/rldyour-lsps/scripts/check_lsps.sh`: local LSP health.
-- `scripts/validate_marketplace.sh`: shell/Python/skill validation.
+## Delete / merge policy
+- Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.

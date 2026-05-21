@@ -1,61 +1,37 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: e2dd718 chore(release): prepare codex 0.4.8
-Scope: plugins/rldyour-design, plugins/rldyour-browser, config/skill-routing-policy.json, README.md
+Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Scope: design, UI, Figma, and visual validation workflow
 Area: DESIGN
 -->
 
 # DESIGN-01-RLDYOUR-DESIGN
 
-## Purpose
+## Scope
+design, UI, Figma, and visual validation workflow
 
-`rldyour-design` owns design and frontend UI workflows for Codex: Figma-to-code, design systems, strict FSD placement, i18n/content classification, shadcn/ui, ReactBits, and browser-validated delivery.
+## Current source of truth
+- `path:README.md`
+- `path:plugins/rldyour-design`
 
-## Source Of Truth
+## Last verified
+- date: 2026-05-22
+- commit: `86b2555935f4c2185658417a3aff82d225d25392`
+- checked by: Codex ry-start memory-domain normalization
 
-- `plugins/rldyour-design/skills/ry-design/SKILL.md`: end-to-end design workflow.
-- `plugins/rldyour-design/skills/figma-to-code/SKILL.md`: Figma implementation workflow.
-- `plugins/rldyour-design/skills/design-system-implementation/SKILL.md`: tokens/theme/UI-kit work.
-- `plugins/rldyour-design/skills/fsd-frontend-architecture/SKILL.md`: FSD placement.
-- `plugins/rldyour-design/skills/design-validation/SKILL.md`: browser/static design validation.
-- `plugins/rldyour-browser/skills/browser-validation/SKILL.md`: browser proof for UI changes.
-- `config/skill-routing-policy.json`: routing expectations.
+## Facts
+- Design memories record Figma, tokens, component reuse, accessibility, and browser evidence requirements.
 
-## Entry Points
+## Evidence
+- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `path:README.md`
+- `path:plugins/rldyour-design`
 
-- `$ry-design`: full design/UI workflow.
-- `$figma-to-code`: implement from Figma.
-- `$design-system-implementation`: centralized tokens/theme/UI kit.
-- `$fsd-frontend-architecture`: FSD placement decisions.
-- `$design-validation`: visual/browser/static validation.
+## Known pitfalls
+- Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
 
-## Current Behavior
+## Update policy
+Update after verified changes to the referenced source-of-truth files.
 
-- Figma is the source of truth for Figma-to-code tasks; implementation adapts design into project architecture, tokens, UI kit, and i18n.
-- Browser-visible UI changes require browser validation when a browser can be run.
-- `ry-design` now explicitly treats accessibility checks, mobile viewport proof, component reuse, and visual artifacts as part of the design evidence contract when the task touches UI behavior.
-- Design workflows classify dynamic/static/admin content and avoid hardcoding project data into UI where data ownership is dynamic.
-- New frontend areas default to strict FSD if the project has no stronger local architecture.
-
-## Contracts And Data
-
-- Use existing project components/tokens before inventing new UI primitives.
-- Store screenshots and temporary browser evidence under `browser/` and do not commit them unless explicitly requested.
-- Do not use visible in-app instructional text to describe app functionality unless the product itself requires it.
-
-## Invariants
-
-- UI text must fit its containers across mobile and desktop viewports.
-- Do not build marketing landing pages when the user asked for a usable app/tool unless explicitly required.
-- Use icons, tooltips, controls, and dense task-oriented layouts according to project and Codex frontend guidance.
-
-## Change Rules
-
-- When design workflows change, update route tests and this memory.
-- When browser validation requirements change, update `rldyour-browser` skills and design validation docs together.
-
-## Verification
-
-- `python3 scripts/validate_skill_routing.py`: design skill routing.
-- `scripts/validate_marketplace.sh`: skill metadata and routing validation.
-- Browser validation through Playwright/Chrome DevTools when implementing UI.
+## Delete / merge policy
+- Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.

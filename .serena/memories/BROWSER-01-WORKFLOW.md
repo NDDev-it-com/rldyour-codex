@@ -1,18 +1,18 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
 Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
-Scope: MCP runtime transport and pin policy
-Area: MCP
+Scope: browser-visible validation and debugging workflows
+Area: BROWSER
 -->
 
-# MCP-01-TRANSPORT
+# Browser Workflow
 
 ## Scope
-MCP runtime transport and pin policy
+browser-visible validation and debugging workflows
 
 ## Current source of truth
-- `path:plugins/rldyour-mcps/.mcp.json`
 - `path:README.md`
+- `path:plugins/rldyour-browser`
 
 ## Last verified
 - date: 2026-05-22
@@ -20,12 +20,12 @@ MCP runtime transport and pin policy
 - checked by: Codex ry-start memory-domain normalization
 
 ## Facts
-- MCP memories record server ownership, transports, versions, and toolset constraints.
+- Browser memories route UI and runtime validation through Playwright and Chrome DevTools when relevant.
 
 ## Evidence
 - `commit:86b2555935f4c2185658417a3aff82d225d25392`
-- `path:plugins/rldyour-mcps/.mcp.json`
 - `path:README.md`
+- `path:plugins/rldyour-browser`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

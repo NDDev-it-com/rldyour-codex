@@ -1,17 +1,17 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
 Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
-Scope: MCP runtime transport and pin policy
-Area: MCP
+Scope: security posture and blocking/warning policy
+Area: SECURITY
 -->
 
-# MCP-01-TRANSPORT
+# Security Posture
 
 ## Scope
-MCP runtime transport and pin policy
+security posture and blocking/warning policy
 
 ## Current source of truth
-- `path:plugins/rldyour-mcps/.mcp.json`
+- `path:plugins/rldyour-security`
 - `path:README.md`
 
 ## Last verified
@@ -20,11 +20,11 @@ MCP runtime transport and pin policy
 - checked by: Codex ry-start memory-domain normalization
 
 ## Facts
-- MCP memories record server ownership, transports, versions, and toolset constraints.
+- Security memories record block/warn/review classes and defensive-only review policy.
 
 ## Evidence
 - `commit:86b2555935f4c2185658417a3aff82d225d25392`
-- `path:plugins/rldyour-mcps/.mcp.json`
+- `path:plugins/rldyour-security`
 - `path:README.md`
 
 ## Known pitfalls

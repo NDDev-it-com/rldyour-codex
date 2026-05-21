@@ -1,191 +1,39 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: e2dd718 chore(release): prepare codex 0.4.8
-Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_contract.py, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, config/rldyour-contract.json, docs/contract-matrix.md, system/agents/*.toml, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
+Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
 
 # RELEASE-01-VALIDATION
 
-## Purpose
+## Scope
+release readiness, versioning, and artifact hygiene
 
-This memory records the validation and release gates that keep the marketplace, plugins, hooks, MCP runtime, managed agents, and agent-only context coherent.
+## Current source of truth
+- `path:VERSION`
+- `path:CHANGELOG.md`
+- `path:.github/workflows/release.yml`
 
-## Source Of Truth
+## Last verified
+- date: 2026-05-22
+- commit: `86b2555935f4c2185658417a3aff82d225d25392`
+- checked by: Codex ry-start memory-domain normalization
 
-- `scripts/validate_marketplace.sh`: top-level validation pipeline.
-- `scripts/validate_fast.sh`: fast local/CI validation slice for static checks, routing, security text scan, and unit coverage.
-- `scripts/validate_runtime.sh`: installer, hook, fullrepo, and runtime prerequisite validation slice.
-- `scripts/validate_release.sh`: release manifest, SBOM, plugin version, and release artifact dry-run slice.
-- `scripts/validate_contract.py`: Codex adapter contract validator for plugin/skill/agent/hook/MCP/cache/security surface.
-- `scripts/plugin_cache_contract.py`: versioned installed plugin cache parity validator.
-- `scripts/smoke_codex_hook_listing.py`: live Codex app-server hook listing/trust smoke.
-- `scripts/validate_agent_tools.py`: Codex-native agent/skill surface validation.
-- `scripts/validate_plugin_versions.py`: plugin manifest and marketplace metadata validation.
-- `scripts/validate_skill_routing.py`: deterministic prompt-to-skill routing checks.
-- `scripts/validate_action_pins.py`: full-SHA pin validation for external GitHub Actions.
-- `scripts/validate_execpolicy_rules.sh`: Codex execpolicy rule validation for managed YOLO rails.
-- `scripts/scan_text_security.py`: tracked and agent-only text scan for secret-like values and hidden Unicode controls.
-- `scripts/smoke_hooks.sh`: hook wiring, `PLUGIN_ROOT` command execution, and lifecycle smoke.
-- `scripts/smoke_serena_memory_taxonomy.sh`: memory taxonomy/analyzer/hook smoke.
-- `scripts/smoke_serena_memory_freshness.sh`: memory freshness regression smoke.
-- `scripts/doctor_system_codex.sh`: installed runtime doctor.
-- `scripts/release_manifest.py`: generated release manifest.
-- `scripts/release_sbom.py`: generated SPDX 2.3 SBOM from plugin manifests and MCP runtime pins.
-- `scripts/validate_runtime_prereqs.py`: strict launcher prerequisite validator for enabled MCP/Codex runtime surfaces.
-- `scripts/classify_ci_noise.py`: strict targeted stderr/log classifier for CI noise.
-- `pyproject.toml`: pytest, coverage, and Python 3.13 runtime contract.
-- `.github/actions/setup-codex-runtime/action.yml`: shared GitHub Actions setup for Python, uv, Bun, Dart, system packages, optional pinned Codex CLI, and the pinned official GitHub MCP server binary.
-- `.github/workflows/security-static.yml`: auto-running no-paid static security workflow (push to main, pull requests, weekly schedule, workflow_dispatch).
-- `.github/workflows/release.yml`: auto-running release bundle, SBOM, attestation, and GitHub Release workflow (push of SemVer tags `[0-9]*.[0-9]*.[0-9]*` and prereleases, plus workflow_dispatch).
-- `.github/workflows/codeql.yml`: auto-running GitHub CodeQL analysis (push to main, pull requests, weekly schedule) with the `security-and-quality` query suite for Python and GitHub Actions. Pinned `github/codeql-action@458d36d7d4f47d0dd16ca424c1d3cda0060f1360 # v3`.
-- `.github/workflows/scorecard.yml`: auto-running OpenSSF Scorecard (push to main, weekly schedule, branch protection rule changes, dispatch). Uploads SARIF to the GitHub Security tab and publishes results to `scorecard.dev`. Pinned `ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3`.
-- `.github/workflows/dependency-review.yml`: pull-request-only gate. Blocks PRs with high-severity vulnerabilities or licenses outside the AGPL-3.0-compatible allow-list. Pinned `actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0`.
-- `.github/workflows/labeler.yml`: pull_request_target trigger applies area labels by changed paths defined in `.github/labeler.yml`. Pinned `actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0`.
-- `CHANGELOG.md` and `VERSION`: release notes and marketplace version.
-- `.github/workflows/validate.yml`: auto-running validation workflow on push to main, pull requests, and workflow_dispatch. Fast and runtime jobs run on Ubuntu and macOS automatically on push/PR; release dry-run and dependency-pins run on Ubuntu only. The workflow_dispatch path still respects `scope` and `include_macos` inputs. The `MCP runtime pin freshness` job runs without `--fail-on-outdated` since `0.4.1` so stale upstream pins do not block pull requests; `dependency-check.yml` continues to fail on stale pins for the scheduled maintainer signal.
-- `.github/workflows/dependency-check.yml`: auto-running MCP pin freshness workflow on daily schedule, on push to MCP pin sources (`config/mcp-runtime-versions.env`, `plugins/rldyour-mcps/.mcp.json`, `scripts/check_mcp_runtime_versions.py`, the workflow file itself), and workflow_dispatch. Job renamed to `MCP runtime pin freshness (scheduled)` to disambiguate from the `MCP runtime pin freshness` job exported by `validate.yml`.
+## Facts
+- Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
-## Entry Points
+## Evidence
+- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `path:VERSION`
+- `path:CHANGELOG.md`
+- `path:.github/workflows/release.yml`
 
-- `scripts/validate_marketplace.sh`: run before finalizing repository changes.
-- `scripts/validate_fast.sh`: run the fast local CI slice.
-- `scripts/validate_runtime.sh --strict-runtime`: run installer/runtime/hook/fullrepo gates with strict prerequisite checks.
-- `scripts/validate_release.sh`: run release manifest/SBOM/version gates.
-- `python3 scripts/validate_contract.py`: run source-tree Codex adapter contract gate.
-- `python3 scripts/plugin_cache_contract.py verify`: run installed cache parity check.
-- `python3 scripts/smoke_codex_hook_listing.py`: run live installed hook listing/trust check.
-- `scripts/doctor_system_codex.sh`: run after installing changed global config/plugins/hooks/agents.
-- `python3 scripts/release_manifest.py`: inspect release inventory.
-- `python3 scripts/release_sbom.py`: inspect generated SBOM inventory.
-- `python3 scripts/check_mcp_runtime_versions.py`: validate pinned runtime versions.
-- `python3 scripts/validate_action_pins.py`: validate external GitHub Actions are pinned to 40-character commit SHAs.
-- `scripts/validate_execpolicy_rules.sh`: validate managed Codex execpolicy rules when Codex CLI is available.
-- `python3 scripts/scan_text_security.py`: scan repository text for secret-like patterns and hidden Unicode controls without printing matched values.
-- `uv run --with pytest --with pytest-cov --with pyyaml python -m pytest`: run unit tests and coverage threshold.
-- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validate restored agent-only instruction docs.
+## Known pitfalls
+- Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
 
-## Current Behavior
+## Update policy
+Update after verified changes to the referenced source-of-truth files.
 
-- Marketplace validation now runs `uv run --with pyyaml python scripts/validate_agent_tools.py` before shell/Python/smoke checks.
-- Marketplace validation now runs `python3 scripts/validate_contract.py` after release metadata validation.
-- Marketplace validation now batches skill frontmatter checks in one `uv run --with pyyaml python` process instead of invoking a Python process per skill.
-- `scripts/validate_agent_tools.py` verifies the temporary managed-subagent MCP isolation policy from the current `.mcp.json` registry. Every current non-core MCP server must be explicitly disabled in each managed agent TOML, each disabled MCP override must include registry-matching transport metadata, and the lightweight core inherited surface plus built-in `codex_apps` remain allowed without declaring `codex_apps` as an `mcp_servers` table.
-- Marketplace validation now runs `python3 scripts/validate_action_pins.py` before skill checks.
-- Marketplace validation now runs the Python unit/coverage harness and requires at least 75% coverage.
-- Marketplace validation runs `scripts/validate_execpolicy_rules.sh` when Codex CLI is available, and runtime validation enforces it after temporary installation.
-- Runtime validation now runs `scripts/smoke_codex_hook_listing.py` after temporary install and execpolicy validation, proving bundled plugin hooks are loaded/trusted by Codex.
-- Release validation now includes `python3 scripts/validate_contract.py`, so adapter surface drift blocks release dry-run.
-- Python syntax checks in `scripts/validate_marketplace.sh` include `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`, `scripts/plugin_cache_contract.py`, `scripts/smoke_codex_hook_listing.py`, `scripts/validate_contract.py`, `scripts/validate_agent_tools.py`, `scripts/validate_action_pins.py`, `scripts/scan_text_security.py`, `scripts/classify_ci_noise.py`, and `scripts/release_sbom.py`.
-- Marketplace validation runs `scripts/smoke_serena_memory_taxonomy.sh` after `scripts/smoke_serena_memory_freshness.sh`.
-- `scripts/smoke_hooks.sh` supports multiple hooks under the same event/matcher, selects the expected hook by script path, rejects cwd/cache-search command wrappers, and runs configured hook commands from a temporary git repo with plugin runtime environment variables.
-- `scripts/smoke_hooks.sh` includes a fake-network Flow SessionStart regression: a fake `git` sleeps/fails on `fetch` and `ls-remote`, and the smoke requires fast offline context without any network git calls.
-- `scripts/smoke_hooks.sh` includes a fake-network Flow Stop regression: a fake `git` sleeps/fails on `fetch` and `ls-remote`, and the smoke requires local-only Stop state without network git calls.
-- `scripts/smoke_hooks.sh` fails if a registered Serena or Flow hook script in `hooks.json` is not covered by its smoke manifest.
-- `scripts/smoke_hooks.sh` sends a large hook payload to every registered Serena/Flow command hook plus Stop dispatcher child scripts to prove they drain stdin and do not trigger Codex broken-pipe failures.
-- `scripts/smoke_hooks.sh` writes large-stdin hook output to a temporary file and waits with an explicit timeout before reading output, so the BrokenPipe regression check stays bounded even if a hook stalls.
-- `scripts/smoke_hooks.sh` verifies the Flow PreToolUse cwd guard blocks common commands that would rename or delete the active Codex cwd.
-- `scripts/smoke_hooks.sh` includes a bootstrap-only `.serena` regression scenario: an unborn git repository containing only auto-created `.serena/project.yml`, `.serena/.gitignore`, and flow runtime markers must not require Flow post-task sync.
-- `scripts/smoke_hooks.sh` runs each hook smoke through a process-group timeout wrapper controlled by `RLDYOUR_HOOK_SMOKE_TIMEOUT` so a stuck hook reports a labeled timeout instead of hanging validation.
-- `.github/workflows/validate.yml` is auto-running for public-repo CI/CD: fast/runtime/release/MCP jobs trigger on push to main, pull requests targeting main, and SemVer tag pushes (no longer manual-only). Fast and runtime jobs include macOS parity by default on push/PR. `workflow_dispatch` remains as a narrower-scope fallback that respects `scope` and `include_macos` inputs.
-- `.github/branch-protection/main.json` enumerates required status checks for the public `main` branch (Fast validation ubuntu/macos, Runtime smoke ubuntu/macos, Release dry-run, MCP runtime pin freshness, No-paid static security, Analyze python, Analyze actions). `strict_required_status_checks=true`. Maintainer keeps admin access (`enforce_admins=false`).
-- The manual `validate.yml` MCP safe-call job bootstraps `fullrepo` agent context before installing into temporary `CODEX_HOME`, then runs deterministic MCP capability calls and strict stderr classification against known first-run MCP/uv/Serena startup noise.
-- `scripts/classify_ci_noise.py` recognizes known first-run Taplo/LSP configuration stderr such as `failed to fetch configuration` and `invalid configuration response`, plus bounded official GitHub MCP `1.0.5` lifecycle lines from deterministic MCP capability smoke, while strict mode still fails on unknown MCP safe-call output.
-- `scripts/smoke_codex_hooks_migration.sh` now expects installer output to contain `[features].hooks = true` and `[features].plugin_hooks = true`, while removing legacy `codex_hooks` aliases.
-- `scripts/release_sbom.py` declares `licenseDeclared = "AGPL-3.0-or-later"` for the root `rldyour-codex` package and all owned plugin packages, uses `supplier = "Organization: NDDev"`, sets `documentNamespace` to `https://github.com/NDDev-it-com/rldyour-codex/releases/{version}/sbom-{ISO timestamp}`, and lists `Tool: scripts/release_sbom.py`, `Organization: NDDev`, and `Person: Danil Silantyev (github:rldyourmnd)` as creators. `tests/unit/test_release_sbom.py` asserts the AGPL declaration and canonical namespace URL.
-- `scripts/smoke_codex_hooks_migration.sh` and `scripts/doctor_system_codex.sh` keep deprecated key migration logic synchronized (including `codex_hooks`, legacy `web_search*`, unified exec/instructions/memories keys, and `use_legacy_landlock` cleanup).
-- `scripts/doctor_system_codex.sh` keeps fullrepo current-state strict locally; a dirty normal branch or stale fullrepo is a real doctor failure outside the GitHub Actions advisory path.
-- `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to the app-server RPC method `hooks/list`.
-- `scripts/smoke_codex_hook_listing.py` additionally verifies live hook source paths include the versioned installed cache path `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>/hooks.json`.
-- `scripts/doctor_system_codex.sh` also verifies that installed managed subagent TOML files match source, preserve the temporary specialist-MCP isolation policy, include complete disabled transport metadata, and do not declare built-in `codex_apps` under `mcp_servers`.
-- `scripts/check_mcp_runtime_versions.py` checks npm, PyPI, and GitHub release pins; `GITHUB_MCP_SERVER_VERSION` tracks `github/github-mcp-server` release tags without a leading `v`.
-- `.github/actions/setup-codex-runtime/action.yml` downloads `github-mcp-server_<OS>_<ARCH>.tar.gz`, verifies it against the published checksums file, installs it into the runner temp bin directory, and exposes it through `GITHUB_PATH` before strict runtime jobs run.
-- GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
-- `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
-- `.github/workflows/security-static.yml` runs on push to `main`, pull requests, weekly schedule, and workflow_dispatch; it runs action pin validation, actionlint `1.7.12`, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
-- `.github/workflows/dependency-check.yml` runs on daily schedule, on push to MCP pin sources, and workflow_dispatch; it is the maintainer signal that fails on stale MCP/runtime pins.
-- `.github/workflows/release.yml` publishes exact SemVer tags without a `v` prefix on tag push or workflow_dispatch, bootstraps `fullrepo` agent context before requiring agent docs, runs `validate_agent_tools.py` through `uv --with pyyaml`, extracts versioned release notes with a portable AWK expression, and produces deterministic `tar.gz` bundles, release manifests, generated SPDX SBOMs, GitHub dependency graph SBOM export via `/dependency-graph/sbom`, artifact attestations, and GitHub Releases.
-- `scripts/classify_ci_noise.py` keeps known benign third-party stderr documented while failing targeted strict jobs on unknown lines.
-- `config/skill-routing-policy.json` version 2 assigns routing classes to all 38 skills and requires cases for implicit, explicit-only, and finalization skills.
-- Text security scan covers tracked text plus agent-only instruction/memory/research paths and rejects secret-like values, BIDI controls, and zero-width controls. When `.git` is absent, it falls back to a bounded text-extension tree walk so extracted release bundles and temporary audit copies are not under-scanned.
-- `config/skill-routing-policy.json` supports `not_expected` assertions for conflict checks; broad review prompts must not route directly to orchestrated reviewer-only micro-skills.
-- Full explicit GitHub CI/CD for commit `037397e685b6e347b56c061c7d2d03fc3e208da6` passed on 2026-05-17 UTC: `validate.yml` run `25998372448` with full scope and macOS parity, `security-static.yml` run `25998372535`, `dependency-check.yml` run `25998372436`, and `release.yml` run `25998372557`.
-- Release `0.3.2` is published from commit `037397e` (`VERSION=0.3.2`) through manual release run `25998372557`. The GitHub Release tag is `0.3.2`, published at `2026-05-17T17:56:07Z`, with `release-manifest.json`, `release-notes.md`, `rldyour-codex-0.3.2.tar.gz`, `sbom.spdx.json`, and `SHA256SUMS` assets. The release keeps changelog coverage in `CHANGELOG.md`, deterministic release manifest/SBOM validation, manual-only CI workflows, strict runtime prerequisite gates, ordered lifecycle hook behavior, managed execpolicy rules, bounded hook smoke, CODEX_HOME-aware flow state, clean-runner MCP safe-call stderr classification, and temporary managed-subagent MCP startup isolation.
-- Local validation for `66070a8` / version `0.3.3` passed on 2026-05-18: `scripts/validate_fast.sh` (68 tests, 75.83% coverage, 260-file text security scan), `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, `scripts/validate_marketplace.sh`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, and release manifest/SBOM generation.
-- The `66070a8` runtime startup smoke launched `codex --no-alt-screen` after installing fixed agents and confirmed the previous `Ignoring malformed agent role definition ... invalid transport` warnings were absent.
-- Local validation for `cdad168` / version `0.3.4` passed on 2026-05-18: `scripts/validate_fast.sh` (69 tests, 75.69% coverage, 260-file text security scan), `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, `scripts/validate_execpolicy_rules.sh`, `scripts/validate_marketplace.sh`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, `git diff --check`, release manifest/SBOM JSON generation, and direct `session_start_dispatcher.sh` timing at about `0.11s`.
-- Full explicit GitHub CI/CD for commit `cdad168b7aad0099a5bf7dd6d1f805af96469b11` passed on 2026-05-17 UTC: `validate.yml` run `25999559961`, `security-static.yml` run `25999559930`, `dependency-check.yml` run `25999559948`, and `release.yml` run `25999559947`.
-- `validate.yml` run `25999559961` passed full scope with macOS parity: Fast validation and Runtime smoke passed on both Ubuntu and macOS, MCP runtime pin freshness passed, Release dry-run passed, and MCP safe call smoke passed on Ubuntu.
-- `security-static.yml` run `25999559930` passed action pin validation, actionlint, text security scan, ShellCheck, Pyright, and Semgrep CLI without paid GitHub Code Security.
-- Release `0.3.4` is published from commit `cdad168` through manual release run `25999559947`. The GitHub Release tag is `0.3.4`, with `release-manifest.json`, `release-notes.md`, `rldyour-codex-0.3.4.tar.gz`, `sbom.spdx.json`, and `SHA256SUMS` assets. The only GitHub Actions annotations observed were setup-uv cache reservation warnings; all workflow conclusions were `success`.
-- Local validation for `6ec3fb9` / version `0.3.5` passed on 2026-05-18: `scripts/smoke_hooks.sh --repo-only`, `uv run --with pytest --with pytest-cov --with pyyaml python -m pytest -q` (70 tests, 76.43% coverage), `scripts/validate_fast.sh`, `scripts/validate_release.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `scripts/validate_marketplace.sh`, `python3 scripts/validate_plugin_versions.py`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, `python3 scripts/validate_agent_tools.py`, `python3 scripts/scan_text_security.py`, and `git diff --check`.
-- Full explicit GitHub CI/CD for commit `6ec3fb9345cb8b6709930f9ff634a3dc8a410469` passed on 2026-05-18 UTC: `validate.yml` run `26006788123` with full scope and macOS parity, `security-static.yml` run `26006788232`, `dependency-check.yml` run `26006788102`, and `release.yml` run `26006831237`.
-- `validate.yml` run `26006788123` passed Release dry-run, Fast validation on Ubuntu and macOS, Runtime smoke on Ubuntu and macOS, MCP runtime pin freshness, and MCP safe call smoke on Ubuntu.
-- `security-static.yml` run `26006788232` passed action pin validation, actionlint, text security scan, ShellCheck, Pyright, and Semgrep CLI without paid GitHub Code Security.
-- Release `0.3.5` is published from commit `6ec3fb9` through manual release run `26006831237`. The GitHub Release tag is `0.3.5`, published at `2026-05-18T00:14:24Z`, with `release-manifest.json`, `release-notes.md`, `rldyour-codex-0.3.5.tar.gz`, `sbom.spdx.json`, and `SHA256SUMS` assets. The only GitHub Actions annotations observed were setup-uv cache reservation warnings; all workflow conclusions were `success`.
-- Local validation for `94cced2` / version `0.4.1` passed on 2026-05-19: `scripts/validate_fast.sh` (72 tests, 76.55% coverage), `scripts/validate_release.sh`, `python3 scripts/validate_action_pins.py` (9 workflow files including `scorecard.yml`, `dependency-review.yml`, `labeler.yml`). Public-repo CI on `8c11c76` confirmed `validate.yml` (Fast ubuntu+macos, Runtime ubuntu+macos, MCP safe-call ubuntu, Release dry-run) success, `security-static.yml` success, `codeql.yml` success on rerun (first push failure was a transient Code Security availability lag after the visibility switch), `release.yml` auto-published Release `0.4.0` from tag push at 2026-05-18T17:59:31Z (run `26051001280`).
-- Local validation for `8c11c76` / version `0.4.0` passed on 2026-05-19: `scripts/validate_fast.sh` (72 tests, 76.55% coverage, 261-file text security scan), `scripts/validate_marketplace.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, `python3 scripts/validate_action_pins.py` (6 workflow files including new `codeql.yml`), `python3 scripts/validate_plugin_versions.py` (9 plugins, no plugin behavior bump), and `git diff --check`. The `0.4.0` release is licensing/CI/docs only; no plugin behavior versions changed.
-- Release `0.4.0` adds: AGPL-3.0-or-later relicense (canonical FSF text in LICENSE), public CI/CD auto-trigger model (validate.yml + security-static.yml + release.yml on tag push + dependency-check.yml on daily schedule + new codeql.yml), Code of Conduct (Contributor Covenant 2.1 reference), AGPL declaration in SBOM, branch-protection desired state for public `main`, and public packaging metadata in `pyproject.toml`.
-- Local validation for `756c23e` / version `0.3.5` passed on 2026-05-18: `scripts/smoke_hooks.sh --repo-only`, `scripts/validate_fast.sh` (70 tests, 76.43% coverage, 261-file text security scan), `scripts/validate_marketplace.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, and `git diff --check`. GitHub CI/CD was not triggered for this follow-up because repository Actions remain explicit-run only.
-- Explicit GitHub CI for commit `756c23e344714aadc48f17801b970972c1cf8a69` passed on 2026-05-18 UTC without publishing a release: `validate.yml` run `26007347307` with `scope=full` and `include_macos=true`, `security-static.yml` run `26007347172`, and `dependency-check.yml` run `26007347330`.
-- `validate.yml` run `26007347307` passed Fast validation on Ubuntu and macOS, Runtime smoke on Ubuntu and macOS, MCP runtime pin freshness, Release dry-run, and MCP safe call smoke on Ubuntu.
-- `security-static.yml` run `26007347172` passed action SHA pin validation, actionlint, text security scan, ShellCheck, Pyright, and Semgrep CLI. `dependency-check.yml` run `26007347330` passed MCP runtime pin freshness.
-- `tests/unit/test_fullrepo_sync.py` configures git identity for temporary repositories and clones before fixture commits, which keeps the unit-test matrix deterministic on GitHub-hosted runners.
-- `tests/unit/test_fullrepo_sync.py` covers `git commit-tree` fallback author/committer identity, and `tests/unit/test_flow_post_task_state.py` covers CODEX_HOME installed helper lookup and bootstrap-only `.serena` no-sync behavior.
-- `scripts/classify_ci_noise.py` allowlists `uv` package download progress lines such as `Downloading pygments (...)` and `Downloaded pygments` as deterministic setup noise.
-- `scripts/validate_marketplace.sh` skips only the live Serena freshness state check in GitHub Actions when fullrepo-managed `.serena/memories/CORE-01-INDEX.md` is not tracked in the normal-branch checkout.
-- `scripts/smoke_serena_memory_taxonomy.sh` keeps analyzer and fixture coverage when repository memories are absent or untracked in GitHub Actions, and runs index/taxonomy parity when `CORE-01-INDEX.md` is present as tracked fullrepo context.
-- Local validation for `697f44d` / version `0.4.2` passed on 2026-05-20: `scripts/validate_fast.sh` (72 tests, 76.55% coverage, 267-file text security scan), `scripts/validate_release.sh`, `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, `python3 scripts/validate_runtime_prereqs.py --strict --require-codex`, `uv run --with pyyaml python scripts/validate_agent_tools.py`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `codex mcp list`, `codex --version`, `scripts/smoke_mcp_capabilities.sh --server serena --retries 1 --timeout 30`, `scripts/validate_marketplace.sh`, and `git diff --check`. GitHub `validate.yml` later failed only the MCP safe-call job because the `get_current_config` safe call logged variable multi-line Serena configuration output that strict CI noise classification did not allow; the follow-up fix changes the safe call to `list_memories`.
-- Local validation for `c399c75` / version `0.4.2` passed on 2026-05-20: CI-repro `scripts/smoke_mcp_capabilities.sh --server serena --retries 1 --timeout 30` with stderr classified by `python3 scripts/classify_ci_noise.py --strict`, `scripts/validate_marketplace.sh`, `scripts/validate_release.sh`, and `git diff --check`.
-- Validation contracts still include pinned runtime checks and smoke coverage in `dependency-check.yml` and `validate.yml`; `validate.yml` does not fail PR/push builds on stale upstream pins, while `dependency-check.yml` is the scheduled/pin-source freshness gate that fails stale pins.
-- Local validation for `2da696d` / version `0.4.1` passed on 2026-05-21: `scripts/validate_fast.sh` (77 tests, 76.30% coverage), `scripts/validate_marketplace.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, `scripts/install_system_codex.sh --apply --strict-runtime`, `scripts/doctor_system_codex.sh --quick --strict-runtime`, `python3 scripts/plugin_cache_contract.py verify`, `python3 scripts/smoke_codex_hook_listing.py`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, `python3 scripts/validate_contract.py`, `python3 scripts/validate_plugin_versions.py`, `python3 scripts/validate_action_pins.py`, and `git diff --check`.
-
-## Contracts And Data
-
-- `scripts/validate_marketplace.sh` must include JSON validation, manifest validation, GitHub Action SHA pin validation, strict runtime prerequisite validation, managed-agent config parity, Codex agent surface validation, shellcheck, Python syntax, pytest/coverage, skill routing, hook feature migration smoke, hook smoke, memory freshness/taxonomy smoke, fullrepo smoke, local git guard smoke, branch cleanup smoke, text security scan, and release manifest checks.
-- `scripts/validate_marketplace.sh` must include the Codex adapter contract gate and installed versioned plugin cache parity gate.
-- `scripts/validate_release.sh` must include the Codex adapter contract gate before writing release artifacts.
-- `scripts/validate_marketplace.sh` should include Codex execpolicy rule validation when Codex CLI is present; `scripts/validate_runtime.sh --strict-runtime` must validate installed rules.
-- `scripts/validate_runtime.sh --strict-runtime` must validate live Codex `hooks/list` through `scripts/smoke_codex_hook_listing.py`.
-- `scripts/validate_agent_tools.py` requires PyYAML and is normally run through `uv run --with pyyaml`; it is the source-tree gate for managed-agent model/reasoning settings, temporary subagent MCP isolation, and complete disabled MCP transport overrides.
-- `scripts/smoke_serena_memory_taxonomy.sh` creates temporary git repositories and must leave no repo changes behind.
-- `scripts/smoke_hooks.sh` must fail on any newly registered hook script until that script is added to the smoke manifest and large-stdin/wiring coverage.
-
-## Invariants
-
-- No fake green checks: if a validation command cannot run, final delivery must report the blocker.
-- `scripts/doctor_system_codex.sh` should be rerun after `scripts/install_system_codex.sh --apply` when global AGENTS, managed agents, plugin cache, hooks, or MCP runtime definitions change.
-- Doctor must fail when installed config lacks `features.plugin_hooks = true`, because rldyour hook behavior is distributed as bundled plugin hooks.
-- Doctor must fail when installed rldyour plugin hooks are missing, disabled, untrusted, or modified relative to their stored trust hash.
-- Full marketplace validation should pass before pushing normal branch changes.
-- Changelog entries should describe durable behavior changes, not transient task notes.
-
-## Change Rules
-
-- When adding a new validator/smoke, wire it into `scripts/validate_marketplace.sh` if it is part of the release gate.
-- When changing Codex adapter surface, update `config/rldyour-contract.json`, `docs/contract-matrix.md`, and `scripts/validate_contract.py` in the same change.
-- When changing hook layout or Stop gate conditions, update `scripts/smoke_hooks.sh`.
-- When changing installed hook commands, run installer apply before doctor so `hooks.state` trusted hashes match the new plugin cache.
-- When changing memory taxonomy/freshness behavior, update `scripts/smoke_serena_memory_taxonomy.sh` and `scripts/smoke_serena_memory_freshness.sh` if needed.
-- MCP runtime pin checks must stay synchronized across `validate.yml` and `dependency-check.yml`: validate keeps runtime parity visible without blocking on upstream staleness, while dependency-check fails stale pins on the daily and pin-source paths.
-- In docs, this contract must be described consistently in `docs/dependency-updates.md`, `docs/observability.md`, and `README.md` whenever validate/dependency-check behavior changes.
-
-## Verification
-
-- `scripts/validate_marketplace.sh`: full repository validation.
-- `scripts/validate_fast.sh`: fast static/unit validation slice.
-- `scripts/validate_runtime.sh --strict-runtime`: strict runtime/install/hook/fullrepo validation slice.
-- `scripts/validate_release.sh`: release manifest/SBOM validation slice.
-- `python3 scripts/validate_contract.py`: Codex adapter contract validation.
-- `python3 scripts/plugin_cache_contract.py verify`: installed versioned plugin cache parity validation.
-- `python3 scripts/smoke_codex_hook_listing.py`: live Codex hook listing/trust validation.
-- `scripts/doctor_system_codex.sh`: installed runtime validation after cache/config install.
-- App-server RPC method `hooks/list` over `codex app-server --listen stdio://`: live hook trust/hash verification used by installer and doctor.
-- `python3 scripts/release_manifest.py`: generated manifest includes expected plugin versions.
-- `python3 scripts/release_sbom.py`: generated SPDX 2.3 SBOM includes root package, plugins, and MCP runtime pins.
-- `git diff --check`: whitespace sanity before commit.
-
-- Local validation for `761e03f` / version `0.4.2` passed on 2026-05-21: `scripts/validate_fast.sh` (80 tests, 76.65% coverage), `scripts/validate_release.sh`, `python3 scripts/validate_contract.py`, `python3 scripts/validate_plugin_versions.py`, and `git diff --check`. Release tag `0.4.2` was pushed.
-- Local validation for `89fabec` / version `0.4.3` passed on 2026-05-21: `scripts/validate_fast.sh` (82 tests, 76.71% coverage), `scripts/validate_release.sh`, `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, Pyright `1.1.409`, `actionlint`, `python3 scripts/validate_contract.py`, `python3 scripts/validate_plugin_versions.py`, `python3 scripts/validate_runtime_prereqs.py --strict --require-codex` with `github-mcp-server` `1.0.5` installed, `scripts/validate_runtime.sh --strict-runtime`, and `git diff --check`.
-- Local validation for `be1134c` / version `0.4.4` passed on 2026-05-21: `scripts/validate_fast.sh` (82 tests, 76.71% coverage), `scripts/validate_release.sh`, `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, Pyright `1.1.409`, `actionlint`, `python3 scripts/validate_contract.py`, `python3 scripts/validate_plugin_versions.py`, `python3 scripts/validate_instruction_docs.py --require-agent-docs`, `scripts/smoke_serena_memory_taxonomy.sh`, `python3 scripts/validate_runtime_prereqs.py --strict --require-codex` with `github-mcp-server` `1.0.5` installed, `scripts/validate_runtime.sh --strict-runtime`, and `git diff --check`. GitHub runs on `be1134c` passed: `validate` `26225768431`, `security-static` `26225768434`, `codeql` `26225768492`, `scorecard` `26225768580`, `release` `26225769190`, and Dependency Graph `26225769591`; GitHub Release `0.4.4` was published with release manifest, release notes, source tarball, SBOMs, and SHA256SUMS.
-- Local validation for `e2dd718` / version `0.4.8` passed on 2026-05-22: `scripts/validate_fast.sh` (83 tests, 76.84% coverage), `scripts/validate_release.sh`, `scripts/smoke_hooks.sh --repo-only --timeout-per-case 5`, `scripts/smoke_serena_memory_taxonomy.sh`, and global `scripts/install_system_codex.sh --apply`. GitHub runs passed for `e2dd718`: `security-static` `26244298243`, `validate` `26244298129`, `scorecard` `26244298126`, `codeql` `26244298099`, and release `0.4.8` `26244298040`; GitHub Release `0.4.8` is published.
+## Delete / merge policy
+- Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
