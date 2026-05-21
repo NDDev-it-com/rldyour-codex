@@ -7,7 +7,7 @@ HOOK_SMOKE_TIMEOUT=${RLDYOUR_HOOK_SMOKE_TIMEOUT:-30}
 
 usage() {
   cat <<'EOF'
-Usage: scripts/smoke_hooks.sh [--codex-home PATH] [--repo-only] [--installed-only]
+Usage: scripts/smoke_hooks.sh [--codex-home PATH] [--repo-only] [--installed-only] [--timeout-per-case SECONDS]
 
 Runs non-mutating smoke checks for repository and installed Codex hook scripts.
 The installed checks validate the hook files Codex will use after restart/plugin-cache sync.
@@ -26,6 +26,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --installed-only)
       MODE="installed"
+      ;;
+    --timeout-per-case)
+      shift
+      HOOK_SMOKE_TIMEOUT=${1:?--timeout-per-case requires seconds}
       ;;
     -h|--help)
       usage

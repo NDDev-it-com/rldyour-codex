@@ -16,12 +16,14 @@ LAUNCHER_ENV = {
     "uvx": "UVX_BIN",
     "bunx": "BUNX_BIN",
     "dart": "DART_BIN",
+    "github-mcp-server": "GITHUB_MCP_SERVER_BIN",
     "codex": "CODEX_BIN",
 }
 REMEDIATION = {
     "uvx": "Install uv/uvx or set UVX_BIN to an executable uvx-compatible launcher.",
     "bunx": "Install Bun so bunx is available, or disable Bun-backed MCP servers for this profile.",
     "dart": "Install the Dart SDK or disable the dart-flutter MCP server for this profile.",
+    "github-mcp-server": "Install GitHub's official MCP server binary or disable the github MCP server for this profile.",
     "codex": "Install the pinned @openai/codex CLI or set CODEX_BIN to its executable path.",
 }
 
@@ -78,13 +80,20 @@ def main() -> int:
     parser.add_argument("--require-codex", action="store_true", help="Require the codex CLI itself.")
     parser.add_argument("--strict", action="store_true", help="Exit non-zero when prerequisites are missing.")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
+    parser.add_argument(
+        "--mode",
+        choices=("static", "local-launch", "live"),
+        default="local-launch",
+        help="static validates config shape only; local-launch checks command availability; live is reserved for runtime smoke lanes.",
+    )
     args = parser.parse_args()
 
     servers = load_mcp_servers(args.mcp_config)
-    missing = missing_launchers(servers, require_codex=args.require_codex)
+    missing = {} if args.mode == "static" else missing_launchers(servers, require_codex=args.require_codex)
 
     payload = {
         "ok": not missing,
+        "mode": args.mode,
         "mcp_config": str(args.mcp_config),
         "missing": [
             {
@@ -104,7 +113,10 @@ def main() -> int:
             print(f"affected MCP servers: {', '.join(item['affected'])}", file=sys.stderr)
             print(f"fix: {item['fix']}", file=sys.stderr)
     else:
-        print(f"Runtime prerequisites available for {len(servers)} MCP server definitions")
+        if args.mode == "static":
+            print(f"Runtime prerequisite config is static-valid for {len(servers)} MCP server definitions")
+        else:
+            print(f"Runtime prerequisites available for {len(servers)} MCP server definitions")
 
     if missing and args.strict:
         return 1

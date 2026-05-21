@@ -15,7 +15,7 @@
     "rldyour-serena-mcp"
   ],
   "skills": {
-    "count": 38,
+    "count": 39,
     "names": [
       "architecture-boundaries",
       "browser-debug",
@@ -45,6 +45,7 @@
       "ry-design",
       "ry-init",
       "ry-newp",
+      "ry-repair",
       "ry-review",
       "ry-rules-review",
       "ry-sec-review",
@@ -137,6 +138,7 @@
       "deepwiki",
       "figma",
       "grep",
+      "github",
       "openaiDeveloperDocs",
       "playwright",
       "semgrep",

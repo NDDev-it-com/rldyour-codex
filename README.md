@@ -38,7 +38,7 @@ The active marketplace currently contains:
 - `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation gates.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
+- `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-repair`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, Codex and Claude Code project instructions, ADR policy, and `ry-rules-review`.
 
 Resolved architecture decisions:

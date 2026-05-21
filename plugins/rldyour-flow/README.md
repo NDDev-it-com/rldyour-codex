@@ -8,6 +8,7 @@ It provides Russian-first command skills:
 - `ry-start`: implement a task through context sufficiency, research, plan, worktree, commits, quality gates, reviews, and sync.
 - `ry-newp`: design and optionally scaffold a new project after deep questioning.
 - `ry-review`: review a diff/scope plus affected integration graph.
+- `ry-repair`: normalize stale docs, memories, contracts, hooks, MCP/LSP config, CI, and AI-tool context while asking the owner for ADR/business decisions.
 - `ry-deploy`: synchronize local, GitHub, and server state, then deploy and verify.
 - `instruction-docs-sync`: synchronize Codex `AGENTS.md` and Claude Code `.claude/CLAUDE.md` from verified project facts.
 - `flow-post-task-sync`: finish task state by synchronizing Serena memories, agent-only files, git commits, GitHub, `fullrepo`, and branch/worktree cleanup.

@@ -1,7 +1,7 @@
 {
   "name": "rldyour-mcps",
   "version": "0.1.6",
-  "description": "Controlled rldyour MCP server runtime set for Codex auto skills, with explicit runtime, startup, browser, OpenAI docs, and safety rules.",
+  "description": "Controlled rldyour MCP server runtime set for Codex auto skills, with explicit runtime, startup, browser, GitHub, OpenAI docs, and safety rules. RU: управляемый набор MCP-серверов для Codex без скрытых транспортов и unpinned launchers.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -31,7 +31,7 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "rldyour MCP Servers",
-    "shortDescription": "Approved MCP runtime for rldyour auto skills",
+    "shortDescription": "Approved MCP runtime / RU: управляемые MCP-серверы",
     "longDescription": "This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter, Figma, and OpenAI Developer Docs. It is the runtime dependency layer for automatic workflow plugins such as rldyour-explore, rldyour-browser, rldyour-security, rldyour-serena-mcp, and rldyour-design. Playwright MCP runs headless with network, storage, testing, and devtools capabilities enabled for full browser validation workflows. OpenAI Developer Docs MCP is the authoritative source for current OpenAI and Codex product documentation. Local launcher packages and host runtime prerequisites are pinned through config/mcp-runtime-versions.env and strict runtime validation. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
     "developerName": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
     "category": "Developer Tools",
