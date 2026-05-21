@@ -6,6 +6,15 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.8] - 2026-05-22
+
+### Changed
+
+- Flow and design skills now explicitly reference the root policy vocabulary for
+  current-code research, deploy preflight/postflight verification, and
+  accessibility validation, keeping Codex skill routing aligned with the
+  control-plane policy validators.
+
 ## [0.4.7] - 2026-05-21
 
 ### Fixed
