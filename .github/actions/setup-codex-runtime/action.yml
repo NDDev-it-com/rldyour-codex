@@ -60,6 +60,54 @@ runs:
           exit 1
         fi
 
+    - name: Install pinned GitHub MCP server
+      if: inputs.install-codex == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        # shellcheck source=config/mcp-runtime-versions.env
+        . config/mcp-runtime-versions.env
+        : "${GITHUB_MCP_SERVER_VERSION:?GITHUB_MCP_SERVER_VERSION is required}"
+        case "$RUNNER_OS" in
+          Linux) os_name="Linux" ;;
+          macOS) os_name="Darwin" ;;
+          *)
+            echo "Unsupported runner OS for github-mcp-server: $RUNNER_OS" >&2
+            exit 1
+            ;;
+        esac
+        case "$(uname -m)" in
+          x86_64|amd64) arch_name="x86_64" ;;
+          arm64|aarch64) arch_name="arm64" ;;
+          i386|i686) arch_name="i386" ;;
+          *)
+            echo "Unsupported runner architecture for github-mcp-server: $(uname -m)" >&2
+            exit 1
+            ;;
+        esac
+        archive="github-mcp-server_${os_name}_${arch_name}.tar.gz"
+        base_url="https://github.com/github/github-mcp-server/releases/download/v${GITHUB_MCP_SERVER_VERSION}"
+        tmp_dir="$(mktemp -d)"
+        install_dir="${RUNNER_TEMP:-$tmp_dir}/rldyour-bin"
+        mkdir -p "$install_dir"
+        curl -fsSL "${base_url}/${archive}" -o "${tmp_dir}/${archive}"
+        curl -fsSL "${base_url}/github-mcp-server_${GITHUB_MCP_SERVER_VERSION}_checksums.txt" -o "${tmp_dir}/checksums.txt"
+        grep "  ${archive}$" "${tmp_dir}/checksums.txt" > "${tmp_dir}/checksums.selected"
+        if [ "$RUNNER_OS" = "Linux" ]; then
+          (cd "$tmp_dir" && sha256sum -c checksums.selected)
+        else
+          expected_sha="$(awk '{print $1}' "${tmp_dir}/checksums.selected")"
+          actual_sha="$(shasum -a 256 "${tmp_dir}/${archive}" | awk '{print $1}')"
+          if [ "$expected_sha" != "$actual_sha" ]; then
+            echo "github-mcp-server checksum mismatch" >&2
+            exit 1
+          fi
+        fi
+        tar -xzf "${tmp_dir}/${archive}" -C "$tmp_dir"
+        install -m 0755 "${tmp_dir}/github-mcp-server" "${install_dir}/github-mcp-server"
+        echo "$install_dir" >> "$GITHUB_PATH"
+        "${install_dir}/github-mcp-server" --version || "${install_dir}/github-mcp-server" --help >/dev/null
+
     - name: Install pinned Codex CLI
       if: inputs.install-codex == 'true'
       shell: bash

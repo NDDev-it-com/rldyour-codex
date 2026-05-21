@@ -23,6 +23,7 @@ class Pin:
 
 PINS: tuple[Pin, ...] = (
     Pin("CODEX_CLI_VERSION", "npm", "@openai/codex"),
+    Pin("GITHUB_MCP_SERVER_VERSION", "github-release", "github/github-mcp-server"),
     Pin("BUN_VERSION", "npm", "bun"),
     Pin("MCP_PYTHON_SDK_VERSION", "pypi", "mcp"),
     Pin("SERENA_AGENT_VERSION", "pypi", "serena-agent"),
@@ -72,11 +73,24 @@ def pypi_latest(package: str) -> str:
     return version
 
 
+def github_release_latest(repository: str) -> str:
+    url = f"https://api.github.com/repos/{repository}/releases/latest"
+    # PINS is a repository allowlist, so repository cannot be user-controlled.
+    with urllib.request.urlopen(url, timeout=45) as response:  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
+        data = json.load(response)
+    tag = data.get("tag_name")
+    if not isinstance(tag, str) or not tag:
+        raise RuntimeError(f"unexpected GitHub releases response for {repository}")
+    return tag.removeprefix("v")
+
+
 def latest_for(pin: Pin) -> str:
     if pin.ecosystem == "npm":
         return npm_latest(pin.package)
     if pin.ecosystem == "pypi":
         return pypi_latest(pin.package)
+    if pin.ecosystem == "github-release":
+        return github_release_latest(pin.package)
     raise RuntimeError(f"unsupported ecosystem: {pin.ecosystem}")
 
 

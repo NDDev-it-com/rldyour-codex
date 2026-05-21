@@ -6,6 +6,26 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-05-21
+
+### Changed
+
+- GitHub Actions runtime setup now installs the pinned official GitHub MCP
+  server `1.0.5` from the upstream release artifact with SHA-256 checksum
+  verification before strict Codex runtime validation runs.
+- Context7 MCP is updated from `2.2.5` to the current stable `2.3.0` in both
+  `.mcp.json` and `config/mcp-runtime-versions.env`.
+- MCP runtime freshness now tracks `GITHUB_MCP_SERVER_VERSION` through the
+  GitHub releases API alongside npm and PyPI-backed runtime pins.
+
+### Fixed
+
+- `scripts/validate_contract.py` now narrows JSON-derived values before sorting
+  or passing them to typed helpers, keeping Pyright strict checks green under
+  the public `security-static` workflow.
+- Public Codex CI no longer fails strict runtime prerequisite checks because the
+  `github` MCP server launcher is absent on hosted Ubuntu/macOS runners.
+
 ## [0.4.2] - 2026-05-21
 
 ### Added
