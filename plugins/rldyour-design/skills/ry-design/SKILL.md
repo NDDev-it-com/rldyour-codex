@@ -35,7 +35,7 @@ For production-quality Figma/UI work, read `../../references/figma-delivery-cont
 7. Use shadcn/ui MCP for primitives, blocks, and registry-based components.
 8. Use ReactBits.dev only for purposeful motion or interactive effects that match the design.
 9. Implement code with Serena-first local code inspection when available.
-10. Use `design-validation` and `rldyour-browser` to verify pixel-perfect layout, functionality, business logic, desktop/mobile, provided Figma frame sizes, state matrix, screenshots, i18n, token/static scans, and runtime health.
+10. Use `design-validation` and `rldyour-browser` to verify pixel-perfect layout, functionality, business logic, accessibility, desktop/mobile, provided Figma frame sizes, state matrix, screenshots, i18n, token/static scans, and runtime health.
 11. Fix mismatches and revalidate until the result is correct or the blocker is explicit.
 12. If durable architecture/design-system facts were created, update Serena memories through `serena-memory-sync`.
 

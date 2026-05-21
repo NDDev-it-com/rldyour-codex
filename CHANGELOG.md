@@ -6,6 +6,45 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.8] - 2026-05-22
+
+### Changed
+
+- Flow and design skills now explicitly reference the root policy vocabulary for
+  current-code research, deploy preflight/postflight verification, and
+  accessibility validation, keeping Codex skill routing aligned with the
+  control-plane policy validators.
+
+## [0.4.7] - 2026-05-21
+
+### Fixed
+
+- Codex runtime baseline metadata and test fixtures now match the `0.133.0`
+  runtime pin, keeping root `validate_runtime_baselines.py` aligned with the
+  adapter release.
+
+## [0.4.6] - 2026-05-21
+
+### Changed
+
+- Runtime Codex CLI pin updated from `0.132.0` to `0.133.0`, the current
+  stable npm release observed by the CI dependency freshness gate on
+  2026-05-21.
+
+## [0.4.5] - 2026-05-21
+
+### Changed
+
+- `rldyour-mcps` now pins `shadcn@4.8.0`, the current stable shadcn MCP CLI
+  package on 2026-05-21. The managed subagent specialist MCP overrides and
+  `config/mcp-runtime-versions.env` were updated in the same release.
+
+### Fixed
+
+- `scripts/smoke_mcp_capabilities.py --mode static --json` is now a true
+  parse-only path: it reads only the repository MCP manifest and no longer
+  imports the Python MCP SDK or requires an installed `CODEX_HOME`.
+
 ## [0.4.4] - 2026-05-21
 
 ### Fixed
