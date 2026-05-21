@@ -17,7 +17,10 @@ Leave the project in a synchronized, documented, committed state. This skill run
 4. Inspect uncommitted changes deeply. Separate source changes, docs, Serena knowledge, generated junk, runtime markers, and secrets.
 5. Run `instruction-docs-sync` when durable project instructions may have changed. Keep `AGENTS.md` optimized for Codex and `.claude/CLAUDE.md` optimized for Claude Code in fullrepo-managed projects.
 6. Run applicable quality checks from project scripts and the resolved `detect_project_checks.sh`.
-7. Commit atomically with Conventional Commits. Use separate commits for implementation, tests, docs/instructions, and Serena knowledge when that improves history.
+7. Commit atomically with Conventional Commits. Use separate commits for
+   implementation, tests/validators, docs/instructions, license/metadata,
+   generated artifacts, and Serena/fullrepo sync when that improves history
+   clarity or reviewability.
 8. Push to upstream when configured. If no upstream exists, ask before creating one.
 9. Keep normal branch history clean from agent-only files. Ensure `.git/info/exclude` contains the rldyour fullrepo block and move tracked agent-only files out of the current branch with `fullrepo_sync.py --migrate-main` only when the project is ready for that migration.
 10. Publish the complete project snapshot to `fullrepo` through the resolved `fullrepo_sync.py --publish` or repo-local `scripts/sync_fullrepo_branch.sh --publish`. This uses safe `--force-with-lease`, not a blind force push.

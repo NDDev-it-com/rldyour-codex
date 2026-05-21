@@ -35,7 +35,12 @@ Use the devcontainer in `.devcontainer/` when you need a clean, production-like 
 - Open a pull request against `main` with a clear, scope-limited change.
 - Title format: Conventional Commits (`type(scope): description`). Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`, `ci`, `build`. Scope is the plugin or area, lowercase.
 - Description must include intent, surface touched, evidence (validation logs, screenshots when relevant), and risks.
-- Keep commits atomic. Squash trivial fixups before review.
+- Keep commits atomic. Split unrelated implementation, tests/validators,
+  docs/instructions, license/metadata, generated artifacts, and Serena/fullrepo
+  sync when they are independently reviewable. Squash trivial fixups before
+  review.
+- Do not rewrite already-pushed history without explicit maintainer approval;
+  use a follow-up commit for published branches.
 - Reference any related ADR under `docs/adr/` or open one when the change is architectural.
 - Sign-off is not required.
 
