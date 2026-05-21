@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-05-21
+
+### Changed
+
+- Runtime Codex CLI pin updated from `0.132.0` to `0.133.0`, the current
+  stable npm release observed by the CI dependency freshness gate on
+  2026-05-21.
+
 ## [0.4.5] - 2026-05-21
 
 ### Changed
