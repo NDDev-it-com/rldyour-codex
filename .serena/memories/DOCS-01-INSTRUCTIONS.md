@@ -16,6 +16,13 @@ instruction docs and durable operator documentation
 - `path:README.md`
 - `path:system/AGENTS.md`
 
+
+## Source Of Truth
+- `path:AGENTS.md`
+- `path:.claude/CLAUDE.md`
+- `path:README.md`
+- `path:system/AGENTS.md`
+
 ## Last verified
 - date: 2026-05-22
 - commit: `86b2555935f4c2185658417a3aff82d225d25392`
@@ -39,3 +46,8 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Delete / merge policy
 - Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
+
+## Cross-References
+- `CORE-01-INDEX.md`
+- `CONTEXT-01-CORE.md`
+- `PATTERNS-01-CANONICAL.md`
