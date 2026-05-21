@@ -27,10 +27,13 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Plugin manifests now align with the repository public license and canonical URL: `AGPL-3.0-or-later` and `https://github.com/NDDev-it-com/rldyour-codex`.
 - Marketplace validation batches skill frontmatter parsing in one Python process and release validation now includes the Codex adapter contract gate.
 - Runtime validation now includes live Codex `hooks/list` trust smoke after installing into a temporary `CODEX_HOME`.
+- System installer and doctor now default to the safe public profile
+  (`rldyour-safe`, `workspace-write`, `on-request`) and require explicit
+  `--owner-mode` for the maintainer-only YOLO profile.
 
 ### Security
 
-- The Codex adapter contract forbids repo-local YOLO defaults in `.codex/config.toml` or `config.toml`; the owner YOLO profile remains install-time, owner-local-only policy.
+- The Codex adapter contract forbids repo-local YOLO defaults in `.codex/config.toml` or `config.toml`; the owner YOLO profile remains install-time, owner-local-only policy behind `--owner-mode`.
 
 ### Fixed
 

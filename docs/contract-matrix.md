@@ -52,8 +52,9 @@ handlers are command handlers and resolve plugin-owned scripts through
 
 The maintainer YOLO profile is owner-local only. Public repository defaults must
 not add repo-local `.codex/config.toml` or `config.toml` files that set
-`danger-full-access` or `approval_policy = "never"`. The system installer may
-write those values only through the explicit owner apply flow.
+`danger-full-access` or `approval_policy = "never"`. The system installer
+defaults to `rldyour-safe` (`workspace-write` + `on-request`) and writes YOLO
+values only when invoked with the explicit `--owner-mode` flag.
 
 ## Validation
 

@@ -63,7 +63,7 @@ These targets are best-effort and not contractual.
 ## Out Of Scope
 
 - Findings against downstream environments running modified versions of this software.
-- Issues stemming from running this repository's installer with non-default permission posture on shared or untrusted machines. The default `profile = "rldyour-yolo"` is documented as a maintainer-controlled trusted-machine mode.
+- Issues stemming from running this repository's installer with explicit `--owner-mode` permission posture on shared or untrusted machines. The default install profile is `rldyour-safe`; `profile = "rldyour-yolo"` is a maintainer-controlled trusted-machine mode and must remain opt-in.
 - Findings against third-party MCP servers, runtimes, or actions referenced by this repository. Report those upstream.
 
 ## Coordinated Disclosure

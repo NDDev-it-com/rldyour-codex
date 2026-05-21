@@ -69,6 +69,15 @@ scripts/install_system_codex.sh --apply
 scripts/doctor_system_codex.sh
 ```
 
+The default install posture is public-safe: `profile = "rldyour-safe"`,
+`approval_policy = "on-request"`, and `sandbox_mode = "workspace-write"`.
+The maintainer-only full-access posture is explicit:
+
+```bash
+scripts/install_system_codex.sh --apply --owner-mode
+scripts/doctor_system_codex.sh --owner-mode
+```
+
 ## System Codex Installation
 
 This repository also stores the canonical global Codex setup for the maintainer.
@@ -85,11 +94,19 @@ Apply to the active Codex home:
 scripts/install_system_codex.sh --apply
 ```
 
+Apply the owner-local full-access profile only on the maintainer's trusted
+machine:
+
+```bash
+scripts/install_system_codex.sh --apply --owner-mode
+```
+
 Verify the installed system state:
 
 ```bash
 scripts/doctor_system_codex.sh
 scripts/doctor_system_codex.sh --quick --strict-runtime
+scripts/doctor_system_codex.sh --owner-mode
 ```
 
 Run the full bootstrap smoke flow on a new or resynced machine:
@@ -98,7 +115,7 @@ Run the full bootstrap smoke flow on a new or resynced machine:
 scripts/bootstrap_check.sh --apply
 ```
 
-The installer writes `~/.codex/AGENTS.md`, managed `~/.codex/agents/*.toml` subagent role configs, installs managed Codex execpolicy rules from `system/rules/*.rules`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies the maintainer-requested permission defaults, sets the maintainer-selected parent and subagent model defaults, writes approved MCP tool overrides, and synchronizes the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing `~/.codex/AGENTS.md`, managed subagent configs, managed rule files, and `~/.codex/config.toml` are backed up before write operations. Credentials and OAuth tokens are never written by this repository.
+The installer writes `~/.codex/AGENTS.md`, managed `~/.codex/agents/*.toml` subagent role configs, installs managed Codex execpolicy rules from `system/rules/*.rules`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies safe public permission defaults unless `--owner-mode` is supplied, sets the maintainer-selected parent and subagent model defaults, writes approved MCP tool overrides, and synchronizes the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing `~/.codex/AGENTS.md`, managed subagent configs, managed rule files, and `~/.codex/config.toml` are backed up before write operations. Credentials and OAuth tokens are never written by this repository.
 
 The Codex adapter contract lives in `config/rldyour-contract.json` and is documented in `docs/contract-matrix.md`. It records the intended Codex surface: 9 plugins, 38 skills, no slash commands by design, 8 managed subagents, command-only plugin hook lifecycle mappings, versioned plugin cache layout, and the owner-local-only YOLO profile boundary. Validate it with `python3 scripts/validate_contract.py`.
 
@@ -112,11 +129,25 @@ Strict runtime mode is available when the environment must be fully reproducible
 
 ```bash
 scripts/install_system_codex.sh --apply --strict-runtime
+scripts/install_system_codex.sh --apply --owner-mode --strict-runtime
 scripts/doctor_system_codex.sh --strict-runtime
+scripts/doctor_system_codex.sh --owner-mode --strict-runtime
 python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 ```
 
-System Codex is intentionally configured for unattended maintainer-controlled execution on a trusted machine: `profile = "rldyour-yolo"`, `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, `default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. Current Codex documentation treats `sandbox_mode` as the active older sandbox model when it is present, so this repository does not migrate the owner profile to beta permission profiles without an explicit policy decision. Managed subagent roles in `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`. This is a maintainer-required operating mode for trusted local machines; downstream operators should review their own permission posture before applying these defaults.
+System Codex now installs safe defaults unless the operator passes
+`--owner-mode`: `profile = "rldyour-safe"`,
+`approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`,
+`model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`.
+The maintainer's unattended trusted-machine mode remains available only through
+`--owner-mode`, which selects `profile = "rldyour-yolo"`,
+`approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and
+`default_permissions = ":danger-no-sandbox"`. Current Codex documentation treats
+`sandbox_mode` as the active older sandbox model when it is present, so this
+repository does not migrate the owner profile to beta permission profiles
+without an explicit policy decision. Managed subagent roles in
+`system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
+`model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
 
 Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit security, design, browser, Flutter, or shadcn work.
 
