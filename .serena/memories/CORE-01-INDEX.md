@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 89fabec chore(release): 0.4.3
+Last commit: be1134c fix(ci): classify github mcp runtime noise
 Scope: .serena/memories, .agents/plugins/marketplace.json, config/rldyour-contract.json, docs/contract-matrix.md, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/rldyour-mcps/.mcp.json, system/AGENTS.md, system/agents/*.toml, pyproject.toml, tests/, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml, docs/adr/*.md, scripts/validate_marketplace.sh, scripts/validate_contract.py, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py
 Area: CORE
 -->
@@ -42,7 +42,7 @@ This is the entry point for the `rldyour-codex` Serena memory set. Read this mem
 
 - Active rldyour plugins: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
 - `config/rldyour-contract.json` records the Codex adapter surface: 9 plugins, 39 skills, no slash commands by design, 8 managed subagents, command-only hook lifecycle mappings, 13 MCP servers, versioned plugin cache, and owner-local-only YOLO boundary.
-- Marketplace release version is `0.4.3`. Repository is licensed under GNU AGPL-3.0-or-later (`LICENSE` is the canonical FSF text). Public CI/CD runs automatically on push to `main`, pull requests, weekly schedules for security-static/CodeQL/Scorecard, daily schedule for dependency-check, and SemVer tag pushes for release. Public-repo settings applied: visibility public, branch protection on main (9 required status checks, strict, linear history, no force-push/delete), SemVer tag ruleset (delete/update/non-ff blocked), Dependabot security updates, OpenSSF Scorecard + Dependency Review + PR Labeler workflows.
+- Marketplace release version is `0.4.4`. Repository is licensed under GNU AGPL-3.0-or-later (`LICENSE` is the canonical FSF text). Public CI/CD runs automatically on push to `main`, pull requests, weekly schedules for security-static/CodeQL/Scorecard, daily schedule for dependency-check, and SemVer tag pushes for release. Public-repo settings applied: visibility public, branch protection on main (9 required status checks, strict, linear history, no force-push/delete), SemVer tag ruleset (delete/update/non-ff blocked), Dependabot security updates, OpenSSF Scorecard + Dependency Review + PR Labeler workflows.
 - `rldyour-flow` is version `0.3.3` and owns SDLC commands, fullrepo, instruction docs, fast offline/local-only SessionStart dispatch, cwd-safe PreToolUse guardrails, ordered local-only Stop lifecycle dispatch, and post-task sync.
 - `rldyour-serena-mcp` is version `0.2.4` and owns Serena-first code workflow plus memory freshness, expanded taxonomy, sync hooks, and acknowledgement.
 - The repository currently has 39 rldyour skills, 13 MCP server definitions, and 8 managed Codex subagent TOML files validated by scripts.
