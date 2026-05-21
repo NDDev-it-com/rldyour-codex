@@ -80,13 +80,18 @@ def main() -> int:
         errors.append("config/rldyour-contract.json: schema_version must be 1")
 
     marketplace = load_json(ROOT / ".agents/plugins/marketplace.json")
-    marketplace_plugins = marketplace.get("plugins") if isinstance(marketplace, dict) else None
-    actual_plugins = sorted(
-        entry.get("name")
-        for entry in marketplace_plugins or []
-        if isinstance(entry, dict) and isinstance(entry.get("name"), str)
-    )
-    expected_plugins = sorted(contract.get("plugins") or [])
+    marketplace_plugins_raw = marketplace.get("plugins") if isinstance(marketplace, dict) else []
+    marketplace_plugins = marketplace_plugins_raw if isinstance(marketplace_plugins_raw, list) else []
+    actual_plugins: list[str] = []
+    for entry in marketplace_plugins:
+        if not isinstance(entry, dict):
+            continue
+        name = entry.get("name")
+        if isinstance(name, str):
+            actual_plugins.append(name)
+    actual_plugins.sort()
+    expected_plugins_raw = contract.get("plugins")
+    expected_plugins = sorted(item for item in expected_plugins_raw if isinstance(item, str)) if isinstance(expected_plugins_raw, list) else []
     if actual_plugins != expected_plugins:
         errors.append(f"plugins: expected {expected_plugins}, got {actual_plugins}")
 
@@ -183,17 +188,21 @@ def main() -> int:
                     if not isinstance(dispatcher, dict):
                         errors.append(f"hooks.lifecycles.{lifecycle_id}: unknown dispatcher {dispatched_by!r}")
                     continue
-                plugin = mapping.get("plugin")
-                event = mapping.get("event")
-                needle = mapping.get("command_contains")
-                if not all(isinstance(item, str) for item in (plugin, event, needle)):
+                plugin_raw = mapping.get("plugin")
+                event_raw = mapping.get("event")
+                needle_raw = mapping.get("command_contains")
+                if not isinstance(plugin_raw, str) or not isinstance(event_raw, str) or not isinstance(needle_raw, str):
                     errors.append(f"hooks.lifecycles.{lifecycle_id}: plugin/event/command_contains must be strings")
                     continue
+                plugin = plugin_raw
+                event = event_raw
+                needle = needle_raw
                 if not command_for_event(plugin, event, needle):
                     errors.append(f"hooks.lifecycles.{lifecycle_id}: {plugin} {event} missing command {needle}")
 
     mcp_contract = contract.get("mcp")
-    expected_servers = sorted(mcp_contract.get("servers") if isinstance(mcp_contract, dict) else [])
+    expected_servers_raw = mcp_contract.get("servers") if isinstance(mcp_contract, dict) else []
+    expected_servers = sorted(item for item in expected_servers_raw if isinstance(item, str)) if isinstance(expected_servers_raw, list) else []
     mcp_data = load_json(ROOT / "plugins/rldyour-mcps/.mcp.json")
     actual_servers = sorted((mcp_data.get("mcpServers") or {}).keys()) if isinstance(mcp_data, dict) else []
     if actual_servers != expected_servers:

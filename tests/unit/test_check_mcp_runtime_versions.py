@@ -22,6 +22,7 @@ CODEX_CLI_VERSION=0.132.0
 SERENA_AGENT_VERSION='1.5.1'
 EMPTY_LINE_IGNORED
 SHADCN_VERSION="3.5.0"
+GITHUB_MCP_SERVER_VERSION="1.0.5"
 """,
         encoding="utf-8",
     )
@@ -29,6 +30,7 @@ SHADCN_VERSION="3.5.0"
         "CODEX_CLI_VERSION": "0.132.0",
         "SERENA_AGENT_VERSION": "1.5.1",
         "SHADCN_VERSION": "3.5.0",
+        "GITHUB_MCP_SERVER_VERSION": "1.0.5",
     }
 
 
@@ -62,8 +64,30 @@ def test_pypi_latest_reads_response(monkeypatch) -> None:
     assert mod.pypi_latest("example") == "4.5.6"
 
 
+def test_github_release_latest_reads_tag(monkeypatch) -> None:
+    class Response(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            self.close()
+
+    data = json.dumps({"tag_name": "v1.0.5"}).encode()
+    monkeypatch.setattr(mod.urllib.request, "urlopen", lambda *args, **kwargs: Response(data))
+    assert mod.github_release_latest("github/github-mcp-server") == "1.0.5"
+
+
 def test_pins_include_host_bun_runtime() -> None:
     assert any(pin.key == "BUN_VERSION" and pin.package == "bun" for pin in mod.PINS)
+
+
+def test_pins_include_github_mcp_server_release() -> None:
+    assert any(
+        pin.key == "GITHUB_MCP_SERVER_VERSION"
+        and pin.ecosystem == "github-release"
+        and pin.package == "github/github-mcp-server"
+        for pin in mod.PINS
+    )
 
 
 def test_main_json_success(monkeypatch, tmp_path: Path, capsys) -> None:
