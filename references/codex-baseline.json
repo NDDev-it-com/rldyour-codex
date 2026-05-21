@@ -4,7 +4,7 @@
   "verified_on": "2026-05-21",
   "baseline": {
     "codex_cli": {
-      "version": "0.132.0",
+      "version": "0.133.0",
       "npm_package": "@openai/codex",
       "ref": "https://developers.openai.com/codex/changelog"
     },
