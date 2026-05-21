@@ -6,6 +6,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-05-21
+
 ### Added
 
 - `config/rldyour-contract.json`, `docs/contract-matrix.md`, and `scripts/validate_contract.py` now define and validate the Codex adapter surface: plugins, skills, absent slash commands, managed subagents, hook lifecycle mappings, MCP servers, versioned plugin cache, and the owner-standard full-auto profile.
@@ -14,6 +16,10 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
+- Repository release advanced to `0.4.2` after merging the runtime-contract
+  branch to `main`. Local release evidence: `scripts/validate_fast.sh` passed
+  with 80 tests and 76.65% coverage, then `scripts/validate_release.sh`
+  passed on 2026-05-21.
 - Runtime pins updated to current stable upstream versions: Codex CLI `0.132.0`, Serena Agent `1.5.1`, and Chrome DevTools MCP `1.0.1`.
 - Plugin manifests now carry canonical authorship for Danil Silantyev
   (`github:rldyourmnd`), CEO NDDev, and validators enforce that
