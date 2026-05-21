@@ -370,6 +370,24 @@
       ]
     },
     {
+      "id": "ru-ry-repair",
+      "prompt": "ry-repair почини систему нормализуй репозиторий убери противоречия",
+      "prompt_terms": [
+        "ry-repair",
+        "почини"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-repair",
+          "description_terms": [
+            "ry-repair",
+            "почини систему",
+            "semantic entropy"
+          ]
+        }
+      ]
+    },
+    {
       "id": "ru-lsp-routing",
       "prompt": "используй LSP для type checking symbols diagnostics Python Rust TS",
       "prompt_terms": [
@@ -554,6 +572,7 @@
     "rldyour-flow:ry-deploy": "explicit-only",
     "rldyour-flow:ry-init": "explicit-only",
     "rldyour-flow:ry-newp": "explicit-only",
+    "rldyour-flow:ry-repair": "explicit-only",
     "rldyour-flow:ry-review": "explicit-only",
     "rldyour-flow:ry-start": "explicit-only",
     "rldyour-lsps:lsp-health-check": "implicit",

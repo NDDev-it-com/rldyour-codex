@@ -1,5 +1,5 @@
 name = "serena-sync"
-description = "Codex-native memory-maintenance agent for auditing and updating numbered .serena/memories without touching source code."
+description = "Codex-native memory-maintenance agent for auditing and updating numbered .serena/memories without touching source code. RU: агент синхронизации Serena memories без правки исходного кода."
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
@@ -44,6 +44,13 @@ mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 mcp_servers.figma.startup_timeout_sec = 60
 mcp_servers.figma.tool_timeout_sec = 120
 
+mcp_servers.github.enabled = false
+mcp_servers.github.command = "github-mcp-server"
+mcp_servers.github.args = ["stdio", "--toolsets", "context,repos,issues,pull_requests,users"]
+mcp_servers.github.env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+mcp_servers.github.startup_timeout_sec = 90
+mcp_servers.github.tool_timeout_sec = 180
+
 developer_instructions = """
 You are serena-sync, the Codex-native project-memory maintenance agent.
 
@@ -60,6 +67,7 @@ Rules:
 - After memory edits, run `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` when available. In fullrepo-managed repositories, this acknowledges current memories and clears runtime markers without committing AI files to the current branch.
 
 Output:
+- If the parent or user wrote in Russian, answer in Russian; keep file paths and source terms unchanged.
 - Report which memories were audited, updated, created, or left unchanged.
 - Cite the code evidence that justified each memory change.
 - If no memory updates are needed, say so explicitly.
