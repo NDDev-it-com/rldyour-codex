@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 761e03f chore(release): 0.4.2
+Last updated: 2026-05-22
+Last commit: e2dd718 chore(release): prepare codex 0.4.8
 Scope: plugins/rldyour-serena-mcp/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, system/agents/serena-sync.toml, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->
@@ -52,6 +52,7 @@ Area: SERENA
 - Memory targets for commit `6ec3fb9` include `CODEX-01-PLUGIN-CANON.md`, `CORE-02-MARKETPLACE.md`, `FLOW-01-SDLC.md`, `HOOKS-01-LIFECYCLE.md`, `RELEASE-01-VALIDATION.md`, `SERENA-01-MEMORY-SYNC.md`, and `TECHDEBT-01-NOW.md`.
 - The 2026-05-18 memory audit synchronized the hook lifecycle hardening to `6ec3fb9`, including stdin-drain behavior, bounded local-only Stop checks, the Flow cwd guard, and local validation evidence before publishing the agent-only snapshot through `fullrepo`.
 - The managed `serena-sync` subagent verifies claims from current code/config/tests at HEAD, then recent git history, then diff, then old memories.
+- For the `0.4.8` audit follow-up, memories are updated as agent-only fullrepo state rather than normal-branch source; the expected final proof is `check_serena_memory_freshness.py` current at `e2dd718` plus a refreshed `fullrepo` publish.
 
 ## Invariants
 

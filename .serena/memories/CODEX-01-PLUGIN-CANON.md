@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-21
-Last commit: be1134c fix(ci): classify github mcp runtime noise
+Last updated: 2026-05-22
+Last commit: e2dd718 chore(release): prepare codex 0.4.8
 Scope: .agents/plugins/marketplace.json, config/rldyour-contract.json, docs/contract-matrix.md, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/validate_contract.py, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py
 Area: CODEX
 -->
@@ -58,6 +58,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Official Codex docs verified for this implementation: Codex plugin manifests live at `.codex-plugin/plugin.json`; plugin hooks can point to `hooks.json`; Codex skills use `skills/`; Codex config uses `[features].hooks` for lifecycle hooks and `[features].plugin_hooks` to opt into bundled hooks from enabled plugins.
 - Installed plugin cache paths are versioned as `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/<version>`. Legacy `<plugin>/local` lookup remains only as a compatibility fallback in wrapper paths.
 - Legacy config aliases (`codex_hooks`, `use_legacy_landlock`, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, and deprecated `features.web_search*`) are migrated by installer/doctor/smoke into canonical equivalents.
+- Release `0.4.8` keeps the Codex-native plugin surface intact while aligning owner-flow skill vocabulary with the control-plane policy contracts. The global install was refreshed from `e2dd718`, including managed agents, execpolicy rules, plugin cache, hook trust hashes, `[features].hooks = true`, and `[features].plugin_hooks = true`.
 
 ## Contracts And Data
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 761e03f chore(release): 0.4.2
+Last updated: 2026-05-22
+Last commit: e2dd718 chore(release): prepare codex 0.4.8
 Scope: plugins/rldyour-design, plugins/rldyour-browser, config/skill-routing-policy.json, README.md
 Area: DESIGN
 -->
@@ -33,6 +33,7 @@ Area: DESIGN
 
 - Figma is the source of truth for Figma-to-code tasks; implementation adapts design into project architecture, tokens, UI kit, and i18n.
 - Browser-visible UI changes require browser validation when a browser can be run.
+- `ry-design` now explicitly treats accessibility checks, mobile viewport proof, component reuse, and visual artifacts as part of the design evidence contract when the task touches UI behavior.
 - Design workflows classify dynamic/static/admin content and avoid hardcoding project data into UI where data ownership is dynamic.
 - New frontend areas default to strict FSD if the project has no stronger local architecture.
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 761e03f chore(release): 0.4.2
+Last updated: 2026-05-22
+Last commit: e2dd718 chore(release): prepare codex 0.4.8
 Scope: plugins/rldyour-flow, plugins/rldyour-flow/hooks.json, plugins/rldyour-flow/hooks/*.sh, plugins/rldyour-flow/scripts/*.py, plugins/rldyour-flow/scripts/*.sh, scripts/sync_fullrepo_branch.sh, scripts/worktree_add.sh, scripts/install_local_git_hooks.sh, scripts/smoke_flow_branch_cleanup.sh, scripts/smoke_fullrepo_bootstrap_init.sh, scripts/smoke_clean_bootstrap.sh
 Area: FLOW
 -->
@@ -53,6 +53,7 @@ Area: FLOW
 - `flow_post_task_state.py` ignores bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml`, `.serena/.gitignore`, `.serena/project.local.yml`, and flow runtime markers; those files alone must not force a Stop-hook `flow-post-task-sync` continuation.
 - `fullrepo_sync.py --publish` supplies fallback author/committer identity to `git commit-tree`, and `scripts/smoke_clean_bootstrap.sh` configures a temporary git identity in clean clones. The clean bootstrap smoke only requires `codex mcp list` when `--require-codex` is passed.
 - `ry-init` remains read-only for Serena memories by default and may report memory candidates rather than writing `.serena`.
+- As of release `0.4.8`, `ry-start` explicitly requires current-code and current-doc/source-backed research for non-trivial implementation work, `ry-deploy` explicitly names deploy preflight/postflight/log/rollback checks, and `ry-design` routes accessibility and browser evidence through the design/browser validation policy surface.
 - `flow-post-task-sync` runs after Serena memory sync and should finish by normal branch commit/push, fullrepo publish, and safe cleanup when applicable. Its skill guidance resolves helper scripts from repo-local `plugins/rldyour-flow/scripts/*` when present or from the installed plugin cache in product repositories.
 
 ## Contracts And Data

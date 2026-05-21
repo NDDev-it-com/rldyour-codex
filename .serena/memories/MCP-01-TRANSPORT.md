@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-20
-Last commit: 89fabec chore(release): 0.4.3
+Last updated: 2026-05-22
+Last commit: e2dd718 chore(release): prepare codex 0.4.8
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, scripts/smoke_mcp_capabilities.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/doctor_system_codex.sh, scripts/install_system_codex.sh
 Area: MCP
 -->
@@ -35,7 +35,7 @@ Area: MCP
 - Managed subagents intentionally use a temporary narrower MCP policy: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps` remain available, while specialist MCP servers are disabled in subagent TOML files to avoid eager startup fan-out and launcher friction. This is a subagent policy, not a removal from the parent-session MCP registry.
 - A disabled managed-agent MCP table is still a declared MCP server table to Codex. It must include a valid transport (`command` or `url`) and registry-matching transport fields from `plugins/rldyour-mcps/.mcp.json`; otherwise Codex can reject the entire standalone role file with `invalid transport`.
 - `codex_apps` is an Apps/connectors capability, not a transport definition in `plugins/rldyour-mcps/.mcp.json`, so managed agents leave it inherited instead of declaring `[mcp_servers.codex_apps]`.
-- Current pins from `config/mcp-runtime-versions.env`: Codex CLI `0.132.0`, GitHub MCP server `1.0.5`, Node major `24`, Bun `1.3.14`, Dart SDK `3.11.0`, MCP Python SDK `1.27.1`, Serena Agent `1.5.1`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `1.0.1`, Context7 MCP `2.3.0`, shadcn `4.7.0`, sequential-thinking `2025.12.18`.
+- Current pins from `config/mcp-runtime-versions.env`: Codex CLI `0.133.0`, GitHub MCP server `1.0.5`, Node major `24`, Bun `1.3.14`, Dart SDK `3.11.0`, MCP Python SDK `1.27.1`, Serena Agent `1.5.1`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Chrome DevTools MCP `1.0.1`, Context7 MCP `2.3.0`, shadcn `4.8.0`, sequential-thinking `2025.12.18`.
 - `dart-flutter` is the explicit reproducibility exception: it launches through the local Dart SDK and is declared as `DART_FLUTTER_MCP_RUNTIME=external-local-dart-sdk` instead of a package-version pin.
 - Strict runtime validation maps enabled local MCP servers to launcher prerequisites (`uvx`, `bunx`, `dart`, `github-mcp-server`, and optional `codex`) and fails in strict mode when a required launcher is missing.
 - GitHub MCP uses the official `github-mcp-server` binary and is restricted to `context,repos,issues,pull_requests,users` toolsets. GitHub Actions installs the pinned release artifact from `github/github-mcp-server` and verifies its published SHA-256 checksum before strict runtime jobs.

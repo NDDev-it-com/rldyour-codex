@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-21
-Last commit: be1134c fix(ci): classify github mcp runtime noise
+Last updated: 2026-05-22
+Last commit: e2dd718 chore(release): prepare codex 0.4.8
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, config/rldyour-contract.json, docs/contract-matrix.md, scripts/validate_plugin_versions.py, scripts/validate_contract.py, scripts/release_manifest.py
 Area: CORE
 -->
@@ -39,7 +39,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Only `rldyour-flow` and `rldyour-serena-mcp` may declare plugin hooks in this repository.
 - `rldyour-mcps` owns MCP transport definitions only and must not contain behavior skills.
 - Curated GitHub and Gmail plugins are enabled in system Codex but are not rldyour plugin directories in this repository.
-- Repository marketplace version is `0.4.4` (from `VERSION`, committed in `be1134c`). The repository is licensed under GNU AGPL-3.0-or-later; the canonical FSF license text lives in `LICENSE` (SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`). `pyproject.toml` declares `license = "AGPL-3.0-or-later"`, `license-files = ["LICENSE"]`, public packaging metadata (authors, maintainers, classifiers, keywords), and project URLs pointing to `https://github.com/NDDev-it-com/rldyour-codex`.
+- Repository marketplace version is `0.4.8` (from `VERSION`, committed in `e2dd718`). The repository is licensed under GNU AGPL-3.0-or-later; the canonical FSF license text lives in `LICENSE` (SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`). `pyproject.toml` declares `license = "AGPL-3.0-or-later"`, `license-files = ["LICENSE"]`, public packaging metadata (authors, maintainers, classifiers, keywords), and project URLs pointing to `https://github.com/NDDev-it-com/rldyour-codex`.
 - Owned plugin manifests declare `license = "AGPL-3.0-or-later"` and use `https://github.com/NDDev-it-com/rldyour-codex` for `homepage`, `repository`, `interface.websiteURL`, `interface.privacyPolicyURL`, and `interface.termsOfServiceURL`.
 
 ## Contracts And Data
@@ -50,7 +50,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Manifest owned license and repository URL values are enforced by both `scripts/validate_plugin_versions.py` and `scripts/validate_contract.py`.
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
-- Current marketplace version is `0.4.4`; commit `be1134c` is a release patch that keeps the `0.4.3` runtime surface intact and classifies bounded official GitHub MCP `1.0.5` lifecycle stderr as known benign after capability smoke passes. Commit `89fabec` installed the pinned GitHub MCP server in CI runtime setup, tracks the GitHub MCP binary through pin freshness, and updates Context7 MCP to `2.3.0`. The `0.4.2` release merged the runtime-contract branch to `main`, added the adapter contract gate, and aligned Codex GitHub MCP parity. The `0.4.1` hardening release adds OpenSSF Scorecard, Dependency Review, and PR Labeler workflows, makes MCP pin freshness advisory on pull requests, and applies the public-repo GitHub settings.
+- Current marketplace version is `0.4.8`; release `0.4.8` records the control-plane audit follow-up, policy vocabulary alignment, current Codex CLI baseline metadata, and refreshed global install evidence. Release `0.4.4` kept the `0.4.3` runtime surface intact and classified bounded official GitHub MCP `1.0.5` lifecycle stderr as known benign after capability smoke passes. Commit `89fabec` installed the pinned GitHub MCP server in CI runtime setup, tracks the GitHub MCP binary through pin freshness, and updates Context7 MCP to `2.3.0`. The `0.4.2` release merged the runtime-contract branch to `main`, added the adapter contract gate, and aligned Codex GitHub MCP parity. The `0.4.1` hardening release adds OpenSSF Scorecard, Dependency Review, and PR Labeler workflows, makes MCP pin freshness advisory on pull requests, and applies the public-repo GitHub settings.
 - Previous release `0.3.5` was published by manual release workflow run `26006831237` after the full explicit CI/CD pipeline passed on `6ec3fb9`. Release `0.4.0` triggers via push of tag `0.4.0` to `origin/main` (release.yml `on: push: tags: [0-9]*.[0-9]*.[0-9]*`).
 
 ## Invariants
