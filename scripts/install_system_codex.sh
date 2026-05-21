@@ -4,11 +4,12 @@ set -euo pipefail
 APPLY=0
 TRUST_HOME=0
 STRICT_RUNTIME=0
+OWNER_MODE=0
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 
 usage() {
   cat <<'EOF'
-Usage: scripts/install_system_codex.sh [--dry-run] [--apply] [--codex-home PATH] [--trust-home] [--strict-runtime]
+Usage: scripts/install_system_codex.sh [--dry-run] [--apply] [--codex-home PATH] [--trust-home] [--strict-runtime] [--owner-mode]
 
 Installs the current rldyour Codex system state into CODEX_HOME.
 
@@ -23,7 +24,8 @@ Managed state:
 - plugin hooks feature flag
 - multi-agent feature flag
 - Codex config deprecated-key migration for managed global setup
-- owner-requested YOLO permission defaults
+- safe public permission defaults by default
+- owner-requested YOLO permission defaults only with --owner-mode
 - owner-selected model defaults
 - owner-selected subagent model defaults
 - rldyour MCP server definitions
@@ -52,6 +54,12 @@ while [ "$#" -gt 0 ]; do
       ;;
     --strict|--strict-runtime)
       STRICT_RUNTIME=1
+      ;;
+    --owner-mode)
+      OWNER_MODE=1
+      ;;
+    --safe-mode)
+      OWNER_MODE=0
       ;;
     -h|--help)
       usage
@@ -171,6 +179,7 @@ dart: $DART_CMD
 codex: ${CODEX_CMD:-not found}
 trust home: $TRUST_HOME
 strict runtime: $STRICT_RUNTIME
+owner mode: $OWNER_MODE
 EOF
 }
 
@@ -221,6 +230,7 @@ patch_config() {
   export RLDYOUR_BUNX_CMD="$BUNX_CMD"
   export RLDYOUR_DART_CMD="$DART_CMD"
   export RLDYOUR_TRUST_HOME="$TRUST_HOME"
+  export RLDYOUR_OWNER_MODE="$OWNER_MODE"
   export RLDYOUR_DRY_RUN=$((1 - APPLY))
   export RLDYOUR_MCP_CONFIG="$ROOT/plugins/rldyour-mcps/.mcp.json"
   export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
@@ -245,6 +255,7 @@ uvx_cmd = os.environ["RLDYOUR_UVX_CMD"]
 bunx_cmd = os.environ["RLDYOUR_BUNX_CMD"]
 dart_cmd = os.environ["RLDYOUR_DART_CMD"]
 trust_home = os.environ.get("RLDYOUR_TRUST_HOME") == "1"
+owner_mode = os.environ.get("RLDYOUR_OWNER_MODE") == "1"
 dry_run = os.environ.get("RLDYOUR_DRY_RUN") == "1"
 mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
 system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
@@ -332,6 +343,7 @@ for name, raw_spec in mcp_source.items():
 managed_headers = {
     "agents",
     "marketplaces.rldyour-codex",
+    "profiles.rldyour-safe",
     "profiles.rldyour-yolo",
     f'projects."{repo_root}"',
 }
@@ -376,14 +388,15 @@ managed_root_keys = {
 out: list[str] = [
     SCHEMA_COMMENT,
     "",
-    'profile = "rldyour-yolo"',
-    'approval_policy = "never"',
-    'sandbox_mode = "danger-full-access"',
-    'default_permissions = ":danger-no-sandbox"',
+    'profile = "rldyour-yolo"' if owner_mode else 'profile = "rldyour-safe"',
+    'approval_policy = "never"' if owner_mode else 'approval_policy = "on-request"',
+    'sandbox_mode = "danger-full-access"' if owner_mode else 'sandbox_mode = "workspace-write"',
     f"model = {json.dumps(managed_model)}",
     f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
     "suppress_unstable_features_warning = true",
 ]
+if owner_mode:
+    out.insert(5, 'default_permissions = ":danger-no-sandbox"')
 skip_managed = False
 in_features = False
 in_memories = False
@@ -647,6 +660,13 @@ out.extend([
     "[marketplaces.rldyour-codex]",
     'source_type = "local"',
     f"source = {json.dumps(repo_root)}",
+])
+
+add_blank()
+out.extend([
+    "[profiles.rldyour-safe]",
+    'approval_policy = "on-request"',
+    'sandbox_mode = "workspace-write"',
 ])
 
 add_blank()

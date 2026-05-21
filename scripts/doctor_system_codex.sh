@@ -4,16 +4,18 @@ set -euo pipefail
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 QUICK=0
 STRICT_RUNTIME=0
+OWNER_MODE=0
 
 usage() {
   cat <<'EOF'
-Usage: scripts/doctor_system_codex.sh [--codex-home PATH] [--quick] [--strict-runtime] [--full]
+Usage: scripts/doctor_system_codex.sh [--codex-home PATH] [--quick] [--strict-runtime] [--owner-mode] [--full]
 
 Checks whether the current machine matches the rldyour Codex system setup.
 
 Modes:
   --quick           Check installed files, config, and managed subagents only.
   --strict-runtime  Fail when enabled local MCP launchers or codex are missing.
+  --owner-mode      Validate the explicit owner-local YOLO profile instead of the safe default.
   --full            Run the full doctor. This is the default.
 EOF
 }
@@ -29,6 +31,12 @@ while [ "$#" -gt 0 ]; do
       ;;
     --strict|--strict-runtime)
       STRICT_RUNTIME=1
+      ;;
+    --owner-mode)
+      OWNER_MODE=1
+      ;;
+    --safe-mode)
+      OWNER_MODE=0
       ;;
     --full)
       QUICK=0
@@ -117,6 +125,7 @@ if [ -f "$CONFIG_PATH" ]; then
   export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
   export RLDYOUR_MARKETPLACE_CONFIG="$ROOT/.agents/plugins/marketplace.json"
   export RLDYOUR_MCP_CONFIG="$ROOT/plugins/rldyour-mcps/.mcp.json"
+  export RLDYOUR_OWNER_MODE="$OWNER_MODE"
   python3 <<'PY' || exit_code=$?
 from __future__ import annotations
 
@@ -132,6 +141,7 @@ codex_home = path.parent
 system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
 marketplace_config_path = Path(os.environ["RLDYOUR_MARKETPLACE_CONFIG"])
 mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
+owner_mode = os.environ.get("RLDYOUR_OWNER_MODE") == "1"
 text = path.read_text(encoding="utf-8")
 config_data = tomllib.loads(text)
 schema_comment = "#:schema https://developers.openai.com/codex/config-schema.json"
@@ -193,12 +203,21 @@ checks.append((
     "no_memories_if_mcp_or_web_search" not in memories_config,
 ))
 
-checks.append(("yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
-checks.append(("approval policy never", config_data.get("approval_policy") == "never"))
-checks.append(("sandbox danger full access", config_data.get("sandbox_mode") == "danger-full-access"))
-checks.append(("default permissions danger no sandbox", config_data.get("default_permissions") == ":danger-no-sandbox"))
+if owner_mode:
+    checks.append(("owner mode yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
+    checks.append(("owner mode approval policy never", config_data.get("approval_policy") == "never"))
+    checks.append(("owner mode sandbox danger full access", config_data.get("sandbox_mode") == "danger-full-access"))
+    checks.append(("owner mode default permissions danger no sandbox", config_data.get("default_permissions") == ":danger-no-sandbox"))
+else:
+    checks.append(("safe profile selected", config_data.get("profile") == "rldyour-safe"))
+    checks.append(("safe approval policy on-request", config_data.get("approval_policy") == "on-request"))
+    checks.append(("safe sandbox workspace-write", config_data.get("sandbox_mode") == "workspace-write"))
+    checks.append(("safe default permissions absent", "default_permissions" not in config_data))
 checks.append(("default model gpt-5.5", config_data.get("model") == "gpt-5.5"))
 checks.append(("default reasoning effort xhigh", config_data.get("model_reasoning_effort") == "xhigh"))
+safe_profile = (config_data.get("profiles") or {}).get("rldyour-safe") or {}
+checks.append(("profile rldyour-safe approval policy", safe_profile.get("approval_policy") == "on-request"))
+checks.append(("profile rldyour-safe sandbox", safe_profile.get("sandbox_mode") == "workspace-write"))
 yolo_profile = (config_data.get("profiles") or {}).get("rldyour-yolo") or {}
 checks.append(("profile rldyour-yolo approval policy", yolo_profile.get("approval_policy") == "never"))
 checks.append(("profile rldyour-yolo sandbox", yolo_profile.get("sandbox_mode") == "danger-full-access"))

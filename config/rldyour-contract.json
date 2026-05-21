@@ -146,7 +146,11 @@
     ]
   },
   "security": {
+    "default_profile": "rldyour-safe",
+    "default_sandbox_mode": "workspace-write",
+    "default_approval_policy": "on-request",
     "owner_yolo_profile": "owner-local-only",
+    "owner_yolo_flag": "--owner-mode",
     "forbid_repo_local_yolo_defaults": true
   },
   "cache": {
