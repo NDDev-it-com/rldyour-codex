@@ -86,6 +86,11 @@ The server is restricted to `context,repos,issues,pull_requests,users` so
 repository, issue, and PR workflows have parity without exposing every GitHub
 toolset by default.
 
+The CI/runtime pin for this binary is `GITHUB_MCP_SERVER_VERSION` in
+`config/mcp-runtime-versions.env`. GitHub Actions installs the matching release
+archive from `github/github-mcp-server` and verifies its published SHA-256
+checksum before strict runtime validation.
+
 ## Codex Verification
 
 After installing or updating the plugin, check:

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 761e03f chore(release): 0.4.2
+Last commit: 89fabec chore(release): 0.4.3
 Scope: .agents/plugins/marketplace.json, plugins/*/.codex-plugin/plugin.json, plugins/*/README.md, README.md, CHANGELOG.md, config/rldyour-contract.json, docs/contract-matrix.md, scripts/validate_plugin_versions.py, scripts/validate_contract.py, scripts/release_manifest.py
 Area: CORE
 -->
@@ -39,7 +39,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Only `rldyour-flow` and `rldyour-serena-mcp` may declare plugin hooks in this repository.
 - `rldyour-mcps` owns MCP transport definitions only and must not contain behavior skills.
 - Curated GitHub and Gmail plugins are enabled in system Codex but are not rldyour plugin directories in this repository.
-- Repository marketplace version is `0.4.2` (from `VERSION`, committed in `761e03f`). The repository is licensed under GNU AGPL-3.0-or-later; the canonical FSF license text lives in `LICENSE` (SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`). `pyproject.toml` declares `license = "AGPL-3.0-or-later"`, `license-files = ["LICENSE"]`, public packaging metadata (authors, maintainers, classifiers, keywords), and project URLs pointing to `https://github.com/NDDev-it-com/rldyour-codex`.
+- Repository marketplace version is `0.4.3` (from `VERSION`, committed in `89fabec`). The repository is licensed under GNU AGPL-3.0-or-later; the canonical FSF license text lives in `LICENSE` (SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`). `pyproject.toml` declares `license = "AGPL-3.0-or-later"`, `license-files = ["LICENSE"]`, public packaging metadata (authors, maintainers, classifiers, keywords), and project URLs pointing to `https://github.com/NDDev-it-com/rldyour-codex`.
 - Owned plugin manifests declare `license = "AGPL-3.0-or-later"` and use `https://github.com/NDDev-it-com/rldyour-codex` for `homepage`, `repository`, `interface.websiteURL`, `interface.privacyPolicyURL`, and `interface.termsOfServiceURL`.
 
 ## Contracts And Data
@@ -50,7 +50,7 @@ This memory records marketplace catalog and plugin-manifest contracts for the ow
 - Manifest owned license and repository URL values are enforced by both `scripts/validate_plugin_versions.py` and `scripts/validate_contract.py`.
 - Marketplace plugin entries use policy `installation = AVAILABLE` and `authentication = ON_USE` for active local rldyour plugins.
 - Release metadata is SemVer-shaped per plugin; repository `VERSION` remains the marketplace version.
-- Current marketplace version is `0.4.2`; commit `761e03f` bumps the marketplace version. The `0.4.1` hardening release adds OpenSSF Scorecard, Dependency Review, and PR Labeler workflows, makes MCP pin freshness advisory on pull requests, and applies the public-repo GitHub settings (visibility public, branch protection on `main`, SemVer tag ruleset, Dependabot updates). The `0.4.0` release covered the AGPL-3.0-or-later relicense, public-OSS CI/CD auto-trigger model, new CodeQL workflow, Code of Conduct, public packaging metadata, branch-protection desired state for public `main`, and AGPL declaration in the generated SBOM. No plugin behavior versions changed in either release.
+- Current marketplace version is `0.4.3`; commit `89fabec` bumps the marketplace version, installs the pinned GitHub MCP server in CI runtime setup, tracks the GitHub MCP binary through pin freshness, and updates Context7 MCP to `2.3.0`. The `0.4.2` release merged the runtime-contract branch to `main`, added the adapter contract gate, and aligned Codex GitHub MCP parity. The `0.4.1` hardening release adds OpenSSF Scorecard, Dependency Review, and PR Labeler workflows, makes MCP pin freshness advisory on pull requests, and applies the public-repo GitHub settings.
 - Previous release `0.3.5` was published by manual release workflow run `26006831237` after the full explicit CI/CD pipeline passed on `6ec3fb9`. Release `0.4.0` triggers via push of tag `0.4.0` to `origin/main` (release.yml `on: push: tags: [0-9]*.[0-9]*.[0-9]*`).
 
 ## Invariants

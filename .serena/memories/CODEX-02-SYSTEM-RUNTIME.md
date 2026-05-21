@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 761e03f chore(release): 0.4.2
+Last commit: 89fabec chore(release): 0.4.3
 Scope: ${CODEX_HOME:-$HOME/.codex}/config.toml, ${CODEX_HOME:-$HOME/.codex}/AGENTS.md, ${CODEX_HOME:-$HOME/.codex}/agents/*.toml, ${CODEX_HOME:-$HOME/.codex}/rules/*.rules, ${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex, system/AGENTS.md, system/agents/*.toml, system/rules/*.rules, scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/validate_execpolicy_rules.sh, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py, config/rldyour-contract.json, plugins/rldyour-mcps/.mcp.json
 Area: CODEX
 -->
@@ -51,7 +51,7 @@ This memory records the installed system Codex runtime state owned by this repos
 - Managed subagents are installed from `system/agents/*.toml`; all rldyour-managed roles use `gpt-5.5` with `medium` reasoning.
 - Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight inherited core surface (`sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`) while specialist MCP servers (`semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, `shadcn`) remain parent-session tools.
 - Since `66070a8`, disabled specialist MCP overrides in managed subagent TOML files include complete transport metadata copied from `plugins/rldyour-mcps/.mcp.json`. This prevents Codex from ignoring standalone custom-agent role files with `invalid transport` warnings when an override disables a server but still declares an MCP table.
-- Current runtime pins installed by `scripts/install_system_codex.sh --apply --strict-runtime`: Codex CLI `0.132.0`, Serena Agent `1.5.1`, Chrome DevTools MCP `1.0.1`, Bun `1.3.14`, Node major `24`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Context7 MCP `2.2.5`, and shadcn `4.7.0`.
+- Current runtime pins installed by `scripts/install_system_codex.sh --apply --strict-runtime`: Codex CLI `0.132.0`, GitHub MCP server `1.0.5`, Serena Agent `1.5.1`, Chrome DevTools MCP `1.0.1`, Bun `1.3.14`, Node major `24`, Semgrep `1.163.0`, Playwright MCP `0.0.75`, Context7 MCP `2.3.0`, and shadcn `4.7.0`.
 - `codex_apps` is not represented as an `mcp_servers` table in managed agents. It remains available through the inherited Apps/connectors surface.
 - Active managed roles are `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `research-explorer`, `security-audit`, `serena-sync`, and `test-reviewer`.
 - Installer/doctor derive rldyour plugin enablement from `.agents/plugins/marketplace.json` and MCP registration from `plugins/rldyour-mcps/.mcp.json`.

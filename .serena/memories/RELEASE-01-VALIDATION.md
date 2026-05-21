@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 761e03f chore(release): 0.4.2
+Last commit: 89fabec chore(release): 0.4.3
 Scope: scripts/validate_marketplace.sh, scripts/validate_fast.sh, scripts/validate_runtime.sh, scripts/validate_release.sh, scripts/validate_contract.py, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py, scripts/validate_agent_tools.py, scripts/validate_execpolicy_rules.sh, scripts/smoke_serena_memory_taxonomy.sh, scripts/smoke_hooks.sh, scripts/doctor_system_codex.sh, scripts/release_manifest.py, scripts/release_sbom.py, scripts/check_mcp_runtime_versions.py, scripts/validate_runtime_prereqs.py, scripts/classify_ci_noise.py, config/rldyour-contract.json, docs/contract-matrix.md, system/agents/*.toml, system/rules/*.rules, pyproject.toml, tests/, CHANGELOG.md, VERSION, .github/workflows/*.yml, .github/actions/setup-codex-runtime/action.yml
 Area: RELEASE
 -->
@@ -35,7 +35,7 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/validate_runtime_prereqs.py`: strict launcher prerequisite validator for enabled MCP/Codex runtime surfaces.
 - `scripts/classify_ci_noise.py`: strict targeted stderr/log classifier for CI noise.
 - `pyproject.toml`: pytest, coverage, and Python 3.13 runtime contract.
-- `.github/actions/setup-codex-runtime/action.yml`: shared GitHub Actions setup for Python, uv, Bun, Dart, system packages, and optional pinned Codex CLI.
+- `.github/actions/setup-codex-runtime/action.yml`: shared GitHub Actions setup for Python, uv, Bun, Dart, system packages, optional pinned Codex CLI, and the pinned official GitHub MCP server binary.
 - `.github/workflows/security-static.yml`: auto-running no-paid static security workflow (push to main, pull requests, weekly schedule, workflow_dispatch).
 - `.github/workflows/release.yml`: auto-running release bundle, SBOM, attestation, and GitHub Release workflow (push of SemVer tags `[0-9]*.[0-9]*.[0-9]*` and prereleases, plus workflow_dispatch).
 - `.github/workflows/codeql.yml`: auto-running GitHub CodeQL analysis (push to main, pull requests, weekly schedule) with the `security-and-quality` query suite for Python and GitHub Actions. Pinned `github/codeql-action@458d36d7d4f47d0dd16ca424c1d3cda0060f1360 # v3`.
@@ -98,6 +98,8 @@ This memory records the validation and release gates that keep the marketplace, 
 - `scripts/doctor_system_codex.sh` verifies installed rldyour plugin hook count and requires every installed rldyour plugin hook to be enabled and trusted according to the app-server RPC method `hooks/list`.
 - `scripts/smoke_codex_hook_listing.py` additionally verifies live hook source paths include the versioned installed cache path `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>/hooks.json`.
 - `scripts/doctor_system_codex.sh` also verifies that installed managed subagent TOML files match source, preserve the temporary specialist-MCP isolation policy, include complete disabled transport metadata, and do not declare built-in `codex_apps` under `mcp_servers`.
+- `scripts/check_mcp_runtime_versions.py` checks npm, PyPI, and GitHub release pins; `GITHUB_MCP_SERVER_VERSION` tracks `github/github-mcp-server` release tags without a leading `v`.
+- `.github/actions/setup-codex-runtime/action.yml` downloads `github-mcp-server_<OS>_<ARCH>.tar.gz`, verifies it against the published checksums file, installs it into the runner temp bin directory, and exposes it through `GITHUB_PATH` before strict runtime jobs run.
 - GitHub Actions workflows pin external actions by full commit SHA, with the source tag kept as an inline comment for review.
 - `.github/workflows/validate.yml` has a separate unit-test matrix job that uploads `pytest.xml`, `coverage.xml`, and strict stderr logs.
 - `.github/workflows/security-static.yml` runs on push to `main`, pull requests, weekly schedule, and workflow_dispatch; it runs action pin validation, actionlint `1.7.12`, text security scan, ShellCheck, Pyright `1.1.409`, and Semgrep CLI without requiring paid GitHub Code Security.
@@ -184,3 +186,4 @@ This memory records the validation and release gates that keep the marketplace, 
 - `git diff --check`: whitespace sanity before commit.
 
 - Local validation for `761e03f` / version `0.4.2` passed on 2026-05-21: `scripts/validate_fast.sh` (80 tests, 76.65% coverage), `scripts/validate_release.sh`, `python3 scripts/validate_contract.py`, `python3 scripts/validate_plugin_versions.py`, and `git diff --check`. Release tag `0.4.2` was pushed.
+- Local validation for `89fabec` / version `0.4.3` passed on 2026-05-21: `scripts/validate_fast.sh` (82 tests, 76.71% coverage), `scripts/validate_release.sh`, `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json`, Pyright `1.1.409`, `actionlint`, `python3 scripts/validate_contract.py`, `python3 scripts/validate_plugin_versions.py`, `python3 scripts/validate_runtime_prereqs.py --strict --require-codex` with `github-mcp-server` `1.0.5` installed, `scripts/validate_runtime.sh --strict-runtime`, and `git diff --check`.

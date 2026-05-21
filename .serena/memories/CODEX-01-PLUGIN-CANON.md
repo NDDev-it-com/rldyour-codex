@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 761e03f chore(release): 0.4.2
+Last commit: 89fabec chore(release): 0.4.3
 Scope: .agents/plugins/marketplace.json, config/rldyour-contract.json, docs/contract-matrix.md, plugins/*/.codex-plugin/plugin.json, plugins/*/skills/*/SKILL.md, plugins/*/skills/*/agents/openai.yaml, plugins/*/hooks.json, system/agents/*.toml, scripts/validate_agent_tools.py, scripts/validate_plugin_versions.py, scripts/validate_skill_routing.py, scripts/validate_contract.py, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py
 Area: CODEX
 -->
@@ -68,7 +68,7 @@ This memory records Codex-native plugin, skill, hook, and managed-subagent surfa
 - Marketplace entries use local `source.path` references to `./plugins/<plugin>`.
 - `plugins/rldyour-mcps/.mcp.json` defines valid MCP dependency values for `agents/openai.yaml`.
 - `scripts/validate_agent_tools.py` loads `.mcp.json`, parses YAML/TOML, rejects unknown MCP dependency names, rejects partial disabled managed-agent MCP overrides, rejects disabled transport drift from `.mcp.json`, and rejects explicit `mcp_servers.codex_apps` tables.
-- `scripts/validate_contract.py` rejects drift in plugin set, skill names/count, slash-command absence, managed agent role mapping, hook command handler shape, MCP server list, manifest license/URL metadata, and repo-local YOLO defaults.
+- `scripts/validate_contract.py` rejects drift in plugin set, skill names/count, slash-command absence, managed agent role mapping, hook command handler shape, MCP server list, manifest license/URL metadata, and repo-local YOLO defaults. JSON-derived contract values must be type-narrowed before comparison so Pyright strict checks prove the validator itself stays safe.
 - Managed agent TOML field `name` must match the filename stem.
 
 ## Invariants

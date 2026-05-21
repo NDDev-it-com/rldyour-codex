@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 761e03f chore(release): 0.4.2
+Last commit: 89fabec chore(release): 0.4.3
 Scope: scripts/install_system_codex.sh, scripts/doctor_system_codex.sh, scripts/plugin_cache_contract.py, scripts/smoke_codex_hook_listing.py, scripts/validate_contract.py, scripts/validate_runtime_prereqs.py, scripts/validate_runtime.sh, scripts/rollback_system_codex.sh, scripts/collect_diagnostics.sh, scripts/bootstrap_check.sh, scripts/smoke_clean_bootstrap.sh, scripts/smoke_codex_hooks_migration.sh, system/AGENTS.md, system/agents/*.toml, pyproject.toml, scripts/validate_marketplace.sh, config/rldyour-contract.json
 Area: CODEX
 -->
@@ -57,6 +57,7 @@ This memory records how the repository installs, verifies, rolls back, and diagn
 - Doctor intentionally fails the local fullrepo current-state gate while normal-branch code/config changes are dirty; rerun after normal commit/push/fullrepo publish for final green state.
 - `scripts/collect_diagnostics.sh` writes local ignored artifacts; do not commit diagnostics bundles.
 - `scripts/validate_runtime.sh --strict-runtime` installs into a temporary `CODEX_HOME`, runs quick strict doctor, validates execpolicy rules, runs `scripts/smoke_codex_hook_listing.py`, then runs hook/fullrepo bootstrap smokes.
+- GitHub Actions setup installs the pinned official `github-mcp-server` release artifact with SHA-256 verification before Codex runtime validation, so strict `github` MCP prerequisites are proven on hosted Ubuntu/macOS runners instead of being assumed.
 
 ## Contracts And Data
 

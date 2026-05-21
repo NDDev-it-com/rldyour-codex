@@ -122,9 +122,9 @@ The Codex adapter contract lives in `config/rldyour-contract.json` and is docume
 
 `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
 
-Local MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runtime-versions.env`; marketplace validation fails if these sources drift. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke.
+Local MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runtime-versions.env`; marketplace validation fails if these sources drift. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke. The official GitHub MCP server binary is pinned separately as `GITHUB_MCP_SERVER_VERSION` and installed by CI from the matching upstream release artifact with checksum verification.
 
-`dart-flutter` is intentionally declared as an external local Dart SDK runtime in `config/mcp-runtime-versions.env`; all other local package launchers remain package-pinned. Host runtime pins for Node major, Bun, and Dart SDK also live in this file so local setup, GitHub Actions, and the devcontainer share one source of truth. GitHub Actions workflows pin external actions to full commit SHAs, with the source tag kept as an inline comment for review.
+`dart-flutter` is intentionally declared as an external local Dart SDK runtime in `config/mcp-runtime-versions.env`; all other local package launchers remain package-pinned or binary-release-pinned. Host runtime pins for Node major, Bun, Dart SDK, and GitHub MCP also live in this file so local setup, GitHub Actions, and the devcontainer share one source of truth. GitHub Actions workflows pin external actions to full commit SHAs, with the source tag kept as an inline comment for review.
 
 Strict runtime mode is available when the environment must be fully reproducible instead of warning-only:
 
