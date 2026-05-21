@@ -16,7 +16,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 - Runtime pins updated to current stable upstream versions: Codex CLI `0.132.0`, Serena Agent `1.5.1`, and Chrome DevTools MCP `1.0.1`.
 - Plugin manifests now carry canonical authorship for Danil Silantyev
-  (`github:rldyourmnd`), CEO & Engineer NDDev, and validators enforce that
+  (`github:rldyourmnd`), CEO NDDev, and validators enforce that
   author/developer attribution together with AGPL-3.0-or-later licensing.
 - Generated `fullrepo` commits now default to Danil Silantyev
   (`rldyourmnd@users.noreply.github.com`) as author and committer when no Git
@@ -72,7 +72,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Public open-source release under the GNU Affero General Public License v3.0 or later. `LICENSE` now contains the canonical AGPL-3.0 text verbatim, sourced from the Free Software Foundation.
 - `CODE_OF_CONDUCT.md` referencing Contributor Covenant 2.1 with a private reporting channel through GitHub Security Advisories.
 - `.github/workflows/codeql.yml` running GitHub CodeQL with the `security-and-quality` query suite for Python and GitHub Actions on every push to `main`, every pull request, and on a weekly schedule.
-- Maintainer attribution to Danil Silantyev (`github:rldyourmnd`), CEO & Engineer NDDev, in `README.md`.
+- Maintainer attribution to Danil Silantyev (`github:rldyourmnd`), CEO NDDev, in `README.md`.
 - `pyproject.toml` now declares SPDX license identifier `AGPL-3.0-or-later`, project authors, project URLs, classifiers, and keywords for public packaging metadata.
 
 ### Changed

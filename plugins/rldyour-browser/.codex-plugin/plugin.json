@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "description": "Auto-invoked browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP. RU: браузерная проверка, скриншоты, адаптив, консоль/сеть и runtime-debug для русскоязычных задач владельца.",
   "author": {
-    "name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
@@ -31,7 +31,7 @@
     "displayName": "rldyour Browser",
     "shortDescription": "Auto browser validation/debugging / RU: браузерная проверка",
     "longDescription": "This skills-only plugin defines automatic browser workflows for Codex. Its skills should be selected automatically when the owner asks to check in the browser, verify visually, validate a UI, inspect screenshots, test a user flow, prove business logic, compare pixel-perfect output, debug console/network/runtime/layout failures, or analyze performance. Playwright MCP is the primary tool for user-flow reproduction, functional validation, business-logic verification, screenshots, accessibility snapshots, storage/network/testing assertions, and pixel-perfect UI checks. Chrome DevTools MCP is the primary tool for console, network, DOM/runtime, layout, Lighthouse, performance trace, and deeper browser debugging. Browser artifacts such as screenshots, videos, traces, PDFs, and temporary evidence must be written under browser/ and treated as ignored local artifacts unless the owner explicitly asks to preserve them.",
-    "developerName": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
+    "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [
       "Automatic browser skill routing",
