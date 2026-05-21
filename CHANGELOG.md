@@ -6,6 +6,20 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-05-21
+
+### Changed
+
+- `rldyour-mcps` now pins `shadcn@4.8.0`, the current stable shadcn MCP CLI
+  package on 2026-05-21. The managed subagent specialist MCP overrides and
+  `config/mcp-runtime-versions.env` were updated in the same release.
+
+### Fixed
+
+- `scripts/smoke_mcp_capabilities.py --mode static --json` is now a true
+  parse-only path: it reads only the repository MCP manifest and no longer
+  imports the Python MCP SDK or requires an installed `CODEX_HOME`.
+
 ## [0.4.4] - 2026-05-21
 
 ### Fixed

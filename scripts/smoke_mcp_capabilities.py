@@ -10,11 +10,10 @@ import sys
 import tomllib
 from collections.abc import Awaitable, Callable
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
-from mcp.client.streamable_http import streamablehttp_client
+if TYPE_CHECKING:
+    from mcp import ClientSession
 
 
 EXPECTED_TOOLS: dict[str, set[str]] = {
@@ -40,14 +39,11 @@ class ProbeFailure(Exception):
 
 
 def _load_servers(root: Path, codex_home: Path) -> dict[str, dict[str, Any]]:
-    repo_path = root / "plugins/rldyour-mcps/.mcp.json"
+    repo_servers = _load_repo_servers(root)
     config_path = codex_home / "config.toml"
-    if not repo_path.is_file():
-        raise ProbeFailure(f"missing {repo_path}")
     if not config_path.is_file():
         raise ProbeFailure(f"missing {config_path}")
 
-    repo_servers = json.loads(repo_path.read_text(encoding="utf-8"))["mcpServers"]
     config_servers = tomllib.loads(config_path.read_text(encoding="utf-8")).get("mcp_servers", {})
     if set(repo_servers) != set(config_servers):
         raise ProbeFailure(
@@ -55,6 +51,90 @@ def _load_servers(root: Path, codex_home: Path) -> dict[str, dict[str, Any]]:
             f"repo={sorted(repo_servers)} installed={sorted(config_servers)}"
         )
     return {name: dict(config_servers[name]) for name in sorted(repo_servers)}
+
+
+def _load_repo_servers(root: Path) -> dict[str, dict[str, Any]]:
+    repo_path = root / "plugins/rldyour-mcps/.mcp.json"
+    if not repo_path.is_file():
+        raise ProbeFailure(f"missing {repo_path}")
+    try:
+        payload = json.loads(repo_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ProbeFailure(f"{repo_path}: invalid JSON: {exc}") from exc
+    servers = payload.get("mcpServers")
+    if not isinstance(servers, dict):
+        raise ProbeFailure(f"{repo_path}: mcpServers must be an object")
+    return {str(name): dict(spec) for name, spec in sorted(servers.items())}
+
+
+def _static_record(name: str, spec: dict[str, Any]) -> tuple[dict[str, Any], str | None]:
+    has_command = "command" in spec
+    has_url = "url" in spec
+    error: str | None = None
+    if has_command == has_url:
+        error = "must define exactly one of command or url"
+    elif has_command and not isinstance(spec.get("command"), str):
+        error = "command must be a string"
+    elif has_url and not isinstance(spec.get("url"), str):
+        error = "url must be a string"
+    elif "args" in spec and not isinstance(spec.get("args"), list):
+        error = "args must be an array"
+    elif "env" in spec and not isinstance(spec.get("env"), dict):
+        error = "env must be an object"
+    elif "env_vars" in spec and not isinstance(spec.get("env_vars"), list):
+        error = "env_vars must be an array"
+
+    record: dict[str, Any] = {
+        "server": name,
+        "status": "static" if error is None else "fail",
+        "transport": "http" if has_url else "stdio" if has_command else "invalid",
+        "expected_tools": sorted(EXPECTED_TOOLS.get(name, set())),
+    }
+    if has_command:
+        record["command"] = spec.get("command")
+        record["args"] = [str(arg) for arg in spec.get("args") or []]
+    if has_url:
+        record["url"] = spec.get("url")
+    if "env" in spec:
+        record["env_keys"] = sorted(str(key) for key in (spec.get("env") or {}))
+    if "env_vars" in spec:
+        record["env_vars"] = [str(key) for key in spec.get("env_vars") or []]
+    if error:
+        record["error"] = error
+    return record, error
+
+
+def _main_static(args: argparse.Namespace) -> int:
+    root = args.root.resolve()
+    servers = _load_repo_servers(root)
+    selected = set(args.server or servers)
+    skipped = set(args.skip_server or [])
+    records: list[dict[str, Any]] = []
+    errors: list[str] = []
+
+    for name, spec in servers.items():
+        if name not in selected or name in skipped:
+            continue
+        record, error = _static_record(name, spec)
+        records.append(record)
+        if error:
+            errors.append(f"{name}: {error}")
+
+    if args.json:
+        print(json.dumps({"mode": "static", "count": len(records), "results": records, "errors": errors}, indent=2))
+    else:
+        print("rldyour MCP capability smoke")
+        print(f"root: {root}")
+        print("mode: static")
+        for record in records:
+            prefix = "fail" if record["status"] == "fail" else "ok"
+            detail = record.get("error") or f"{record['transport']} config parsed"
+            print(f"{prefix:<7} {record['server']}: {detail}")
+        if errors:
+            print("\n".join(errors), file=sys.stderr)
+        else:
+            print("MCP static capability smoke passed.")
+    return 1 if errors else 0
 
 
 def _merged_env(spec: dict[str, Any]) -> tuple[dict[str, str], list[str]]:
@@ -77,7 +157,7 @@ def _content_len(result: Any) -> int:
     return len(content) if isinstance(content, list) else 0
 
 
-async def _safe_call(name: str, session: ClientSession, missing_env: list[str]) -> str | None:
+async def _safe_call(name: str, session: "ClientSession", missing_env: list[str]) -> str | None:
     if name == "serena":
         result = await session.call_tool("list_memories", {})
         if result.isError:
@@ -172,8 +252,11 @@ async def _safe_call(name: str, session: ClientSession, missing_env: list[str]) 
 
 async def _stdio_session(
     spec: dict[str, Any],
-    body: Callable[[ClientSession, list[str]], Awaitable[None]],
+    body: Callable[["ClientSession", list[str]], Awaitable[None]],
 ) -> None:
+    from mcp import ClientSession, StdioServerParameters
+    from mcp.client.stdio import stdio_client
+
     command = str(spec.get("command") or "")
     if not command:
         raise ProbeFailure("missing command")
@@ -200,8 +283,11 @@ async def _stdio_session(
 
 async def _http_session(
     spec: dict[str, Any],
-    body: Callable[[ClientSession, list[str]], Awaitable[None]],
+    body: Callable[["ClientSession", list[str]], Awaitable[None]],
 ) -> None:
+    from mcp import ClientSession
+    from mcp.client.streamable_http import streamablehttp_client
+
     url = str(spec.get("url") or "")
     if not url:
         raise ProbeFailure("missing url")
@@ -335,6 +421,13 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Probe MCP initialize/list_tools/safe call_tool behavior.")
     parser.add_argument("--root", type=Path, default=Path.cwd(), help="Repository root.")
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", "~/.codex")))
+    parser.add_argument(
+        "--mode",
+        choices=("static", "local-launch"),
+        default="local-launch",
+        help="static parses repo MCP config only; local-launch probes the installed Codex MCP runtime.",
+    )
+    parser.add_argument("--json", action="store_true", help="Emit JSON. Supported for --mode static.")
     parser.add_argument("--server", action="append", help="Only probe this server. Repeatable.")
     parser.add_argument("--skip-server", action="append", help="Skip this server. Repeatable.")
     parser.add_argument("--list-only", action="store_true", help="Only initialize and list tools.")
@@ -353,6 +446,11 @@ def _parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = _parse_args()
+    if args.mode == "static":
+        return _main_static(args)
+    if args.json:
+        print("--json is only supported with --mode static", file=sys.stderr)
+        return 2
     return asyncio.run(_main_async(args))
 
 
