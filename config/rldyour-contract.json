@@ -146,12 +146,19 @@
     ]
   },
   "security": {
-    "default_profile": "rldyour-safe",
-    "default_sandbox_mode": "workspace-write",
-    "default_approval_policy": "on-request",
-    "owner_yolo_profile": "owner-local-only",
-    "owner_yolo_flag": "--owner-mode",
-    "forbid_repo_local_yolo_defaults": true
+    "default_profile": "rldyour-yolo",
+    "default_sandbox_mode": "danger-full-access",
+    "default_approval_policy": "never",
+    "default_permissions": ":danger-no-sandbox",
+    "full_auto_standard": true,
+    "full_auto_aliases": [
+      "yolo",
+      "full-auto",
+      "dangerously-skip-permissions"
+    ],
+    "safe_profile": "rldyour-safe",
+    "safe_profile_flag": "--safe-mode",
+    "allow_repo_local_yolo_defaults": true
   },
   "cache": {
     "layout": "versioned",

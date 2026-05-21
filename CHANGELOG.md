@@ -8,7 +8,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Added
 
-- `config/rldyour-contract.json`, `docs/contract-matrix.md`, and `scripts/validate_contract.py` now define and validate the Codex adapter surface: plugins, skills, absent slash commands, managed subagents, hook lifecycle mappings, MCP servers, versioned plugin cache, and owner-local YOLO boundaries.
+- `config/rldyour-contract.json`, `docs/contract-matrix.md`, and `scripts/validate_contract.py` now define and validate the Codex adapter surface: plugins, skills, absent slash commands, managed subagents, hook lifecycle mappings, MCP servers, versioned plugin cache, and the owner-standard full-auto profile.
 - `scripts/plugin_cache_contract.py` centralizes installed plugin cache discovery and parity checks from plugin manifest versions.
 - `scripts/smoke_codex_hook_listing.py` proves live Codex `app-server` `hooks/list` output includes all rldyour bundled plugin hooks as trusted, enabled, and sourced from versioned cache paths.
 
@@ -27,13 +27,16 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Plugin manifests now align with the repository public license and canonical URL: `AGPL-3.0-or-later` and `https://github.com/NDDev-it-com/rldyour-codex`.
 - Marketplace validation batches skill frontmatter parsing in one Python process and release validation now includes the Codex adapter contract gate.
 - Runtime validation now includes live Codex `hooks/list` trust smoke after installing into a temporary `CODEX_HOME`.
-- System installer and doctor now default to the safe public profile
-  (`rldyour-safe`, `workspace-write`, `on-request`) and require explicit
-  `--owner-mode` for the maintainer-only YOLO profile.
+- System installer and doctor now default to the owner-standard full-auto
+  profile (`rldyour-yolo`, `danger-full-access`, `never`,
+  `:danger-no-sandbox`) and keep `--safe-mode` as an explicit conservative
+  override.
 
 ### Security
 
-- The Codex adapter contract forbids repo-local YOLO defaults in `.codex/config.toml` or `config.toml`; the owner YOLO profile remains install-time, owner-local-only policy behind `--owner-mode`.
+- The Codex adapter contract records YOLO/full-auto/dangerously-skip-permissions
+  as the standard owner posture and validates that safe mode is only an
+  explicit override.
 
 ### Fixed
 

@@ -4,18 +4,19 @@ set -euo pipefail
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 QUICK=0
 STRICT_RUNTIME=0
-OWNER_MODE=0
+OWNER_MODE=1
 
 usage() {
   cat <<'EOF'
-Usage: scripts/doctor_system_codex.sh [--codex-home PATH] [--quick] [--strict-runtime] [--owner-mode] [--full]
+Usage: scripts/doctor_system_codex.sh [--codex-home PATH] [--quick] [--strict-runtime] [--owner-mode|--safe-mode] [--full]
 
 Checks whether the current machine matches the rldyour Codex system setup.
 
 Modes:
   --quick           Check installed files, config, and managed subagents only.
   --strict-runtime  Fail when enabled local MCP launchers or codex are missing.
-  --owner-mode      Validate the explicit owner-local YOLO profile instead of the safe default.
+  --owner-mode      Validate the owner-standard YOLO/full-auto profile. This is the default.
+  --safe-mode       Validate the optional safe override profile.
   --full            Run the full doctor. This is the default.
 EOF
 }
@@ -212,7 +213,7 @@ else:
     checks.append(("safe profile selected", config_data.get("profile") == "rldyour-safe"))
     checks.append(("safe approval policy on-request", config_data.get("approval_policy") == "on-request"))
     checks.append(("safe sandbox workspace-write", config_data.get("sandbox_mode") == "workspace-write"))
-    checks.append(("safe default permissions absent", "default_permissions" not in config_data))
+    checks.append(("safe mode default permissions absent", "default_permissions" not in config_data))
 checks.append(("default model gpt-5.5", config_data.get("model") == "gpt-5.5"))
 checks.append(("default reasoning effort xhigh", config_data.get("model_reasoning_effort") == "xhigh"))
 safe_profile = (config_data.get("profiles") or {}).get("rldyour-safe") or {}
