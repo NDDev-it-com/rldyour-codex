@@ -160,9 +160,14 @@ def main() -> int:
             errors.append(f"{expected_key}: missing currentHash")
         source_path = str(hook.get("sourcePath") or "")
         version = manifest_version(args.repo_root, plugin)
-        expected_source = f"/plugins/cache/rldyour-codex/{plugin}/{version}/hooks.json"
-        if expected_source not in source_path:
-            errors.append(f"{expected_key}: sourcePath must include {expected_source}, got {source_path!r}")
+        expected_sources = [
+            f"/plugins/cache/rldyour-codex/{plugin}/{version}/hooks.json",
+            f"/plugins/cache/rldyour-codex/{plugin}/local/hooks.json",
+        ]
+        if not any(expected_source in source_path for expected_source in expected_sources):
+            errors.append(
+                f"{expected_key}: sourcePath must include one of {expected_sources}, got {source_path!r}"
+            )
 
     unexpected = sorted(set(by_key) - set(expected))
     if unexpected:
