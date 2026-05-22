@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last commit: 77280a6219d6de48815df6da3e33552d9c6c9283 fix: accept local hook cache paths
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -13,24 +13,31 @@ deterministic hook lifecycle behavior
 ## Current source of truth
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
+- `path:scripts/smoke_codex_hook_listing.py`
 
 
 ## Source Of Truth
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
+- `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
 - date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `77280a6219d6de48815df6da3e33552d9c6c9283`
+- checked by: Codex ry-start macOS system config verification
 
 ## Facts
 - Hook memories record bounded, deterministic lifecycle behavior and the authoritative Stop owner.
+- `scripts/smoke_codex_hook_listing.py` validates runtime `hooks/list`
+  against installed rldyour plugin hooks and accepts both
+  `plugins/cache/rldyour-codex/<plugin>/<version>/hooks.json` and
+  `plugins/cache/rldyour-codex/<plugin>/local/hooks.json` source paths.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:77280a6219d6de48815df6da3e33552d9c6c9283`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
+- `path:scripts/smoke_codex_hook_listing.py`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

@@ -8,6 +8,9 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Fixed
 
+- Codex `hooks/list` smoke now accepts both versioned and `local` installed
+  plugin cache hook source paths, matching the current local marketplace install
+  layout used by system Codex.
 - Dart/Flutter MCP capability smoke now requires the stable tools exposed by
   Dart SDK `3.12.0`; `run_tests` is no longer treated as globally available in
   non-Dart repository checkouts.
