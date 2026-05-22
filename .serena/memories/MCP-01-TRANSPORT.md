@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last commit: c89b5380f272ac9553b254573383c71aa1e33e33 fix: align dart mcp smoke with dart 3.12
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -21,15 +21,21 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `c89b5380f272ac9553b254573383c71aa1e33e33`
+- checked by: Codex ry-start Dart 3.12 runtime sync
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
+- Dart/Flutter MCP is provided by the local Dart SDK. On Dart SDK `3.12.0`,
+  `dart mcp-server --force-roots-fallback` exposes `analyze_files` and
+  `pub_dev_search` in this non-Dart checkout; `run_tests` is conditional and is
+  not a global smoke requirement.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:c89b5380f272ac9553b254573383c71aa1e33e33`
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
+- `path:scripts/smoke_mcp_capabilities.py`
 - `path:README.md`
 
 ## Known pitfalls

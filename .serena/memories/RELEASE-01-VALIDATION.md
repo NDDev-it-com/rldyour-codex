@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last commit: c89b5380f272ac9553b254573383c71aa1e33e33 fix: align dart mcp smoke with dart 3.12
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,16 +23,20 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `c89b5380f272ac9553b254573383c71aa1e33e33`
+- checked by: Codex ry-start Dart 3.12 runtime sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
+- Commit `c89b5380f272ac9553b254573383c71aa1e33e33` updates unreleased Codex
+  runtime metadata for Dart SDK `3.12.0` and keeps the product version at
+  `0.4.9`.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:c89b5380f272ac9553b254573383c71aa1e33e33`
 - `path:VERSION`
 - `path:CHANGELOG.md`
+- `path:config/mcp-runtime-versions.env`
 - `path:.github/workflows/release.yml`
 
 ## Known pitfalls
