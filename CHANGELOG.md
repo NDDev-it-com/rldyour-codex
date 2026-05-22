@@ -6,6 +6,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+### Fixed
+
+- Dart/Flutter MCP capability smoke now requires the stable tools exposed by
+  Dart SDK `3.12.0`; `run_tests` is no longer treated as globally available in
+  non-Dart repository checkouts.
+
 ## [0.4.9] - 2026-05-22
 
 ### Changed
