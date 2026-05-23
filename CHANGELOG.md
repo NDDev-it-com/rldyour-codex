@@ -6,6 +6,11 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+### Changed
+
+- Context7 MCP now pins `@upstash/context7-mcp@3.0.0`, matching the current
+  npm stable package in `.mcp.json` and `config/mcp-runtime-versions.env`.
+
 ### Fixed
 
 - Codex `hooks/list` smoke now accepts both versioned and `local` installed
