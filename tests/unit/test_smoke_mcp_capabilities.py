@@ -19,7 +19,7 @@ def test_static_mode_parses_repo_config_without_installed_codex_home(
                 "mcpServers": {
                     "serena": {
                         "command": "uvx",
-                        "args": ["--from", "serena-agent==1.5.1", "serena"],
+                        "args": ["--from", "serena-agent==1.5.3", "serena"],
                     },
                     "openaiDeveloperDocs": {
                         "url": "https://developers.openai.com/mcp",
