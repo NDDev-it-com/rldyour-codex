@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 77280a6219d6de48815df6da3e33552d9c6c9283 fix: accept local hook cache paths
+Last updated: 2026-05-27
+Last commit: 8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9 fix: allow public fast validation without agent docs
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,24 +24,32 @@ release readiness, versioning, and artifact hygiene
 - `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `77280a6219d6de48815df6da3e33552d9c6c9283`
-- checked by: Codex ry-start macOS system config verification
+- date: 2026-05-27
+- commit: `8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
+- checked by: Codex ry-start current audit repair
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Commit `77280a6219d6de48815df6da3e33552d9c6c9283` keeps product version
-  `0.4.9` and updates unreleased validation behavior so
-  `scripts/smoke_codex_hook_listing.py` accepts both versioned and `local`
-  installed plugin cache `hooks.json` source paths.
+- Commit `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222` keeps product version
+  `0.4.9`, updates Chrome DevTools MCP freshness to `1.1.1`, and adds an
+  instruction-doc guard against reintroducing removed Codex `plugin_hooks`
+  feature-flag claims.
+- Commit `8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9` keeps public fast
+  validation compatible with normal source checkouts by requiring agent-only
+  `AGENTS.md` / `.claude/CLAUDE.md` only when those files are present locally.
+- Verified gates for this sync included `validate_instruction_docs.py
+  --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`, and
+  `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:77280a6219d6de48815df6da3e33552d9c6c9283`
+- `commit:8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:.github/workflows/release.yml`
 - `path:scripts/smoke_codex_hook_listing.py`
+- `path:scripts/validate_instruction_docs.py`
+- `path:scripts/validate_fast.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

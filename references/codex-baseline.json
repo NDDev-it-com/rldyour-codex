@@ -1,25 +1,27 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_version": 1,
-  "verified_on": "2026-05-21",
+  "verified_on": "2026-05-27",
   "baseline": {
     "codex_cli": {
-      "version": "0.133.0",
+      "version": "0.134.0",
       "npm_package": "@openai/codex",
       "ref": "https://developers.openai.com/codex/changelog"
     },
     "runtime_contract": {
       "hooks": "command-only",
       "hooks_enabled_by_default": true,
-      "plugin_hooks_feature_flag": "features.plugin_hooks",
-      "plugin_hooks_required": true,
+      "plugin_hooks_feature_flag": null,
+      "plugin_hooks_required": false,
+      "plugin_hooks_default_enabled": true,
       "matching_command_hooks_may_run_concurrently": true
     },
     "owner_runtime_policy": {
       "default_profile": "rldyour-yolo",
+      "permission_model": "legacy_sandbox",
+      "permission_profiles_active": false,
       "approval_policy": "never",
       "sandbox_mode": "danger-full-access",
-      "default_permissions": ":danger-no-sandbox",
       "safe_override_flag": "--safe-mode"
     }
   }

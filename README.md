@@ -70,9 +70,11 @@ scripts/doctor_system_codex.sh
 ```
 
 The default install posture is owner-standard full-auto:
-`profile = "rldyour-yolo"`, `approval_policy = "never"`,
-`sandbox_mode = "danger-full-access"`, and
-`default_permissions = ":danger-no-sandbox"`.
+`~/.codex/config.toml` receives the active owner defaults, and
+`~/.codex/rldyour-yolo.config.toml` is the explicit `--profile rldyour-yolo`
+layer with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`,
+using Codex's legacy sandbox dialect. It does not write an active
+`default_permissions` permission-profile field while `sandbox_mode` is present.
 The optional conservative override is explicit:
 
 ```bash
@@ -116,9 +118,9 @@ Run the full bootstrap smoke flow on a new or resynced machine:
 scripts/bootstrap_check.sh --apply
 ```
 
-The installer writes `~/.codex/AGENTS.md`, managed `~/.codex/agents/*.toml` subagent role configs, installs managed Codex execpolicy rules from `system/rules/*.rules`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies the owner-standard full-auto permission defaults unless `--safe-mode` is supplied, sets the maintainer-selected parent and subagent model defaults, writes approved MCP tool overrides, and synchronizes the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing `~/.codex/AGENTS.md`, managed subagent configs, managed rule files, and `~/.codex/config.toml` are backed up before write operations. Credentials and OAuth tokens are never written by this repository.
+The installer writes `~/.codex/AGENTS.md`, managed `~/.codex/agents/*.toml` subagent role configs, installs managed Codex execpolicy rules from `system/rules/*.rules`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies the owner-standard full-auto permission defaults unless `--safe-mode` is supplied, writes `~/.codex/rldyour-yolo.config.toml` and `~/.codex/rldyour-safe.config.toml` profile layers for current Codex `--profile` semantics, sets the maintainer-selected parent and subagent model defaults, writes approved MCP tool overrides, and synchronizes the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing `~/.codex/AGENTS.md`, managed subagent configs, managed rule files, `~/.codex/config.toml`, and managed profile files are backed up before write operations. Credentials and OAuth tokens are never written by this repository.
 
-The Codex adapter contract lives in `config/rldyour-contract.json` and is documented in `docs/contract-matrix.md`. It records the intended Codex surface: 9 plugins, 38 skills, no slash commands by design, 8 managed subagents, command-only plugin hook lifecycle mappings, versioned plugin cache layout, and the owner-standard full-auto profile boundary. Validate it with `python3 scripts/validate_contract.py`.
+The Codex adapter contract lives in `config/rldyour-contract.json` and is documented in `docs/contract-matrix.md`. It records the intended Codex surface: 9 plugins, 39 skills, no slash commands by design, 8 managed subagents, command-only plugin hook lifecycle mappings, versioned plugin cache layout, and the owner-standard full-auto profile boundary. Validate it with `python3 scripts/validate_contract.py`.
 
 `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
 
@@ -137,16 +139,18 @@ python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 ```
 
 System Codex installs owner-standard full-auto defaults:
-`profile = "rldyour-yolo"`, `approval_policy = "never"`,
-`sandbox_mode = "danger-full-access"`,
-`default_permissions = ":danger-no-sandbox"`, `model = "gpt-5.5"`,
-and `model_reasoning_effort = "xhigh"`. The optional conservative override is
-available through `--safe-mode`, which selects `profile = "rldyour-safe"`,
-`approval_policy = "on-request"`, and `sandbox_mode = "workspace-write"`.
+`approval_policy = "never"`, `sandbox_mode = "danger-full-access"`,
+`model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. The same values
+are also written to
+`~/.codex/rldyour-yolo.config.toml` for current Codex `--profile rldyour-yolo`
+startup. The optional conservative override is available through `--safe-mode`,
+which writes `~/.codex/rldyour-safe.config.toml` with
+`approval_policy = "on-request"` and `sandbox_mode = "workspace-write"`.
 Current Codex documentation treats
 `sandbox_mode` as the active older sandbox model when it is present, so this
-repository does not migrate the owner full-auto profile to beta permission profiles
-without an explicit policy decision. Managed subagent roles in
+repository does not write active `default_permissions` permission-profile fields
+or migrate the owner full-auto profile to beta permission profiles without an
+explicit policy decision. Managed subagent roles in
 `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
 `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
 

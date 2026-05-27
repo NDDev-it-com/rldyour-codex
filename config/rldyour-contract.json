@@ -83,7 +83,8 @@
     }
   },
   "hooks": {
-    "plugin_hooks_required": true,
+    "plugin_hooks_required": false,
+    "plugin_hooks_default_enabled": true,
     "handler_type": "command",
     "lifecycles": {
       "prompt.submit.sync-required": {
@@ -149,9 +150,10 @@
   },
   "security": {
     "default_profile": "rldyour-yolo",
+    "permission_model": "legacy_sandbox",
+    "permission_profiles_active": false,
     "default_sandbox_mode": "danger-full-access",
     "default_approval_policy": "never",
-    "default_permissions": ":danger-no-sandbox",
     "full_auto_standard": true,
     "full_auto_aliases": [
       "yolo",

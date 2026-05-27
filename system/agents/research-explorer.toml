@@ -18,7 +18,7 @@ mcp_servers.playwright.tool_timeout_sec = 180
 
 mcp_servers.chrome-devtools.enabled = false
 mcp_servers.chrome-devtools.command = "bunx"
-mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.0.1", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
+mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.1.1", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
 mcp_servers.chrome-devtools.startup_timeout_sec = 90
 mcp_servers.chrome-devtools.tool_timeout_sec = 180
 
@@ -30,7 +30,7 @@ mcp_servers.semgrep.tool_timeout_sec = 180
 
 mcp_servers.shadcn.enabled = false
 mcp_servers.shadcn.command = "bunx"
-mcp_servers.shadcn.args = ["shadcn@4.8.0", "mcp"]
+mcp_servers.shadcn.args = ["shadcn@4.8.1", "mcp"]
 mcp_servers.shadcn.startup_timeout_sec = 90
 mcp_servers.shadcn.tool_timeout_sec = 120
 

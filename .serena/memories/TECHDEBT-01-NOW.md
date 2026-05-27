@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last updated: 2026-05-27
+Last commit: 8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9 fix: allow public fast validation without agent docs
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -20,17 +20,31 @@ verified current technical debt
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- date: 2026-05-27
+- commit: `8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
+- checked by: Codex ry-start current audit repair
 
 ## Facts
-- Technical debt memories record verified open debt only when it has code/config evidence.
+- The audited Codex `plugin_hooks` active-doc drift is closed by the
+  `.claude/CLAUDE.md` fullrepo update and by tracked active-doc forbidden-claim
+  validation in `scripts/validate_instruction_docs.py`.
+- The audited Chrome DevTools MCP freshness drift is closed for Codex at
+  `chrome-devtools-mcp@1.1.1` and `check_mcp_runtime_versions.py` reports it
+  current.
+- The public-CI instruction-doc requirement mismatch is closed: `validate_fast.sh`
+  now runs strict `--require-agent-docs` only when agent-only instruction docs
+  are restored locally/fullrepo, while public source checkouts validate tracked
+  active docs without requiring ignored files.
+- Remaining debt should be recorded here only when current code/config evidence
+  proves it is still open.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
 - `path:README.md`
 - `path:CHANGELOG.md`
+- `path:scripts/validate_instruction_docs.py`
+- `path:config/mcp-runtime-versions.env`
+- `path:scripts/validate_fast.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

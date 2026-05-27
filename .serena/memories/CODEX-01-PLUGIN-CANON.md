@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last updated: 2026-05-27
+Last commit: eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222 test: guard codex active instruction drift
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -20,17 +20,30 @@ Codex adapter implementation surface
 - `path:.agents/plugins/marketplace.json`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- date: 2026-05-27
+- commit: `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
+- checked by: Codex ry-start current audit repair
 
 ## Facts
-- Codex memories describe the Codex plugin marketplace, system install, hooks, MCP, apps, and managed agents.
+- Codex adapter surface currently validates as 9 plugins, 39 skills with
+  `agents/openai.yaml`, 8 managed TOML agents, and 13 MCP servers.
+- Current owner install policy is the legacy sandbox dialect:
+  `approval_policy = "never"` and `sandbox_mode = "danger-full-access"` for
+  `rldyour-yolo`; active `default_permissions`, `profile =`, and
+  `[profiles.*]` are forbidden while this dialect is selected.
+- Current Codex 0.134 treats `plugin_hooks` as a removed feature flag. Plugin
+  hook availability is default-enabled and verified through trusted
+  `hooks/list` output, not through `[features].plugin_hooks = true`.
+- `scripts/validate_instruction_docs.py` scans active instruction surfaces for
+  stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
+  `:danger-no-sandbox`, and current-pin wording drift.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
+- `path:scripts/validate_instruction_docs.py`
+- `path:system/agents/*.toml`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

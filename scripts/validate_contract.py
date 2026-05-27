@@ -161,11 +161,14 @@ def main() -> int:
     if not isinstance(hooks, dict):
         errors.append("hooks: expected object")
     else:
-        if hooks.get("plugin_hooks_required") is not True:
-            errors.append("hooks.plugin_hooks_required must be true")
+        if hooks.get("plugin_hooks_required") is not False:
+            errors.append("hooks.plugin_hooks_required must be false for current Codex")
+        if hooks.get("plugin_hooks_default_enabled") is not True:
+            errors.append("hooks.plugin_hooks_default_enabled must be true for current Codex")
         for script in ("scripts/install_system_codex.sh", "scripts/doctor_system_codex.sh"):
-            if "plugin_hooks" not in (ROOT / script).read_text(encoding="utf-8"):
-                errors.append(f"{script}: must enforce/check features.plugin_hooks")
+            script_text = (ROOT / script).read_text(encoding="utf-8")
+            if 'plugin_hooks = true' in script_text or 'features.get("plugin_hooks") is True' in script_text:
+                errors.append(f"{script}: must not write or require removed features.plugin_hooks")
         expected_handler_type = hooks.get("handler_type")
         for plugin in ("rldyour-flow", "rldyour-serena-mcp"):
             for event, handler in iter_hook_handlers(hook_manifest(plugin)):
@@ -212,12 +215,16 @@ def main() -> int:
     if isinstance(security, dict):
         if security.get("default_profile") != "rldyour-yolo":
             errors.append("security.default_profile must be rldyour-yolo")
+        if security.get("permission_model") != "legacy_sandbox":
+            errors.append("security.permission_model must be legacy_sandbox")
+        if security.get("permission_profiles_active") is not False:
+            errors.append("security.permission_profiles_active must be false")
         if security.get("default_sandbox_mode") != "danger-full-access":
             errors.append("security.default_sandbox_mode must be danger-full-access")
         if security.get("default_approval_policy") != "never":
             errors.append("security.default_approval_policy must be never")
-        if security.get("default_permissions") != ":danger-no-sandbox":
-            errors.append("security.default_permissions must be :danger-no-sandbox")
+        if "default_permissions" in security:
+            errors.append("security.default_permissions must be absent while legacy_sandbox is active")
         if security.get("full_auto_standard") is not True:
             errors.append("security.full_auto_standard must be true")
         if security.get("safe_profile") != "rldyour-safe":
@@ -226,12 +233,16 @@ def main() -> int:
             errors.append("security.safe_profile_flag must be --safe-mode")
         install_text = (ROOT / "scripts/install_system_codex.sh").read_text(encoding="utf-8")
         doctor_text = (ROOT / "scripts/doctor_system_codex.sh").read_text(encoding="utf-8")
-        if 'OWNER_MODE=1' not in install_text or 'profile = "rldyour-yolo"' not in install_text:
-            errors.append("scripts/install_system_codex.sh must default to rldyour-yolo full-auto mode")
+        if 'OWNER_MODE=1' not in install_text or "rldyour-yolo.config.toml" not in install_text:
+            errors.append("scripts/install_system_codex.sh must default to the rldyour-yolo profile file")
+        if '[profiles.rldyour-yolo]' in install_text or 'profile = "rldyour-yolo"' in install_text:
+            errors.append("scripts/install_system_codex.sh must not write legacy profile selectors or tables")
         if "--safe-mode" not in install_text:
             errors.append("scripts/install_system_codex.sh must keep --safe-mode as an explicit override")
-        if 'OWNER_MODE=1' not in doctor_text or "owner mode yolo profile selected" not in doctor_text:
+        if 'OWNER_MODE=1' not in doctor_text or "profile file rldyour-yolo exists" not in doctor_text:
             errors.append("scripts/doctor_system_codex.sh must validate full-auto mode by default")
+        if "owner mode yolo profile selected" in doctor_text:
+            errors.append("scripts/doctor_system_codex.sh must not validate the legacy profile selector")
 
     if errors:
         print("\n".join(errors), file=sys.stderr)

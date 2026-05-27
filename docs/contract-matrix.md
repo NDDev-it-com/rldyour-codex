@@ -33,9 +33,10 @@ the human-readable matrix for the same facts.
 
 ## Hook Lifecycle Mapping
 
-Codex bundled plugin hooks require `[features].plugin_hooks = true`. Hook
-handlers are command handlers and resolve plugin-owned scripts through
-`PLUGIN_ROOT`.
+Codex 0.134 reports `plugin_hooks` as a removed feature flag; bundled plugin
+hooks are default-enabled through the plugin runtime and verified with trusted
+`hooks/list` output. Hook handlers are command handlers and resolve
+plugin-owned scripts through `PLUGIN_ROOT`.
 
 | Lifecycle contract | Plugin | Codex event | Script |
 | --- | --- | --- | --- |
@@ -51,11 +52,14 @@ handlers are command handlers and resolve plugin-owned scripts through
 ## Security Contract
 
 The maintainer standard profile is full-auto / YOLO:
-`profile = "rldyour-yolo"`, `approval_policy = "never"`,
-`sandbox_mode = "danger-full-access"`, and
-`default_permissions = ":danger-no-sandbox"`. This is the default installer and
-doctor contract. `--safe-mode` remains available only as an explicit
-conservative override.
+`approval_policy = "never"` and `sandbox_mode = "danger-full-access"` using
+Codex's legacy sandbox dialect. Current Codex profile selection uses
+`$CODEX_HOME/<name>.config.toml`, so the installer writes
+`rldyour-yolo.config.toml` and `rldyour-safe.config.toml` and does not write
+legacy `profile = "..."` selectors, `[profiles.*]` tables, or active
+`default_permissions` permission-profile fields while `sandbox_mode` is
+present. This is the default installer and doctor contract. `--safe-mode`
+remains available only as an explicit conservative override.
 
 ## Validation
 

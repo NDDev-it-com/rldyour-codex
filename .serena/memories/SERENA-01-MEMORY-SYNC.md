@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last updated: 2026-05-27
+Last commit: eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222 test: guard codex active instruction drift
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -22,18 +22,25 @@ Serena memory, fullrepo, and knowledge sync policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- date: 2026-05-27
+- commit: `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
+- checked by: Codex ry-start current audit repair
 
 ## Facts
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
+- `scripts/check_serena_memory_freshness.py` compares the newest `Last commit`
+  evidence in `.serena/memories/*.md` with the adapter source branch HEAD and
+  fails when high-impact non-knowledge changes are not reflected.
+- Root `scripts/validate_adapter_health.py` now delegates the Codex freshness
+  check when adapter Serena memories are present, so root local/fullrepo health
+  can catch stale adapter knowledge.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`
+- `path:scripts/check_serena_memory_freshness.py`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

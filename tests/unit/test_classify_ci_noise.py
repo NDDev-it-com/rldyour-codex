@@ -27,7 +27,7 @@ def test_known_noise_is_classified_as_benign() -> None:
             "chrome-devtools-mcp exposes content of the browser instance to the MCP clients allowing them to inspect,",
             "debug, and modify any data in the browser or DevTools.",
             "Avoid sharing sensitive or personal information that you do not want to share with MCP clients.",
-            "Context7 Documentation MCP Server v2.3.0 running on stdio",
+            "Context7 Documentation MCP Server v3.0.0 running on stdio",
             "Starting Semgrep MCP server version v1.163.0",
             "Tracing initialized",
             "get_supported_languages succeeded",

@@ -18,10 +18,17 @@ The repository still keeps deterministic hooks, execpolicy rules, validation, an
 
 System Codex installs and validates the owner-standard full-auto profile by default:
 
-- `profile = "rldyour-yolo"`
 - `approval_policy = "never"`
 - `sandbox_mode = "danger-full-access"`
-- `default_permissions = ":danger-no-sandbox"`
+
+It intentionally does not write an active `default_permissions` permission
+profile field while `sandbox_mode` is present, because current Codex treats
+those as separate permission dialects.
+
+Current Codex `--profile rldyour-yolo` startup loads
+`$CODEX_HOME/rldyour-yolo.config.toml`; the installer must write that profile
+file and must not write removed legacy `profile = "..."` selectors or
+`[profiles.*]` tables.
 
 The aliases `yolo`, `full-auto`, and `dangerously-skip-permissions` all refer to this owner-standard posture.
 

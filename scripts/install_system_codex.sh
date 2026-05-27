@@ -21,7 +21,7 @@ Managed state:
 - rldyour-codex marketplace registration
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
 - hooks feature flag
-- plugin hooks feature flag
+- plugin hook trust state
 - multi-agent feature flag
 - Codex config deprecated-key migration for managed global setup
 - owner-standard YOLO/full-auto permission defaults by default
@@ -84,6 +84,8 @@ SYSTEM_AGENTS="$ROOT/system/AGENTS.md"
 SYSTEM_AGENT_DIR="$ROOT/system/agents"
 SYSTEM_RULE_DIR="$ROOT/system/rules"
 CONFIG_PATH="$CODEX_HOME_DIR/config.toml"
+YOLO_PROFILE_PATH="$CODEX_HOME_DIR/rldyour-yolo.config.toml"
+SAFE_PROFILE_PATH="$CODEX_HOME_DIR/rldyour-safe.config.toml"
 CODEX_AGENT_DIR="$CODEX_HOME_DIR/agents"
 CODEX_RULE_DIR="$CODEX_HOME_DIR/rules"
 CACHE_ROOT="$CODEX_HOME_DIR/plugins/cache/rldyour-codex"
@@ -172,6 +174,8 @@ system AGENTS: $CODEX_HOME_DIR/AGENTS.md
 system agents: $CODEX_AGENT_DIR
 system rules: $CODEX_RULE_DIR
 config: $CONFIG_PATH
+yolo profile: $YOLO_PROFILE_PATH
+safe profile: $SAFE_PROFILE_PATH
 cache root: $CACHE_ROOT
 uvx: $UVX_CMD
 bunx: $BUNX_CMD
@@ -224,6 +228,8 @@ validate_runtime_prereqs() {
 
 patch_config() {
   export RLDYOUR_CODEX_CONFIG="$CONFIG_PATH"
+  export RLDYOUR_YOLO_PROFILE_CONFIG="$YOLO_PROFILE_PATH"
+  export RLDYOUR_SAFE_PROFILE_CONFIG="$SAFE_PROFILE_PATH"
   export RLDYOUR_REPO_ROOT="$ROOT"
   export RLDYOUR_HOME="$HOME"
   export RLDYOUR_UVX_CMD="$UVX_CMD"
@@ -249,6 +255,8 @@ from pathlib import Path
 SCHEMA_COMMENT = "#:schema https://developers.openai.com/codex/config-schema.json"
 
 config_path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
+yolo_profile_path = Path(os.environ["RLDYOUR_YOLO_PROFILE_CONFIG"])
+safe_profile_path = Path(os.environ["RLDYOUR_SAFE_PROFILE_CONFIG"])
 repo_root = os.environ["RLDYOUR_REPO_ROOT"]
 home = os.environ["RLDYOUR_HOME"]
 uvx_cmd = os.environ["RLDYOUR_UVX_CMD"]
@@ -367,6 +375,18 @@ header_re = re.compile(r"^\s*\[([^\]]+)\]\s*$")
 assignment_re = re.compile(r"^\s*((?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+')(?:\s*\.\s*(?:[A-Za-z0-9_-]+|\"[^\"]+\"|'[^']+'))*)\s*=(.*)$")
 bare_key_re = re.compile(r"^[A-Za-z0-9_-]+$")
 existing = config_path.read_text(encoding="utf-8") if config_path.exists() else ""
+yolo_profile_existing = yolo_profile_path.read_text(encoding="utf-8") if yolo_profile_path.exists() else ""
+if (
+    "[mcp_servers." not in existing
+    and "[plugins." not in existing
+    and "[agents]" not in existing
+    and (
+        "[mcp_servers." in yolo_profile_existing
+        or "[plugins." in yolo_profile_existing
+        or "[agents]" in yolo_profile_existing
+    )
+):
+    existing = yolo_profile_existing
 try:
     existing_data = tomllib.loads(existing) if existing.strip() else {}
 except tomllib.TOMLDecodeError as exc:
@@ -388,22 +408,18 @@ managed_root_keys = {
 out: list[str] = [
     SCHEMA_COMMENT,
     "",
-    'profile = "rldyour-yolo"' if owner_mode else 'profile = "rldyour-safe"',
     'approval_policy = "never"' if owner_mode else 'approval_policy = "on-request"',
     'sandbox_mode = "danger-full-access"' if owner_mode else 'sandbox_mode = "workspace-write"',
     f"model = {json.dumps(managed_model)}",
     f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
     "suppress_unstable_features_warning = true",
 ]
-if owner_mode:
-    out.insert(5, 'default_permissions = ":danger-no-sandbox"')
 skip_managed = False
 in_features = False
 in_memories = False
 features_table_seen = False
 feature_dotted_lines: list[str] = []
 hooks_written = False
-plugin_hooks_written = False
 multi_agent_written = False
 memories_external_context_written = "disable_on_external_context" in existing_memories
 current_header: str | None = None
@@ -424,6 +440,7 @@ deprecated_root_keys = {
     "experimental_use_unified_exec_tool",
 }
 deprecated_feature_keys = {
+    "plugin_hooks",
     "use_legacy_landlock",
     "web_search",
     "web_search_cached",
@@ -515,13 +532,10 @@ out.append("")
 
 
 def append_managed_features() -> None:
-    global hooks_written, plugin_hooks_written, multi_agent_written
+    global hooks_written, multi_agent_written
     if not hooks_written:
         out.append("hooks = true")
         hooks_written = True
-    if not plugin_hooks_written:
-        out.append("plugin_hooks = true")
-        plugin_hooks_written = True
     if not multi_agent_written:
         out.append("multi_agent = true")
         multi_agent_written = True
@@ -618,9 +632,6 @@ for raw_line in existing.splitlines():
                 hooks_written = True
             continue
         if feature_key == "plugin_hooks":
-            if not plugin_hooks_written:
-                out.append("plugin_hooks = true")
-                plugin_hooks_written = True
             continue
         if feature_key == "multi_agent":
             if not multi_agent_written:
@@ -660,21 +671,6 @@ out.extend([
     "[marketplaces.rldyour-codex]",
     'source_type = "local"',
     f"source = {json.dumps(repo_root)}",
-])
-
-add_blank()
-out.extend([
-    "[profiles.rldyour-safe]",
-    'approval_policy = "on-request"',
-    'sandbox_mode = "workspace-write"',
-])
-
-add_blank()
-out.extend([
-    "[profiles.rldyour-yolo]",
-    'approval_policy = "never"',
-    'sandbox_mode = "danger-full-access"',
-    'default_permissions = ":danger-no-sandbox"',
 ])
 
 add_blank()
@@ -724,17 +720,47 @@ for server, tools in mcp_tool_approvals.items():
         out.append(f"[mcp_servers.{server}.tools.{tool}]")
         out.append(f"approval_mode = {toml_value(approval_mode)}")
 
+compact_out: list[str] = []
+for line in out:
+    if line == "" and compact_out and compact_out[-1] == "":
+        continue
+    compact_out.append(line)
+out = compact_out
 new_text = "\n".join(out).rstrip() + "\n"
+
+def profile_config_text(*, yolo: bool) -> str:
+    lines = [
+        SCHEMA_COMMENT,
+        "",
+        'approval_policy = "never"' if yolo else 'approval_policy = "on-request"',
+        'sandbox_mode = "danger-full-access"' if yolo else 'sandbox_mode = "workspace-write"',
+    ]
+    lines.extend([
+        f"model = {json.dumps(managed_model)}",
+        f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
+        "suppress_unstable_features_warning = true",
+        "",
+    ])
+    return "\n".join(lines)
+
+yolo_profile_text = profile_config_text(yolo=True)
+safe_profile_text = profile_config_text(yolo=False)
 
 if dry_run:
     print(f"dry-run: would patch {config_path}")
+    print(f"dry-run: would patch {yolo_profile_path}")
+    print(f"dry-run: would patch {safe_profile_path}")
     print(f"dry-run: managed plugins: {len(rldyour_plugins) + len(curated_plugins)}")
     print(f"dry-run: managed subagents: {len(managed_agents)}")
     print(f"dry-run: managed MCP servers: {len(mcp_servers)}")
 else:
     config_path.parent.mkdir(parents=True, exist_ok=True)
     config_path.write_text(new_text, encoding="utf-8")
+    yolo_profile_path.write_text(yolo_profile_text, encoding="utf-8")
+    safe_profile_path.write_text(safe_profile_text, encoding="utf-8")
     print(f"patched {config_path}")
+    print(f"patched {yolo_profile_path}")
+    print(f"patched {safe_profile_path}")
 PY
 }
 
@@ -925,6 +951,8 @@ fi
 
 backup_file "$CODEX_HOME_DIR/AGENTS.md"
 backup_file "$CONFIG_PATH"
+backup_file "$YOLO_PROFILE_PATH"
+backup_file "$SAFE_PROFILE_PATH"
 for agent_file in "$SYSTEM_AGENT_DIR"/*.toml; do
   [ -f "$agent_file" ] || continue
   backup_agent_file "$CODEX_AGENT_DIR/$(basename "$agent_file")"

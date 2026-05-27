@@ -68,6 +68,8 @@ INSTALLED_AGENTS="$CODEX_HOME_DIR/AGENTS.md"
 INSTALLED_AGENT_DIR="$CODEX_HOME_DIR/agents"
 INSTALLED_RULE_DIR="$CODEX_HOME_DIR/rules"
 CONFIG_PATH="$CODEX_HOME_DIR/config.toml"
+YOLO_PROFILE_PATH="$CODEX_HOME_DIR/rldyour-yolo.config.toml"
+SAFE_PROFILE_PATH="$CODEX_HOME_DIR/rldyour-safe.config.toml"
 CACHE_ROOT="$CODEX_HOME_DIR/plugins/cache/rldyour-codex"
 CODEX_CMD=${CODEX_BIN:-$(command -v codex 2>/dev/null || true)}
 UVX_CMD=${UVX_BIN:-$(command -v uvx 2>/dev/null || true)}
@@ -122,6 +124,8 @@ fi
 section "Config"
 if [ -f "$CONFIG_PATH" ]; then
   export RLDYOUR_CODEX_CONFIG="$CONFIG_PATH"
+  export RLDYOUR_YOLO_PROFILE_CONFIG="$YOLO_PROFILE_PATH"
+  export RLDYOUR_SAFE_PROFILE_CONFIG="$SAFE_PROFILE_PATH"
   export RLDYOUR_REPO_ROOT="$ROOT"
   export RLDYOUR_SYSTEM_AGENT_DIR="$SYSTEM_AGENT_DIR"
   export RLDYOUR_MARKETPLACE_CONFIG="$ROOT/.agents/plugins/marketplace.json"
@@ -137,6 +141,8 @@ import tomllib
 from pathlib import Path
 
 path = Path(os.environ["RLDYOUR_CODEX_CONFIG"])
+yolo_profile_path = Path(os.environ["RLDYOUR_YOLO_PROFILE_CONFIG"])
+safe_profile_path = Path(os.environ["RLDYOUR_SAFE_PROFILE_CONFIG"])
 repo_root = os.environ["RLDYOUR_REPO_ROOT"]
 codex_home = path.parent
 system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
@@ -146,6 +152,16 @@ owner_mode = os.environ.get("RLDYOUR_OWNER_MODE") == "1"
 text = path.read_text(encoding="utf-8")
 config_data = tomllib.loads(text)
 schema_comment = "#:schema https://developers.openai.com/codex/config-schema.json"
+
+
+def load_toml(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except tomllib.TOMLDecodeError:
+        return {"__parse_error__": True}
+    return data if isinstance(data, dict) else {}
 
 
 def load_rldyour_plugins(path: Path) -> list[str]:
@@ -181,10 +197,10 @@ checks.append(("repo trusted", project.get("trust_level") == "trusted"))
 
 features = config_data.get("features") or {}
 checks.append(("hooks feature enabled", features.get("hooks") is True))
-checks.append(("plugin hooks feature enabled", features.get("plugin_hooks") is True))
 checks.append(("multi-agent feature enabled", features.get("multi_agent") is True))
 deprecated_feature_keys = {
     "codex_hooks",
+    "plugin_hooks",
     "use_legacy_landlock",
     "web_search",
     "web_search_cached",
@@ -204,26 +220,36 @@ checks.append((
     "no_memories_if_mcp_or_web_search" not in memories_config,
 ))
 
+checks.append(("legacy profile selector absent", "profile" not in config_data))
 if owner_mode:
-    checks.append(("owner mode yolo profile selected", config_data.get("profile") == "rldyour-yolo"))
     checks.append(("owner mode approval policy never", config_data.get("approval_policy") == "never"))
     checks.append(("owner mode sandbox danger full access", config_data.get("sandbox_mode") == "danger-full-access"))
-    checks.append(("owner mode default permissions danger no sandbox", config_data.get("default_permissions") == ":danger-no-sandbox"))
+    checks.append(("owner mode default permissions absent", "default_permissions" not in config_data))
 else:
-    checks.append(("safe profile selected", config_data.get("profile") == "rldyour-safe"))
     checks.append(("safe approval policy on-request", config_data.get("approval_policy") == "on-request"))
     checks.append(("safe sandbox workspace-write", config_data.get("sandbox_mode") == "workspace-write"))
     checks.append(("safe mode default permissions absent", "default_permissions" not in config_data))
 checks.append(("default model gpt-5.5", config_data.get("model") == "gpt-5.5"))
 checks.append(("default reasoning effort xhigh", config_data.get("model_reasoning_effort") == "xhigh"))
-safe_profile = (config_data.get("profiles") or {}).get("rldyour-safe") or {}
+
+checks.append(("legacy profiles table absent", "profiles" not in config_data))
+safe_profile = load_toml(safe_profile_path)
+checks.append(("profile file rldyour-safe exists", safe_profile_path.exists()))
+checks.append(("profile rldyour-safe parse", "__parse_error__" not in safe_profile))
 checks.append(("profile rldyour-safe approval policy", safe_profile.get("approval_policy") == "on-request"))
 checks.append(("profile rldyour-safe sandbox", safe_profile.get("sandbox_mode") == "workspace-write"))
-yolo_profile = (config_data.get("profiles") or {}).get("rldyour-yolo") or {}
+checks.append(("profile rldyour-safe legacy selector absent", "profile" not in safe_profile))
+yolo_profile = load_toml(yolo_profile_path)
+checks.append(("profile file rldyour-yolo exists", yolo_profile_path.exists()))
+checks.append(("profile rldyour-yolo parse", "__parse_error__" not in yolo_profile))
 checks.append(("profile rldyour-yolo approval policy", yolo_profile.get("approval_policy") == "never"))
 checks.append(("profile rldyour-yolo sandbox", yolo_profile.get("sandbox_mode") == "danger-full-access"))
-checks.append(("profile rldyour-yolo permissions", yolo_profile.get("default_permissions") == ":danger-no-sandbox"))
-profiles_config = config_data.get("profiles") or {}
+checks.append(("profile rldyour-yolo default permissions absent", "default_permissions" not in yolo_profile))
+checks.append(("profile rldyour-yolo legacy selector absent", "profile" not in yolo_profile))
+profiles_config = {
+    "rldyour-safe": safe_profile,
+    "rldyour-yolo": yolo_profile,
+}
 for profile_name, profile_data in sorted(profiles_config.items()):
     if not isinstance(profile_data, dict):
         continue
@@ -232,6 +258,15 @@ for profile_name, profile_data in sorted(profiles_config.items()):
         f"profile {profile_name} legacy unified exec absent",
         "experimental_use_unified_exec_tool" not in profile_data,
     ))
+    checks.append((
+        f"profile {profile_name} permission dialect not mixed",
+        not ("sandbox_mode" in profile_data and "default_permissions" in profile_data),
+    ))
+
+checks.append((
+    "base config permission dialect not mixed",
+    not ("sandbox_mode" in config_data and "default_permissions" in config_data),
+))
 
 agents_config = config_data.get("agents") or {}
 checks.append(("agents max_threads", agents_config.get("max_threads") == 6))
