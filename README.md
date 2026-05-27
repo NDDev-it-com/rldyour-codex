@@ -73,7 +73,8 @@ The default install posture is owner-standard full-auto:
 `~/.codex/config.toml` receives the active owner defaults, and
 `~/.codex/rldyour-yolo.config.toml` is the explicit `--profile rldyour-yolo`
 layer with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`,
-and `default_permissions = ":danger-full-access"`.
+using Codex's legacy sandbox dialect. It does not write an active
+`default_permissions` permission-profile field while `sandbox_mode` is present.
 The optional conservative override is explicit:
 
 ```bash
@@ -139,16 +140,17 @@ python3 scripts/validate_runtime_prereqs.py --strict --require-codex
 
 System Codex installs owner-standard full-auto defaults:
 `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`,
-`default_permissions = ":danger-full-access"`, `model = "gpt-5.5"`,
-and `model_reasoning_effort = "xhigh"`. The same values are also written to
+`model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. The same values
+are also written to
 `~/.codex/rldyour-yolo.config.toml` for current Codex `--profile rldyour-yolo`
 startup. The optional conservative override is available through `--safe-mode`,
 which writes `~/.codex/rldyour-safe.config.toml` with
 `approval_policy = "on-request"` and `sandbox_mode = "workspace-write"`.
 Current Codex documentation treats
 `sandbox_mode` as the active older sandbox model when it is present, so this
-repository does not migrate the owner full-auto profile to beta permission profiles
-without an explicit policy decision. Managed subagent roles in
+repository does not write active `default_permissions` permission-profile fields
+or migrate the owner full-auto profile to beta permission profiles without an
+explicit policy decision. Managed subagent roles in
 `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
 `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
 

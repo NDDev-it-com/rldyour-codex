@@ -414,8 +414,6 @@ out: list[str] = [
     f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
     "suppress_unstable_features_warning = true",
 ]
-if owner_mode:
-    out.insert(5, 'default_permissions = ":danger-full-access"')
 skip_managed = False
 in_features = False
 in_memories = False
@@ -737,8 +735,6 @@ def profile_config_text(*, yolo: bool) -> str:
         'approval_policy = "never"' if yolo else 'approval_policy = "on-request"',
         'sandbox_mode = "danger-full-access"' if yolo else 'sandbox_mode = "workspace-write"',
     ]
-    if yolo:
-        lines.append('default_permissions = ":danger-full-access"')
     lines.extend([
         f"model = {json.dumps(managed_model)}",
         f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",

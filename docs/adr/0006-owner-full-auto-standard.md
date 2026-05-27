@@ -20,7 +20,10 @@ System Codex installs and validates the owner-standard full-auto profile by defa
 
 - `approval_policy = "never"`
 - `sandbox_mode = "danger-full-access"`
-- `default_permissions = ":danger-full-access"`
+
+It intentionally does not write an active `default_permissions` permission
+profile field while `sandbox_mode` is present, because current Codex treats
+those as separate permission dialects.
 
 Current Codex `--profile rldyour-yolo` startup loads
 `$CODEX_HOME/rldyour-yolo.config.toml`; the installer must write that profile
