@@ -1,6 +1,6 @@
 [project]
 name = "rldyour-codex"
-version = "0.4.9"
+version = "0.5.0"
 description = "Personal Codex marketplace with rldyour plugins, MCP servers, skills, hooks, and SDLC tooling."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
