@@ -151,7 +151,7 @@
     "default_profile": "rldyour-yolo",
     "default_sandbox_mode": "danger-full-access",
     "default_approval_policy": "never",
-    "default_permissions": ":danger-no-sandbox",
+    "default_permissions": ":danger-full-access",
     "full_auto_standard": true,
     "full_auto_aliases": [
       "yolo",

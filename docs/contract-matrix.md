@@ -51,11 +51,13 @@ handlers are command handlers and resolve plugin-owned scripts through
 ## Security Contract
 
 The maintainer standard profile is full-auto / YOLO:
-`profile = "rldyour-yolo"`, `approval_policy = "never"`,
-`sandbox_mode = "danger-full-access"`, and
-`default_permissions = ":danger-no-sandbox"`. This is the default installer and
-doctor contract. `--safe-mode` remains available only as an explicit
-conservative override.
+`approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and
+`default_permissions = ":danger-full-access"`. Current Codex profile selection
+uses `$CODEX_HOME/<name>.config.toml`, so the installer writes
+`rldyour-yolo.config.toml` and `rldyour-safe.config.toml` and does not write
+legacy `profile = "..."` selectors or `[profiles.*]` tables. This is the
+default installer and doctor contract. `--safe-mode` remains available only as
+an explicit conservative override.
 
 ## Validation
 

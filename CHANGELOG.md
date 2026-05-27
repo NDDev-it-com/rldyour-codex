@@ -8,11 +8,18 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
+- Codex CLI runtime baseline now targets `0.134.0`; system install and doctor
+  checks use current profile files (`$CODEX_HOME/rldyour-yolo.config.toml` and
+  `$CODEX_HOME/rldyour-safe.config.toml`) instead of removed legacy
+  `profile = "..."` selectors and `[profiles.*]` tables.
 - Context7 MCP now pins `@upstash/context7-mcp@3.0.0`, matching the current
   npm stable package in `.mcp.json` and `config/mcp-runtime-versions.env`.
 
 ### Fixed
 
+- System Codex migration now preserves manually repaired profile-file content
+  while moving shared plugins, MCP, hooks, and agent configuration back into the
+  base `config.toml`.
 - Codex `hooks/list` smoke now accepts both versioned and `local` installed
   plugin cache hook source paths, matching the current local marketplace install
   layout used by system Codex.
@@ -129,7 +136,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Runtime validation now includes live Codex `hooks/list` trust smoke after installing into a temporary `CODEX_HOME`.
 - System installer and doctor now default to the owner-standard full-auto
   profile (`rldyour-yolo`, `danger-full-access`, `never`,
-  `:danger-no-sandbox`) and keep `--safe-mode` as an explicit conservative
+  `:danger-full-access`) and keep `--safe-mode` as an explicit conservative
   override.
 
 ### Security

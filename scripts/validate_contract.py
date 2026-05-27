@@ -216,8 +216,8 @@ def main() -> int:
             errors.append("security.default_sandbox_mode must be danger-full-access")
         if security.get("default_approval_policy") != "never":
             errors.append("security.default_approval_policy must be never")
-        if security.get("default_permissions") != ":danger-no-sandbox":
-            errors.append("security.default_permissions must be :danger-no-sandbox")
+        if security.get("default_permissions") != ":danger-full-access":
+            errors.append("security.default_permissions must be :danger-full-access")
         if security.get("full_auto_standard") is not True:
             errors.append("security.full_auto_standard must be true")
         if security.get("safe_profile") != "rldyour-safe":
@@ -226,12 +226,16 @@ def main() -> int:
             errors.append("security.safe_profile_flag must be --safe-mode")
         install_text = (ROOT / "scripts/install_system_codex.sh").read_text(encoding="utf-8")
         doctor_text = (ROOT / "scripts/doctor_system_codex.sh").read_text(encoding="utf-8")
-        if 'OWNER_MODE=1' not in install_text or 'profile = "rldyour-yolo"' not in install_text:
-            errors.append("scripts/install_system_codex.sh must default to rldyour-yolo full-auto mode")
+        if 'OWNER_MODE=1' not in install_text or "rldyour-yolo.config.toml" not in install_text:
+            errors.append("scripts/install_system_codex.sh must default to the rldyour-yolo profile file")
+        if '[profiles.rldyour-yolo]' in install_text or 'profile = "rldyour-yolo"' in install_text:
+            errors.append("scripts/install_system_codex.sh must not write legacy profile selectors or tables")
         if "--safe-mode" not in install_text:
             errors.append("scripts/install_system_codex.sh must keep --safe-mode as an explicit override")
-        if 'OWNER_MODE=1' not in doctor_text or "owner mode yolo profile selected" not in doctor_text:
+        if 'OWNER_MODE=1' not in doctor_text or "profile file rldyour-yolo exists" not in doctor_text:
             errors.append("scripts/doctor_system_codex.sh must validate full-auto mode by default")
+        if "owner mode yolo profile selected" in doctor_text:
+            errors.append("scripts/doctor_system_codex.sh must not validate the legacy profile selector")
 
     if errors:
         print("\n".join(errors), file=sys.stderr)
