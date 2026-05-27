@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9 fix: allow public fast validation without agent docs
+Last commit: 18ff3847cd72d1f17c4db5509c70fe516cec1332 feat: add codex runtime validation modes
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,7 +21,7 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-27
-- commit: `8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
+- commit: `18ff3847cd72d1f17c4db5509c70fe516cec1332`
 - checked by: Codex ry-start current audit repair
 
 ## Facts
@@ -35,16 +35,22 @@ verified current technical debt
   now runs strict `--require-agent-docs` only when agent-only instruction docs
   are restored locally/fullrepo, while public source checkouts validate tracked
   active docs without requiring ignored files.
+- The audited runtime-smoke classification debt is closed for Codex:
+  `scripts/validate_runtime.sh` now exposes explicit `auto`, `static`,
+  `installed`, and `live` lanes. Static mode is deterministic and verifies
+  generated TOML/config invariants without a Codex binary; installed/live modes
+  make binary/network requirements explicit.
 - Remaining debt should be recorded here only when current code/config evidence
   proves it is still open.
 
 ## Evidence
-- `commit:8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
+- `commit:18ff3847cd72d1f17c4db5509c70fe516cec1332`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:scripts/validate_instruction_docs.py`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/validate_fast.sh`
+- `path:scripts/validate_runtime.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

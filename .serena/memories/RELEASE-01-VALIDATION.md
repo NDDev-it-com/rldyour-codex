@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9 fix: allow public fast validation without agent docs
+Last commit: 18ff3847cd72d1f17c4db5509c70fe516cec1332 feat: add codex runtime validation modes
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-27
-- commit: `8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
+- commit: `18ff3847cd72d1f17c4db5509c70fe516cec1332`
 - checked by: Codex ry-start current audit repair
 
 ## Facts
@@ -37,12 +37,19 @@ release readiness, versioning, and artifact hygiene
 - Commit `8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9` keeps public fast
   validation compatible with normal source checkouts by requiring agent-only
   `AGENTS.md` / `.claude/CLAUDE.md` only when those files are present locally.
+- Commit `18ff3847cd72d1f17c4db5509c70fe516cec1332` adds explicit
+  `auto`, `static`, `installed`, and `live` modes to `scripts/validate_runtime.sh`.
+  Static mode materializes temp Codex config/profile TOML and verifies hooks,
+  multi-agent, MCP TOML, legacy sandbox policy, and absence of removed
+  `plugin_hooks`, legacy profile selectors, and active `default_permissions`
+  without requiring a Codex binary or network.
 - Verified gates for this sync included `validate_instruction_docs.py
-  --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`, and
-  `check_mcp_runtime_versions.py`.
+  --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
+  `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
+  --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:8b746f31da1f1435d9ca5a9de5aa65cf7ccf7fa9`
+- `commit:18ff3847cd72d1f17c4db5509c70fe516cec1332`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
@@ -50,6 +57,7 @@ release readiness, versioning, and artifact hygiene
 - `path:scripts/smoke_codex_hook_listing.py`
 - `path:scripts/validate_instruction_docs.py`
 - `path:scripts/validate_fast.sh`
+- `path:scripts/validate_runtime.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
