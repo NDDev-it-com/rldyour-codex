@@ -63,6 +63,11 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         "MCP servers print startup banners and successful safe-call traces to stderr.",
     ),
     NoiseRule(
+        "mcp-transient-retry",
+        re.compile(r"retry\s+[-A-Za-z0-9_]+\s+attempt\s+\d+\s+failed:\s+unhandled errors in a TaskGroup"),
+        "MCP capability smoke retries transient TaskGroup failures and validates the eventual successful call.",
+    ),
+    NoiseRule(
         "github-mcp-server-runtime",
         re.compile(
             r"GitHub MCP Server running on stdio|"
