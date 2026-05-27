@@ -63,7 +63,7 @@ These targets are best-effort and not contractual.
 ## Out Of Scope
 
 - Findings against downstream environments running modified versions of this software.
-- Issues stemming from running this repository's owner-standard full-auto permission posture on shared or untrusted machines. The default install profile is `rldyour-yolo` with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and `default_permissions = ":danger-no-sandbox"` by maintainer policy; use `--safe-mode` only when a conservative local override is intentionally required.
+- Issues stemming from running this repository's owner-standard full-auto permission posture on shared or untrusted machines. The default install profile is `rldyour-yolo` with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and `default_permissions = ":danger-full-access"` by maintainer policy; use `--safe-mode` only when a conservative local override is intentionally required.
 - Findings against third-party MCP servers, runtimes, or actions referenced by this repository. Report those upstream.
 
 ## Coordinated Disclosure
