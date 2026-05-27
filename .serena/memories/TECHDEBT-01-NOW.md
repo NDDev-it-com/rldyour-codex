@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 18ff3847cd72d1f17c4db5509c70fe516cec1332 feat: add codex runtime validation modes
+Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,8 +21,8 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-27
-- commit: `18ff3847cd72d1f17c4db5509c70fe516cec1332`
-- checked by: Codex ry-start current audit repair
+- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- checked by: Codex ry-start version synchronization
 
 ## Facts
 - The audited Codex `plugin_hooks` active-doc drift is closed by the
@@ -40,11 +40,14 @@ verified current technical debt
   `installed`, and `live` lanes. Static mode is deterministic and verifies
   generated TOML/config invariants without a Codex binary; installed/live modes
   make binary/network requirements explicit.
+- Version synchronization debt is closed for this adapter at `0.5.0`; root
+  control-plane pins must reference commit
+  `062c2c1591265189665d8da2d05c7efb4b95ee21`.
 - Remaining debt should be recorded here only when current code/config evidence
   proves it is still open.
 
 ## Evidence
-- `commit:18ff3847cd72d1f17c4db5509c70fe516cec1332`
+- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:scripts/validate_instruction_docs.py`

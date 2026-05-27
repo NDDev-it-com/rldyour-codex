@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 18ff3847cd72d1f17c4db5509c70fe516cec1332 feat: add codex runtime validation modes
+Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,8 +25,8 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-27
-- commit: `18ff3847cd72d1f17c4db5509c70fe516cec1332`
-- checked by: Codex ry-start current audit repair
+- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- checked by: Codex ry-start version synchronization
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
@@ -43,13 +43,16 @@ release readiness, versioning, and artifact hygiene
   multi-agent, MCP TOML, legacy sandbox policy, and absence of removed
   `plugin_hooks`, legacy profile selectors, and active `default_permissions`
   without requiring a Codex binary or network.
+- Commit `062c2c1591265189665d8da2d05c7efb4b95ee21` bumps the product/config
+  version to `0.5.0` in `VERSION`, `pyproject.toml`, and `CHANGELOG.md` without
+  changing runtime semantics.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:18ff3847cd72d1f17c4db5509c70fe516cec1332`
+- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

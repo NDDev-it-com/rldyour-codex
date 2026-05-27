@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last updated: 2026-05-27
+Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -22,15 +22,17 @@ repository identity and source-of-truth map
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- date: 2026-05-27
+- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- checked by: Codex ry-start version synchronization
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
+- Current product/config version is `0.5.0`; root control-plane must pin
+  `062c2c1591265189665d8da2d05c7efb4b95ee21` for this adapter.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

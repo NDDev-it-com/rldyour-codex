@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222 test: guard codex active instruction drift
+Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -21,8 +21,8 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-27
-- commit: `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
-- checked by: Codex ry-start current audit repair
+- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- checked by: Codex ry-start version synchronization
 
 ## Facts
 - Codex adapter surface currently validates as 9 plugins, 39 skills with
@@ -37,9 +37,12 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
+- Current product/config version is `0.5.0`; the version bump is recorded in
+  `VERSION`, `pyproject.toml`, and `CHANGELOG.md` without changing plugin,
+  MCP, hook, or managed-agent runtime semantics.
 
 ## Evidence
-- `commit:eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
+- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:scripts/validate_instruction_docs.py`
