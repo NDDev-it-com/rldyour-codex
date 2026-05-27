@@ -39,6 +39,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Public fast validation now tolerates normal source checkouts without restored
   agent-only docs while preserving strict checks when fullrepo context is
   available.
+- CI noise classification now treats retried MCP TaskGroup startup failures as
+  benign only after the capability smoke itself reaches a passing result.
 
 ## [0.4.9] - 2026-05-22
 

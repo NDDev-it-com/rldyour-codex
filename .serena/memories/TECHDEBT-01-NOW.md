@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
+Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,7 +21,7 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-27
-- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - checked by: Codex ry-start version synchronization
 
 ## Facts
@@ -42,12 +42,14 @@ verified current technical debt
   make binary/network requirements explicit.
 - Version synchronization debt is closed for this adapter at `0.5.0`; root
   control-plane pins must reference commit
-  `062c2c1591265189665d8da2d05c7efb4b95ee21`.
+  `98bcb04a2dc707ab820377056c0c7bff25a94cf5`.
+- CI classifier drift is closed for retried MCP TaskGroup startup noise; the
+  classifier still fails on unknown non-empty lines in strict mode.
 - Remaining debt should be recorded here only when current code/config evidence
   proves it is still open.
 
 ## Evidence
-- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
+- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:scripts/validate_instruction_docs.py`

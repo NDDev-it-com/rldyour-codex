@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
+Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-27
-- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - checked by: Codex ry-start version synchronization
 
 ## Facts
@@ -46,13 +46,16 @@ release readiness, versioning, and artifact hygiene
 - Commit `062c2c1591265189665d8da2d05c7efb4b95ee21` bumps the product/config
   version to `0.5.0` in `VERSION`, `pyproject.toml`, and `CHANGELOG.md` without
   changing runtime semantics.
+- Commit `98bcb04a2dc707ab820377056c0c7bff25a94cf5` keeps product version
+  `0.5.0`, restores `uv.lock` version parity, and classifies retried MCP
+  TaskGroup startup noise after the smoke reaches a passing result.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
+- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

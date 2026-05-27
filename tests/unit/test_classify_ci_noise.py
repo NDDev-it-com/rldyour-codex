@@ -32,6 +32,7 @@ def test_known_noise_is_classified_as_benign() -> None:
             "Tracing initialized",
             "get_supported_languages succeeded",
             "Sequential Thinking MCP Server running on stdio",
+            "retry   grep attempt 1 failed: unhandled errors in a TaskGroup (1 sub-exception)",
             'time=2026-05-21T12:18:51.376Z level=INFO msg="starting server" version=1.0.5 host="" dynamicToolsets=false readOnly=false lockdownEnabled=false',
             "GitHub MCP Server running on stdio",
             'time=2026-05-21T12:18:51.378Z level=INFO msg="server run start"',
@@ -48,7 +49,7 @@ def test_known_noise_is_classified_as_benign() -> None:
         ]
     )
 
-    assert len(benign) == 32
+    assert len(benign) == 33
     assert unknown == []
 
 

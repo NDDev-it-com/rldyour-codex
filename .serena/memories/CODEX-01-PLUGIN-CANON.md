@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
+Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -21,7 +21,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-27
-- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - checked by: Codex ry-start version synchronization
 
 ## Facts
@@ -40,9 +40,12 @@ Codex adapter implementation surface
 - Current product/config version is `0.5.0`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, and `CHANGELOG.md` without changing plugin,
   MCP, hook, or managed-agent runtime semantics.
+- `uv.lock` records the same `0.5.0` product version, and CI noise
+  classification allows retried MCP TaskGroup startup lines without allowing
+  unknown strict-mode stderr.
 
 ## Evidence
-- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
+- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:scripts/validate_instruction_docs.py`

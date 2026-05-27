@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 062c2c1591265189665d8da2d05c7efb4b95ee21 chore(release): bump config version to 0.5.0
+Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -23,16 +23,16 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-27
-- commit: `062c2c1591265189665d8da2d05c7efb4b95ee21`
+- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - checked by: Codex ry-start version synchronization
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 - Current product/config version is `0.5.0`; root control-plane must pin
-  `062c2c1591265189665d8da2d05c7efb4b95ee21` for this adapter.
+  `98bcb04a2dc707ab820377056c0c7bff25a94cf5` for this adapter.
 
 ## Evidence
-- `commit:062c2c1591265189665d8da2d05c7efb4b95ee21`
+- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`
