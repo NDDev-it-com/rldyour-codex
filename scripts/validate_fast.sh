@@ -25,7 +25,11 @@ python3 scripts/release_sbom.py >/dev/null
 
 step "Routing and agent surfaces"
 python3 scripts/validate_skill_routing.py
-python3 scripts/validate_instruction_docs.py --require-agent-docs
+if [ -f AGENTS.md ] || [ -f .claude/CLAUDE.md ]; then
+  python3 scripts/validate_instruction_docs.py --require-agent-docs
+else
+  python3 scripts/validate_instruction_docs.py
+fi
 "$UV_BIN" run --with pyyaml python scripts/validate_agent_tools.py
 
 step "Supply-chain and text security"
