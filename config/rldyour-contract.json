@@ -83,7 +83,8 @@
     }
   },
   "hooks": {
-    "plugin_hooks_required": true,
+    "plugin_hooks_required": false,
+    "plugin_hooks_default_enabled": true,
     "handler_type": "command",
     "lifecycles": {
       "prompt.submit.sync-required": {

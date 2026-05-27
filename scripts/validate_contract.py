@@ -161,11 +161,14 @@ def main() -> int:
     if not isinstance(hooks, dict):
         errors.append("hooks: expected object")
     else:
-        if hooks.get("plugin_hooks_required") is not True:
-            errors.append("hooks.plugin_hooks_required must be true")
+        if hooks.get("plugin_hooks_required") is not False:
+            errors.append("hooks.plugin_hooks_required must be false for current Codex")
+        if hooks.get("plugin_hooks_default_enabled") is not True:
+            errors.append("hooks.plugin_hooks_default_enabled must be true for current Codex")
         for script in ("scripts/install_system_codex.sh", "scripts/doctor_system_codex.sh"):
-            if "plugin_hooks" not in (ROOT / script).read_text(encoding="utf-8"):
-                errors.append(f"{script}: must enforce/check features.plugin_hooks")
+            script_text = (ROOT / script).read_text(encoding="utf-8")
+            if 'plugin_hooks = true' in script_text or 'features.get("plugin_hooks") is True' in script_text:
+                errors.append(f"{script}: must not write or require removed features.plugin_hooks")
         expected_handler_type = hooks.get("handler_type")
         for plugin in ("rldyour-flow", "rldyour-serena-mcp"):
             for event, handler in iter_hook_handlers(hook_manifest(plugin)):

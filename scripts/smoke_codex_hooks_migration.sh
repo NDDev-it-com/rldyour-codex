@@ -181,10 +181,9 @@ features = data.get("features") or {}
 
 if features.get("hooks") is not True:
     raise SystemExit(f"{case_name}: expected [features].hooks = true, got {features!r}")
-if features.get("plugin_hooks") is not True:
-    raise SystemExit(f"{case_name}: expected [features].plugin_hooks = true, got {features!r}")
 deprecated_features = {
     "codex_hooks",
+    "plugin_hooks",
     "use_legacy_landlock",
     "web_search",
     "web_search_cached",
