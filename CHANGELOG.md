@@ -18,7 +18,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Context7 MCP now pins `@upstash/context7-mcp@3.0.0`, matching the current
   npm stable package in `.mcp.json` and `config/mcp-runtime-versions.env`.
 - Shared MCP runtime pins now match current upstream stable packages:
-  `serena-agent==1.5.3`, `chrome-devtools-mcp@1.1.0`, and `shadcn@4.8.1`.
+  `serena-agent==1.5.3`, `chrome-devtools-mcp@1.1.1`, and `shadcn@4.8.1`.
 
 ### Fixed
 

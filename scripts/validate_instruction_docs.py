@@ -22,6 +22,21 @@ SECRET_RE = re.compile(
 CODEX_DOC = "AGENTS.md"
 CLAUDE_DOC = ".claude/CLAUDE.md"
 LEGACY_CLAUDE_DOC = "CLAUDE.md"
+ACTIVE_DOCS = (
+    CODEX_DOC,
+    CLAUDE_DOC,
+    "README.md",
+    "docs/contract-matrix.md",
+    "system/AGENTS.md",
+)
+FORBIDDEN_ACTIVE_CLAIMS = {
+    "[features].plugin_hooks = true": "Codex 0.134 treats plugin_hooks as a removed feature flag",
+    "features.plugin_hooks = true": "Codex 0.134 treats plugin_hooks as a removed feature flag",
+    "active `hooks`, `plugin_hooks`, and `multi_agent`": "plugin hooks are verified through hooks/list, not an active feature flag",
+    "active hooks, plugin_hooks, and multi_agent": "plugin hooks are verified through hooks/list, not an active feature flag",
+    ":danger-no-sandbox": "current Codex built-ins use :danger-full-access for the danger profile",
+    "currently pinned at v1.15.4": "active current-pin wording must match the current OpenCode baseline",
+}
 
 
 def run_state(root: Path) -> dict[str, object]:
@@ -53,6 +68,9 @@ def validate_file_content(root: Path, relative: str, errors: list[str], warnings
     lines = text.splitlines()
     if SECRET_RE.search(text):
         errors.append(f"{relative}: contains secret-looking content")
+    for needle, reason in FORBIDDEN_ACTIVE_CLAIMS.items():
+        if needle in text:
+            errors.append(f"{relative}: forbidden active claim {needle!r}: {reason}")
     if relative == CODEX_DOC:
         if len(lines) > 260:
             warnings.append(f"{relative}: {len(lines)} lines; keep Codex instructions compact")
@@ -103,7 +121,7 @@ def main() -> int:
     if (root / LEGACY_CLAUDE_DOC).is_file():
         errors.append(f"{LEGACY_CLAUDE_DOC}: use .claude/CLAUDE.md for Claude Code project memory")
 
-    for relative in (CODEX_DOC, CLAUDE_DOC):
+    for relative in ACTIVE_DOCS:
         validate_file_content(root, relative, errors, warnings)
 
     payload = {
