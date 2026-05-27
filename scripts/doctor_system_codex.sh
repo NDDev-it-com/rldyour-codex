@@ -197,10 +197,10 @@ checks.append(("repo trusted", project.get("trust_level") == "trusted"))
 
 features = config_data.get("features") or {}
 checks.append(("hooks feature enabled", features.get("hooks") is True))
-checks.append(("plugin hooks feature enabled", features.get("plugin_hooks") is True))
 checks.append(("multi-agent feature enabled", features.get("multi_agent") is True))
 deprecated_feature_keys = {
     "codex_hooks",
+    "plugin_hooks",
     "use_legacy_landlock",
     "web_search",
     "web_search_cached",

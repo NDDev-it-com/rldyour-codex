@@ -11,8 +11,9 @@
     "runtime_contract": {
       "hooks": "command-only",
       "hooks_enabled_by_default": true,
-      "plugin_hooks_feature_flag": "features.plugin_hooks",
-      "plugin_hooks_required": true,
+      "plugin_hooks_feature_flag": null,
+      "plugin_hooks_required": false,
+      "plugin_hooks_default_enabled": true,
       "matching_command_hooks_may_run_concurrently": true
     },
     "owner_runtime_policy": {

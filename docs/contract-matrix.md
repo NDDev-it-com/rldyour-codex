@@ -33,9 +33,10 @@ the human-readable matrix for the same facts.
 
 ## Hook Lifecycle Mapping
 
-Codex bundled plugin hooks require `[features].plugin_hooks = true`. Hook
-handlers are command handlers and resolve plugin-owned scripts through
-`PLUGIN_ROOT`.
+Codex 0.134 reports `plugin_hooks` as a removed feature flag; bundled plugin
+hooks are default-enabled through the plugin runtime and verified with trusted
+`hooks/list` output. Hook handlers are command handlers and resolve
+plugin-owned scripts through `PLUGIN_ROOT`.
 
 | Lifecycle contract | Plugin | Codex event | Script |
 | --- | --- | --- | --- |

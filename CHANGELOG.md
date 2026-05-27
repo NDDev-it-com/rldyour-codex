@@ -12,6 +12,9 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
   checks use current profile files (`$CODEX_HOME/rldyour-yolo.config.toml` and
   `$CODEX_HOME/rldyour-safe.config.toml`) instead of removed legacy
   `profile = "..."` selectors and `[profiles.*]` tables.
+- System install and doctor now remove the obsolete `features.plugin_hooks`
+  flag because Codex 0.134 reports plugin hooks as default-enabled; hook
+  correctness is verified through trusted `hooks/list` output.
 - Context7 MCP now pins `@upstash/context7-mcp@3.0.0`, matching the current
   npm stable package in `.mcp.json` and `config/mcp-runtime-versions.env`.
 

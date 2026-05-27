@@ -21,7 +21,7 @@ Managed state:
 - rldyour-codex marketplace registration
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
 - hooks feature flag
-- plugin hooks feature flag
+- plugin hook trust state
 - multi-agent feature flag
 - Codex config deprecated-key migration for managed global setup
 - owner-standard YOLO/full-auto permission defaults by default
@@ -422,7 +422,6 @@ in_memories = False
 features_table_seen = False
 feature_dotted_lines: list[str] = []
 hooks_written = False
-plugin_hooks_written = False
 multi_agent_written = False
 memories_external_context_written = "disable_on_external_context" in existing_memories
 current_header: str | None = None
@@ -443,6 +442,7 @@ deprecated_root_keys = {
     "experimental_use_unified_exec_tool",
 }
 deprecated_feature_keys = {
+    "plugin_hooks",
     "use_legacy_landlock",
     "web_search",
     "web_search_cached",
@@ -534,13 +534,10 @@ out.append("")
 
 
 def append_managed_features() -> None:
-    global hooks_written, plugin_hooks_written, multi_agent_written
+    global hooks_written, multi_agent_written
     if not hooks_written:
         out.append("hooks = true")
         hooks_written = True
-    if not plugin_hooks_written:
-        out.append("plugin_hooks = true")
-        plugin_hooks_written = True
     if not multi_agent_written:
         out.append("multi_agent = true")
         multi_agent_written = True
@@ -637,9 +634,6 @@ for raw_line in existing.splitlines():
                 hooks_written = True
             continue
         if feature_key == "plugin_hooks":
-            if not plugin_hooks_written:
-                out.append("plugin_hooks = true")
-                plugin_hooks_written = True
             continue
         if feature_key == "multi_agent":
             if not multi_agent_written:
