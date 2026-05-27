@@ -6,6 +6,8 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-27
+
 ### Changed
 
 - Codex CLI runtime baseline now targets `0.134.0`; system install and doctor
@@ -19,6 +21,9 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
   npm stable package in `.mcp.json` and `config/mcp-runtime-versions.env`.
 - Shared MCP runtime pins now match current upstream stable packages:
   `serena-agent==1.5.3`, `chrome-devtools-mcp@1.1.1`, and `shadcn@4.8.1`.
+- Runtime validation now exposes explicit `auto`, `static`, `installed`, and
+  `live` lanes so source-only CI, installed local checks, and network freshness
+  checks are classified instead of inferred from host state.
 
 ### Fixed
 
@@ -31,6 +36,9 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 - Dart/Flutter MCP capability smoke now requires the stable tools exposed by
   Dart SDK `3.12.0`; `run_tests` is no longer treated as globally available in
   non-Dart repository checkouts.
+- Public fast validation now tolerates normal source checkouts without restored
+  agent-only docs while preserving strict checks when fullrepo context is
+  available.
 
 ## [0.4.9] - 2026-05-22
 
