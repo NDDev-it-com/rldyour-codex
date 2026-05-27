@@ -52,13 +52,14 @@ plugin-owned scripts through `PLUGIN_ROOT`.
 ## Security Contract
 
 The maintainer standard profile is full-auto / YOLO:
-`approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and
-`default_permissions = ":danger-full-access"`. Current Codex profile selection
-uses `$CODEX_HOME/<name>.config.toml`, so the installer writes
+`approval_policy = "never"` and `sandbox_mode = "danger-full-access"` using
+Codex's legacy sandbox dialect. Current Codex profile selection uses
+`$CODEX_HOME/<name>.config.toml`, so the installer writes
 `rldyour-yolo.config.toml` and `rldyour-safe.config.toml` and does not write
-legacy `profile = "..."` selectors or `[profiles.*]` tables. This is the
-default installer and doctor contract. `--safe-mode` remains available only as
-an explicit conservative override.
+legacy `profile = "..."` selectors, `[profiles.*]` tables, or active
+`default_permissions` permission-profile fields while `sandbox_mode` is
+present. This is the default installer and doctor contract. `--safe-mode`
+remains available only as an explicit conservative override.
 
 ## Validation
 

@@ -215,12 +215,16 @@ def main() -> int:
     if isinstance(security, dict):
         if security.get("default_profile") != "rldyour-yolo":
             errors.append("security.default_profile must be rldyour-yolo")
+        if security.get("permission_model") != "legacy_sandbox":
+            errors.append("security.permission_model must be legacy_sandbox")
+        if security.get("permission_profiles_active") is not False:
+            errors.append("security.permission_profiles_active must be false")
         if security.get("default_sandbox_mode") != "danger-full-access":
             errors.append("security.default_sandbox_mode must be danger-full-access")
         if security.get("default_approval_policy") != "never":
             errors.append("security.default_approval_policy must be never")
-        if security.get("default_permissions") != ":danger-full-access":
-            errors.append("security.default_permissions must be :danger-full-access")
+        if "default_permissions" in security:
+            errors.append("security.default_permissions must be absent while legacy_sandbox is active")
         if security.get("full_auto_standard") is not True:
             errors.append("security.full_auto_standard must be true")
         if security.get("safe_profile") != "rldyour-safe":

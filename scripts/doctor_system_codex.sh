@@ -224,7 +224,7 @@ checks.append(("legacy profile selector absent", "profile" not in config_data))
 if owner_mode:
     checks.append(("owner mode approval policy never", config_data.get("approval_policy") == "never"))
     checks.append(("owner mode sandbox danger full access", config_data.get("sandbox_mode") == "danger-full-access"))
-    checks.append(("owner mode default permissions danger full access", config_data.get("default_permissions") == ":danger-full-access"))
+    checks.append(("owner mode default permissions absent", "default_permissions" not in config_data))
 else:
     checks.append(("safe approval policy on-request", config_data.get("approval_policy") == "on-request"))
     checks.append(("safe sandbox workspace-write", config_data.get("sandbox_mode") == "workspace-write"))
@@ -244,7 +244,7 @@ checks.append(("profile file rldyour-yolo exists", yolo_profile_path.exists()))
 checks.append(("profile rldyour-yolo parse", "__parse_error__" not in yolo_profile))
 checks.append(("profile rldyour-yolo approval policy", yolo_profile.get("approval_policy") == "never"))
 checks.append(("profile rldyour-yolo sandbox", yolo_profile.get("sandbox_mode") == "danger-full-access"))
-checks.append(("profile rldyour-yolo permissions", yolo_profile.get("default_permissions") == ":danger-full-access"))
+checks.append(("profile rldyour-yolo default permissions absent", "default_permissions" not in yolo_profile))
 checks.append(("profile rldyour-yolo legacy selector absent", "profile" not in yolo_profile))
 profiles_config = {
     "rldyour-safe": safe_profile,
@@ -258,6 +258,15 @@ for profile_name, profile_data in sorted(profiles_config.items()):
         f"profile {profile_name} legacy unified exec absent",
         "experimental_use_unified_exec_tool" not in profile_data,
     ))
+    checks.append((
+        f"profile {profile_name} permission dialect not mixed",
+        not ("sandbox_mode" in profile_data and "default_permissions" in profile_data),
+    ))
+
+checks.append((
+    "base config permission dialect not mixed",
+    not ("sandbox_mode" in config_data and "default_permissions" in config_data),
+))
 
 agents_config = config_data.get("agents") or {}
 checks.append(("agents max_threads", agents_config.get("max_threads") == 6))
