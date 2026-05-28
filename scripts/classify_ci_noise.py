@@ -108,6 +108,14 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         ),
         "Serena MCP and its language-server dependencies log normal startup/shutdown detail to stderr.",
     ),
+    NoiseRule(
+        "superseded-research-claim",
+        re.compile(
+            r"^warning: \.serena/research/[^:]+: contains superseded historical claim "
+            r"'.+': .+$"
+        ),
+        "Instruction validation reports explicitly superseded historical research claims without failing.",
+    ),
 )
 
 
