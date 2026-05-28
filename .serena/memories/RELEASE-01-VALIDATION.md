@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
+Last commit: 84ef50d1d0005e3977c3c644b4a680d5feb4b6e8 ci: classify superseded research warnings
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- commit: `84ef50d1d0005e3977c3c644b4a680d5feb4b6e8`
 - checked by: Codex ry-start release hardening
 
 ## Facts
@@ -54,13 +54,18 @@ release readiness, versioning, and artifact hygiene
   Semgrep/shadcn MCP pins, groups Codex Dependabot GitHub Actions updates, and
   adds stale research-claim validation for superseded Codex `plugin_hooks`
   research notes.
+- Commit `84ef50d1d0005e3977c3c644b4a680d5feb4b6e8` keeps the `1.0.0`
+  runtime/config tuple unchanged and extends `scripts/classify_ci_noise.py` so
+  strict fast validation treats warnings about explicitly superseded Serena
+  research claims as known benign CI noise while still failing on unknown
+  stderr lines.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
+- `commit:84ef50d1d0005e3977c3c644b4a680d5feb4b6e8`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

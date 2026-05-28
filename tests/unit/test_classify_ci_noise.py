@@ -46,10 +46,11 @@ def test_known_noise_is_classified_as_benign() -> None:
             "INFO  2026-05-17 12:25:07,197 [StartLS:bash] solidlsp.language_servers.common:_run_command:115 - Running command 'npm install --prefix ./ bash-language-server@5.6.0'",
             "INFO  2026-05-17 12:25:06,979 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution",
             "CRITICAL: Before starting to work on a coding task, call the `initial_instructions` tool to read the 'Serena Instructions Manual'.",
+            "warning: .serena/research/CODEX-2026-05-15-OFFICIAL-CAPABILITIES.md: contains superseded historical claim '[features].plugin_hooks = true': Codex 0.134 treats plugin_hooks as a removed feature flag",
         ]
     )
 
-    assert len(benign) == 33
+    assert len(benign) == 34
     assert unknown == []
 
 

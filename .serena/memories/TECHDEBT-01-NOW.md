@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
+Last commit: 84ef50d1d0005e3977c3c644b4a680d5feb4b6e8 ci: classify superseded research warnings
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,7 +21,7 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-28
-- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- commit: `84ef50d1d0005e3977c3c644b4a680d5feb4b6e8`
 - checked by: Codex ry-start release hardening
 
 ## Facts
@@ -42,16 +42,17 @@ verified current technical debt
   make binary/network requirements explicit.
 - Version synchronization debt is closed for this adapter at `1.0.0`; root
   control-plane pins must reference commit
-  `b92c6a3290020771e57a9e415f8b131be573a770`.
+  `84ef50d1d0005e3977c3c644b4a680d5feb4b6e8`.
 - Semgrep MCP freshness drift is closed for Codex at `semgrep==1.164.0`, and
   shadcn MCP freshness is closed at `shadcn@4.8.2`.
-- CI classifier drift is closed for retried MCP TaskGroup startup noise; the
+- CI classifier drift is closed for retried MCP TaskGroup startup noise and for
+  warnings emitted by explicitly superseded Serena research claims; the
   classifier still fails on unknown non-empty lines in strict mode.
 - Remaining debt should be recorded here only when current code/config evidence
   proves it is still open.
 
 ## Evidence
-- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
+- `commit:84ef50d1d0005e3977c3c644b4a680d5feb4b6e8`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:scripts/validate_instruction_docs.py`
