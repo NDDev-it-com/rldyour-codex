@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-27
-Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
+Last updated: 2026-05-28
+Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -20,9 +20,9 @@ Codex adapter implementation surface
 - `path:.agents/plugins/marketplace.json`
 
 ## Last verified
-- date: 2026-05-27
-- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
-- checked by: Codex ry-start version synchronization
+- date: 2026-05-28
+- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- checked by: Codex ry-start release hardening
 
 ## Facts
 - Codex adapter surface currently validates as 9 plugins, 39 skills with
@@ -37,15 +37,20 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `0.5.0`; the version bump is recorded in
+- Current product/config version is `1.0.0`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, and `CHANGELOG.md` without changing plugin,
   MCP, hook, or managed-agent runtime semantics.
-- `uv.lock` records the same `0.5.0` product version, and CI noise
-  classification allows retried MCP TaskGroup startup lines without allowing
-  unknown strict-mode stderr.
+- `uv.lock` records the same `1.0.0` product version.
+- Commit `b92c6a3290020771e57a9e415f8b131be573a770` refreshes Codex Semgrep
+  and shadcn MCP pins to `semgrep==1.164.0` and `shadcn@4.8.2` across the MCP
+  source manifest, managed TOML agents, runtime env pin file, and fixture
+  tests.
+- `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
+  for current-tense stale `plugin_hooks` claims unless the research file has a
+  `SUPERSEDED` banner.
 
 ## Evidence
-- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
+- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:scripts/validate_instruction_docs.py`

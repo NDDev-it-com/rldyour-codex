@@ -57,7 +57,7 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | `deepwiki` | Repository documentation and explanations | remote URL |
 | `grep` | Search across public GitHub repositories | remote URL |
 | `github` | GitHub repositories, issues, pull requests, users, and context | `github-mcp-server stdio`, `GITHUB_PERSONAL_ACCESS_TOKEN` |
-| `semgrep` | Static analysis and security checks | `uvx --from semgrep==1.163.0 semgrep mcp` |
+| `semgrep` | Static analysis and security checks | `uvx --from semgrep==1.164.0 semgrep mcp` |
 | `shadcn` | shadcn/ui registry work | `bunx` |
 | `dart-flutter` | Dart/Flutter MCP for Dart and Flutter projects | `dart` |
 | `figma` | Figma design context | remote URL, OAuth |

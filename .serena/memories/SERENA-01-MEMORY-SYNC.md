@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-27
-Last commit: eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222 test: guard codex active instruction drift
+Last updated: 2026-05-28
+Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -22,9 +22,9 @@ Serena memory, fullrepo, and knowledge sync policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-27
-- commit: `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
-- checked by: Codex ry-start current audit repair
+- date: 2026-05-28
+- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- checked by: Codex ry-start release hardening
 
 ## Facts
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
@@ -34,9 +34,12 @@ Serena memory, fullrepo, and knowledge sync policy
 - Root `scripts/validate_adapter_health.py` now delegates the Codex freshness
   check when adapter Serena memories are present, so root local/fullrepo health
   can catch stale adapter knowledge.
+- The 2026-05-28 Codex release-hardening sync records `b92c6a3` as the current
+  memory evidence head after Semgrep/shadcn MCP pin updates, product version
+  `1.0.0`, and stale research-claim validation changes.
 
 ## Evidence
-- `commit:eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
+- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`

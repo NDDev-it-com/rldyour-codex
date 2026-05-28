@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-27
-Last commit: eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222 test: guard codex active instruction drift
+Last updated: 2026-05-28
+Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -20,9 +20,9 @@ MCP runtime transport and pin policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-27
-- commit: `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
-- checked by: Codex ry-start current audit repair
+- date: 2026-05-28
+- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- checked by: Codex ry-start release hardening
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
@@ -32,13 +32,17 @@ MCP runtime transport and pin policy
 - Chrome DevTools MCP is pinned to `chrome-devtools-mcp@1.1.1` in
   `config/mcp-runtime-versions.env`, the MCP source manifest, and all managed
   agent disabled specialist-MCP transport metadata.
+- Semgrep MCP is pinned to `semgrep==1.164.0` and shadcn MCP is pinned to
+  `shadcn@4.8.2` in `config/mcp-runtime-versions.env`,
+  `plugins/rldyour-mcps/.mcp.json`, and all managed agent disabled
+  specialist-MCP transport metadata.
 - Dart/Flutter MCP is provided by the local Dart SDK. On Dart SDK `3.12.0`,
   `dart mcp-server --force-roots-fallback` exposes `analyze_files` and
   `pub_dev_search` in this non-Dart checkout; `run_tests` is conditional and is
   not a global smoke requirement.
 
 ## Evidence
-- `commit:eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222`
+- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/smoke_mcp_capabilities.py`

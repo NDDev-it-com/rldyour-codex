@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-27
-Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
+Last updated: 2026-05-28
+Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -20,9 +20,9 @@ verified current technical debt
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-05-27
-- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
-- checked by: Codex ry-start version synchronization
+- date: 2026-05-28
+- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- checked by: Codex ry-start release hardening
 
 ## Facts
 - The audited Codex `plugin_hooks` active-doc drift is closed by the
@@ -40,16 +40,18 @@ verified current technical debt
   `installed`, and `live` lanes. Static mode is deterministic and verifies
   generated TOML/config invariants without a Codex binary; installed/live modes
   make binary/network requirements explicit.
-- Version synchronization debt is closed for this adapter at `0.5.0`; root
+- Version synchronization debt is closed for this adapter at `1.0.0`; root
   control-plane pins must reference commit
-  `98bcb04a2dc707ab820377056c0c7bff25a94cf5`.
+  `b92c6a3290020771e57a9e415f8b131be573a770`.
+- Semgrep MCP freshness drift is closed for Codex at `semgrep==1.164.0`, and
+  shadcn MCP freshness is closed at `shadcn@4.8.2`.
 - CI classifier drift is closed for retried MCP TaskGroup startup noise; the
   classifier still fails on unknown non-empty lines in strict mode.
 - Remaining debt should be recorded here only when current code/config evidence
   proves it is still open.
 
 ## Evidence
-- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
+- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:scripts/validate_instruction_docs.py`

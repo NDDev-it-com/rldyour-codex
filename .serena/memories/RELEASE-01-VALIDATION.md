@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-27
-Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
+Last updated: 2026-05-28
+Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,9 +24,9 @@ release readiness, versioning, and artifact hygiene
 - `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
-- date: 2026-05-27
-- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
-- checked by: Codex ry-start version synchronization
+- date: 2026-05-28
+- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- checked by: Codex ry-start release hardening
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
@@ -49,13 +49,18 @@ release readiness, versioning, and artifact hygiene
 - Commit `98bcb04a2dc707ab820377056c0c7bff25a94cf5` keeps product version
   `0.5.0`, restores `uv.lock` version parity, and classifies retried MCP
   TaskGroup startup noise after the smoke reaches a passing result.
+- Commit `b92c6a3290020771e57a9e415f8b131be573a770` bumps product/config
+  version to `1.0.0`, keeps `pyproject.toml` and `uv.lock` in parity, refreshes
+  Semgrep/shadcn MCP pins, groups Codex Dependabot GitHub Actions updates, and
+  adds stale research-claim validation for superseded Codex `plugin_hooks`
+  research notes.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
+- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
