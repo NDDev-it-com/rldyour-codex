@@ -6,8 +6,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+
+## [1.0.2] - 2026-05-28
+
 ### Fixed
 
+- Release nested legacy profile-table migration cleanup.
 - System Codex migration now removes nested legacy profile tables such as
   `[profiles.rldyour-yolo.features]` from `config.toml` instead of leaving them
   behind for doctor/runtime validation to reject.
