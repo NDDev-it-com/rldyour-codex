@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.0.3] - 2026-05-29
+
+### Changed
+
+- Standardize release automation and repository descriptions.
+
 ## [1.0.2] - 2026-05-28
 
 ### Fixed
