@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
+Last commit: 2172b16855bd550f580f4a631601953e3a956083 docs: record Codex surface adoption
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -23,20 +23,21 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-28
-- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
-- checked by: Codex system sync after nested legacy profile cleanup
+- commit: `2172b16855bd550f580f4a631601953e3a956083`
+- checked by: Codex ry-start Dependabot hardening
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 - Current product/config version is `1.0.0`; root control-plane must pin
-  `d7909f83ae7ec947946f374ffae99af37db5335a` for this adapter after the
-  nested legacy profile table migration fix.
+  `2172b16855bd550f580f4a631601953e3a956083` for this adapter after the
+  Codex surface-adoption matrix update.
 
 ## Evidence
-- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
+- `commit:2172b16855bd550f580f4a631601953e3a956083`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`
+- `path:references/codex-surface-adoption.md`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
+Last commit: 2172b16855bd550f580f4a631601953e3a956083 docs: record Codex surface adoption
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,8 +25,8 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
-- checked by: Codex system sync after nested legacy profile cleanup
+- commit: `2172b16855bd550f580f4a631601953e3a956083`
+- checked by: Codex ry-start release hardening
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
@@ -67,23 +67,30 @@ release readiness, versioning, and artifact hygiene
   semantics unchanged and aligns the Codex Dependabot `github-actions` update
   cadence to monthly grouped PRs.
 - Commit `d7909f83ae7ec947946f374ffae99af37db5335a` keeps product/runtime
-  semantics unchanged and fixes system config migration so nested legacy
-  `[profiles.rldyour-*.*]` tables are removed before doctor/runtime validation.
+  semantics unchanged and removes nested legacy profile tables from generated
+  managed subagent TOML output; `scripts/smoke_codex_hooks_migration.sh`
+  covers the regression.
+- Commit `2172b16855bd550f580f4a631601953e3a956083` keeps product/runtime
+  semantics unchanged and records the Codex 0.134.0 surface adoption matrix in
+  `references/codex-surface-adoption.md`.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
+- `commit:2172b16855bd550f580f4a631601953e3a956083`
 - `path:VERSION`
 - `path:CHANGELOG.md`
+- `path:references/codex-surface-adoption.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:.github/workflows/release.yml`
 - `path:scripts/smoke_codex_hook_listing.py`
 - `path:scripts/validate_instruction_docs.py`
 - `path:scripts/validate_fast.sh`
 - `path:scripts/validate_runtime.sh`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/smoke_codex_hooks_migration.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

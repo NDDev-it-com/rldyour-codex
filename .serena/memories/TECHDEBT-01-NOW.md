@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
+Last commit: 2172b16855bd550f580f4a631601953e3a956083 docs: record Codex surface adoption
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,8 +21,8 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-28
-- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
-- checked by: Codex system sync after nested legacy profile cleanup
+- commit: `2172b16855bd550f580f4a631601953e3a956083`
+- checked by: Codex ry-start release hardening
 
 ## Facts
 - The audited Codex `plugin_hooks` active-doc drift is closed by the
@@ -42,12 +42,18 @@ verified current technical debt
   make binary/network requirements explicit.
 - Version synchronization debt is closed for this adapter at `1.0.0`; root
   control-plane pins must reference commit
-  `d7909f83ae7ec947946f374ffae99af37db5335a`.
+  `2d4cee72988a99a934168c9649fec8307560c283`.
 - CodeQL action freshness debt is closed for Codex at `github/codeql-action`
   `v4.36.0`; Dependabot GitHub Actions version updates are grouped into one
   reviewable PR.
 - Dependabot cadence noise is closed for Codex: GitHub Actions updates are
   checked monthly and grouped under the `github-actions` group.
+- Nested legacy profile table drift is closed for Codex by
+  `d7909f83ae7ec947946f374ffae99af37db5335a`; managed subagent TOML output
+  remains flat and migration smoke covers the regression.
+- Codex surface-adoption matrix debt is closed by
+  `references/codex-surface-adoption.md` at
+  `2172b16855bd550f580f4a631601953e3a956083`.
 - Semgrep MCP freshness drift is closed for Codex at `semgrep==1.164.0`, and
   shadcn MCP freshness is closed at `shadcn@4.8.2`.
 - CI classifier drift is closed for retried MCP TaskGroup startup noise and for
@@ -57,13 +63,16 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
+- `commit:2172b16855bd550f580f4a631601953e3a956083`
 - `path:README.md`
 - `path:CHANGELOG.md`
+- `path:references/codex-surface-adoption.md`
 - `path:scripts/validate_instruction_docs.py`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/validate_fast.sh`
 - `path:scripts/validate_runtime.sh`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/smoke_codex_hooks_migration.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
