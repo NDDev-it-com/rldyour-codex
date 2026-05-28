@@ -92,7 +92,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "semgrep==1.163.0",
+        "semgrep==1.164.0",
         "semgrep",
         "mcp"
       ],
@@ -102,7 +102,7 @@
     "shadcn": {
       "command": "bunx",
       "args": [
-        "shadcn@4.8.1",
+        "shadcn@4.8.2",
         "mcp"
       ],
       "startup_timeout_sec": 90,

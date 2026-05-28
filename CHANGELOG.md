@@ -6,6 +6,13 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-28
+
+### Changed
+
+- Shared MCP runtime pins now track `semgrep==1.164.0` and `shadcn@4.8.2`;
+  managed Codex subagent TOML files and fixture tests were updated in lockstep.
+
 ## [0.5.0] - 2026-05-27
 
 ### Changed

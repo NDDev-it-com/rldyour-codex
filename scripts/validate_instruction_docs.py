@@ -29,9 +29,12 @@ ACTIVE_DOCS = (
     "docs/contract-matrix.md",
     "system/AGENTS.md",
 )
+RESEARCH_DIR = ".serena/research"
 FORBIDDEN_ACTIVE_CLAIMS = {
     "[features].plugin_hooks = true": "Codex 0.134 treats plugin_hooks as a removed feature flag",
     "features.plugin_hooks = true": "Codex 0.134 treats plugin_hooks as a removed feature flag",
+    "requires `[features].plugin_hooks = true`": "plugin_hooks is removed in current Codex",
+    "forces `plugin_hooks = true`": "plugin_hooks is removed in current Codex",
     "active `hooks`, `plugin_hooks`, and `multi_agent`": "plugin hooks are verified through hooks/list, not an active feature flag",
     "active hooks, plugin_hooks, and multi_agent": "plugin hooks are verified through hooks/list, not an active feature flag",
     ":danger-no-sandbox": "current Codex built-ins use :danger-full-access for the danger profile",
@@ -90,6 +93,26 @@ def validate_file_content(root: Path, relative: str, errors: list[str], warnings
             errors.append(f"{relative}: must be first-class Claude Code memory, not only @AGENTS.md")
 
 
+def validate_research_content(root: Path, errors: list[str], warnings: list[str]) -> None:
+    research_root = root / RESEARCH_DIR
+    if not research_root.is_dir():
+        return
+    for path in sorted(research_root.glob("*.md")):
+        relative = path.relative_to(root).as_posix()
+        text = read_text(path)
+        header = "\n".join(text.splitlines()[:16])
+        superseded = "SUPERSEDED ON" in header
+        for needle, reason in FORBIDDEN_ACTIVE_CLAIMS.items():
+            if needle not in text:
+                continue
+            if superseded:
+                warnings.append(f"{relative}: contains superseded historical claim {needle!r}: {reason}")
+            else:
+                errors.append(
+                    f"{relative}: stale research claim {needle!r} requires a SUPERSEDED banner or rewrite: {reason}"
+                )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validate rldyour AGENTS.md and .claude/CLAUDE.md policy.")
     parser.add_argument("--root", default=".", help="Repository root to inspect.")
@@ -123,6 +146,7 @@ def main() -> int:
 
     for relative in ACTIVE_DOCS:
         validate_file_content(root, relative, errors, warnings)
+    validate_research_content(root, errors, warnings)
 
     payload = {
         "state": state,
