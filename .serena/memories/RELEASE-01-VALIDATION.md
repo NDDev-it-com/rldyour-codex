@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2172b16855bd550f580f4a631601953e3a956083 docs: record Codex surface adoption
+Last commit: d35c3c90d7341d5ab9c94b868bfe47bb41858c74 docs: align public metadata descriptions
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2172b16855bd550f580f4a631601953e3a956083`
+- commit: `d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
 - checked by: Codex ry-start release hardening
 
 ## Facts
@@ -73,16 +73,22 @@ release readiness, versioning, and artifact hygiene
 - Commit `2172b16855bd550f580f4a631601953e3a956083` keeps product/runtime
   semantics unchanged and records the Codex 0.134.0 surface adoption matrix in
   `references/codex-surface-adoption.md`.
+- Commit `d35c3c90d7341d5ab9c94b868bfe47bb41858c74` keeps product/runtime
+  semantics unchanged and aligns public repository metadata surfaces in
+  `README.md`, `CONTRIBUTING.md`, and `pyproject.toml` with the root
+  control-plane GitHub description.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
-  --mode installed`, and `check_mcp_runtime_versions.py`.
+  --mode installed`, `check_mcp_runtime_versions.py`, and root
+  `scripts/validate_public_metadata_surfaces.py`.
 
 ## Evidence
-- `commit:2172b16855bd550f580f4a631601953e3a956083`
+- `commit:d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
+- `path:CONTRIBUTING.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:.github/workflows/release.yml`
 - `path:scripts/smoke_codex_hook_listing.py`

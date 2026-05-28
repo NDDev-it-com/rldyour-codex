@@ -1,6 +1,6 @@
 # Contributing
 
-This repository is a personal Codex marketplace maintained by [@rldyourmnd](https://github.com/rldyourmnd). Contributions are welcome under the project's AGPL-3.0-or-later license, but the maintainer keeps final authority on direction, plugin boundaries, runtime pins, validation gates, and the agent-only `fullrepo` workflow.
+This repository is a Codex plugin marketplace and system setup for rldyour AI CLI workflows: MCP servers, hooks, managed agents, runtime validation, and Serena memory. It is maintained by [@rldyourmnd](https://github.com/rldyourmnd). Contributions are welcome under the project's AGPL-3.0-or-later license, but the maintainer keeps final authority on direction, plugin boundaries, runtime pins, validation gates, and the agent-only `fullrepo` workflow.
 
 By submitting a pull request, you certify that you have the right to license the contribution under AGPL-3.0-or-later.
 

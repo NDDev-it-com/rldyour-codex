@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2172b16855bd550f580f4a631601953e3a956083 docs: record Codex surface adoption
+Last commit: d35c3c90d7341d5ab9c94b868bfe47bb41858c74 docs: align public metadata descriptions
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,7 +21,7 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2172b16855bd550f580f4a631601953e3a956083`
+- commit: `d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
 - checked by: Codex ry-start release hardening
 
 ## Facts
@@ -54,6 +54,10 @@ verified current technical debt
 - Codex surface-adoption matrix debt is closed by
   `references/codex-surface-adoption.md` at
   `2172b16855bd550f580f4a631601953e3a956083`.
+- Public metadata wording drift is closed for Codex at
+  `d35c3c90d7341d5ab9c94b868bfe47bb41858c74`: `README.md`,
+  `CONTRIBUTING.md`, and `pyproject.toml` now match the control-plane
+  repository description semantics.
 - Semgrep MCP freshness drift is closed for Codex at `semgrep==1.164.0`, and
   shadcn MCP freshness is closed at `shadcn@4.8.2`.
 - CI classifier drift is closed for retried MCP TaskGroup startup noise and for
@@ -63,10 +67,11 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:2172b16855bd550f580f4a631601953e3a956083`
+- `commit:d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
+- `path:CONTRIBUTING.md`
 - `path:scripts/validate_instruction_docs.py`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/validate_fast.sh`
