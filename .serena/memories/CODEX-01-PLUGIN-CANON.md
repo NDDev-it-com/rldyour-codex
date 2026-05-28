@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2172b16855bd550f580f4a631601953e3a956083 docs: record Codex surface adoption
+Last commit: 56fb6d9d22aa602f03f5aff5e5fc0939a2982d51 fix: sync plugin cache versions with adapter release
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -21,8 +21,8 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2172b16855bd550f580f4a631601953e3a956083`
-- checked by: Codex ry-start release hardening
+- commit: `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- checked by: Codex ry-start internal adapter release version sync
 
 ## Facts
 - Codex adapter surface currently validates as 9 plugins, 39 skills with
@@ -37,10 +37,12 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.0.0`; the version bump is recorded in
-  `VERSION`, `pyproject.toml`, and `CHANGELOG.md` without changing plugin,
+- Current product/config version is `1.0.1`; the version bump is recorded in
+  `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- `uv.lock` records the same `1.0.0` product version.
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.0.1`
+  version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
+  release-coordinate parity.
 - Commit `b92c6a3290020771e57a9e415f8b131be573a770` refreshes Codex Semgrep
   and shadcn MCP pins to `semgrep==1.164.0` and `shadcn@4.8.2` across the MCP
   source manifest, managed TOML agents, runtime env pin file, and fixture
@@ -57,9 +59,12 @@ Codex adapter implementation surface
   `--profile` is adopted, legacy profile selectors remain forbidden, MCP
   runtime materialization stays native TOML, and plugin hooks remain
   default-enabled/trusted rather than a `[features].plugin_hooks` flag.
+- Commit `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51` moves the adapter to
+  `1.0.1`, synchronizes plugin manifest versions with the adapter product
+  version, and hardens plugin-version validation.
 
 ## Evidence
-- `commit:2172b16855bd550f580f4a631601953e3a956083`
+- `commit:56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`

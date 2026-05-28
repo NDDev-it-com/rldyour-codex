@@ -12,6 +12,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
   `[profiles.rldyour-yolo.features]` from `config.toml` instead of leaving them
   behind for doctor/runtime validation to reject.
 
+## [1.0.1] - 2026-05-28
+
+### Changed
+
+- Synchronize internal plugin and index versions with the adapter release.
+
 ## [1.0.0] - 2026-05-28
 
 ### Changed

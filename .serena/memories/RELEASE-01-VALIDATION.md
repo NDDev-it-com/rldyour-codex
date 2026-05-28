@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: d35c3c90d7341d5ab9c94b868bfe47bb41858c74 docs: align public metadata descriptions
+Last commit: 56fb6d9d22aa602f03f5aff5e5fc0939a2982d51 fix: sync plugin cache versions with adapter release
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,8 +25,8 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
-- checked by: Codex ry-start release hardening
+- commit: `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- checked by: Codex ry-start internal adapter release version sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
@@ -77,6 +77,10 @@ release readiness, versioning, and artifact hygiene
   semantics unchanged and aligns public repository metadata surfaces in
   `README.md`, `CONTRIBUTING.md`, and `pyproject.toml` with the root
   control-plane GitHub description.
+- Commit `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51` bumps the product/config
+  version to `1.0.1`, keeps `pyproject.toml` and `uv.lock` in parity,
+  synchronizes all Codex plugin manifest versions to `1.0.1`, and publishes
+  GitHub Release `1.0.1`.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
@@ -84,7 +88,7 @@ release readiness, versioning, and artifact hygiene
   `scripts/validate_public_metadata_surfaces.py`.
 
 ## Evidence
-- `commit:d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
+- `commit:56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: d35c3c90d7341d5ab9c94b868bfe47bb41858c74 docs: align public metadata descriptions
+Last commit: 56fb6d9d22aa602f03f5aff5e5fc0939a2982d51 fix: sync plugin cache versions with adapter release
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,8 +21,8 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-28
-- commit: `d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
-- checked by: Codex ry-start release hardening
+- commit: `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- checked by: Codex ry-start internal adapter release version sync
 
 ## Facts
 - The audited Codex `plugin_hooks` active-doc drift is closed by the
@@ -40,9 +40,10 @@ verified current technical debt
   `installed`, and `live` lanes. Static mode is deterministic and verifies
   generated TOML/config invariants without a Codex binary; installed/live modes
   make binary/network requirements explicit.
-- Version synchronization debt is closed for this adapter at `1.0.0`; root
+- Version synchronization debt is closed for this adapter at `1.0.1`; root
   control-plane pins must reference commit
-  `2d4cee72988a99a934168c9649fec8307560c283`.
+  `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`, and plugin manifest versions
+  must match the adapter `VERSION`.
 - CodeQL action freshness debt is closed for Codex at `github/codeql-action`
   `v4.36.0`; Dependabot GitHub Actions version updates are grouped into one
   reviewable PR.
@@ -67,7 +68,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:d35c3c90d7341d5ab9c94b868bfe47bb41858c74`
+- `commit:56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

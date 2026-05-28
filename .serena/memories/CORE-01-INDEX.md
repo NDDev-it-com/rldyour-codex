@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2172b16855bd550f580f4a631601953e3a956083 docs: record Codex surface adoption
+Last commit: 56fb6d9d22aa602f03f5aff5e5fc0939a2982d51 fix: sync plugin cache versions with adapter release
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -23,17 +23,17 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2172b16855bd550f580f4a631601953e3a956083`
-- checked by: Codex ry-start Dependabot hardening
+- commit: `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- checked by: Codex ry-start internal adapter release version sync
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
-- Current product/config version is `1.0.0`; root control-plane must pin
-  `2172b16855bd550f580f4a631601953e3a956083` for this adapter after the
-  Codex surface-adoption matrix update.
+- Current product/config version is `1.0.1`; root control-plane must pin
+  `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51` for this adapter after the
+  plugin manifest/cache version sync.
 
 ## Evidence
-- `commit:2172b16855bd550f580f4a631601953e3a956083`
+- `commit:56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`
