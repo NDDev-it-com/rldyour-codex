@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
+Last updated: 2026-05-29
+Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -18,9 +18,9 @@ rldyour SDLC command lifecycle
 - `path:plugins/rldyour-flow`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
-- checked by: Codex ry-start memory-domain normalization
+- date: 2026-05-29
+- commit: `818d3c19388978564b29724488678cd803b99867`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.

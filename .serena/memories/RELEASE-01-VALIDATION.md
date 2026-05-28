@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
+Last updated: 2026-05-29
+Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,9 +24,9 @@ release readiness, versioning, and artifact hygiene
 - `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
-- checked by: Codex ry-start internal adapter release version sync
+- date: 2026-05-29
+- commit: `818d3c19388978564b29724488678cd803b99867`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
@@ -81,6 +81,11 @@ release readiness, versioning, and artifact hygiene
   version to `1.0.2`, keeps `pyproject.toml` and `uv.lock` in parity,
   synchronizes all Codex plugin manifest versions to `1.0.2`, and publishes
   GitHub Release `1.0.2`.
+- Commit `818d3c19388978564b29724488678cd803b99867` bumps the product/config
+  version to `1.0.3`, aligns active repository descriptions with the root
+  `config/repository-description-policy.json` template, preserves the existing
+  `workflow_dispatch` release input as `version`, creates or reuses numeric
+  tags during manual release runs, and publishes GitHub Release `1.0.3`.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
@@ -88,7 +93,7 @@ release readiness, versioning, and artifact hygiene
   `scripts/validate_public_metadata_surfaces.py`.
 
 ## Evidence
-- `commit:2a852698661384a3ba4497c4ea2c98111d941965`
+- `commit:818d3c19388978564b29724488678cd803b99867`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
