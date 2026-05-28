@@ -126,11 +126,13 @@ def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, man
 def main() -> int:
     errors: list[str] = []
 
+    product_version = ""
     version_path = ROOT / "VERSION"
     if not version_path.is_file():
         errors.append("VERSION: missing marketplace release version")
     else:
-        require_semver(version_path.read_text(encoding="utf-8").strip(), "VERSION", errors)
+        product_version = version_path.read_text(encoding="utf-8").strip()
+        require_semver(product_version, "VERSION", errors)
 
     for required in (
         ROOT / "CHANGELOG.md",
@@ -225,6 +227,11 @@ def main() -> int:
         if manifest.get("name") != name:
             errors.append(f"{name}: manifest name mismatch: {manifest.get('name')!r}")
         require_semver(manifest.get("version"), f"{manifest_path.relative_to(ROOT)} version", errors)
+        if product_version and manifest.get("version") != product_version:
+            errors.append(
+                f"{manifest_path.relative_to(ROOT)} version {manifest.get('version')!r} "
+                f"must match VERSION {product_version!r}"
+            )
         description = manifest.get("description")
         if not isinstance(description, str) or len(description.strip()) < 20:
             errors.append(f"{name}: manifest description must be meaningful")
