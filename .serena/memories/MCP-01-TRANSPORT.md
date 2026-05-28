@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
+Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -21,7 +21,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-28
-- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
+- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
 - checked by: Codex ry-start release hardening
 
 ## Facts

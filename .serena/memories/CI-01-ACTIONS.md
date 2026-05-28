@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
+Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -21,7 +21,7 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2d4cee72988a99a934168c9649fec8307560c283`
+- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
 - checked by: Codex ry-start Dependabot hardening
 
 ## Facts

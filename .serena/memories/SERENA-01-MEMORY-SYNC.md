@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 56fb6d9d22aa602f03f5aff5e5fc0939a2982d51 fix: sync plugin cache versions with adapter release
+Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -23,7 +23,7 @@ Serena memory, fullrepo, and knowledge sync policy
 
 ## Last verified
 - date: 2026-05-28
-- commit: `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
 - checked by: Codex ry-start internal adapter release version sync
 
 ## Facts
@@ -37,12 +37,12 @@ Serena memory, fullrepo, and knowledge sync policy
 - The 2026-05-28 Codex release-hardening sync records `b92c6a3` as the current
   memory evidence head after Semgrep/shadcn MCP pin updates, product version
   `1.0.0`, and stale research-claim validation changes.
-- The 2026-05-28 internal adapter release sync records `56fb6d9` as the current
-  memory evidence head after the `1.0.1` product bump and plugin manifest
+- The 2026-05-28 internal adapter release sync records `2a85269` as the current
+  memory evidence head after the `1.0.2` product bump and plugin manifest
   version parity hardening.
 
 ## Evidence
-- `commit:56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- `commit:2a852698661384a3ba4497c4ea2c98111d941965`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`

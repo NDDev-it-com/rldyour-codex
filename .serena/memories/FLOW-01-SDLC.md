@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last updated: 2026-05-28
+Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -18,8 +18,8 @@ rldyour SDLC command lifecycle
 - `path:plugins/rldyour-flow`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
+- date: 2026-05-28
+- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
 - checked by: Codex ry-start memory-domain normalization
 
 ## Facts

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 56fb6d9d22aa602f03f5aff5e5fc0939a2982d51 fix: sync plugin cache versions with adapter release
+Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -21,7 +21,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-28
-- commit: `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
 - checked by: Codex ry-start internal adapter release version sync
 
 ## Facts
@@ -37,10 +37,10 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.0.1`; the version bump is recorded in
+- Current product/config version is `1.0.2`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.0.1`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.0.2`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity.
 - Commit `b92c6a3290020771e57a9e415f8b131be573a770` refreshes Codex Semgrep
@@ -59,12 +59,12 @@ Codex adapter implementation surface
   `--profile` is adopted, legacy profile selectors remain forbidden, MCP
   runtime materialization stays native TOML, and plugin hooks remain
   default-enabled/trusted rather than a `[features].plugin_hooks` flag.
-- Commit `56fb6d9d22aa602f03f5aff5e5fc0939a2982d51` moves the adapter to
-  `1.0.1`, synchronizes plugin manifest versions with the adapter product
+- Commit `2a852698661384a3ba4497c4ea2c98111d941965` moves the adapter to
+  `1.0.2`, synchronizes plugin manifest versions with the adapter product
   version, and hardens plugin-version validation.
 
 ## Evidence
-- `commit:56fb6d9d22aa602f03f5aff5e5fc0939a2982d51`
+- `commit:2a852698661384a3ba4497c4ea2c98111d941965`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`

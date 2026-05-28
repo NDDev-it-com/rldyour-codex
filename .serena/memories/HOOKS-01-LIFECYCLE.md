@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 77280a6219d6de48815df6da3e33552d9c6c9283 fix: accept local hook cache paths
+Last updated: 2026-05-28
+Last commit: 2a852698661384a3ba4497c4ea2c98111d941965 fix: sync plugin cache versions with adapter release
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,8 +22,8 @@ deterministic hook lifecycle behavior
 - `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `77280a6219d6de48815df6da3e33552d9c6c9283`
+- date: 2026-05-28
+- commit: `2a852698661384a3ba4497c4ea2c98111d941965`
 - checked by: Codex ry-start macOS system config verification
 
 ## Facts
