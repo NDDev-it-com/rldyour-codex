@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 84ef50d1d0005e3977c3c644b4a680d5feb4b6e8 ci: classify superseded research warnings
+Last commit: 33aae825830df3c262a1ccf9b31ad6b0efa12426 ci: refresh CodeQL action pin
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `84ef50d1d0005e3977c3c644b4a680d5feb4b6e8`
+- commit: `33aae825830df3c262a1ccf9b31ad6b0efa12426`
 - checked by: Codex ry-start release hardening
 
 ## Facts
@@ -59,13 +59,17 @@ release readiness, versioning, and artifact hygiene
   strict fast validation treats warnings about explicitly superseded Serena
   research claims as known benign CI noise while still failing on unknown
   stderr lines.
+- Commit `33aae825830df3c262a1ccf9b31ad6b0efa12426` keeps product/runtime
+  semantics unchanged, refreshes all Codex `github/codeql-action` workflow
+  pins to the `v4.36.0` dereferenced commit SHA, and groups all Dependabot
+  GitHub Actions version updates into one reviewable PR.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:84ef50d1d0005e3977c3c644b4a680d5feb4b6e8`
+- `commit:33aae825830df3c262a1ccf9b31ad6b0efa12426`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

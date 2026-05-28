@@ -19,8 +19,7 @@ updates:
       prefix: ci
       include: scope
     groups:
-      actions-minor-and-patch:
+      github-actions:
         applies-to: version-updates
-        update-types:
-          - minor
-          - patch
+        patterns:
+          - "*"
