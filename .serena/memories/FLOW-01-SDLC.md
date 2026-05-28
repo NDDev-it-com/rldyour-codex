@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last updated: 2026-05-28
+Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -18,15 +18,15 @@ rldyour SDLC command lifecycle
 - `path:plugins/rldyour-flow`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- date: 2026-05-28
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls

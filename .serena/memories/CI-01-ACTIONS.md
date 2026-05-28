@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
+Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -21,8 +21,8 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2d4cee72988a99a934168c9649fec8307560c283`
-- checked by: Codex ry-start Dependabot hardening
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
@@ -31,7 +31,7 @@ GitHub Actions and local CI policy
   single PR through `.github/dependabot.yml`.
 
 ## Evidence
-- `commit:2d4cee72988a99a934168c9649fec8307560c283`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:.github/workflows`
 - `path:.github/dependabot.yml`
 - `path:README.md`

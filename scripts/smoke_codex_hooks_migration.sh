@@ -148,6 +148,16 @@ EOF
 use_legacy_landlock = true
 EOF
       ;;
+    profiles_nested_legacy)
+      cat >"$config_path" <<'EOF'
+[profiles.rldyour-yolo.features]
+terminal_resize_reflow = true
+memories = true
+
+[profiles."rldyour-safe".features]
+terminal_resize_reflow = false
+EOF
+      ;;
     *)
       printf 'unknown smoke case: %s\n' "$case_name" >&2
       return 2
@@ -201,6 +211,8 @@ for deprecated_root_key in {
         raise SystemExit(f"{case_name}: deprecated root key was not removed: {deprecated_root_key}")
 if data.get("suppress_unstable_features_warning") is not True:
     raise SystemExit(f"{case_name}: suppress_unstable_features_warning was not enabled: {data!r}")
+if "profiles" in data:
+    raise SystemExit(f"{case_name}: legacy profiles table was not removed: {data['profiles']!r}")
 
 if case_name in {
     "table_legacy",
@@ -270,6 +282,7 @@ cases=(
   features_web_search_canonical_wins
   memories_legacy
   features_legacy_landlock
+  profiles_nested_legacy
 )
 
 for case_name in "${cases[@]}"; do

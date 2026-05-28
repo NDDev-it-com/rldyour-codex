@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: b92c6a3290020771e57a9e415f8b131be573a770 chore(release): harden Codex 1.0.0 runtime pins
+Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -23,8 +23,8 @@ Serena memory, fullrepo, and knowledge sync policy
 
 ## Last verified
 - date: 2026-05-28
-- commit: `b92c6a3290020771e57a9e415f8b131be573a770`
-- checked by: Codex ry-start release hardening
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
@@ -39,7 +39,7 @@ Serena memory, fullrepo, and knowledge sync policy
   `1.0.0`, and stale research-claim validation changes.
 
 ## Evidence
-- `commit:b92c6a3290020771e57a9e415f8b131be573a770`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`

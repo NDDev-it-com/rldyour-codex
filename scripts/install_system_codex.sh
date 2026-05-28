@@ -556,6 +556,16 @@ def is_rldyour_plugin_header(header_path: list[str]) -> bool:
         and header_path[1].endswith("@rldyour-codex")
     )
 
+
+def is_managed_header(header: str, header_path: list[str]) -> bool:
+    if header in managed_headers:
+        return True
+    return (
+        len(header_path) >= 2
+        and header_path[0] == "profiles"
+        and header_path[1] in {"rldyour-safe", "rldyour-yolo"}
+    )
+
 for raw_line in existing.splitlines():
     if raw_line.strip() == SCHEMA_COMMENT:
         continue
@@ -566,7 +576,7 @@ for raw_line in existing.splitlines():
             append_managed_features()
         header = match.group(1)
         header_path = split_toml_key(header)
-        if header in managed_headers or is_rldyour_plugin_header(header_path):
+        if is_managed_header(header, header_path) or is_rldyour_plugin_header(header_path):
             skip_managed = True
             in_features = False
             in_memories = False

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
+Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,8 +21,8 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2d4cee72988a99a934168c9649fec8307560c283`
-- checked by: Codex ry-start release hardening
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - The audited Codex `plugin_hooks` active-doc drift is closed by the
@@ -42,7 +42,7 @@ verified current technical debt
   make binary/network requirements explicit.
 - Version synchronization debt is closed for this adapter at `1.0.0`; root
   control-plane pins must reference commit
-  `2d4cee72988a99a934168c9649fec8307560c283`.
+  `d7909f83ae7ec947946f374ffae99af37db5335a`.
 - CodeQL action freshness debt is closed for Codex at `github/codeql-action`
   `v4.36.0`; Dependabot GitHub Actions version updates are grouped into one
   reviewable PR.
@@ -57,7 +57,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:2d4cee72988a99a934168c9649fec8307560c283`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:scripts/validate_instruction_docs.py`

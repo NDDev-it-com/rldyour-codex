@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 77280a6219d6de48815df6da3e33552d9c6c9283 fix: accept local hook cache paths
+Last updated: 2026-05-28
+Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,9 +22,9 @@ deterministic hook lifecycle behavior
 - `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `77280a6219d6de48815df6da3e33552d9c6c9283`
-- checked by: Codex ry-start macOS system config verification
+- date: 2026-05-28
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Hook memories record bounded, deterministic lifecycle behavior and the authoritative Stop owner.
@@ -34,7 +34,7 @@ deterministic hook lifecycle behavior
   `plugins/cache/rldyour-codex/<plugin>/local/hooks.json` source paths.
 
 ## Evidence
-- `commit:77280a6219d6de48815df6da3e33552d9c6c9283`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
 - `path:scripts/smoke_codex_hook_listing.py`

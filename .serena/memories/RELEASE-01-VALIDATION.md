@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
+Last commit: d7909f83ae7ec947946f374ffae99af37db5335a fix(installer): drop nested legacy profile tables
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,8 +25,8 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2d4cee72988a99a934168c9649fec8307560c283`
-- checked by: Codex ry-start release hardening
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
@@ -66,13 +66,16 @@ release readiness, versioning, and artifact hygiene
 - Commit `2d4cee72988a99a934168c9649fec8307560c283` keeps product/runtime
   semantics unchanged and aligns the Codex Dependabot `github-actions` update
   cadence to monthly grouped PRs.
+- Commit `d7909f83ae7ec947946f374ffae99af37db5335a` keeps product/runtime
+  semantics unchanged and fixes system config migration so nested legacy
+  `[profiles.rldyour-*.*]` tables are removed before doctor/runtime validation.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:2d4cee72988a99a934168c9649fec8307560c283`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
