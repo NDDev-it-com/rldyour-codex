@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 86b2555935f4c2185658417a3aff82d225d25392 feat(flow): enforce numeric releases and deploy routing
+Last updated: 2026-05-28
+Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -20,16 +20,20 @@ GitHub Actions and local CI policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `86b2555935f4c2185658417a3aff82d225d25392`
-- checked by: Codex ry-start memory-domain normalization
+- date: 2026-05-28
+- commit: `2d4cee72988a99a934168c9649fec8307560c283`
+- checked by: Codex ry-start Dependabot hardening
 
 ## Facts
 - CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
+- GitHub Actions workflows pin third-party actions to full commit SHAs. Dependabot
+  monitors `github-actions` monthly and groups all action version updates into a
+  single PR through `.github/dependabot.yml`.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:2d4cee72988a99a934168c9649fec8307560c283`
 - `path:.github/workflows`
+- `path:.github/dependabot.yml`
 - `path:README.md`
 
 ## Known pitfalls

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 33aae825830df3c262a1ccf9b31ad6b0efa12426 ci: refresh CodeQL action pin
+Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `33aae825830df3c262a1ccf9b31ad6b0efa12426`
+- commit: `2d4cee72988a99a934168c9649fec8307560c283`
 - checked by: Codex ry-start release hardening
 
 ## Facts
@@ -63,13 +63,16 @@ release readiness, versioning, and artifact hygiene
   semantics unchanged, refreshes all Codex `github/codeql-action` workflow
   pins to the `v4.36.0` dereferenced commit SHA, and groups all Dependabot
   GitHub Actions version updates into one reviewable PR.
+- Commit `2d4cee72988a99a934168c9649fec8307560c283` keeps product/runtime
+  semantics unchanged and aligns the Codex Dependabot `github-actions` update
+  cadence to monthly grouped PRs.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
   --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:33aae825830df3c262a1ccf9b31ad6b0efa12426`
+- `commit:2d4cee72988a99a934168c9649fec8307560c283`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

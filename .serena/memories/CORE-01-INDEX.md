@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-27
-Last commit: 98bcb04a2dc707ab820377056c0c7bff25a94cf5 fix(ci): classify transient MCP retry noise
+Last updated: 2026-05-28
+Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -22,17 +22,18 @@ repository identity and source-of-truth map
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-05-27
-- commit: `98bcb04a2dc707ab820377056c0c7bff25a94cf5`
-- checked by: Codex ry-start version synchronization
+- date: 2026-05-28
+- commit: `2d4cee72988a99a934168c9649fec8307560c283`
+- checked by: Codex ry-start Dependabot hardening
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
-- Current product/config version is `0.5.0`; root control-plane must pin
-  `98bcb04a2dc707ab820377056c0c7bff25a94cf5` for this adapter.
+- Current product/config version is `1.0.0`; root control-plane must pin
+  `2d4cee72988a99a934168c9649fec8307560c283` for this adapter after the
+  Dependabot GitHub Actions cadence alignment.
 
 ## Evidence
-- `commit:98bcb04a2dc707ab820377056c0c7bff25a94cf5`
+- `commit:2d4cee72988a99a934168c9649fec8307560c283`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

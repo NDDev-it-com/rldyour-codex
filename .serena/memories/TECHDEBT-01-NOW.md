@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 33aae825830df3c262a1ccf9b31ad6b0efa12426 ci: refresh CodeQL action pin
+Last commit: 2d4cee72988a99a934168c9649fec8307560c283 ci: align Dependabot action cadence
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,7 +21,7 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-28
-- commit: `33aae825830df3c262a1ccf9b31ad6b0efa12426`
+- commit: `2d4cee72988a99a934168c9649fec8307560c283`
 - checked by: Codex ry-start release hardening
 
 ## Facts
@@ -42,10 +42,12 @@ verified current technical debt
   make binary/network requirements explicit.
 - Version synchronization debt is closed for this adapter at `1.0.0`; root
   control-plane pins must reference commit
-  `33aae825830df3c262a1ccf9b31ad6b0efa12426`.
+  `2d4cee72988a99a934168c9649fec8307560c283`.
 - CodeQL action freshness debt is closed for Codex at `github/codeql-action`
   `v4.36.0`; Dependabot GitHub Actions version updates are grouped into one
   reviewable PR.
+- Dependabot cadence noise is closed for Codex: GitHub Actions updates are
+  checked monthly and grouped under the `github-actions` group.
 - Semgrep MCP freshness drift is closed for Codex at `semgrep==1.164.0`, and
   shadcn MCP freshness is closed at `shadcn@4.8.2`.
 - CI classifier drift is closed for retried MCP TaskGroup startup noise and for
@@ -55,7 +57,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:33aae825830df3c262a1ccf9b31ad6b0efa12426`
+- `commit:2d4cee72988a99a934168c9649fec8307560c283`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:scripts/validate_instruction_docs.py`
