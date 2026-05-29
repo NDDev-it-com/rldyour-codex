@@ -1,7 +1,7 @@
 {
   "name": "rldyour-mcps",
-  "version": "1.1.3",
-  "description": "Controlled rldyour MCP server runtime set for Codex auto skills, with explicit runtime, startup, browser, GitHub, OpenAI docs, and safety rules. RU: управляемый набор MCP-серверов для Codex без скрытых транспортов и unpinned launchers.",
+  "version": "1.1.4",
+  "description": "Управляемые MCP-серверы Codex без hidden transports. EN: Controlled MCP runtime set.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -31,8 +31,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "rldyour MCP Servers",
-    "shortDescription": "Approved MCP runtime / RU: управляемые MCP-серверы",
-    "longDescription": "This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter, Figma, and OpenAI Developer Docs. It is the runtime dependency layer for automatic workflow plugins such as rldyour-explore, rldyour-browser, rldyour-security, rldyour-serena-mcp, and rldyour-design. Playwright MCP runs headless with network, storage, testing, and devtools capabilities enabled for full browser validation workflows. OpenAI Developer Docs MCP is the authoritative source for current OpenAI and Codex product documentation. Local launcher packages and host runtime prerequisites are pinned through config/mcp-runtime-versions.env and strict runtime validation. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
+    "shortDescription": "Управляемые MCP. EN: controlled servers",
+    "longDescription": "Управляемый MCP runtime Codex для approved servers, pinned launchers и safe tool routing. EN: This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, Semgrep, shadcn, Dart/Flutter, Figma, and OpenAI Developer Docs. It is the runtime dependency layer for automatic workflow plugins such as rldyour-explore, rldyour-browser, rldyour-security, rldyour-serena-mcp, and rldyour-design. Playwright MCP runs headless with network, storage, testing, and devtools capabilities enabled for full browser validation workflows. OpenAI Developer Docs MCP is the authoritative source for current OpenAI and Codex product documentation. Local launcher packages and host runtime prerequisites are pinned through config/mcp-runtime-versions.env and strict runtime validation. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
     "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [
@@ -45,9 +45,9 @@
     "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "defaultPrompt": [
-      "Show my MCP servers.",
-      "Choose the right MCP for this task.",
-      "Check MCP availability without writing data."
+      "Покажи MCP-серверы. EN: show MCP servers.",
+      "Выбери MCP для задачи. EN: route MCP tools.",
+      "Проверь MCP доступность без записи. EN: read-only MCP check."
     ],
     "brandColor": "#0F766E",
     "screenshots": []

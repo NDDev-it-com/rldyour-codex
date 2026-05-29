@@ -1,14 +1,14 @@
 interface:
   display_name: Browser Debug
-  short_description: 'Русскоязычная Codex skill metadata. EN: Auto browser runtime diagnosis'
-  default_prompt: 'Используй $Browser Debug для этой задачи с русскоязычным контекстом владельца. EN: Use $browser-debug to diagnose browser console, network, runtime, layout, hydration, and performance issues.'
+  short_description: 'Браузерный debug. EN: browser runtime debug'
+  default_prompt: 'Используй $browser-debug: консоль, сеть, DOM. EN: browser debug.'
 dependencies:
   tools:
   - type: mcp
     value: chrome-devtools
-    description: 'Chrome DevTools: консоль, сеть, DOM/runtime, layout, Lighthouse и performance-debug. EN: console, network, DOM/runtime, layout, Lighthouse, and performance debugging.'
+    description: 'Браузерный DevTools. EN: console, network, DOM.'
   - type: mcp
     value: playwright
-    description: 'Playwright: браузерная проверка, user flows, screenshots, snapshots и assertions. EN: browser validation, user flows, screenshots, snapshots, and assertions.'
+    description: 'Браузерные flows. EN: screenshots and assertions.'
 policy:
   allow_implicit_invocation: true

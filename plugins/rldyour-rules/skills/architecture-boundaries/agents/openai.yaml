@@ -1,14 +1,14 @@
 interface:
   display_name: Architecture Boundaries
-  short_description: 'Русскоязычная Codex skill metadata. EN: Apply FSD and VSA boundaries'
-  default_prompt: 'Используй $Architecture Boundaries для этой задачи с русскоязычным контекстом владельца. EN: Use $architecture-boundaries to verify placement, imports, slices, and backend use-case structure.'
+  short_description: 'Границы архитектуры. EN: architecture boundaries'
+  default_prompt: 'Используй $architecture-boundaries: проверь слои. EN: architecture boundaries.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
 policy:
   allow_implicit_invocation: true

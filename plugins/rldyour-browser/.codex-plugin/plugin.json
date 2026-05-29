@@ -1,7 +1,7 @@
 {
   "name": "rldyour-browser",
-  "version": "1.1.3",
-  "description": "Auto-invoked browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP. RU: браузерная проверка, скриншоты, адаптив, консоль/сеть и runtime-debug для русскоязычных задач владельца.",
+  "version": "1.1.4",
+  "description": "Браузерная проверка и debug для Playwright/DevTools. EN: Browser validation and debugging workflows.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -29,8 +29,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour Browser",
-    "shortDescription": "Auto browser validation/debugging / RU: браузерная проверка",
-    "longDescription": "This skills-only plugin defines automatic browser workflows for Codex. Its skills should be selected automatically when the owner asks to check in the browser, verify visually, validate a UI, inspect screenshots, test a user flow, prove business logic, compare pixel-perfect output, debug console/network/runtime/layout failures, or analyze performance. Playwright MCP is the primary tool for user-flow reproduction, functional validation, business-logic verification, screenshots, accessibility snapshots, storage/network/testing assertions, and pixel-perfect UI checks. Chrome DevTools MCP is the primary tool for console, network, DOM/runtime, layout, Lighthouse, performance trace, and deeper browser debugging. Browser artifacts such as screenshots, videos, traces, PDFs, and temporary evidence must be written under browser/ and treated as ignored local artifacts unless the owner explicitly asks to preserve them.",
+    "shortDescription": "Браузерная проверка. EN: Browser validation",
+    "longDescription": "Браузерные workflows Codex для browser validation, screenshots и runtime-debug. EN: This skills-only plugin defines automatic browser workflows for Codex. Its skills should be selected automatically when the owner asks to check in the browser, verify visually, validate a UI, inspect screenshots, test a user flow, prove business logic, compare pixel-perfect output, debug console/network/runtime/layout failures, or analyze performance. Playwright MCP is the primary tool for user-flow reproduction, functional validation, business-logic verification, screenshots, accessibility snapshots, storage/network/testing assertions, and pixel-perfect UI checks. Chrome DevTools MCP is the primary tool for console, network, DOM/runtime, layout, Lighthouse, performance trace, and deeper browser debugging. Browser artifacts such as screenshots, videos, traces, PDFs, and temporary evidence must be written under browser/ and treated as ignored local artifacts unless the owner explicitly asks to preserve them.",
     "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [
@@ -46,9 +46,9 @@
     "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "defaultPrompt": [
-      "Use $browser-validation to validate this implementation in the browser.",
-      "Use $browser-debug to diagnose this UI/runtime issue with browser evidence.",
-      "Use $browser-tool-routing to choose Playwright, Chrome DevTools, or both."
+      "Используй $browser-validation: проверь UI в браузере. EN: browser validation.",
+      "Используй $browser-debug: консоль, сеть, runtime. EN: browser debug.",
+      "Используй $browser-tool-routing: выбери Playwright/DevTools. EN: route browser tools."
     ],
     "brandColor": "#0EA5E9",
     "screenshots": []

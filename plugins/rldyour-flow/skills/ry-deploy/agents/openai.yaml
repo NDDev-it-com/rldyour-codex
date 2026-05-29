@@ -1,17 +1,17 @@
 interface:
   display_name: ry-deploy
-  short_description: 'Deploy с GitHub/server sync, health checks, logs и rollback evidence. EN: Deploy with server verification'
-  default_prompt: 'Используй $ry-deploy для этой задачи с русскоязычным контекстом владельца. EN: Use $ry-deploy to synchronize GitHub and deploy to the target server with verification.'
+  short_description: 'Деплой flow. EN: deploy and verify'
+  default_prompt: 'Используй $ry-deploy: задеплой и проверь. EN: deploy workflow.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
   - type: mcp
     value: grep
-    description: 'Grep: реальные production-паттерны из GitHub-кода. EN: real-world production usage patterns.'
+    description: 'Поиск кода. EN: production GitHub usage.'
 policy:
   allow_implicit_invocation: true

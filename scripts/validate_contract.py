@@ -161,10 +161,16 @@ def main() -> int:
     if not isinstance(hooks, dict):
         errors.append("hooks: expected object")
     else:
-        if hooks.get("plugin_hooks_required") is not False:
-            errors.append("hooks.plugin_hooks_required must be false for current Codex")
-        if hooks.get("plugin_hooks_default_enabled") is not True:
-            errors.append("hooks.plugin_hooks_default_enabled must be true for current Codex")
+        if hooks.get("removed_plugin_hooks_feature_required") is not False:
+            errors.append("hooks.removed_plugin_hooks_feature_required must be false for current Codex")
+        for key in (
+            "hooks_feature_default_enabled",
+            "plugin_bundled_hooks_discoverable",
+            "plugin_hook_trust_required",
+            "trusted_hook_hashes_refreshed_by_installer",
+        ):
+            if hooks.get(key) is not True:
+                errors.append(f"hooks.{key} must be true for current Codex")
         for script in ("scripts/install_system_codex.sh", "scripts/doctor_system_codex.sh"):
             script_text = (ROOT / script).read_text(encoding="utf-8")
             if 'plugin_hooks = true' in script_text or 'features.get("plugin_hooks") is True' in script_text:

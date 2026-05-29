@@ -1,17 +1,17 @@
 interface:
   display_name: ry-review
-  short_description: 'Глубокое report-only review diff/scope и affected integration graph. EN: Deep report-only code review'
-  default_prompt: 'Используй $ry-review для этой задачи с русскоязычным контекстом владельца. EN: Use $ry-review to review the current diff and affected integration graph.'
+  short_description: 'Глубокое ревью. EN: diff review'
+  default_prompt: 'Используй $ry-review: проверь diff. EN: deep review.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
   - type: mcp
     value: grep
-    description: 'Grep: реальные production-паттерны из GitHub-кода. EN: real-world production usage patterns.'
+    description: 'Поиск кода. EN: production GitHub usage.'
 policy:
   allow_implicit_invocation: true
