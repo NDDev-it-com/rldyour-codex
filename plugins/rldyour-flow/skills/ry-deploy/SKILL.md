@@ -1,6 +1,6 @@
 ---
 name: ry-deploy
-description: "Deploy with local/GitHub/server sync, checks, logs, fixes, and memory/docs/git finalization. Use for ry-deploy, deploy server, задеплой, деплой на сервер, прод."
+description: "Выполняет deploy с local/GitHub/server sync, checks, logs, fixes и memory/docs/git finalization. EN: ry-deploy, production deploy, server rollout."
 ---
 
 # ry-deploy

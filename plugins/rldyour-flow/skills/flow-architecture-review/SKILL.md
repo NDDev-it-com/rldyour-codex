@@ -1,6 +1,6 @@
 ---
 name: flow-architecture-review
-description: "Orchestrated architecture review for ry-start/ry-review. Use explicitly for architecture, layers, dependencies, data flow; триггеры: архитектурное ревью, проверь слои."
+description: "Оркестрирует architecture review для ry-start/ry-review: architecture, layers, dependencies и data flow. EN: architecture review, dependencies."
 ---
 
 # Flow Architecture Review

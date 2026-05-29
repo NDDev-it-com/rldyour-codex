@@ -1,6 +1,6 @@
 ---
 name: flow-consistency-review
-description: "Orchestrated consistency review for ry-start/ry-review. Use explicitly for naming, style, imports, public APIs; триггеры: консистентность, нейминг, паттерны."
+description: "Оркестрирует consistency review для ry-start/ry-review: naming, style, imports и public APIs. EN: consistency review, naming, patterns."
 ---
 
 # Flow Consistency Review

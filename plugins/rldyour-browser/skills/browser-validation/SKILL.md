@@ -1,6 +1,6 @@
 ---
 name: browser-validation
-description: "Validate browser-visible UI, flows, responsive states, and business logic. Use after frontend changes or prompts: проверь в браузере, визуально, адаптив, UI, бизнес-логику, pixel-perfect."
+description: "Проверяет browser-visible UI, flows, responsive states и business logic. EN: browser validation, UI, responsive, user flow."
 ---
 
 # Browser Validation

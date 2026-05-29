@@ -1,6 +1,6 @@
 ---
 name: ry-sec-review
-description: "Defensive Mythos-style security review for diffs, PRs, and sensitive code. Use for $ry-sec-review, проверь безопасность, секьюрити ревью, auth/authz, secrets, OWASP."
+description: "Проводит defensive security review для diffs, PRs и sensitive code. EN: ry-sec-review, security review, auth, secrets, OWASP."
 ---
 
 # ry-sec-review

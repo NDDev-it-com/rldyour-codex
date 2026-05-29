@@ -1,6 +1,6 @@
 ---
 name: lsp-routing
-description: "Route language-server usage for implementation, types, diagnostics, symbols, and semantic refactors. Use for LSP/лсп, type checking, Python/Rust/Dart/TS/Go/C++/Qt/YAML/etc."
+description: "Маршрутизирует language-server usage для реализации, типов, diagnostics, symbols и semantic refactors. EN: LSP routing, type checking, symbols."
 ---
 
 # LSP Routing

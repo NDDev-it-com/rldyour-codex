@@ -1,6 +1,6 @@
 ---
 name: dependency-compatibility-policy
-description: "Choose and update dependencies with current, compatible, source-backed versions. Use for зависимости, версии, package updates, migration, совместимость, latest, актуальные технологии."
+description: "Проверяет и обновляет зависимости до current, compatible, source-backed versions. EN: dependency compatibility, package updates, migration, latest."
 ---
 
 # Dependency Compatibility Policy

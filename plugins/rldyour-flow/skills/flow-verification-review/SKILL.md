@@ -1,6 +1,6 @@
 ---
 name: flow-verification-review
-description: "Orchestrated verification review for ry-start/ry-review. Use explicitly for tests, quality gates, browser/server evidence; триггеры: проверь тесты, проверки."
+description: "Оркестрирует verification review для ry-start/ry-review: tests, quality gates, browser/server evidence. EN: verification review, checks, evidence."
 ---
 
 # Flow Verification Review

@@ -1,6 +1,6 @@
 ---
 name: ry-design
-description: "End-to-end design/UI workflow with Figma, i18n, tokens, data classification, full validation. Use for $ry-design, сверстай, перенеси Figma, pixel-perfect."
+description: "Выполняет end-to-end design/UI workflow с Figma, i18n, tokens, data classification и full validation. EN: ry-design, pixel-perfect, UI workflow."
 ---
 
 # ry-design

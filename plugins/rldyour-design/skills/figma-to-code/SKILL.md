@@ -1,6 +1,6 @@
 ---
 name: figma-to-code
-description: "Implement Figma designs pixel-perfect with Figma MCP, tokens, FSD, i18n, dynamic/static content classification, shadcn/ui, browser validation. Use for Figma links, перенеси из фигмы, сверстай макет."
+description: "Переносит Figma designs pixel-perfect через Figma MCP, tokens, FSD, i18n, shadcn/ui и browser validation. EN: Figma to code, UI implementation."
 ---
 
 # Figma To Code

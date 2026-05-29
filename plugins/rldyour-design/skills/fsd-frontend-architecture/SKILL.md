@@ -1,6 +1,6 @@
 ---
 name: fsd-frontend-architecture
-description: "Apply strict FSD placement for frontend/UI, i18n, data/admin boundaries. Use for FSD, архитектура, pages/widgets/features/entities/shared, imports."
+description: "Применяет strict FSD placement для frontend/UI, i18n и data/admin boundaries. EN: FSD frontend architecture, pages, widgets, features, entities."
 ---
 
 # FSD Frontend Architecture

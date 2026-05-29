@@ -1,6 +1,6 @@
 ---
 name: implementation-discipline
-description: "Apply disciplined implementation rules for code, APIs, schemas, configs, tests, naming, errors, reuse, and sync. Use for реализация, доработка, рефакторинг, нейминг."
+description: "Применяет disciplined implementation rules для code, APIs, schemas, configs, tests, naming, errors, reuse и sync. EN: implementation discipline, refactor."
 ---
 
 # Implementation Discipline

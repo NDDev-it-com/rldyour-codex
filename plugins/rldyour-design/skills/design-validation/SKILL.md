@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: "Validate design implementation in browser with Figma parity, i18n/token/static scans, responsive states. Use after UI/Figma work; проверь дизайн, адаптив, pixel-perfect."
+description: "Проверяет дизайн-реализацию в браузере: Figma parity, i18n/token/static scans и responsive states. EN: design validation, browser, pixel-perfect."
 ---
 
 # Design Validation
