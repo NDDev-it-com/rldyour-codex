@@ -1,11 +1,11 @@
 interface:
   display_name: Flow Architecture Review
-  short_description: 'Русскоязычная Codex skill metadata. EN: Review architecture boundaries'
-  default_prompt: 'Используй $Flow Architecture Review для этой задачи с русскоязычным контекстом владельца. EN: Use $flow-architecture-review to check architecture, dependencies, layers, and data flow.'
+  short_description: 'Архревью flow. EN: architecture review'
+  default_prompt: 'Используй $flow-architecture-review: проверь архитектуру. EN: architecture review.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: false

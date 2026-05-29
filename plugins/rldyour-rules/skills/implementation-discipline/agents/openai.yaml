@@ -1,11 +1,11 @@
 interface:
   display_name: Implementation Discipline
-  short_description: 'Русскоязычная Codex skill metadata. EN: Keep implementation synchronized'
-  default_prompt: 'Используй $Implementation Discipline для этой задачи с русскоязычным контекстом владельца. EN: Use $implementation-discipline to synchronize code, contracts, tests, docs, and generated artifacts.'
+  short_description: 'Дисциплина кода. EN: implementation discipline'
+  default_prompt: 'Используй $implementation-discipline: держи clean code. EN: implementation rules.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: true

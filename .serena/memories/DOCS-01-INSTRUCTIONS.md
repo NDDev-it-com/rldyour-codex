@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6814a398cf0026102cf15688e038f71744d9ac5b chore(release): codex 1.1.3
+Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -26,14 +26,20 @@ instruction docs and durable operator documentation
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6814a398cf0026102cf15688e038f71744d9ac5b`
+- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Docs memories record which instruction and operator docs must change after durable behavior changes.
+- `system/AGENTS.md` is the compact global Codex owner/runtime contract and
+  fullrepo `AGENTS.md` is the compact project-specific contract. The
+  `1.1.4` hardening keeps each file below 10 KiB and validates the combined
+  pair with `scripts/validate_agents_context_budget.py`; deep operational
+  detail belongs in skills, references, and Serena memories rather than
+  bloating AGENTS context.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`

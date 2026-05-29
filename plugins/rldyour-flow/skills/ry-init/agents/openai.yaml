@@ -1,20 +1,20 @@
 interface:
   display_name: ry-init
-  short_description: 'Инициализация scoped project context через Serena-first discovery. EN: Initialize scoped project context'
-  default_prompt: 'Используй $ry-init для этой задачи с русскоязычным контекстом владельца. EN: Use $ry-init to initialize this project or scope with Serena-first context.'
+  short_description: 'Инициализация scope. EN: project context init'
+  default_prompt: 'Используй $ry-init: собери контекст. EN: project initialization.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
   - type: mcp
     value: deepwiki
-    description: 'DeepWiki: архитектура GitHub-репозиториев, internals и проектные решения. EN: repository architecture, internals, and design decisions.'
+    description: 'Архитектура DeepWiki. EN: repository docs.'
   - type: mcp
     value: grep
-    description: 'Grep: реальные production-паттерны из GitHub-кода. EN: real-world production usage patterns.'
+    description: 'Поиск кода. EN: production GitHub usage.'
 policy:
   allow_implicit_invocation: true

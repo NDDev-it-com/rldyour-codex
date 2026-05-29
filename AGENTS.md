@@ -1,85 +1,106 @@
 # rldyour-codex Agent Instructions
 
-## Project Purpose
+## Purpose
 
-This repository is the rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory. It is published publicly under the GNU AGPL-3.0-or-later license at https://github.com/NDDev-it-com/rldyour-codex. Maintainer: Danil Silantyev (`@rldyourmnd`), CEO NDDev. The repository owns rldyour plugins, skills, hooks, MCP runtime definitions, validation scripts, and Serena project knowledge for the local Codex runtime.
+This repository is the Codex-native adapter for `rldyour-ai-cli-tools`: local plugin marketplace, plugin manifests, skills, OpenAI metadata, hooks, managed subagents, MCP source definitions, system installer, runtime doctors, validation gates, and Serena project knowledge.
 
-## License
+GitHub: `https://github.com/NDDev-it-com/rldyour-codex`.
+License: `AGPL-3.0-or-later`.
+Maintainer: Danil Silantyev (`@rldyourmnd`), CEO NDDev.
 
-- Code, configs, scripts, and tests in this repository are licensed under GNU AGPL-3.0-or-later. The canonical FSF text lives in `LICENSE`.
-- AGPL-3.0 Section 13 (Remote Network Interaction) applies to modified versions served over a network.
-- Contributions are accepted under the same license (inbound = outbound).
+## Language
 
-## Language And Documentation
-
-- User-facing communication with the owner is Russian unless explicitly requested otherwise.
-- Repository files are English: docs, plugin metadata, skills, scripts, comments, commits, Serena memories, plans, and research archives.
-- Keep technical identifiers ASCII, stable, and kebab-case where applicable.
+- User-facing conversation with the owner is Russian unless explicitly requested otherwise.
+- Repository artifacts are English.
+- Stable identifiers stay ASCII and kebab-case where applicable.
 
 ## Source Of Truth
 
-- `.agents/plugins/marketplace.json`: active marketplace catalog.
-- `plugins/<plugin>/.codex-plugin/plugin.json`: plugin manifest and linked capabilities.
-- `plugins/<plugin>/skills/*/SKILL.md`: primary automatic skill routing contract.
-- `plugins/<plugin>/skills/*/agents/openai.yaml`: UI metadata and implicit invocation policy.
-- `plugins/rldyour-mcps/.mcp.json`: repository MCP runtime definitions.
-- `config/mcp-runtime-versions.env`: pinned local MCP launcher, host runtime, and Codex CLI versions used by scripts and manual CI.
-- `VERSION` and `CHANGELOG.md`: marketplace release version and human-readable change history.
-- `.github/workflows/validate.yml`: auto-running validation on push to main, pull requests, and workflow_dispatch. Fast and runtime jobs run on Ubuntu and macOS automatically on push/PR; release dry-run, dependency-pins, and mcp-safe-calls run on Ubuntu only.
-- `.github/workflows/security-static.yml`: auto-running no-paid static security on push, pull_request, weekly schedule, and workflow_dispatch.
-- `.github/workflows/codeql.yml`: auto-running GitHub CodeQL analysis on push, pull_request, weekly schedule. Matrix: Python and GitHub Actions. Pinned `github/codeql-action@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0`.
-- `.github/workflows/release.yml`: auto-running on push of SemVer tags matching `[0-9]*.[0-9]*.[0-9]*` and prereleases `[0-9]*.[0-9]*.[0-9]*-*`, plus workflow_dispatch as a fallback.
-- `.github/workflows/dependency-check.yml`: auto-running MCP runtime pin freshness on daily schedule, push to MCP pin sources, and workflow_dispatch. Job exported as `MCP runtime pin freshness (scheduled)`.
-- `.github/workflows/scorecard.yml`: OpenSSF Scorecard analysis on push to main, weekly schedule, branch protection rule changes, and workflow_dispatch. Pinned `ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3`.
-- `.github/workflows/dependency-review.yml`: pull-request-only gate with `fail-on-severity: high` and AGPL-3.0-compatible license allow-list. Pinned `actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0`.
-- `.github/workflows/labeler.yml`: pull_request_target labeler applying area labels from `.github/labeler.yml`. Pinned `actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0`.
-- `.github/branch-protection/main.json`: desired branch protection for the public `main` branch with required CI status checks; applied to the live repository via GitHub API.
-- `config/skill-routing-policy.json`: deterministic prompt-to-skill routing policy tests.
-- `system/agents/*.toml`: managed Codex custom subagent role configs installed to `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`.
-- `system/rules/*.rules`: managed Codex execpolicy rules installed to `${CODEX_HOME:-$HOME/.codex}/rules/*.rules`.
-- `${CODEX_HOME:-$HOME/.codex}/config.toml`: active system Codex registration, `[features].hooks`, `[features].multi_agent`, `[agents]` registration, YOLO permission defaults, owner-selected model defaults, approved MCP tool overrides, and MCP runtime config.
-- `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`: active managed subagent role configs; rldyour-managed roles use `model = "gpt-5.5"` with `model_reasoning_effort = "medium"` and temporary specialist-MCP isolation. Disabled specialist MCP overrides must include full `command` or `url` transport metadata copied from `plugins/rldyour-mcps/.mcp.json`; built-in `codex_apps` stays inherited from Apps/connectors and must not be declared as a synthetic `[mcp_servers.codex_apps]` table.
-- `.claude/CLAUDE.md`: Claude Code-native project memory for this repository, published through `fullrepo`.
-- `.serena/memories/*.md`: high-signal verified project knowledge.
+- `.agents/plugins/marketplace.json`: repo-scoped Codex plugin marketplace.
+- `plugins/<plugin>/.codex-plugin/plugin.json`: plugin manifest, version, user-facing marketplace metadata, linked skills/hooks/MCP/apps.
+- `plugins/<plugin>/skills/*/SKILL.md`: primary skill routing metadata and workflow body.
+- `plugins/<plugin>/skills/*/agents/openai.yaml`: compact OpenAI skill UI/dependency metadata and implicit invocation policy.
+- `plugins/rldyour-mcps/.mcp.json`: source MCP runtime definitions; Codex runtime materialization is TOML `[mcp_servers.*]`.
+- `config/rldyour-contract.json`: Codex adapter contract, native surfaces, model/runtime policy, hook semantics, and MCP mapping.
+- `config/skill-routing-policy.json`: deterministic prompt-to-skill routing fixtures.
+- `config/mcp-runtime-versions.env`: pinned local MCP launcher, host runtime, and Codex CLI versions used by scripts.
+- `system/AGENTS.md`: compact global Codex instruction template installed to `~/.codex/AGENTS.md`.
+- `system/agents/*.toml`: managed Codex subagent roles.
+- `system/rules/*.rules`: managed Codex execpolicy rules.
+- `VERSION` and `CHANGELOG.md`: marketplace product version and release history.
+- `.github/workflows/*.yml`: public adapter CI and release workflows.
+- `.serena/memories/*.md`: fullrepo-only durable project knowledge.
 
-## Plugin Boundaries
+## Native Boundaries
 
-- `rldyour-mcps` owns MCP transport definitions only. It must not contain behavior policy or skills.
-- `rldyour-serena-mcp` owns Serena-first code workflow, memory sync, and Serena lifecycle hook scripts. Its Stop memory gate is invoked by the ordered Flow lifecycle dispatcher, not registered as a competing plugin Stop hook.
-- `rldyour-flow` owns SDLC commands, scoped context packs, context sufficiency gates, instruction docs sync, fast offline/local-only SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, ordered local-only Stop lifecycle dispatch, and post-task synchronization hooks.
-- `rldyour-rules` owns quality, architecture, dependency, verification, Codex/Claude project-instruction, and ADR policy.
-- `rldyour-design` owns Figma-to-code, centralized i18n, dynamic/static/admin content classification, centralized tokens, UI-kit reuse, strict FSD placement, shadcn/ui, ReactBits, and browser/design validation gates.
-- `rldyour-explore`, `rldyour-browser`, `rldyour-security`, and `rldyour-lsps` own their domain workflows and must not duplicate MCP transports.
-- Curated `github@openai-curated` and `gmail@openai-curated` are intentionally enabled in system Codex.
+- Codex flows are skills/plugins, not custom slash-command files copied from Claude or OpenCode.
+- `rldyour-mcps` owns transport definitions only and must not contain skills or behavior policy.
+- `rldyour-flow` owns SDLC skills, SessionStart/PreToolUse/Stop lifecycle scripts, instruction docs sync, fullrepo sync, and post-task sync.
+- `rldyour-serena-mcp` owns Serena-first code workflow, memory sync, plans/research guidance, and helper scripts. Its Stop work is invoked by Flow, not registered as an independent competing Stop hook.
+- `rldyour-rules`, `rldyour-explore`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, and `rldyour-security` own their domain workflows and must not duplicate MCP transports.
+- Plugin-bundled hooks are discoverable from manifests, but trusted hook hashes must be refreshed by installer/doctor through Codex `hooks/list` before they run.
+
+## Metadata Policy
+
+- First-party `SKILL.md` descriptions are Russian-first with an English suffix.
+- `agents/openai.yaml` must use the shared policy in `scripts/codex_openai_metadata_policy.py`:
+  - `interface.short_description`: 25-64 chars, Russian-first, English-compatible.
+  - `interface.default_prompt`: <=128 chars, Russian-first, English-compatible, and mentions the exact `$<skill-name>`.
+  - `dependencies.tools[*].description`: Russian-first, English-compatible, compact.
+  - reviewer track skills are orchestrated-only and set `allow_implicit_invocation: false`.
+- Plugin manifest user-facing fields are Russian-first with English compatibility: `description`, `interface.shortDescription`, `interface.longDescription`, and `interface.defaultPrompt`.
+- Keep metadata compact. Put detailed instructions in skill bodies, references, docs, or Serena memories.
+
+## Permission And Runtime Policy
+
+- Owner-standard mode is full-auto/YOLO: `approval_policy = "never"` plus `sandbox_mode = "danger-full-access"`.
+- Safe mode is explicit only through `scripts/install_system_codex.sh --apply --safe-mode`.
+- Do not mix beta permission profiles (`default_permissions` or `[permissions]`) with legacy `sandbox_mode` in the same active config layer.
+- Required Codex features are `hooks = true` and `multi_agent = true`.
+- Parent owner profile uses `gpt-5.5` with `model_reasoning_effort = "xhigh"`.
+- Managed subagents use `gpt-5.5` with `model_reasoning_effort = "medium"` unless the owner explicitly changes policy.
+- Removed/deprecated config aliases such as `plugin_hooks`, `codex_hooks`, legacy profile selectors, legacy web-search flags, and active `default_permissions` with `sandbox_mode` must not appear.
 
 ## Development Rules
 
-- Use `apply_patch` for manual file edits.
-- Do not commit secrets, tokens, cookies, private keys, raw credentials, browser evidence, or Serena runtime markers.
-- Use `plugin-creator` guidance for plugin manifests and marketplace changes.
-- Use `skill-creator` guidance for skill changes. Every callable rldyour skill must include compact Russian and English trigger phrases in `SKILL.md` frontmatter `description`; details belong in the skill body or references. Reviewer track skills may set `allow_implicit_invocation: false` when orchestrated by `ry-start` or `ry-review`.
-- Use Serena-first code inspection where supported; use `rg` and direct reads for docs, JSON, shell scripts, and other text-level work.
-- After meaningful changes, update `.serena/memories` with verified facts only.
-- After meaningful project behavior, workflow, setup, validation, architecture, plugin, hook, or command changes, update `AGENTS.md` for Codex and `.claude/CLAUDE.md` for Claude Code from verified code state.
-- After plugin changes that affect runtime behavior, sync changed plugin directories into `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/<plugin>/<version>` with `scripts/install_system_codex.sh --apply` and restart Codex.
-- `fullrepo` is the standard branch for portable agent-only context. Normal project branches should exclude project-root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar AI workflow files through `.git/info/exclude`; publish them with `scripts/sync_fullrepo_branch.sh --publish` after normal branch sync. This repository may intentionally track selected instruction templates that are product artifacts, such as `system/AGENTS.md`.
+- Use `apply_patch` for manual edits.
+- Do not commit secrets, tokens, cookies, private keys, raw credentials, browser evidence, caches, or Serena runtime markers.
+- Use repo-local patterns and validators; avoid parallel hardcoded plugin/MCP lists.
+- Use Serena-first inspection where supported; use `rg` and direct reads for docs, JSON, shell, TOML, YAML, and generated metadata.
+- After meaningful behavior/config/workflow/release changes, sync `.serena/memories` with verified facts only.
+- Keep `system/AGENTS.md` and this `AGENTS.md` compact. The combined standard Codex instruction pair must stay comfortably below the default project-doc cap.
 
 ## Validation
 
-Run the marketplace validation script before finalizing repository changes:
+Run the marketplace gate before finalizing adapter changes:
 
 ```bash
 scripts/validate_marketplace.sh
+```
+
+Targeted checks:
+
+```bash
+python3 scripts/codex_openai_metadata_policy.py --repo-root .
+python3 scripts/validate_agent_tools.py
+python3 scripts/validate_plugin_versions.py
+python3 scripts/validate_contract.py
+python3 scripts/validate_skill_routing.py
+python3 scripts/validate_instruction_docs.py --require-agent-docs
+python3 scripts/check_serena_memory_freshness.py
 scripts/validate_fast.sh
 scripts/validate_runtime.sh --strict-runtime
 scripts/validate_release.sh
 scripts/validate_execpolicy_rules.sh
+uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
 ```
 
-Additional targeted checks:
+Runtime/doctor checks when the installed Codex environment is in scope:
 
 ```bash
-codex mcp list
+scripts/install_system_codex.sh --dry-run
+scripts/install_system_codex.sh --apply
+scripts/doctor_system_codex.sh --quick --strict-runtime
 scripts/smoke_mcp_runtime.sh
 scripts/smoke_mcp_capabilities.sh
 python3 scripts/smoke_codex_hook_listing.py
@@ -87,64 +108,22 @@ scripts/smoke_hooks.sh
 scripts/smoke_codex_hooks_migration.sh
 scripts/smoke_serena_memory_freshness.sh
 scripts/smoke_serena_memory_taxonomy.sh
-scripts/smoke_local_git_guard.sh
-scripts/smoke_flow_branch_cleanup.sh
-scripts/smoke_clean_bootstrap.sh
 scripts/smoke_fullrepo_sync.sh
 scripts/smoke_fullrepo_bootstrap_init.sh
-python3 scripts/validate_agent_tools.py
-python3 scripts/validate_action_pins.py
-python3 scripts/scan_text_security.py
-uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
-scripts/bootstrap_check.sh --apply
-scripts/sync_fullrepo_branch.sh --status
-scripts/sync_fullrepo_branch.sh --bootstrap-init
-python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
-python3 scripts/check_serena_memory_freshness.py
-plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool
-plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
-python3 scripts/validate_instruction_docs.py --require-agent-docs
-plugins/rldyour-lsps/scripts/check_lsps.sh
-python3 scripts/validate_plugin_versions.py
-python3 scripts/validate_contract.py
-python3 scripts/validate_skill_routing.py
-python3 scripts/release_manifest.py
-python3 scripts/release_sbom.py
-python3 scripts/check_mcp_runtime_versions.py
-python3 scripts/validate_runtime_prereqs.py --strict --require-codex
-scripts/doctor_system_codex.sh
-scripts/doctor_system_codex.sh --quick --strict-runtime
 ```
 
-For plugin cache verification:
+## Git And Fullrepo
 
-```bash
-python3 scripts/plugin_cache_contract.py verify
-```
+- Prefer atomic Conventional Commits.
+- Split unrelated implementation, validators/tests, docs/instructions, release metadata, generated artifacts, and Serena/fullrepo sync when independently reviewable.
+- Keep `main` focused on product source. This repository intentionally tracks `system/AGENTS.md` as a product template; project-root `AGENTS.md`, `.claude/CLAUDE.md`, `.serena`, `.codex`, `.cursor/rules`, and similar agent-only context live on `fullrepo`.
+- Use `scripts/sync_fullrepo_branch.sh --bootstrap-init` when restoring agent-only context and `scripts/sync_fullrepo_branch.sh --publish` after normal branch sync.
+- Do not force-push `main`. Do not rewrite already-pushed history without explicit owner approval.
+- Before final delivery, ensure normal branch status is clean, pushed if required, and `fullrepo` is published when agent-only context changed.
 
-## Git And Sync
+## Release
 
-- Keep `main` synchronized with `origin/main` unless working on an explicit branch or worktree workflow.
-- Prefer atomic commits with Conventional Commits.
-- Keep history logical and inspectable: split unrelated implementation,
-  tests/validators, docs/instructions, license/metadata, generated artifacts,
-  and Serena/fullrepo sync when independently reviewable. Do not rewrite
-  already-pushed history without explicit owner approval.
-- Use `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` for knowledge-only Serena updates.
-- Use `$instruction-docs-sync` after Serena memory sync when durable project instruction facts changed.
-- Use `scripts/sync_fullrepo_branch.sh --bootstrap-init` at initialization when agent-only context is expected, and `scripts/sync_fullrepo_branch.sh --publish` after normal branch push. Bootstrap restores existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs excludes, and removes tracked agent-only files from the current branch index when migration is needed. Use `scripts/worktree_add.sh <branch> [path]` for parallel Codex worktrees that should immediately restore agent-only context from `fullrepo`.
-- Use `scripts/install_local_git_hooks.sh --repo <project> --apply` to install the branch-aware local pre-push guard in product repositories; it keeps product branches strict and allows AI context only on the configured `fullrepo` branch while still blocking secrets/runtime files.
-- Treat `branch_cleanup_state` from `plugins/rldyour-flow/scripts/flow_post_task_state.py` as a finish gate: merged local/remote workflow branches and merged workflow worktrees must be cleaned or explicitly reported as blockers before final delivery.
-- Treat bootstrap-only untracked `.serena` files created by tool startup, such as `.serena/project.yml` plus runtime markers, as non-work; they must not force a Stop-hook post-task sync loop.
-- Standard finish order is Serena memories and durable docs from verified code, matching checks, atomic normal-branch commit and push, `fullrepo` publish from final `HEAD`, then safe cleanup of merged workflow branches and worktrees.
-- Before final delivery, ensure `git status -sb` is clean and pushed when the task produced commits.
-
-## System Install
-
-- `system/AGENTS.md` is the canonical template for the owner's global `~/.codex/AGENTS.md`.
-- `scripts/install_system_codex.sh --dry-run` shows what would be installed.
-- `scripts/install_system_codex.sh --apply` writes the global AGENTS file, installs managed `agents/*.toml`, installs managed Codex execpolicy rules from `system/rules/*.rules`, patches rldyour-owned Codex config sections, writes the official Codex config schema hint, writes `[features].hooks = true` and `[features].multi_agent = true`, removes deprecated hook aliases such as `codex_hooks` and the removed `plugin_hooks` feature flag, derives rldyour plugin enablement from `.agents/plugins/marketplace.json`, derives MCP server registration from `plugins/rldyour-mcps/.mcp.json`, applies owner-requested YOLO/model defaults, writes approved MCP tool overrides, registers the marketplace, syncs plugin cache into versioned `<plugin>/<version>` directories, and refreshes trusted hashes for installed rldyour plugin hooks through the app-server RPC method `hooks/list` over `codex app-server --listen stdio://`. Add `--strict-runtime` when missing launchers for enabled MCP servers must fail instead of warn.
-- `scripts/validate_execpolicy_rules.sh` validates managed rules with `codex execpolicy check`.
-- `scripts/doctor_system_codex.sh` verifies the installed system Codex state, including marketplace-derived rldyour plugin enablement, MCP registration from `.mcp.json`, the config schema hint, active `hooks` and `multi_agent` features, managed subagent config parity, managed subagent `gpt-5.5`/`medium` settings, managed subagent temporary MCP isolation with complete disabled transport metadata, installed rldyour plugin hook trust/enabled state through `hooks/list`, and absence of deprecated hook aliases and removed feature flags. Use `--quick --strict-runtime` for a bounded strict runtime smoke and `--strict-runtime` for full strict prerequisite enforcement.
-- `scripts/rollback_system_codex.sh --list` lists installer backups; `--restore <backup>` restores backed up `AGENTS.md`, `config.toml`, managed `agents/*.toml`, and managed `rules/*.rules`.
-- `scripts/collect_diagnostics.sh` writes a local ignored diagnostics bundle for failure triage.
+- Default version movement is patch. Minor/major releases require explicit owner direction.
+- Plugin manifest versions must match `VERSION`.
+- Release evidence lives in `VERSION`, `CHANGELOG.md`, `docs/release-process.md`, `docs/rollback-restore.md`, `docs/dependency-updates.md`, `docs/observability.md`, release workflow outputs, and generated release manifests/SBOM.
+- Do not call a release production-ready while `scripts/validate_marketplace.sh` or the root control-plane release gate fails.

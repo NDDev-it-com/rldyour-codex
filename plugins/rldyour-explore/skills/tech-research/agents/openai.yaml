@@ -1,25 +1,25 @@
 interface:
   display_name: Technical Research
-  short_description: 'Русскоязычная Codex skill metadata. EN: Auto docs, architecture, GitHub patterns'
-  default_prompt: 'Используй $Technical Research для этой задачи с русскоязычным контекстом владельца. EN: Use $tech-research to research technical docs, repository architecture, and production usage patterns before implementation.'
+  short_description: 'Техисследование. EN: technical research'
+  default_prompt: 'Используй $tech-research: docs, repos, patterns. EN: technical research.'
 dependencies:
   tools:
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
   - type: mcp
     value: openaiDeveloperDocs
-    description: 'OpenAI Docs: официальная документация OpenAI/Codex для APIs, models, skills, MCP, hooks и config. EN: official OpenAI/Codex docs for APIs, models, skills, MCP, hooks, and config.'
+    description: 'Документация OpenAI. EN: official Codex/API docs.'
     transport: streamable_http
     url: https://developers.openai.com/mcp
   - type: mcp
     value: deepwiki
-    description: 'DeepWiki: архитектура GitHub-репозиториев, internals и проектные решения. EN: repository architecture, internals, and design decisions.'
+    description: 'Архитектура DeepWiki. EN: repository docs.'
     transport: streamable_http
     url: https://mcp.deepwiki.com/mcp
   - type: mcp
     value: grep
-    description: 'Grep: реальные production-паттерны из GitHub-кода. EN: real-world production usage patterns.'
+    description: 'Поиск кода. EN: production GitHub usage.'
     transport: streamable_http
     url: https://mcp.grep.app
 policy:

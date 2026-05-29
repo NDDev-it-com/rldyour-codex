@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6814a398cf0026102cf15688e038f71744d9ac5b chore(release): codex 1.1.3
+Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -22,13 +22,18 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6814a398cf0026102cf15688e038f71744d9ac5b`
+- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Current Codex product/config version is `1.1.3`; root control-plane pins must
-  reference commit `6814a398cf0026102cf15688e038f71744d9ac5b`, and plugin
+- Current Codex product/config version is `1.1.4`; root control-plane pins must
+  reference commit `e029de0004fc0ae6e62d337dc387103e01e1e823`, and plugin
   manifest versions must match the adapter `VERSION`.
+- The audited marketplace metadata blocker is closed in current source:
+  `scripts/codex_openai_metadata_policy.py` is the shared policy for direct
+  and marketplace validation, all `agents/openai.yaml` routing metadata is
+  compact/Russian-first/English-compatible, and
+  `bash scripts/validate_marketplace.sh` passes.
 - The audited Codex `plugin_hooks`, MCP freshness, public-CI instruction-doc,
   runtime-smoke, surface-adoption, public metadata, Dependabot cadence, and CI
   classifier debts are closed in current source-of-truth files.
@@ -40,7 +45,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
@@ -56,6 +61,8 @@ verified current technical debt
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
 
 ## Historical evidence
+- Historical OpenAI skill metadata compactness drift was closed at adapter
+  `1.1.4` and commit `e029de0004fc0ae6e62d337dc387103e01e1e823`.
 - Historical `plugin_hooks` active-doc drift was closed by the
   `.claude/CLAUDE.md` fullrepo update and by tracked active-doc forbidden-claim
   validation in `scripts/validate_instruction_docs.py`.

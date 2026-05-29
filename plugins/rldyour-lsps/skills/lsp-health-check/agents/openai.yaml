@@ -1,11 +1,11 @@
 interface:
   display_name: LSP Health Check
-  short_description: 'Русскоязычная Codex skill metadata. EN: Verify LSP commands and project prerequisites'
-  default_prompt: 'Используй $LSP Health Check для этой задачи с русскоязычным контекстом владельца. EN: Use $lsp-health-check to verify local language servers and project prerequisites.'
+  short_description: 'Диагностика LSP. EN: language server health'
+  default_prompt: 'Используй $lsp-health-check: проверь LSP. EN: language server health.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: true

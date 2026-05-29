@@ -1,14 +1,14 @@
 interface:
   display_name: Browser Tool Routing
-  short_description: 'Русскоязычная Codex skill metadata. EN: Auto Playwright vs DevTools routing'
-  default_prompt: 'Используй $Browser Tool Routing для этой задачи с русскоязычным контекстом владельца. EN: Use $browser-tool-routing to choose Playwright, Chrome DevTools, or both for browser validation or debugging.'
+  short_description: 'Маршрут browser tools. EN: Playwright or DevTools'
+  default_prompt: 'Используй $browser-tool-routing: выбери Playwright/DevTools. EN: route browser tools.'
 dependencies:
   tools:
   - type: mcp
     value: playwright
-    description: 'Playwright: браузерная проверка, user flows, screenshots, snapshots и assertions. EN: browser validation, user flows, screenshots, snapshots, and assertions.'
+    description: 'Браузерные flows. EN: screenshots and assertions.'
   - type: mcp
     value: chrome-devtools
-    description: 'Chrome DevTools: консоль, сеть, DOM/runtime, layout, Lighthouse и performance-debug. EN: console, network, DOM/runtime, layout, Lighthouse, and performance debugging.'
+    description: 'Браузерный DevTools. EN: console, network, DOM.'
 policy:
   allow_implicit_invocation: true

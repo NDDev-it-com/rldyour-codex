@@ -1,14 +1,14 @@
 interface:
   display_name: Browser Validation
-  short_description: 'Русскоязычная Codex skill metadata. EN: Auto visual and functional browser proof'
-  default_prompt: 'Используй $Browser Validation для этой задачи с русскоязычным контекстом владельца. EN: Use $browser-validation to verify visible UI, functionality, responsive behavior, and business logic in a real browser.'
+  short_description: 'Браузерная проверка. EN: browser validation'
+  default_prompt: 'Используй $browser-validation: проверь UI/flows. EN: browser validation.'
 dependencies:
   tools:
   - type: mcp
     value: playwright
-    description: 'Playwright: браузерная проверка, user flows, screenshots, snapshots и assertions. EN: browser validation, user flows, screenshots, snapshots, and assertions.'
+    description: 'Браузерные flows. EN: screenshots and assertions.'
   - type: mcp
     value: chrome-devtools
-    description: 'Chrome DevTools: консоль, сеть, DOM/runtime, layout, Lighthouse и performance-debug. EN: console, network, DOM/runtime, layout, Lighthouse, and performance debugging.'
+    description: 'Браузерный DevTools. EN: console, network, DOM.'
 policy:
   allow_implicit_invocation: true

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6814a398cf0026102cf15688e038f71744d9ac5b chore(release): codex 1.1.3
+Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -26,26 +26,35 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6814a398cf0026102cf15688e038f71744d9ac5b`
+- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.3`; `VERSION`, `pyproject.toml`,
+- Current product/config version is `1.1.4`; `VERSION`, `pyproject.toml`,
   `uv.lock`, plugin manifests, and `CHANGELOG.md` are the source of truth for
   the adapter-local SemVer state.
-- Release `1.1.3` keeps Codex skill `agents/openai.yaml` UI metadata
-  Russian-first, makes adapter `SKILL.md` descriptions Russian-first with
-  English trigger suffixes, keeps the Codex CLI runtime baseline at `0.135.0`,
-  and preserves the owner-standard legacy sandbox permission dialect.
-- Verified gates for this sync included `validate_instruction_docs.py
-  --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
-  `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
-  --mode installed`, `check_mcp_runtime_versions.py`, and root
-  `scripts/validate_public_metadata_surfaces.py`.
+- Release `1.1.4` hardens Codex skill `agents/openai.yaml` UI metadata:
+  `interface.short_description` is compact, Russian-first, English-compatible,
+  and 25-64 characters; `interface.default_prompt` is Russian-first,
+  English-compatible, includes the exact `$<skill>` mention, and is at most
+  128 characters. The shared source of truth is
+  `scripts/codex_openai_metadata_policy.py`.
+- Release `1.1.4` keeps the Codex CLI runtime baseline at `0.135.0`, keeps the
+  owner-standard legacy sandbox permission dialect, makes plugin manifest
+  user-facing metadata Russian-first, and adds
+  `scripts/validate_agents_context_budget.py` so system/project instruction
+  docs stay safely below Codex's default project-doc budget.
+- Verified gates for this sync included `bash scripts/validate_marketplace.sh`,
+  `scripts/validate_fast.sh`, `scripts/validate_release.sh`,
+  `scripts/doctor_system_codex.sh --quick --strict-runtime`,
+  `validate_contract.py`, `validate_agent_tools.py`,
+  `validate_plugin_versions.py`, `validate_agents_context_budget.py
+  --require-project-agents`, and `validate_instruction_docs.py
+  --require-agent-docs`.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
@@ -63,6 +72,10 @@ release readiness, versioning, and artifact hygiene
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
 
 ## Historical evidence
+- Release `1.1.3` made Codex skill `agents/openai.yaml` UI metadata
+  Russian-first, made adapter `SKILL.md` descriptions Russian-first with
+  English trigger suffixes, kept the Codex CLI runtime baseline at `0.135.0`,
+  and preserved the owner-standard legacy sandbox permission dialect.
 - Release `1.1.3` adopted Codex CLI `0.135.0`, refreshed
   `GITHUB_MCP_SERVER_VERSION=1.1.0`, kept the legacy sandbox permission
   dialect unchanged, and published GitHub Release `1.1.3`.

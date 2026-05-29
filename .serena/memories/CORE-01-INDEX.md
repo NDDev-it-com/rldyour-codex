@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6814a398cf0026102cf15688e038f71744d9ac5b chore(release): codex 1.1.3
+Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -29,12 +29,12 @@ repository identity and source-of-truth map
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
-- Current product/config version is `1.1.3`; root control-plane must pin
-  `6814a398cf0026102cf15688e038f71744d9ac5b` for this adapter after the
-  automated release and metadata sync.
+- Current product/config version is `1.1.4`; root control-plane must pin
+  `e029de0004fc0ae6e62d337dc387103e01e1e823` for this adapter after the
+  Codex metadata hardening release.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

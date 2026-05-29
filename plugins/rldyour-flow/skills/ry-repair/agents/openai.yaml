@@ -1,17 +1,17 @@
 interface:
   display_name: ry-repair
-  short_description: 'Ремонт stale docs, memories, contracts, hooks и tool context. EN: Repair stale repo contracts and AI-tool context'
-  default_prompt: 'Используй $ry-repair для этой задачи с русскоязычным контекстом владельца. EN: Use $ry-repair to normalize stale docs, memories, contracts, hooks, and tool context.'
+  short_description: 'Ремонт repo context. EN: repair drift'
+  default_prompt: 'Используй $ry-repair: убери drift. EN: repair repo context.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: github
-    description: 'GitHub: issues, pull requests, releases и repository history, когда нужна GitHub evidence. EN: issues, pull requests, releases, and repository history when GitHub evidence is needed.'
+    description: 'Репозиторий GitHub. EN: PR, issues, releases.'
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
 policy:
   allow_implicit_invocation: true

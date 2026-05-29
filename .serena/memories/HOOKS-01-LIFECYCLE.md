@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6814a398cf0026102cf15688e038f71744d9ac5b chore(release): codex 1.1.3
+Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -24,18 +24,23 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6814a398cf0026102cf15688e038f71744d9ac5b`
+- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Hook memories record bounded, deterministic lifecycle behavior and the authoritative Stop owner.
+- The adapter contract distinguishes hook feature availability from plugin
+  hook trust. Current keys are `hooks_feature_default_enabled`,
+  `plugin_bundled_hooks_discoverable`, `plugin_hook_trust_required`, and
+  `trusted_hook_hashes_refreshed_by_installer`; enabled plugins do not imply
+  trusted hook execution until the installer refreshes trusted hook hashes.
 - `scripts/smoke_codex_hook_listing.py` validates runtime `hooks/list`
   against installed rldyour plugin hooks and accepts both
   `plugins/cache/rldyour-codex/<plugin>/<version>/hooks.json` and
   `plugins/cache/rldyour-codex/<plugin>/local/hooks.json` source paths.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
 - `path:scripts/smoke_codex_hook_listing.py`

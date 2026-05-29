@@ -1,7 +1,7 @@
 {
   "name": "rldyour-serena-mcp",
-  "version": "1.1.3",
-  "description": "Auto-invoked Serena MCP workflow layer for Codex: semantic code inspection, fullrepo-aware project memory sync, plans, research archives, and lifecycle hooks. RU: Serena-first анализ кода, индексация, memories/plans/research и синхронизация знаний.",
+  "version": "1.1.4",
+  "description": "Код через Serena, memories, plans и research sync. EN: Serena MCP workflow skills.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "email": "rldyourmnd@users.noreply.github.com",
@@ -30,8 +30,8 @@
   "hooks": "./hooks.json",
   "interface": {
     "displayName": "rldyour Serena MCP",
-    "shortDescription": "Auto Serena workflow / RU: код и memory sync",
-    "longDescription": "This plugin defines automatic Serena MCP workflow routing for Codex. Its skills should be selected automatically when the owner asks to inspect, index, explore, understand, edit, refactor, trace, or review repository code, projects, directories, files, symbols, call sites, dependencies, or implementation scope, and when project knowledge should be synchronized after meaningful changes. It does not declare a duplicate Serena MCP transport; the server is expected to come from rldyour-mcps. The plugin provides two skills: serena-code-workflow for semantic code inspection and editing through Serena MCP tools, and serena-memory-sync for high-signal fact-only updates to .serena/memories plus selected plans and research archives. Memory files must preserve source-of-truth paths, entry points, current behavior, invariants, change rules, verification commands, and unresolved gaps so future Codex sessions can implement with high confidence. Hook scripts add Serena-first reminders for code prompts and mark memory sync requirements after git commit-like changes with Codex-specific impact analysis. Stop memory gating is no longer registered as a competing plugin Stop hook; rldyour-flow invokes the Serena Stop script inside its ordered lifecycle dispatcher before Flow post-task synchronization. In fullrepo-managed projects, the commit helper acknowledges current knowledge without committing AI files to normal branches so rldyour-flow can publish the complete fullrepo snapshot. Serena freshness checks distinguish .serena knowledge from agent instruction files and use the numbered AREA-01-SLUG.md taxonomy plus CORE-01-INDEX.md so memory state stays machine-readable and current.",
+    "shortDescription": "Код и memory sync. EN: Serena workflow",
+    "longDescription": "Серена-first workflow Codex для semantic code inspection, edits и memory sync. EN: This plugin defines automatic Serena MCP workflow routing for Codex. Its skills should be selected automatically when the owner asks to inspect, index, explore, understand, edit, refactor, trace, or review repository code, projects, directories, files, symbols, call sites, dependencies, or implementation scope, and when project knowledge should be synchronized after meaningful changes. It does not declare a duplicate Serena MCP transport; the server is expected to come from rldyour-mcps. The plugin provides two skills: serena-code-workflow for semantic code inspection and editing through Serena MCP tools, and serena-memory-sync for high-signal fact-only updates to .serena/memories plus selected plans and research archives. Memory files must preserve source-of-truth paths, entry points, current behavior, invariants, change rules, verification commands, and unresolved gaps so future Codex sessions can implement with high confidence. Hook scripts add Serena-first reminders for code prompts and mark memory sync requirements after git commit-like changes with Codex-specific impact analysis. Stop memory gating is no longer registered as a competing plugin Stop hook; rldyour-flow invokes the Serena Stop script inside its ordered lifecycle dispatcher before Flow post-task synchronization. In fullrepo-managed projects, the commit helper acknowledges current knowledge without committing AI files to normal branches so rldyour-flow can publish the complete fullrepo snapshot. Serena freshness checks distinguish .serena knowledge from agent instruction files and use the numbered AREA-01-SLUG.md taxonomy plus CORE-01-INDEX.md so memory state stays machine-readable and current.",
     "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [
@@ -46,9 +46,9 @@
     "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
     "defaultPrompt": [
-      "Use $serena-code-workflow to inspect and edit repository code through Serena first.",
-      "Use $serena-memory-sync to update high-signal project memories after meaningful changes.",
-      "Use $serena-memory-sync to archive durable plans or research when they help future sessions."
+      "Используй $serena-code-workflow: изучи код через Serena. EN: semantic code work.",
+      "Используй $serena-memory-sync: обнови memories. EN: sync project knowledge.",
+      "Используй $serena-memory-sync: сохрани durable plan/research. EN: archive knowledge."
     ],
     "brandColor": "#0F766E",
     "screenshots": []

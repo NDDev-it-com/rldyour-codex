@@ -1,23 +1,23 @@
 interface:
   display_name: Figma To Code
-  short_description: 'Русскоязычная Codex skill metadata. EN: Figma to code with full gates'
-  default_prompt: 'Используй $Figma To Code для этой задачи с русскоязычным контекстом владельца. EN: Use $figma-to-code to implement Figma with screenshots, tokens, i18n, data classification, and validation.'
+  short_description: 'Фигма в код. EN: Figma-to-code workflow'
+  default_prompt: 'Используй $figma-to-code: перенеси Figma в код. EN: implement design.'
 dependencies:
   tools:
   - type: mcp
     value: figma
-    description: 'Figma: источник истины для frames, components, variables, assets и design parity. EN: source of truth for frames, components, variables, assets, and design parity.'
+    description: 'Фигма: макеты/assets. EN: frames, variables, assets.'
   - type: mcp
     value: shadcn
-    description: 'shadcn: registry primitives, blocks и component installation для UI. EN: registry primitives, blocks, and component installation for UI.'
+    description: 'Компоненты shadcn. EN: UI primitives and blocks.'
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: playwright
-    description: 'Playwright: браузерная проверка, user flows, screenshots, snapshots и assertions. EN: browser validation, user flows, screenshots, snapshots, and assertions.'
+    description: 'Браузерные flows. EN: screenshots and assertions.'
   - type: mcp
     value: chrome-devtools
-    description: 'Chrome DevTools: консоль, сеть, DOM/runtime, layout, Lighthouse и performance-debug. EN: console, network, DOM/runtime, layout, Lighthouse, and performance debugging.'
+    description: 'Браузерный DevTools. EN: console, network, DOM.'
 policy:
   allow_implicit_invocation: true

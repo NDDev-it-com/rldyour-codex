@@ -1,11 +1,11 @@
 interface:
   display_name: Instruction Docs Sync
-  short_description: 'Русскоязычная Codex skill metadata. EN: Sync AGENTS.md and Claude memory'
-  default_prompt: 'Используй $Instruction Docs Sync для этой задачи с русскоязычным контекстом владельца. EN: Use $instruction-docs-sync to update AGENTS.md and .claude/CLAUDE.md from verified project facts.'
+  short_description: 'Синхронизация docs. EN: instruction docs'
+  default_prompt: 'Используй $instruction-docs-sync: синхронизируй AGENTS/CLAUDE. EN: docs sync.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: true

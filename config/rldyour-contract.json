@@ -83,8 +83,11 @@
     }
   },
   "hooks": {
-    "plugin_hooks_required": false,
-    "plugin_hooks_default_enabled": true,
+    "removed_plugin_hooks_feature_required": false,
+    "hooks_feature_default_enabled": true,
+    "plugin_bundled_hooks_discoverable": true,
+    "plugin_hook_trust_required": true,
+    "trusted_hook_hashes_refreshed_by_installer": true,
     "handler_type": "command",
     "lifecycles": {
       "prompt.submit.sync-required": {

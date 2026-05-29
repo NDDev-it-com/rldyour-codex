@@ -1,20 +1,20 @@
 interface:
   display_name: ry-newp
-  short_description: 'Планирование нового проекта: вопросы, research, architecture docs и scaffold. EN: New project planning workflow'
-  default_prompt: 'Используй $ry-newp для этой задачи с русскоязычным контекстом владельца. EN: Use $ry-newp to plan a new project with architecture, questions, docs, and optional scaffold.'
+  short_description: 'Новый проект. EN: project planning'
+  default_prompt: 'Используй $ry-newp: подготовь ТЗ/архитектуру. EN: new project plan.'
 dependencies:
   tools:
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
   - type: mcp
     value: deepwiki
-    description: 'DeepWiki: архитектура GitHub-репозиториев, internals и проектные решения. EN: repository architecture, internals, and design decisions.'
+    description: 'Архитектура DeepWiki. EN: repository docs.'
   - type: mcp
     value: grep
-    description: 'Grep: реальные production-паттерны из GitHub-кода. EN: real-world production usage patterns.'
+    description: 'Поиск кода. EN: production GitHub usage.'
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: true

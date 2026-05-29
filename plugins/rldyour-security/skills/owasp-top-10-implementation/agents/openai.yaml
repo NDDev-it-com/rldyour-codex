@@ -1,14 +1,14 @@
 interface:
   display_name: OWASP Implementation
-  short_description: 'Русскоязычная Codex skill metadata. EN: Auto OWASP secure implementation'
-  default_prompt: 'Используй $OWASP Implementation для этой задачи с русскоязычным контекстом владельца. EN: Use $owasp-top-10-implementation to add non-blocking OWASP security guidance while implementing security-relevant changes.'
+  short_description: 'Подсказки OWASP. EN: secure implementation'
+  default_prompt: 'Используй $owasp-top-10-implementation: учти OWASP. EN: secure implementation.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: semgrep
-    description: 'Semgrep: статический security scan, когда он применим; findings требуют ручной проверки. EN: static security scanning when applicable; findings still require manual validation.'
+    description: 'Скан Semgrep. EN: static security analysis.'
 policy:
   allow_implicit_invocation: true

@@ -1,11 +1,11 @@
 interface:
   display_name: Flow Post-Task Sync
-  short_description: 'Русскоязычная Codex skill metadata. EN: Finalize memories, docs, git, GitHub'
-  default_prompt: 'Используй $Flow Post-Task Sync для этой задачи с русскоязычным контекстом владельца. EN: Use $flow-post-task-sync to finalize Serena, AGENTS.md, CLAUDE.md, git, and GitHub state.'
+  short_description: 'Финальный sync. EN: post-task sync'
+  default_prompt: 'Используй $flow-post-task-sync: memory, docs, git, fullrepo. EN: final sync.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: true

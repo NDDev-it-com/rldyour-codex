@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.4] - 2026-05-30
+
+### Fixed
+
+- Harden Codex skill metadata validation and marketplace routing.
+
 ## [1.1.3] - 2026-05-29
 
 ### Changed

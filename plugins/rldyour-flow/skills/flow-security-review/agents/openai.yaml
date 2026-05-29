@@ -1,14 +1,14 @@
 interface:
   display_name: Flow Security Review
-  short_description: 'Русскоязычная Codex skill metadata. EN: Review security-sensitive changes'
-  default_prompt: 'Используй $Flow Security Review для этой задачи с русскоязычным контекстом владельца. EN: Use $flow-security-review to review auth, secrets, input validation, and OWASP-sensitive code.'
+  short_description: 'Ревью security. EN: security check'
+  default_prompt: 'Используй $flow-security-review: проверь security. EN: security review.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: semgrep
-    description: 'Semgrep: статический security scan, когда он применим; findings требуют ручной проверки. EN: static security scanning when applicable; findings still require manual validation.'
+    description: 'Скан Semgrep. EN: static security analysis.'
 policy:
   allow_implicit_invocation: false

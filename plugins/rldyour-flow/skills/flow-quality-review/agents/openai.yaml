@@ -1,11 +1,11 @@
 interface:
   display_name: Flow Quality Review
-  short_description: 'Русскоязычная Codex skill metadata. EN: Review correctness and tech debt'
-  default_prompt: 'Используй $Flow Quality Review для этой задачи с русскоязычным контекстом владельца. EN: Use $flow-quality-review to find hacks, shortcuts, edge cases, and quality issues.'
+  short_description: 'Ревью качества. EN: code quality check'
+  default_prompt: 'Используй $flow-quality-review: проверь качество кода. EN: quality review.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: false

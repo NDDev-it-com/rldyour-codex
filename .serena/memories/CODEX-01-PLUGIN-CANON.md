@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6814a398cf0026102cf15688e038f71744d9ac5b chore(release): codex 1.1.3
+Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -22,7 +22,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6814a398cf0026102cf15688e038f71744d9ac5b`
+- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,26 +32,34 @@ Codex adapter implementation surface
   `approval_policy = "never"` and `sandbox_mode = "danger-full-access"` for
   `rldyour-yolo`; active `default_permissions`, `profile =`, and
   `[profiles.*]` are forbidden while this dialect is selected.
-- Current Codex 0.135 treats `plugin_hooks` as a removed feature flag. Plugin
-  hook availability is default-enabled and verified through trusted
-  `hooks/list` output, not through `[features].plugin_hooks = true`.
+- Current Codex 0.135 treats `plugin_hooks` as a removed feature flag. Hook
+  discovery is modeled as explicit contract fields:
+  `hooks_feature_default_enabled`, `plugin_bundled_hooks_discoverable`,
+  `plugin_hook_trust_required`, and
+  `trusted_hook_hashes_refreshed_by_installer`; runtime hook availability is
+  verified through trusted `hooks/list` output, not through
+  `[features].plugin_hooks = true`.
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.3`; the version bump is recorded in
+- Current product/config version is `1.1.4`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.3`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.4`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
-  release-coordinate parity.
-- Commit `6814a398cf0026102cf15688e038f71744d9ac5b` moves the adapter to
-  `1.1.3`, keeps plugin manifest versions in parity with `VERSION`, and
-  records the Russian-first `agents/openai.yaml` metadata release.
+  release-coordinate parity and requires user-facing plugin manifest metadata
+  to stay Russian-first and English-compatible.
+- Commit `e029de0004fc0ae6e62d337dc387103e01e1e823` moves the adapter to
+  `1.1.4`, keeps plugin manifest versions in parity with `VERSION`, makes
+  `scripts/codex_openai_metadata_policy.py` the shared OpenAI skill metadata
+  policy for `validate_agent_tools.py` and `validate_marketplace.sh`, enforces
+  compact Russian-first `agents/openai.yaml` routing metadata, and adds
+  `scripts/validate_agents_context_budget.py`.
 - `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`
@@ -64,6 +72,9 @@ Codex adapter implementation surface
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
 
 ## Historical evidence
+- Commit `6814a398cf0026102cf15688e038f71744d9ac5b` moved the adapter to
+  `1.1.3`, kept plugin manifest versions in parity with `VERSION`, and
+  recorded the Russian-first `agents/openai.yaml` metadata release.
 - Commit `a13c0a18275af27a0148b9ccf01a893d77344503` moved the adapter to
   `1.1.1`, completed Codex `0.135.0` surface-adoption notes, kept plugin
   manifest versions in parity with `VERSION`, and kept the legacy sandbox
