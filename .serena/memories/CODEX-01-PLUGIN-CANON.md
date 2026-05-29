@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -21,7 +21,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -68,7 +68,7 @@ Codex adapter implementation surface
   versions in parity with `VERSION`, and publishes GitHub Release `1.0.3`.
 
 ## Evidence
-- `commit:818d3c19388978564b29724488678cd803b99867`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`

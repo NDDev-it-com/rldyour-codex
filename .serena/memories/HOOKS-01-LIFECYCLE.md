@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -23,7 +23,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -34,7 +34,7 @@ deterministic hook lifecycle behavior
   `plugins/cache/rldyour-codex/<plugin>/local/hooks.json` source paths.
 
 ## Evidence
-- `commit:77280a6219d6de48815df6da3e33552d9c6c9283`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
 - `path:scripts/smoke_codex_hook_listing.py`

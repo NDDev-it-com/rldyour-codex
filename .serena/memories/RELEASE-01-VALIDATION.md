@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -93,7 +93,7 @@ release readiness, versioning, and artifact hygiene
   `scripts/validate_public_metadata_surfaces.py`.
 
 ## Evidence
-- `commit:818d3c19388978564b29724488678cd803b99867`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

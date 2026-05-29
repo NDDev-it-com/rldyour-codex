@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: source-backed research workflow
 Area: EXPLORE
 -->
@@ -21,14 +21,14 @@ source-backed research workflow
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Explore memories record when current source-backed research is required before implementation.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:plugins/rldyour-explore`
 - `path:README.md`
 

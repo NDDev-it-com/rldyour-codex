@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -25,14 +25,14 @@ instruction docs and durable operator documentation
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Docs memories record which instruction and operator docs must change after durable behavior changes.
 
 ## Evidence
-- `commit:86b2555935f4c2185658417a3aff82d225d25392`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`

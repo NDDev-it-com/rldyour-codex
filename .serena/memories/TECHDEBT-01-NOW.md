@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c19388978564b29724488678cd803b99867 chore(release): codex 1.0.3
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,7 +21,7 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -68,7 +68,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:2a852698661384a3ba4497c4ea2c98111d941965`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
