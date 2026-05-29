@@ -1,6 +1,6 @@
 {
   "name": "rldyour-serena-mcp",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Auto-invoked Serena MCP workflow layer for Codex: semantic code inspection, fullrepo-aware project memory sync, plans, research archives, and lifecycle hooks. RU: Serena-first анализ кода, индексация, memories/plans/research и синхронизация знаний.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
