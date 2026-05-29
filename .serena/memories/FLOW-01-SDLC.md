@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: d35c3c9
+Last updated: 2026-05-29
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -18,15 +18,15 @@ rldyour SDLC command lifecycle
 - `path:plugins/rldyour-flow`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
-- checked by: Codex system sync after nested legacy profile cleanup
+- date: 2026-05-29
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls

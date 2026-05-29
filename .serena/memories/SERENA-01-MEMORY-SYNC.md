@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c1
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -23,8 +23,8 @@ Serena memory, fullrepo, and knowledge sync policy
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
-- checked by: Codex system sync after nested legacy profile cleanup
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
@@ -34,12 +34,15 @@ Serena memory, fullrepo, and knowledge sync policy
 - Root `scripts/validate_adapter_health.py` now delegates the Codex freshness
   check when adapter Serena memories are present, so root local/fullrepo health
   can catch stale adapter knowledge.
-- The 2026-05-29 Codex release sync records `818d3c1` as the current memory
-  evidence head after refreshing plugin package manifests, `VERSION`, and
-  release metadata to `1.0.3`.
+- The 2026-05-28 Codex release-hardening sync records `b92c6a3` as the current
+  memory evidence head after Semgrep/shadcn MCP pin updates, product version
+  `1.0.0`, and stale research-claim validation changes.
+- The 2026-05-28 internal adapter release sync records `2a85269` as the current
+  memory evidence head after the `1.0.2` product bump and plugin manifest
+  version parity hardening.
 
 ## Evidence
-- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`

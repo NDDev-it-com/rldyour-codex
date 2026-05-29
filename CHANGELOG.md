@@ -7,6 +7,13 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.0] - 2026-05-29
+
+### Changed
+
+- Adopt Codex CLI 0.135.0 runtime baseline.
+- Refresh GitHub MCP Server host-binary pin to 1.1.0.
+
 ## [1.0.3] - 2026-05-29
 
 ### Changed

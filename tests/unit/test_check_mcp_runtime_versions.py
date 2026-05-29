@@ -18,19 +18,19 @@ def test_parse_env_file_handles_comments_quotes_and_blanks(tmp_path: Path) -> No
     env_file.write_text(
         """
 # comment
-CODEX_CLI_VERSION=0.134.0
+CODEX_CLI_VERSION=0.135.0
 SERENA_AGENT_VERSION='1.5.1'
 EMPTY_LINE_IGNORED
 SHADCN_VERSION="3.5.0"
-GITHUB_MCP_SERVER_VERSION="1.0.5"
+GITHUB_MCP_SERVER_VERSION="1.1.0"
 """,
         encoding="utf-8",
     )
     assert mod.parse_env_file(env_file) == {
-        "CODEX_CLI_VERSION": "0.134.0",
+        "CODEX_CLI_VERSION": "0.135.0",
         "SERENA_AGENT_VERSION": "1.5.1",
         "SHADCN_VERSION": "3.5.0",
-        "GITHUB_MCP_SERVER_VERSION": "1.0.5",
+        "GITHUB_MCP_SERVER_VERSION": "1.1.0",
     }
 
 
@@ -72,9 +72,9 @@ def test_github_release_latest_reads_tag(monkeypatch) -> None:
         def __exit__(self, exc_type, exc, tb):
             self.close()
 
-    data = json.dumps({"tag_name": "v1.0.5"}).encode()
+    data = json.dumps({"tag_name": "v1.1.0"}).encode()
     monkeypatch.setattr(mod.urllib.request, "urlopen", lambda *args, **kwargs: Response(data))
-    assert mod.github_release_latest("github/github-mcp-server") == "1.0.5"
+    assert mod.github_release_latest("github/github-mcp-server") == "1.1.0"
 
 
 def test_pins_include_host_bun_runtime() -> None:

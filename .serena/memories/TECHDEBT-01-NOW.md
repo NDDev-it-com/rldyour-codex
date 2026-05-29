@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 818d3c1
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,8 +21,8 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-29
-- commit: `818d3c19388978564b29724488678cd803b99867`
-- checked by: Codex system sync after nested legacy profile cleanup
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - The audited Codex `plugin_hooks` active-doc drift is closed by the
@@ -40,14 +40,25 @@ verified current technical debt
   `installed`, and `live` lanes. Static mode is deterministic and verifies
   generated TOML/config invariants without a Codex binary; installed/live modes
   make binary/network requirements explicit.
-- Version synchronization debt is now closed for this adapter at `1.0.3`; root
+- Version synchronization debt is closed for this adapter at `1.0.2`; root
   control-plane pins must reference commit
-  `818d3c19388978564b29724488678cd803b99867`.
+  `2a852698661384a3ba4497c4ea2c98111d941965`, and plugin manifest versions
+  must match the adapter `VERSION`.
 - CodeQL action freshness debt is closed for Codex at `github/codeql-action`
   `v4.36.0`; Dependabot GitHub Actions version updates are grouped into one
   reviewable PR.
 - Dependabot cadence noise is closed for Codex: GitHub Actions updates are
   checked monthly and grouped under the `github-actions` group.
+- Nested legacy profile table drift is closed for Codex by
+  `d7909f83ae7ec947946f374ffae99af37db5335a`; managed subagent TOML output
+  remains flat and migration smoke covers the regression.
+- Codex surface-adoption matrix debt is closed by
+  `references/codex-surface-adoption.md` at
+  `2172b16855bd550f580f4a631601953e3a956083`.
+- Public metadata wording drift is closed for Codex at
+  `d35c3c90d7341d5ab9c94b868bfe47bb41858c74`: `README.md`,
+  `CONTRIBUTING.md`, and `pyproject.toml` now match the control-plane
+  repository description semantics.
 - Semgrep MCP freshness drift is closed for Codex at `semgrep==1.164.0`, and
   shadcn MCP freshness is closed at `shadcn@4.8.2`.
 - CI classifier drift is closed for retried MCP TaskGroup startup noise and for
@@ -57,13 +68,17 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:README.md`
 - `path:CHANGELOG.md`
+- `path:references/codex-surface-adoption.md`
+- `path:CONTRIBUTING.md`
 - `path:scripts/validate_instruction_docs.py`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/validate_fast.sh`
 - `path:scripts/validate_runtime.sh`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/smoke_codex_hooks_migration.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

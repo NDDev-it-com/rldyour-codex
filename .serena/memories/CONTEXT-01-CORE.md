@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: d35c3c9
+Last updated: 2026-05-29
+Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
 Scope: always-needed repository context
 Area: CONTEXT
 -->
@@ -20,15 +20,15 @@ always-needed repository context
 - `path:config/rldyour-contract.json`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
-- checked by: Codex system sync after nested legacy profile cleanup
+- date: 2026-05-29
+- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Context memories hold stable facts that agents need before planning or editing.
 
 ## Evidence
-- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
+- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
 - `path:README.md`
 - `path:config/rldyour-contract.json`
 
