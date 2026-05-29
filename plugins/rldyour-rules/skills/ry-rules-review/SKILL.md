@@ -1,6 +1,6 @@
 ---
 name: ry-rules-review
-description: "Audit implementation against rldyour rules. Use for ry-rules-review, review against rules, hard rules review, проверить по правилам, аудит правил, качество по правилам."
+description: "Проводит аудит реализации по rldyour rules: качество, архитектура, границы, проверки и отсутствие скрытого долга. EN: ry-rules-review, hard rules review."
 ---
 
 # ry-rules-review

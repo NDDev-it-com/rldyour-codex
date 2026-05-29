@@ -1,6 +1,6 @@
 ---
 name: project-instructions-policy
-description: "Maintain project instructions and durable docs: AGENTS.md, CLAUDE.md, REVIEW.md, ADRs, conventions, gates, deploy contracts. Use for правила проекта, документация."
+description: "Поддерживает project instructions и durable docs: AGENTS.md, CLAUDE.md, REVIEW.md, ADRs, conventions, gates и deploy contracts. EN: project instructions, documentation policy."
 ---
 
 # Project Instructions Policy

@@ -1,6 +1,6 @@
 ---
 name: ry-newp
-description: "Plan a new project with skeptical questions, research, architecture docs, and optional scaffold after approval. Use for ry-newp, new project, новый проект, ТЗ, проект с нуля."
+description: "Планирует новый проект через skeptical questions, research, architecture docs и optional scaffold after approval. EN: ry-newp, new project, requirements."
 ---
 
 # ry-newp

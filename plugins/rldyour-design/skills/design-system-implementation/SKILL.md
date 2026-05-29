@@ -1,6 +1,6 @@
 ---
 name: design-system-implementation
-description: "Implement centralized design systems, tokens, UI kit, i18n-ready primitives, shadcn/ui, ReactBits. Use for дизайн-система, токены, theme, colors, motion."
+description: "Реализует centralized design systems, tokens, UI kit, i18n-ready primitives, shadcn/ui и ReactBits. EN: design system, tokens, theme, motion."
 ---
 
 # Design System Implementation

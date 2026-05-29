@@ -1,6 +1,6 @@
 ---
 name: tech-research
-description: "Research technical scope with Context7, DeepWiki, and Grep before coding. Use for исследуй интернет, документация, best practices, migration, API/framework setup, GitHub patterns."
+description: "Исследует технический scope через Context7, DeepWiki и Grep before coding. EN: technical research, docs, best practices, migration, API setup."
 ---
 
 # Tech Research

@@ -1,6 +1,6 @@
 ---
 name: verification-quality-gates
-description: "Run matching quality gates before delivery: tests, lint, types, LSP diagnostics, browser/security/design checks. Use for проверки, тесты, линтер, типы, качество."
+description: "Запускает подходящие quality gates перед delivery: tests, lint, types, LSP diagnostics, browser/security/design checks. EN: verification, tests, quality gates."
 ---
 
 # Verification Quality Gates

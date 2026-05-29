@@ -1,6 +1,6 @@
 ---
 name: browser-debug
-description: "Debug browser-only failures with Chrome DevTools/Playwright. Use for console/network/runtime/layout/hydration/Lighthouse bugs; triggers: ошибка в браузере, консоль, сеть, не работает UI."
+description: "Отлаживает browser-only failures через Chrome DevTools/Playwright: console, network, runtime, layout, hydration, Lighthouse. EN: browser debug."
 ---
 
 # Browser Debug

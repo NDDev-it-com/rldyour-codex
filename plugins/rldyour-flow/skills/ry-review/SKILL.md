@@ -1,6 +1,6 @@
 ---
 name: ry-review
-description: "Report-only deep review of diff, PR, or scope with research and reviewer tracks. Use for ry-review, review, audit diff, проверь реализацию, сделай ревью, найди проблемы."
+description: "Делает report-only deep review diff/PR/scope с research и reviewer tracks. EN: ry-review, review, audit diff, implementation review."
 ---
 
 # ry-review

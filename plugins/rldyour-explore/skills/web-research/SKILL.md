@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: "Research current web sources and cite them. Use for посмотри в интернете, изучи интернет, latest/current, найди источники, сравни, подтверди факт ссылками."
+description: "Исследует актуальные web sources и цитирует источники. EN: web research, latest/current, source-backed evidence, compare sources."
 ---
 
 # Web Research

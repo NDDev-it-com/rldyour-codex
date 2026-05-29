@@ -1,6 +1,6 @@
 ---
 name: lsp-setup
-description: "Install, update, or repair language servers with brew-first policy and toolchain fallbacks. Use only for установи LSP, обнови лсп, почини language server, поставь серверы."
+description: "Устанавливает, обновляет или чинит language servers по brew-first policy и toolchain fallbacks. EN: LSP setup, language server repair."
 ---
 
 # LSP Setup
