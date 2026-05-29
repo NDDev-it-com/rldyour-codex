@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.2] - 2026-05-29
+
+### Fixed
+
+- Localize Codex OpenAI skill metadata and remove stale OpenCode inventory wording.
+
 ## [1.1.1] - 2026-05-29
 
 ### Changed
