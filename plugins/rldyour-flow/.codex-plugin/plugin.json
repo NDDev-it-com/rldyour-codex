@@ -1,6 +1,6 @@
 {
   "name": "rldyour-flow",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Autonomous Russian-first SDLC workflow for Codex: deep ry-init context packs, instruction docs sync, fullrepo sync, ry-repair, reviewer skills, deploy, and non-blocking hooks. RU: автономный SDLC-слой Codex для инициализации, реализации, ревью, ремонта репозитория, деплоя и синхронизации.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",

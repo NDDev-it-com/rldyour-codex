@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.3] - 2026-05-29
+
+### Changed
+
+- Make all Codex skill descriptions Russian-first while retaining English trigger suffixes.
+
 ## [1.1.2] - 2026-05-29
 
 ### Fixed
