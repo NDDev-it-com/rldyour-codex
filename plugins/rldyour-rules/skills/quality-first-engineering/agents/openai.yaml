@@ -1,17 +1,14 @@
 interface:
-  display_name: "Quality-First Engineering"
-  short_description: "Apply rldyour quality rules"
-  default_prompt: "Use $quality-first-engineering to keep this implementation clean, scalable, and no-hacks."
-
+  display_name: Quality-First Engineering
+  short_description: 'Русскоязычная Codex skill metadata. EN: Apply rldyour quality rules'
+  default_prompt: 'Используй $Quality-First Engineering для этой задачи с русскоязычным контекстом владельца. EN: Use $quality-first-engineering to keep this implementation clean, scalable, and no-hacks.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "sequential-thinking"
-      description: "Structured reasoning for non-trivial decisions."
-    - type: "mcp"
-      value: "serena"
-      description: "Code source-of-truth inspection."
-
+  - type: mcp
+    value: sequential-thinking
+    description: 'Sequential Thinking: структурированное рассуждение для нетривиальных решений и review. EN: structured reasoning for non-trivial decisions and review.'
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
 policy:
   allow_implicit_invocation: true
-

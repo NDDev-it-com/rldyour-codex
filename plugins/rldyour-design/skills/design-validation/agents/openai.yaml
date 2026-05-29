@@ -1,19 +1,17 @@
 interface:
-  display_name: "Design Validation"
-  short_description: "Browser design parity gate"
-  default_prompt: "Use $design-validation to verify Figma parity, responsive states, i18n/tokens, browser runtime, and scans."
-
+  display_name: Design Validation
+  short_description: 'Русскоязычная Codex skill metadata. EN: Browser design parity gate'
+  default_prompt: 'Используй $Design Validation для этой задачи с русскоязычным контекстом владельца. EN: Use $design-validation to verify Figma parity, responsive states, i18n/tokens, browser runtime, and scans.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "figma"
-      description: "Design source for visual comparison and expected frame/component behavior."
-    - type: "mcp"
-      value: "playwright"
-      description: "Primary validation MCP for browser flows, screenshots, snapshots, responsive checks, and assertions."
-    - type: "mcp"
-      value: "chrome-devtools"
-      description: "Secondary diagnosis MCP for console, network, runtime, layout, Lighthouse, and performance evidence."
-
+  - type: mcp
+    value: figma
+    description: 'Figma: источник истины для frames, components, variables, assets и design parity. EN: source of truth for frames, components, variables, assets, and design parity.'
+  - type: mcp
+    value: playwright
+    description: 'Playwright: браузерная проверка, user flows, screenshots, snapshots и assertions. EN: browser validation, user flows, screenshots, snapshots, and assertions.'
+  - type: mcp
+    value: chrome-devtools
+    description: 'Chrome DevTools: консоль, сеть, DOM/runtime, layout, Lighthouse и performance-debug. EN: console, network, DOM/runtime, layout, Lighthouse, and performance debugging.'
 policy:
   allow_implicit_invocation: true

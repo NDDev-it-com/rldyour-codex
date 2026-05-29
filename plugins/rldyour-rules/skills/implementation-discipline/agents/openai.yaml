@@ -1,14 +1,11 @@
 interface:
-  display_name: "Implementation Discipline"
-  short_description: "Keep implementation synchronized"
-  default_prompt: "Use $implementation-discipline to synchronize code, contracts, tests, docs, and generated artifacts."
-
+  display_name: Implementation Discipline
+  short_description: 'Русскоязычная Codex skill metadata. EN: Keep implementation synchronized'
+  default_prompt: 'Используй $Implementation Discipline для этой задачи с русскоязычным контекстом владельца. EN: Use $implementation-discipline to synchronize code, contracts, tests, docs, and generated artifacts.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "serena"
-      description: "Trace changed symbols and integration paths."
-
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
 policy:
   allow_implicit_invocation: true
-
