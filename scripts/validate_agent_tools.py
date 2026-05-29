@@ -24,6 +24,12 @@ from typing import Any
 
 import yaml
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from codex_openai_metadata_policy import validate_metadata_file
+
 
 EXPECTED_AGENT_MODEL = "gpt-5.5"
 EXPECTED_AGENT_REASONING = "medium"
@@ -111,32 +117,6 @@ def validate_skill_frontmatter(path: Path, failures: list[str]) -> None:
             f"{path}: Claude-only frontmatter keys are not allowed in Codex skills: "
             + ", ".join(claude_keys)
         )
-
-
-def validate_openai_metadata(path: Path, valid_mcp_servers: set[str], failures: list[str]) -> None:
-    try:
-        data = load_yaml_mapping(path)
-    except Exception as exc:
-        failures.append(f"{path}: parse failed: {exc}")
-        return
-
-    dependencies = data.get("dependencies")
-    tools = dependencies.get("tools", []) if isinstance(dependencies, dict) else []
-    if tools is None:
-        return
-    if not isinstance(tools, list):
-        failures.append(f"{path}: dependencies.tools must be a list")
-        return
-    for tool in tools:
-        if not isinstance(tool, dict):
-            failures.append(f"{path}: dependency tool entries must be objects")
-            continue
-        if tool.get("type") != "mcp":
-            failures.append(f"{path}: dependencies.tools only supports type=mcp")
-            continue
-        value = str(tool.get("value") or "")
-        if value not in valid_mcp_servers:
-            failures.append(f"{path}: unknown MCP dependency {value!r}")
 
 
 def validate_disabled_mcp_transport(
@@ -236,7 +216,7 @@ def main() -> int:
     for path in skill_files:
         validate_skill_frontmatter(path, failures)
     for path in metadata_files:
-        validate_openai_metadata(path, valid_mcp_servers, failures)
+        failures.extend(validate_metadata_file(path, repo_root, valid_mcp_servers))
     for path in managed_agents:
         validate_managed_agent(path, mcp_registry, failures)
 

@@ -14,6 +14,8 @@ SEMVER_RE = re.compile(
     r"(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$"
 )
 HEX_COLOR_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
+CYRILLIC_FIRST_RE = re.compile(r"^\s*[А-Яа-яЁё]")
+ASCII_ALPHA_RE = re.compile(r"[A-Za-z]")
 ALLOWED_INSTALLATION = {"AVAILABLE", "INSTALLED_BY_DEFAULT", "NOT_AVAILABLE"}
 ALLOWED_AUTHENTICATION = {"ON_USE", "ON_INSTALL"}
 EXPECTED_PLUGIN_LICENSE = "AGPL-3.0-or-later"
@@ -54,6 +56,11 @@ def require_string_list(value: object, label: str, errors: list[str], *, min_ite
     return result
 
 
+def require_russian_first_bilingual(value: object, label: str, errors: list[str]) -> None:
+    if not isinstance(value, str) or not CYRILLIC_FIRST_RE.search(value) or not ASCII_ALPHA_RE.search(value):
+        errors.append(f"{label}: must be Russian-first and English-compatible")
+
+
 def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, manifest_path: Path, errors: list[str]) -> None:
     relative = manifest_path.relative_to(ROOT)
     author = manifest.get("author")
@@ -78,6 +85,17 @@ def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, man
         return
     for key in ("displayName", "shortDescription", "longDescription", "developerName", "category"):
         require_non_empty_string(interface.get(key), f"{plugin_name}: interface.{key}", errors)
+    require_russian_first_bilingual(manifest.get("description"), f"{plugin_name}: description", errors)
+    require_russian_first_bilingual(
+        interface.get("shortDescription"),
+        f"{plugin_name}: interface.shortDescription",
+        errors,
+    )
+    require_russian_first_bilingual(
+        interface.get("longDescription"),
+        f"{plugin_name}: interface.longDescription",
+        errors,
+    )
     if interface.get("developerName") != EXPECTED_AUTHOR:
         errors.append(f"{plugin_name}: interface.developerName must be {EXPECTED_AUTHOR}")
     for key in ("websiteURL", "privacyPolicyURL", "termsOfServiceURL"):
@@ -94,6 +112,7 @@ def require_manifest_metadata(manifest: dict[str, object], plugin_name: str, man
     if len(default_prompt) > 3:
         errors.append(f"{plugin_name}: interface.defaultPrompt must contain at most 3 prompts")
     for index, prompt in enumerate(default_prompt):
+        require_russian_first_bilingual(prompt, f"{plugin_name}: interface.defaultPrompt[{index}]", errors)
         if len(prompt) > 128:
             errors.append(f"{plugin_name}: interface.defaultPrompt[{index}] exceeds 128 characters")
 

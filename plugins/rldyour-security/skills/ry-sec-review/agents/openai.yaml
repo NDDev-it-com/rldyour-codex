@@ -1,17 +1,17 @@
 interface:
   display_name: ry-sec-review
-  short_description: 'Defensive security review diff, PR или sensitive code path. EN: Auto defensive security review'
-  default_prompt: 'Используй $ry-sec-review для этой задачи с русскоязычным контекстом владельца. EN: Use $ry-sec-review to perform a defensive security review of an implementation, diff, PR, or sensitive code path.'
+  short_description: 'Ревью security. EN: defensive security audit'
+  default_prompt: 'Используй $ry-sec-review: проверь уязвимости. EN: security audit.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
     value: semgrep
-    description: 'Semgrep: статический security scan, когда он применим; findings требуют ручной проверки. EN: static security scanning when applicable; findings still require manual validation.'
+    description: 'Скан Semgrep. EN: static security analysis.'
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
 policy:
   allow_implicit_invocation: true

@@ -1,11 +1,11 @@
 interface:
   display_name: LSP Setup
-  short_description: 'Русскоязычная Codex skill metadata. EN: Install or update LSP tooling explicitly'
-  default_prompt: 'Используй $LSP Setup для этой задачи с русскоязычным контекстом владельца. EN: Use $lsp-setup to install missing language servers with the brew-first profile.'
+  short_description: 'Настройка LSP. EN: language server setup'
+  default_prompt: 'Используй $lsp-setup: установи/почини LSP. EN: setup language server.'
 dependencies:
   tools:
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: true

@@ -1,20 +1,20 @@
 interface:
   display_name: Design System Implementation
-  short_description: 'Русскоязычная Codex skill metadata. EN: Central tokens and UI kit'
-  default_prompt: 'Используй $Design System Implementation для этой задачи с русскоязычным контекстом владельца. EN: Use $design-system-implementation to centralize tokens, UI kit, i18n-ready primitives, shadcn/ui, and motion.'
+  short_description: 'Дизайн-система. EN: tokens and UI kit'
+  default_prompt: 'Используй $design-system-implementation: токены, UI kit, i18n. EN: design system.'
 dependencies:
   tools:
   - type: mcp
     value: figma
-    description: 'Figma: источник истины для frames, components, variables, assets и design parity. EN: source of truth for frames, components, variables, assets, and design parity.'
+    description: 'Фигма: макеты/assets. EN: frames, variables, assets.'
   - type: mcp
     value: shadcn
-    description: 'shadcn: registry primitives, blocks и component installation для UI. EN: registry primitives, blocks, and component installation for UI.'
+    description: 'Компоненты shadcn. EN: UI primitives and blocks.'
   - type: mcp
     value: context7
-    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+    description: 'Документация Context7. EN: current library/API docs.'
   - type: mcp
     value: serena
-    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+    description: 'Семантика Serena. EN: code symbols, refs, memory.'
 policy:
   allow_implicit_invocation: true

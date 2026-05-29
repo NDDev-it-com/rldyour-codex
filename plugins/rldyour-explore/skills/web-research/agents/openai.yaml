@@ -1,12 +1,12 @@
 interface:
   display_name: Web Research
-  short_description: 'Русскоязычная Codex skill metadata. EN: Auto web research with sources'
-  default_prompt: 'Используй $Web Research для этой задачи с русскоязычным контекстом владельца. EN: Use $web-research to research current information online and answer with authoritative source links.'
+  short_description: 'Веб research. EN: authoritative web sources'
+  default_prompt: 'Используй $web-research: найди источники. EN: authoritative web research.'
 dependencies:
   tools:
   - type: mcp
     value: openaiDeveloperDocs
-    description: 'OpenAI Docs: официальная документация OpenAI/Codex для APIs, models, skills, MCP, hooks и config. EN: official OpenAI/Codex docs for APIs, models, skills, MCP, hooks, and config.'
+    description: 'Документация OpenAI. EN: official Codex/API docs.'
     transport: streamable_http
     url: https://developers.openai.com/mcp
 policy:

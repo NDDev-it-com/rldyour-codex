@@ -122,107 +122,10 @@ python3 scripts/validate_skill_routing.py
 
 step "Instruction docs policy"
 python3 scripts/validate_instruction_docs.py
+python3 scripts/validate_agents_context_budget.py
 
 step "OpenAI skill metadata"
-"$UV_BIN" run --with pyyaml python - <<'PY'
-import json
-from pathlib import Path
-import re
-import sys
-import yaml
-
-MAX_DEFAULT_PROMPT_CHARS = 128
-MIN_SHORT_DESCRIPTION_CHARS = 25
-MAX_SHORT_DESCRIPTION_CHARS = 64
-ORCHESTRATED_ONLY = {
-    "flow-architecture-review",
-    "flow-consistency-review",
-    "flow-integration-review",
-    "flow-quality-review",
-    "flow-security-review",
-    "flow-verification-review",
-}
-KNOWN_MCP_SERVERS = set(
-    json.loads(Path("plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
-)
-
-
-def skill_name_for(path: Path) -> str | None:
-    skill_md = path.parent.parent / "SKILL.md"
-    if not skill_md.is_file():
-        return None
-    match = re.match(r"^---\n(.*?)\n---\n", skill_md.read_text(encoding="utf-8"), re.S)
-    if not match:
-        return None
-    name = re.search(r"^name:\s*(.+)$", match.group(1), re.M)
-    if not name:
-        return None
-    return name.group(1).strip().strip("\"'")
-
-
-errors = []
-count = 0
-for path in sorted(Path("plugins").glob("rldyour-*/skills/*/agents/openai.yaml")):
-    count += 1
-    skill_name = skill_name_for(path)
-    if not skill_name:
-        errors.append(f"{path}: cannot resolve sibling SKILL.md name")
-        continue
-    try:
-        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    except Exception as exc:
-        errors.append(f"{path}: parse failed: {exc}")
-        continue
-    interface = data.get("interface") if isinstance(data, dict) else None
-    if not isinstance(interface, dict):
-        errors.append(f"{path}: missing interface object")
-        continue
-    short_description = str(interface.get("short_description") or "")
-    default_prompt = str(interface.get("default_prompt") or "")
-    if not (MIN_SHORT_DESCRIPTION_CHARS <= len(short_description) <= MAX_SHORT_DESCRIPTION_CHARS):
-        errors.append(
-            f"{path}: interface.short_description length {len(short_description)} must be "
-            f"{MIN_SHORT_DESCRIPTION_CHARS}-{MAX_SHORT_DESCRIPTION_CHARS}"
-        )
-    if len(default_prompt) > MAX_DEFAULT_PROMPT_CHARS:
-        errors.append(f"{path}: interface.default_prompt length {len(default_prompt)} exceeds {MAX_DEFAULT_PROMPT_CHARS}")
-    if f"${skill_name}" not in default_prompt:
-        errors.append(f"{path}: interface.default_prompt must mention ${skill_name}")
-    policy = data.get("policy") if isinstance(data, dict) else None
-    if not isinstance(policy, dict):
-        errors.append(f"{path}: missing policy object")
-        continue
-    allow_implicit = policy.get("allow_implicit_invocation")
-    if skill_name in ORCHESTRATED_ONLY:
-        if allow_implicit is not False:
-            errors.append(f"{path}: orchestrated reviewer skill must set policy.allow_implicit_invocation=false")
-    elif allow_implicit is not True:
-        errors.append(f"{path}: policy.allow_implicit_invocation must be true")
-
-    dependencies = data.get("dependencies") if isinstance(data, dict) else None
-    tools = dependencies.get("tools", []) if isinstance(dependencies, dict) else []
-    if tools is None:
-        tools = []
-    if not isinstance(tools, list):
-        errors.append(f"{path}: dependencies.tools must be a list")
-        continue
-    for tool in tools:
-        if not isinstance(tool, dict):
-            errors.append(f"{path}: dependency tool entries must be objects")
-            continue
-        if tool.get("type") != "mcp":
-            errors.append(f"{path}: dependencies.tools only supports type=mcp")
-            continue
-        value = str(tool.get("value") or "")
-        if value not in KNOWN_MCP_SERVERS:
-            errors.append(f"{path}: unknown MCP dependency {value!r}")
-
-if errors:
-    print("\n".join(errors), file=sys.stderr)
-    raise SystemExit(1)
-
-print(f"validated OpenAI metadata files: {count}")
-PY
+"$UV_BIN" run --with pyyaml python scripts/codex_openai_metadata_policy.py --repo-root "$ROOT"
 
 step "System subagent configs"
 python3 - "$CODEX_HOME_DIR" <<'PY'
