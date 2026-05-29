@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
+Last commit: 818d3c1
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -25,11 +25,13 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-29
-- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
-- checked by: Codex ry-start automated release and metadata sync
+- commit: `818d3c19388978564b29724488678cd803b99867`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
+- Current product/config version is `1.0.3`; its bump is tracked in `VERSION`,
+  `pyproject.toml`, and `CHANGELOG.md` after a runtime-only version refresh.
 - Commit `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222` keeps product version
   `0.4.9`, updates Chrome DevTools MCP freshness to `1.1.1`, and adds an
   instruction-doc guard against reintroducing removed Codex `plugin_hooks`
@@ -67,45 +69,27 @@ release readiness, versioning, and artifact hygiene
   semantics unchanged and aligns the Codex Dependabot `github-actions` update
   cadence to monthly grouped PRs.
 - Commit `d7909f83ae7ec947946f374ffae99af37db5335a` keeps product/runtime
-  semantics unchanged and removes nested legacy profile tables from generated
-  managed subagent TOML output; `scripts/smoke_codex_hooks_migration.sh`
-  covers the regression.
-- Commit `2172b16855bd550f580f4a631601953e3a956083` keeps product/runtime
-  semantics unchanged and records the Codex 0.134.0 surface adoption matrix in
-  `references/codex-surface-adoption.md`.
-- Commit `d35c3c90d7341d5ab9c94b868bfe47bb41858c74` keeps product/runtime
-  semantics unchanged and aligns public repository metadata surfaces in
-  `README.md`, `CONTRIBUTING.md`, and `pyproject.toml` with the root
-  control-plane GitHub description.
-- Commit `2a852698661384a3ba4497c4ea2c98111d941965` bumps the product/config
-  version to `1.0.2`, keeps `pyproject.toml` and `uv.lock` in parity,
-  synchronizes all Codex plugin manifest versions to `1.0.2`, and publishes
-  GitHub Release `1.0.2`.
-- Commit `818d3c19388978564b29724488678cd803b99867` bumps the product/config
-  version to `1.0.3`, aligns active repository descriptions with the root
-  `config/repository-description-policy.json` template, preserves the existing
-  `workflow_dispatch` release input as `version`, creates or reuses numeric
-  tags during manual release runs, and publishes GitHub Release `1.0.3`.
+  semantics unchanged and fixes system config migration so nested legacy
+  `[profiles.rldyour-*.*]` tables are removed before doctor/runtime validation.
+- Commit `818d3c19388978564b29724488678cd803b99867` is a release-hardening
+  sync to `1.0.3`; it updates all plugin manifests, `VERSION`, `pyproject.toml`,
+  and `README.md` text to keep repository metadata and package-version contracts
+  aligned.
 - Verified gates for this sync included `validate_instruction_docs.py
   --require-agent-docs`, `validate_contract.py`, `validate_agent_tools.py`,
   `scripts/validate_runtime.sh --mode static`, `scripts/validate_runtime.sh
-  --mode installed`, `check_mcp_runtime_versions.py`, and root
-  `scripts/validate_public_metadata_surfaces.py`.
+  --mode installed`, and `check_mcp_runtime_versions.py`.
 
 ## Evidence
-- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:VERSION`
 - `path:CHANGELOG.md`
-- `path:references/codex-surface-adoption.md`
-- `path:CONTRIBUTING.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:.github/workflows/release.yml`
 - `path:scripts/smoke_codex_hook_listing.py`
 - `path:scripts/validate_instruction_docs.py`
 - `path:scripts/validate_fast.sh`
 - `path:scripts/validate_runtime.sh`
-- `path:scripts/install_system_codex.sh`
-- `path:scripts/smoke_codex_hooks_migration.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

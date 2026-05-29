@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-29
-Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
+Last updated: 2026-05-28
+Last commit: d35c3c9
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,9 +22,9 @@ deterministic hook lifecycle behavior
 - `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
-- date: 2026-05-29
-- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
-- checked by: Codex ry-start automated release and metadata sync
+- date: 2026-05-28
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Hook memories record bounded, deterministic lifecycle behavior and the authoritative Stop owner.
@@ -34,7 +34,7 @@ deterministic hook lifecycle behavior
   `plugins/cache/rldyour-codex/<plugin>/local/hooks.json` source paths.
 
 ## Evidence
-- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
 - `path:scripts/smoke_codex_hook_listing.py`

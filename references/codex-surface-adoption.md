@@ -1,19 +1,16 @@
 # Codex Surface Adoption
 
-Verified: 2026-05-29
+Verified: 2026-05-28
 
 Source of truth:
 - Runtime baseline: `references/codex-baseline.json`
 - Runtime package pin: package metadata for `@openai/codex`
-- Official changelog and config docs: `https://github.com/openai/codex/releases/tag/rust-v0.135.0` and `https://developers.openai.com/codex/`
+- Official changelog and config docs: `https://developers.openai.com/codex/`
 
 ## Decisions
 
 | Surface | Introduced | Decision | Implementation | Validator |
 | --- | --- | --- | --- | --- |
-| Codex CLI runtime baseline | 0.135.0 | Adopted | Root contract and adapter runtime pins require `@openai/codex` / `codex-cli` `0.135.0`; local installed runtime must report `codex-cli 0.135.0`. | `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
-| `codex doctor` richer diagnostics | 0.135.0 | Operational | Owner doctor flow remains `scripts/doctor_system_codex.sh`; no config migration is required. | `scripts/doctor_system_codex.sh --quick --strict-runtime` |
-| Remote `/status` server-version details | 0.135.0 | Not applicable | Remote TUI status output is user-facing runtime behavior and does not change repository config. | n/a |
 | `--profile` as primary selector | 0.134.0 | Adopted | Owner launcher and docs use `codex --profile rldyour-yolo`; installer writes `$CODEX_HOME/rldyour-yolo.config.toml` and `$CODEX_HOME/rldyour-safe.config.toml`. | `scripts/validate_contract.py` |
 | Legacy `[profiles.*]` and `profile = "..."` rejected | 0.134.0 | Adopted | Installer, doctor, contracts, and instruction docs forbid legacy profile selectors. | `scripts/validate_instruction_docs.py` |
 | Permission profiles not mixed with `sandbox_mode` | 0.134.0 docs | Adopted | Owner policy remains `approval_policy = "never"` plus `sandbox_mode = "danger-full-access"`; active `default_permissions` is absent. | `scripts/validate_contract.py` |

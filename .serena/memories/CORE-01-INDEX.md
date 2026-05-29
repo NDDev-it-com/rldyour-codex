@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
+Last commit: 818d3c1
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -23,21 +23,20 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-29
-- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
-- checked by: Codex ry-start automated release and metadata sync
+- commit: `818d3c19388978564b29724488678cd803b99867`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 - Current product/config version is `1.0.3`; root control-plane must pin
   `818d3c19388978564b29724488678cd803b99867` for this adapter after the
-  automated release and metadata sync.
+  nested legacy profile table migration fix.
 
 ## Evidence
-- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`
-- `path:references/codex-surface-adoption.md`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

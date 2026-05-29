@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-29
-Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
+Last updated: 2026-05-28
+Last commit: d35c3c9
 Scope: design, UI, Figma, and visual validation workflow
 Area: DESIGN
 -->
@@ -20,15 +20,15 @@ design, UI, Figma, and visual validation workflow
 - `path:plugins/rldyour-design`
 
 ## Last verified
-- date: 2026-05-29
-- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
-- checked by: Codex ry-start automated release and metadata sync
+- date: 2026-05-28
+- commit: `d7909f83ae7ec947946f374ffae99af37db5335a`
+- checked by: Codex system sync after nested legacy profile cleanup
 
 ## Facts
 - Design memories record Figma, tokens, component reuse, accessibility, and browser evidence requirements.
 
 ## Evidence
-- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- `commit:d7909f83ae7ec947946f374ffae99af37db5335a`
 - `path:README.md`
 - `path:plugins/rldyour-design`
 
