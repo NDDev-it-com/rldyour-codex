@@ -1,6 +1,6 @@
 ---
 name: architecture-boundaries
-description: "Enforce architecture boundaries for FSD, VSA, clean architecture, modules, public APIs, and imports. Use for архитектура, слои, FSD, VSA, фронтенд, бекенд."
+description: "Проверяет архитектурные границы: FSD, VSA, clean architecture, modules, public APIs и imports. EN: architecture boundaries, layers, backend, frontend."
 ---
 
 # Architecture Boundaries

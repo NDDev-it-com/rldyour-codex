@@ -1,6 +1,6 @@
 ---
 name: flow-security-review
-description: "Orchestrated security review for ry-start/ry-review. Use explicitly for auth, secrets, OWASP, injection, SSRF/XSS; триггеры: безопасность, секьюрити ревью."
+description: "Оркестрирует security review для ry-start/ry-review: auth, secrets, OWASP, injection, SSRF/XSS. EN: security review, OWASP, sensitive scope."
 ---
 
 # Flow Security Review

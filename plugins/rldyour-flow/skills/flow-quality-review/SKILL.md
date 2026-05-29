@@ -1,6 +1,6 @@
 ---
 name: flow-quality-review
-description: "Orchestrated quality review for ry-start/ry-review. Use explicitly for correctness, edge cases, errors, no hacks; триггеры: проверь качество, костыли, техдолг."
+description: "Оркестрирует quality review для ry-start/ry-review: correctness, edge cases, errors, no hacks. EN: quality review, technical debt, correctness."
 ---
 
 # Flow Quality Review

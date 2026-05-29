@@ -1,6 +1,6 @@
 ---
 name: ry-start
-description: "Full task lifecycle: init, research, plan, implement, verify, review, commit, sync. Use for ry-start, implement/build/fix, реализуй, доработай, исправь, сделай качественно."
+description: "Выполняет полный lifecycle задачи: init, research, plan, implement, verify, review, commit и sync. EN: ry-start, implement, build, fix, lifecycle."
 ---
 
 # ry-start

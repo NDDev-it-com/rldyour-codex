@@ -1,6 +1,6 @@
 ---
 name: browser-tool-routing
-description: "Route browser tasks to Playwright, Chrome DevTools, or both. Use for проверь в браузере, визуально, скриншот, pixel-perfect, адаптив, UI validation, console/network/performance."
+description: "Маршрутизирует browser tasks в Playwright, Chrome DevTools или оба инструмента. EN: browser tool routing, screenshots, responsive, console/network."
 ---
 
 # Browser Tool Routing

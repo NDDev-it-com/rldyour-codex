@@ -1,6 +1,6 @@
 ---
 name: serena-code-workflow
-description: "Use Serena-first semantic code inspection and symbol tools before raw reads/grep. Use for изучи код/проект, проиндексируй, найди символы/ссылки, рефакторинг."
+description: "Использует Serena-first semantic code inspection и symbol tools перед raw reads/grep. EN: Serena code workflow, symbols, references, refactor."
 ---
 
 # Serena Code Workflow
