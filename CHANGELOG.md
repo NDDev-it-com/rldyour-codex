@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.1] - 2026-05-29
+
+### Changed
+
+- Complete Codex 0.135.0 surface adoption notes.
+
 ## [1.1.0] - 2026-05-29
 
 ### Changed
