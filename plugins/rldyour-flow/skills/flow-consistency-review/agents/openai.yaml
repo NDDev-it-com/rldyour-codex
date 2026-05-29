@@ -1,13 +1,11 @@
 interface:
-  display_name: "Flow Consistency Review"
-  short_description: "Review conventions and patterns"
-  default_prompt: "Use $flow-consistency-review to verify naming, style, and project pattern consistency."
-
+  display_name: Flow Consistency Review
+  short_description: 'Русскоязычная Codex skill metadata. EN: Review conventions and patterns'
+  default_prompt: 'Используй $Flow Consistency Review для этой задачи с русскоязычным контекстом владельца. EN: Use $flow-consistency-review to verify naming, style, and project pattern consistency.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "serena"
-      description: "Project pattern inspection and symbol overview."
-
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
 policy:
   allow_implicit_invocation: false

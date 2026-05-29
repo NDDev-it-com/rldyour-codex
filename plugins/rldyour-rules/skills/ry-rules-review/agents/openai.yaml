@@ -1,20 +1,17 @@
 interface:
-  display_name: "ry-rules-review"
-  short_description: "Audit code against rldyour rules"
-  default_prompt: "Use $ry-rules-review to audit this diff or scope against rldyour rules."
-
+  display_name: ry-rules-review
+  short_description: 'Аудит diff/scope против rldyour engineering rules. EN: Audit code against rldyour rules'
+  default_prompt: 'Используй $ry-rules-review для этой задачи с русскоязычным контекстом владельца. EN: Use $ry-rules-review to audit this diff or scope against rldyour rules.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "serena"
-      description: "Semantic diff and integration graph inspection."
-    - type: "mcp"
-      value: "sequential-thinking"
-      description: "Structured review reasoning."
-    - type: "mcp"
-      value: "context7"
-      description: "Official docs when review depends on current technology."
-
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+  - type: mcp
+    value: sequential-thinking
+    description: 'Sequential Thinking: структурированное рассуждение для нетривиальных решений и review. EN: structured reasoning for non-trivial decisions and review.'
+  - type: mcp
+    value: context7
+    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
 policy:
   allow_implicit_invocation: true
-
