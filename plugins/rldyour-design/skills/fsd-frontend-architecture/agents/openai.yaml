@@ -1,16 +1,14 @@
 interface:
-  display_name: "FSD Frontend Architecture"
-  short_description: "FSD UI and data placement"
-  default_prompt: "Use $fsd-frontend-architecture to place UI, i18n, assets, data/admin ownership, imports, and public APIs in FSD."
-
+  display_name: FSD Frontend Architecture
+  short_description: 'Русскоязычная Codex skill metadata. EN: FSD UI and data placement'
+  default_prompt: 'Используй $FSD Frontend Architecture для этой задачи с русскоязычным контекстом владельца. EN: Use $fsd-frontend-architecture to place UI, i18n, assets, data/admin ownership, imports, and public APIs in FSD.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "serena"
-      description: "Preferred for semantic code inspection, symbol mapping, references, and precise FSD-aware edits."
-    - type: "mcp"
-      value: "context7"
-      description: "Official documentation lookup for FSD, React, routing, Tailwind, and framework-specific architecture rules."
-
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
+  - type: mcp
+    value: context7
+    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
 policy:
   allow_implicit_invocation: true

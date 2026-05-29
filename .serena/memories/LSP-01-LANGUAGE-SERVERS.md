@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
+Last commit: 39099a5e191e97f30f70512da4a6d752de9d4b5d chore(release): codex 1.1.2
 Scope: language-server setup and diagnostic proof
 Area: LSP
 -->
@@ -21,14 +21,14 @@ language-server setup and diagnostic proof
 
 ## Last verified
 - date: 2026-05-29
-- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- commit: `39099a5e191e97f30f70512da4a6d752de9d4b5d`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - LSP memories record language-server coverage and diagnostic proof requirements.
 
 ## Evidence
-- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- `commit:39099a5e191e97f30f70512da4a6d752de9d4b5d`
 - `path:plugins/rldyour-lsps`
 - `path:README.md`
 

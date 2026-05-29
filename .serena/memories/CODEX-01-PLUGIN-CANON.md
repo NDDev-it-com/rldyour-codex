@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: ea419bc0900cc934ca1b9434e8ff8f4e0304328b chore(release): codex 1.1.0
+Last commit: 39099a5e191e97f30f70512da4a6d752de9d4b5d chore(release): codex 1.1.2
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -21,7 +21,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-29
-- commit: `ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- commit: `39099a5e191e97f30f70512da4a6d752de9d4b5d`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -37,42 +37,20 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.0`; the version bump is recorded in
+- Current product/config version is `1.1.2`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.0`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.2`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity.
-- Commit `b92c6a3290020771e57a9e415f8b131be573a770` refreshes Codex Semgrep
-  and shadcn MCP pins to `semgrep==1.164.0` and `shadcn@4.8.2` across the MCP
-  source manifest, managed TOML agents, runtime env pin file, and fixture
-  tests.
+- Commit `39099a5e191e97f30f70512da4a6d752de9d4b5d` moves the adapter to
+  `1.1.2`, keeps plugin manifest versions in parity with `VERSION`, and
+  records the Russian-first `agents/openai.yaml` metadata release.
 - `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
-- Commit `d7909f83ae7ec947946f374ffae99af37db5335a` hardens
-  `scripts/install_system_codex.sh` so managed subagent TOML output stays
-  flat and does not emit nested legacy profile tables. The migration smoke
-  covers this regression class.
-- Commit `2172b16855bd550f580f4a631601953e3a956083` adds
-  `references/codex-surface-adoption.md` as the Codex 0.134.0 adoption matrix:
-  `--profile` is adopted, legacy profile selectors remain forbidden, MCP
-  runtime materialization stays native TOML, and plugin hooks remain
-  default-enabled/trusted rather than a `[features].plugin_hooks` flag.
-- Commit `2a852698661384a3ba4497c4ea2c98111d941965` moves the adapter to
-  `1.0.2`, synchronizes plugin manifest versions with the adapter product
-  version, and hardens plugin-version validation.
-- Commit `818d3c19388978564b29724488678cd803b99867` moves the adapter to
-  `1.0.3`, aligns active descriptions with the root
-  `config/repository-description-policy.json` template, keeps plugin manifest
-  versions in parity with `VERSION`, and publishes GitHub Release `1.0.3`.
-- Commit `ea419bc0900cc934ca1b9434e8ff8f4e0304328b` moves the adapter to
-  `1.1.0`, adopts Codex CLI `0.135.0`, refreshes the GitHub MCP Server
-  host-binary pin to `1.1.0`, keeps plugin manifest versions in parity with
-  `VERSION`, and publishes GitHub Release `1.1.0`.
-
 ## Evidence
-- `commit:ea419bc0900cc934ca1b9434e8ff8f4e0304328b`
+- `commit:39099a5e191e97f30f70512da4a6d752de9d4b5d`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`
@@ -83,6 +61,32 @@ Codex adapter implementation surface
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
+
+## Historical evidence
+- Commit `a13c0a18275af27a0148b9ccf01a893d77344503` moved the adapter to
+  `1.1.1`, completed Codex `0.135.0` surface-adoption notes, kept plugin
+  manifest versions in parity with `VERSION`, and kept the legacy sandbox
+  permission dialect unchanged.
+- Commit `b92c6a3290020771e57a9e415f8b131be573a770` refreshed Codex Semgrep
+  and shadcn MCP pins to `semgrep==1.164.0` and `shadcn@4.8.2` across the MCP
+  source manifest, managed TOML agents, runtime env pin file, and fixture
+  tests.
+- Commit `d7909f83ae7ec947946f374ffae99af37db5335a` hardened
+  `scripts/install_system_codex.sh` so managed subagent TOML output stays
+  flat and does not emit nested legacy profile tables. The migration smoke
+  covers this regression class.
+- Commit `2172b16855bd550f580f4a631601953e3a956083` added
+  `references/codex-surface-adoption.md` as the Codex 0.134.0 adoption matrix:
+  `--profile` is adopted, legacy profile selectors remain forbidden, MCP
+  runtime materialization stays native TOML, and plugin hooks remain
+  default-enabled/trusted rather than a `[features].plugin_hooks` flag.
+- Commit `2a852698661384a3ba4497c4ea2c98111d941965` moved the adapter to
+  `1.0.2`, synchronized plugin manifest versions with the adapter product
+  version, and hardened plugin-version validation.
+- Commit `818d3c19388978564b29724488678cd803b99867` moved the adapter to
+  `1.0.3`, aligned active descriptions with the root
+  `config/repository-description-policy.json` template, kept plugin manifest
+  versions in parity with `VERSION`, and published GitHub Release `1.0.3`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.

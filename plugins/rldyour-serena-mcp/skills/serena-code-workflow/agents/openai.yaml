@@ -1,13 +1,11 @@
 interface:
-  display_name: "Serena Code Workflow"
-  short_description: "Auto Serena-first code workflow"
-  default_prompt: "Use $serena-code-workflow to inspect, trace, edit, or refactor repository code through Serena MCP first."
-
+  display_name: Serena Code Workflow
+  short_description: 'Русскоязычная Codex skill metadata. EN: Auto Serena-first code workflow'
+  default_prompt: 'Используй $Serena Code Workflow для этой задачи с русскоязычным контекстом владельца. EN: Use $serena-code-workflow to inspect, trace, edit, or refactor repository code through Serena MCP first.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "serena"
-      description: "Serena MCP semantic code tools for project activation, memories, symbol overview, symbol search, references, and structured code edits."
-
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
 policy:
   allow_implicit_invocation: true

@@ -1,17 +1,14 @@
 interface:
-  display_name: "Dependency Compatibility"
-  short_description: "Use latest compatible dependencies"
-  default_prompt: "Use $dependency-compatibility-policy to check versions, compatibility, release notes, and lockfiles."
-
+  display_name: Dependency Compatibility
+  short_description: 'Русскоязычная Codex skill metadata. EN: Use latest compatible dependencies'
+  default_prompt: 'Используй $Dependency Compatibility для этой задачи с русскоязычным контекстом владельца. EN: Use $dependency-compatibility-policy to check versions, compatibility, release notes, and lockfiles.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "context7"
-      description: "Official dependency and framework documentation."
-    - type: "mcp"
-      value: "grep"
-      description: "Real-world dependency usage patterns."
-
+  - type: mcp
+    value: context7
+    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+  - type: mcp
+    value: grep
+    description: 'Grep: реальные production-паттерны из GitHub-кода. EN: real-world production usage patterns.'
 policy:
   allow_implicit_invocation: true
-

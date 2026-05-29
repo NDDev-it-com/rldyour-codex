@@ -1,13 +1,11 @@
 interface:
-  display_name: "Flow Integration Review"
-  short_description: "Review cross-layer synchronization"
-  default_prompt: "Use $flow-integration-review to verify contracts, schemas, configs, and integration paths."
-
+  display_name: Flow Integration Review
+  short_description: 'Русскоязычная Codex skill metadata. EN: Review cross-layer synchronization'
+  default_prompt: 'Используй $Flow Integration Review для этой задачи с русскоязычным контекстом владельца. EN: Use $flow-integration-review to verify contracts, schemas, configs, and integration paths.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "serena"
-      description: "Reference tracing across integration boundaries."
-
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
 policy:
   allow_implicit_invocation: false

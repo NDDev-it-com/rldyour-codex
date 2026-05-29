@@ -1,22 +1,20 @@
 interface:
-  display_name: "Design System Implementation"
-  short_description: "Central tokens and UI kit"
-  default_prompt: "Use $design-system-implementation to centralize tokens, UI kit, i18n-ready primitives, shadcn/ui, and motion."
-
+  display_name: Design System Implementation
+  short_description: 'Русскоязычная Codex skill metadata. EN: Central tokens and UI kit'
+  default_prompt: 'Используй $Design System Implementation для этой задачи с русскоязычным контекстом владельца. EN: Use $design-system-implementation to centralize tokens, UI kit, i18n-ready primitives, shadcn/ui, and motion.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "figma"
-      description: "Source for Figma variables, styles, components, assets, and Code Connect hints."
-    - type: "mcp"
-      value: "shadcn"
-      description: "Primary registry workflow for shadcn/ui primitives, blocks, and component installation."
-    - type: "mcp"
-      value: "context7"
-      description: "Official documentation lookup for framework, Tailwind, shadcn, or library-specific implementation details."
-    - type: "mcp"
-      value: "serena"
-      description: "Preferred for inspecting existing design-system code and applying precise changes."
-
+  - type: mcp
+    value: figma
+    description: 'Figma: источник истины для frames, components, variables, assets и design parity. EN: source of truth for frames, components, variables, assets, and design parity.'
+  - type: mcp
+    value: shadcn
+    description: 'shadcn: registry primitives, blocks и component installation для UI. EN: registry primitives, blocks, and component installation for UI.'
+  - type: mcp
+    value: context7
+    description: 'Context7: официальная актуальная документация библиотек, API, migrations и конфигураций. EN: official current docs for libraries, APIs, migrations, and configuration.'
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
 policy:
   allow_implicit_invocation: true

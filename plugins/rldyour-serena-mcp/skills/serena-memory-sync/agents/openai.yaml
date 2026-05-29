@@ -1,13 +1,11 @@
 interface:
-  display_name: "Serena Memory Sync"
-  short_description: "Auto fact-only memory sync"
-  default_prompt: "Use $serena-memory-sync to update .serena memories, plans, and research after meaningful verified project changes."
-
+  display_name: Serena Memory Sync
+  short_description: 'Русскоязычная Codex skill metadata. EN: Auto fact-only memory sync'
+  default_prompt: 'Используй $Serena Memory Sync для этой задачи с русскоязычным контекстом владельца. EN: Use $serena-memory-sync to update .serena memories, plans, and research after meaningful verified project changes.'
 dependencies:
   tools:
-    - type: "mcp"
-      value: "serena"
-      description: "Serena MCP memory and semantic code tools used to audit changed code and update project knowledge from verified facts."
-
+  - type: mcp
+    value: serena
+    description: 'Serena MCP: семантический анализ кода, memories, symbols, references и точечные правки. EN: semantic code inspection, memories, symbols, references, and precise edits.'
 policy:
   allow_implicit_invocation: true
