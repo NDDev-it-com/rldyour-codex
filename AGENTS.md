@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This repository is the Codex-native adapter for `rldyour-ai-cli-tools`: local plugin marketplace, plugin manifests, skills, OpenAI metadata, hooks, managed subagents, MCP source definitions, system installer, runtime doctors, validation gates, and Serena project knowledge.
+This repository is the Codex-native adapter for `rldyour-ai-cli-tools`: rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory.
 
 GitHub: `https://github.com/NDDev-it-com/rldyour-codex`.
 License: `AGPL-3.0-or-later`.
