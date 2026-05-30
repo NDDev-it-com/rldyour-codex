@@ -27,7 +27,7 @@ architecture decisions and owner-approved policy changes
 - ADR memories record decisions and policy shape. Meaning changes require explicit owner approval.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:docs/adr`
 
 ## Known pitfalls

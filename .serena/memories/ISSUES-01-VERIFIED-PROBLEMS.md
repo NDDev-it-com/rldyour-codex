@@ -30,7 +30,7 @@ GitHub issue and PR evidence policy
 - Status policy: issues and PRs are evidence only after verification against current code/config.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-review`
 

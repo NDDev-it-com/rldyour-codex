@@ -27,7 +27,7 @@ CLI runtime and package baselines
 - Runtime memories record pinned CLI/package baselines and freshness checks.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:references/codex-baseline.json`
 
 ## Known pitfalls

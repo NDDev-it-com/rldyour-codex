@@ -71,14 +71,14 @@ release readiness, versioning, and artifact hygiene
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
 
 ## Historical evidence
-- Release `1.1.3` made Codex skill `agents/openai.yaml` UI metadata
+- Release `1.1.5` made Codex skill `agents/openai.yaml` UI metadata
   Russian-first, made adapter `SKILL.md` descriptions Russian-first with
   English trigger suffixes, kept the Codex CLI runtime baseline at `0.135.0`,
   and preserved the owner-standard legacy sandbox permission dialect.
-- Release `1.1.3` adopted Codex CLI `0.135.0`, refreshed
+- Release `1.1.5` adopted Codex CLI `0.135.0`, refreshed
   `GITHUB_MCP_SERVER_VERSION=1.1.0`, kept the legacy sandbox permission
-  dialect unchanged, and published GitHub Release `1.1.3`.
-- Release `1.1.3` completed the Codex `0.135.0` surface-adoption notes for
+  dialect unchanged, and published GitHub Release `1.1.5`.
+- Release `1.1.5` completed the Codex `0.135.0` surface-adoption notes for
   `/permissions`, patched zsh helper diagnostics, and Vim-mode refinements
   without changing the owner-standard legacy sandbox permission dialect.
 - Commit `eefb9d4e48eb0d9e8562176ed08e0b1bdbed3222` kept product version
@@ -131,17 +131,17 @@ release readiness, versioning, and artifact hygiene
 - Commit `2a852698661384a3ba4497c4ea2c98111d941965` bumped the product/config
   version to `1.0.2`, kept `pyproject.toml` and `uv.lock` in parity,
   synchronized all Codex plugin manifest versions to `1.0.2`, and published
-  GitHub Release `1.1.3`.
+  GitHub Release `1.1.5`.
 - Commit `818d3c19388978564b29724488678cd803b99867` bumped the product/config
   version to `1.0.3`, aligned active repository descriptions with the root
   `config/repository-description-policy.json` template, preserved the existing
   `workflow_dispatch` release input as `version`, created or reused numeric
-  tags during manual release runs, and published GitHub Release `1.1.3`.
+  tags during manual release runs, and published GitHub Release `1.1.5`.
 - Commit `a13c0a18275af27a0148b9ccf01a893d77344503` bumped the product/config
   version to `1.1.0`, updated the Codex CLI runtime baseline to `0.135.0`,
   refreshed the GitHub MCP Server host-binary pin to `1.1.0`, kept
   `pyproject.toml`, `uv.lock`, and plugin manifest versions in parity, and
-  published GitHub Release `1.1.3`.
+  published GitHub Release `1.1.5`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.

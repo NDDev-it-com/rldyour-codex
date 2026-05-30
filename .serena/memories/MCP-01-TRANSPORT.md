@@ -43,7 +43,7 @@ MCP runtime transport and pin policy
   not a global smoke requirement.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/smoke_mcp_capabilities.py`

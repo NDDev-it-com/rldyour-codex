@@ -27,7 +27,7 @@ rldyour SDLC command lifecycle
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls

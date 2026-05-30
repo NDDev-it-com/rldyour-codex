@@ -32,7 +32,7 @@ GitHub Actions and local CI policy
   single PR through `.github/dependabot.yml`.
 
 ## Evidence
-- `commit:6814a398cf0026102cf15688e038f71744d9ac5b`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:.github/workflows`
 - `path:.github/dependabot.yml`
 - `path:README.md`
