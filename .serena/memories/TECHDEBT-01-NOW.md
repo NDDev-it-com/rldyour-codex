@@ -26,8 +26,8 @@ verified current technical debt
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Current Codex product/config version is `1.1.6`; root control-plane pins must
-  reference commit `7df63a3ba7302bad4af6c7a6d2e26703cec76a03`, and plugin
+- Current Codex product/config version is `1.1.7`; root control-plane pins must
+  reference commit `fe7566ebc15149d57d9f1d65bf792e66d90daa26`, and plugin
   manifest versions must match the adapter `VERSION`.
 - The audited marketplace metadata blocker is closed in current source:
   `scripts/codex_openai_metadata_policy.py` is the shared policy for direct
