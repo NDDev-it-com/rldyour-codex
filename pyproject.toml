@@ -1,6 +1,6 @@
 [project]
 name = "rldyour-codex"
-version = "1.1.9"
+version = "1.1.10"
 description = "rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
