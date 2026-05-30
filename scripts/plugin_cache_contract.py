@@ -35,7 +35,12 @@ def _load_manifest(plugin_dir: Path) -> dict[str, object]:
     return data
 
 
-def discover_entries(root: Path = ROOT, cache_root: Path = DEFAULT_CACHE_ROOT) -> list[PluginCacheEntry]:
+def discover_entries(
+    root: Path = ROOT,
+    cache_root: Path = DEFAULT_CACHE_ROOT,
+    *,
+    include_local: bool = False,
+) -> list[PluginCacheEntry]:
     entries: list[PluginCacheEntry] = []
     for plugin_dir in sorted((root / "plugins").glob("rldyour-*")):
         if not plugin_dir.is_dir():
@@ -57,6 +62,15 @@ def discover_entries(root: Path = ROOT, cache_root: Path = DEFAULT_CACHE_ROOT) -
                 cache_dir=cache_root / name / version,
             )
         )
+        if include_local:
+            entries.append(
+                PluginCacheEntry(
+                    name=name,
+                    version=version,
+                    source_dir=plugin_dir,
+                    cache_dir=cache_root / name / "local",
+                )
+            )
     if not entries:
         raise ValueError(f"{root / 'plugins'}: no rldyour plugins found")
     return entries
@@ -76,6 +90,8 @@ def verify(entries: list[PluginCacheEntry]) -> int:
     failed = False
     for entry in entries:
         label = f"{entry.name}@{entry.version}"
+        if entry.cache_dir.name == "local":
+            label = f"{entry.name}@local ({entry.version})"
         if not entry.cache_dir.is_dir():
             print(f"missing cache directory: {entry.cache_dir}", file=sys.stderr)
             failed = True
@@ -92,6 +108,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Inspect or verify rldyour Codex plugin cache paths.")
     parser.add_argument("--root", type=Path, default=ROOT, help="Repository root.")
     parser.add_argument("--cache-root", type=Path, default=DEFAULT_CACHE_ROOT, help="Codex marketplace cache root.")
+    parser.add_argument(
+        "--include-local",
+        action="store_true",
+        help="Also inspect/sync active local cache aliases used by local marketplaces.",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
     list_parser = subparsers.add_parser("list", help="List expected plugin cache entries.")
     list_parser.add_argument("--format", choices=("tsv", "json"), default="tsv")
@@ -102,7 +123,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
-        entries = discover_entries(args.root, args.cache_root)
+        entries = discover_entries(args.root, args.cache_root, include_local=args.include_local)
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 1

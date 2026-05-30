@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.9] - 2026-05-30
+
+### Fixed
+
+- Harden Russian-first routing metadata across Claude, Codex, and OpenCode.
+
 ## [1.1.7] - 2026-05-30
 
 ### Changed

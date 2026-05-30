@@ -590,7 +590,7 @@ else
 fi
 
 section "Plugin cache"
-if python3 "$ROOT/scripts/plugin_cache_contract.py" --cache-root "$CACHE_ROOT" verify; then
+if python3 "$ROOT/scripts/plugin_cache_contract.py" --cache-root "$CACHE_ROOT" --include-local verify; then
   :
 else
   fail "plugin cache parity"

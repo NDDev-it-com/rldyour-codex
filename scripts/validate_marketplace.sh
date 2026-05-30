@@ -504,7 +504,7 @@ if [ ! -d "$CACHE_ROOT" ]; then
   printf 'cache root missing: %s\n' "$CACHE_ROOT" >&2
   exit 1
 fi
-python3 scripts/plugin_cache_contract.py --cache-root "$CACHE_ROOT" verify
+python3 scripts/plugin_cache_contract.py --cache-root "$CACHE_ROOT" --include-local verify
 
 step "Hook smoke"
 scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
