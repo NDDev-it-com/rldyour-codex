@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6946af99905464a1ba4ef90052854eaaf9239d08 fix: classify MCP safe-call runtime noise
+Last commit: 49803c423a7111b5fa4166334db59fb491dcf2c0 fix: skip GitHub MCP smoke without token
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -24,7 +24,7 @@ Serena memory, fullrepo, and knowledge sync policy
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6946af99905464a1ba4ef90052854eaaf9239d08`
+- commit: `49803c423a7111b5fa4166334db59fb491dcf2c0`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -43,7 +43,7 @@ Serena memory, fullrepo, and knowledge sync policy
   version parity hardening.
 
 ## Evidence
-- `commit:6946af99905464a1ba4ef90052854eaaf9239d08`
+- `commit:49803c423a7111b5fa4166334db59fb491dcf2c0`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`

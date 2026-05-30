@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6946af99905464a1ba4ef90052854eaaf9239d08 fix: classify MCP safe-call runtime noise
+Last commit: 49803c423a7111b5fa4166334db59fb491dcf2c0 fix: skip GitHub MCP smoke without token
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -26,15 +26,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6946af99905464a1ba4ef90052854eaaf9239d08`
+- commit: `49803c423a7111b5fa4166334db59fb491dcf2c0`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.10`; `VERSION`, `pyproject.toml`,
+- Current product/config version is `1.1.11`; `VERSION`, `pyproject.toml`,
   `uv.lock`, plugin manifests, and `CHANGELOG.md` are the source of truth for
   the adapter-local SemVer state.
-- Release `1.1.10` keeps the Codex CLI runtime baseline at `0.135.0`, keeps the
+- Release `1.1.11` keeps the Codex CLI runtime baseline at `0.135.0`, keeps the
   owner-standard legacy sandbox permission dialect, keeps `ry-start` reviewer
   fanout explicit opt-in, and makes versioned plus active `local` plugin cache
   aliases part of installer/doctor/marketplace validation through
@@ -48,7 +48,7 @@ release readiness, versioning, and artifact hygiene
   `validate_instruction_docs.py --require-agent-docs`.
 
 ## Evidence
-- `commit:6946af99905464a1ba4ef90052854eaaf9239d08`
+- `commit:49803c423a7111b5fa4166334db59fb491dcf2c0`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

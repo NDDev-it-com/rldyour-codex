@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6946af99905464a1ba4ef90052854eaaf9239d08 fix: classify MCP safe-call runtime noise
+Last commit: 49803c423a7111b5fa4166334db59fb491dcf2c0 fix: skip GitHub MCP smoke without token
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -20,14 +20,14 @@ rldyour SDLC command lifecycle
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6946af99905464a1ba4ef90052854eaaf9239d08`
+- commit: `49803c423a7111b5fa4166334db59fb491dcf2c0`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:6946af99905464a1ba4ef90052854eaaf9239d08`
+- `commit:49803c423a7111b5fa4166334db59fb491dcf2c0`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls

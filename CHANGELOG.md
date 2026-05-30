@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.11] - 2026-05-30
+
+### Fixed
+
+- Skip startup-required GitHub MCP smoke when token env is absent.
+
 ## [1.1.10] - 2026-05-30
 
 ### Fixed
