@@ -588,6 +588,8 @@ def is_rldyour_plugin_header(header_path: list[str]) -> bool:
 def is_managed_header(header: str, header_path: list[str]) -> bool:
     if header in managed_headers:
         return True
+    if len(header_path) >= 2 and header_path[0] == "mcp_servers" and header_path[1] in mcp_servers:
+        return True
     return (
         len(header_path) >= 2
         and header_path[0] == "profiles"
