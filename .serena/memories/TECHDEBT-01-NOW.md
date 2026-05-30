@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 49803c423a7111b5fa4166334db59fb491dcf2c0 fix: skip GitHub MCP smoke without token
+Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -22,12 +22,12 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-30
-- commit: `49803c423a7111b5fa4166334db59fb491dcf2c0`
+- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Current Codex product/config version is `1.1.11`; root control-plane pins must
-  reference commit `49803c423a7111b5fa4166334db59fb491dcf2c0`, and plugin
+- Current Codex product/config version is `1.1.12`; root control-plane pins must
+  reference commit `6daebd91be6351fe76b0cb5b3d060917b5faec58`, and plugin
   manifest versions must match the adapter `VERSION`.
 - The audited marketplace metadata blocker is closed in current source:
   `scripts/codex_openai_metadata_policy.py` is the shared policy for direct
@@ -45,7 +45,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:49803c423a7111b5fa4166334db59fb491dcf2c0`
+- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

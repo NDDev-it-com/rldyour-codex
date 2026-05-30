@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 49803c423a7111b5fa4166334db59fb491dcf2c0 fix: skip GitHub MCP smoke without token
+Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -22,7 +22,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-30
-- commit: `49803c423a7111b5fa4166334db59fb491dcf2c0`
+- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -42,15 +42,15 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.11`; the version bump is recorded in
+- Current product/config version is `1.1.12`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.11`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.12`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity and requires user-facing plugin manifest metadata
   to stay Russian-first and English-compatible.
-- Commit `49803c423a7111b5fa4166334db59fb491dcf2c0` moves the adapter to
-  `1.1.11`, keeps plugin manifest versions in parity with `VERSION`, keeps
+- Commit `6daebd91be6351fe76b0cb5b3d060917b5faec58` moves the adapter to
+  `1.1.12`, keeps plugin manifest versions in parity with `VERSION`, keeps
   GitHub MCP token access through Codex `env_vars`, keeps managed subagent
   descriptions Russian-first, keeps `ry-start` reviewer fanout explicit
   opt-in, and makes installer/doctor/marketplace plugin-cache validation cover
@@ -59,7 +59,7 @@ Codex adapter implementation surface
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:49803c423a7111b5fa4166334db59fb491dcf2c0`
+- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`

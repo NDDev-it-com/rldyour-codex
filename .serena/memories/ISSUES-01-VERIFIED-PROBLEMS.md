@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 49803c423a7111b5fa4166334db59fb491dcf2c0 fix: skip GitHub MCP smoke without token
+Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
 Scope: GitHub issue and PR evidence policy
 Area: ISSUES
 -->
@@ -22,7 +22,7 @@ GitHub issue and PR evidence policy
 
 ## Last verified
 - date: 2026-05-30
-- commit: `49803c423a7111b5fa4166334db59fb491dcf2c0`
+- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -30,7 +30,7 @@ GitHub issue and PR evidence policy
 - Status policy: issues and PRs are evidence only after verification against current code/config.
 
 ## Evidence
-- `commit:49803c423a7111b5fa4166334db59fb491dcf2c0`
+- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-review`
 
