@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.12] - 2026-05-30
+
+### Changed
+
+- Align public free CI capability coverage.
+
 ## [1.1.11] - 2026-05-30
 
 ### Fixed
