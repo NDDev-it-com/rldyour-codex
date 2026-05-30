@@ -158,6 +158,19 @@ memories = true
 terminal_resize_reflow = false
 EOF
       ;;
+    mcp_secret_placeholder_upgrade)
+      cat >"$config_path" <<'EOF'
+[mcp_servers.github]
+command = "github-mcp-server"
+args = ["stdio", "--toolsets", "context,repos"]
+
+[mcp_servers.github.env]
+GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+
+[mcp_servers.github.tools.old]
+approval_mode = "approve"
+EOF
+      ;;
     *)
       printf 'unknown smoke case: %s\n' "$case_name" >&2
       return 2
@@ -255,6 +268,17 @@ if case_name == "memories_legacy":
         raise SystemExit(f"{case_name}: memories legacy alias was not migrated: {memories!r}")
     if "no_memories_if_mcp_or_web_search" in memories:
         raise SystemExit(f"{case_name}: memories legacy alias was not removed: {memories!r}")
+if case_name == "mcp_secret_placeholder_upgrade":
+    github = (data.get("mcp_servers") or {}).get("github") or {}
+    if "env" in github:
+        raise SystemExit(f"{case_name}: stale github env table was not removed: {github!r}")
+    if github.get("env_vars") != ["GITHUB_PERSONAL_ACCESS_TOKEN"]:
+        raise SystemExit(f"{case_name}: github token was not forwarded through env_vars: {github!r}")
+    if "${GITHUB_PERSONAL_ACCESS_TOKEN}" in text:
+        raise SystemExit(f"{case_name}: literal GitHub token placeholder remains in config")
+    tools = github.get("tools") or {}
+    if "old" in tools:
+        raise SystemExit(f"{case_name}: stale managed github tool approval remains: {tools!r}")
 PY
 
   printf 'ok      %s\n' "$case_name"
@@ -283,6 +307,7 @@ cases=(
   memories_legacy
   features_legacy_landlock
   profiles_nested_legacy
+  mcp_secret_placeholder_upgrade
 )
 
 for case_name in "${cases[@]}"; do
