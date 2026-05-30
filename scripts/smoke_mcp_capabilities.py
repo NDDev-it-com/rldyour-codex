@@ -32,6 +32,7 @@ EXPECTED_TOOLS: dict[str, set[str]] = {
 }
 
 AUTH_REQUIRED = {"figma"}
+STARTUP_ENV_REQUIRED = {"github"}
 
 
 class ProbeFailure(Exception):
@@ -150,6 +151,10 @@ def _merged_env(spec: dict[str, Any]) -> tuple[dict[str, str], list[str]]:
         else:
             env[key_text] = value
     return env, missing
+
+
+def _missing_forwarded_env(spec: dict[str, Any]) -> list[str]:
+    return [str(key) for key in spec.get("env_vars") or [] if os.environ.get(str(key)) is None]
 
 
 def _content_len(result: Any) -> int:
@@ -315,6 +320,12 @@ async def _probe_server(
 ) -> tuple[str, str]:
     if name in AUTH_REQUIRED and not include_auth:
         return "skip", f"{name}: auth-required MCP skipped; use --include-auth to probe it"
+    missing_env = _missing_forwarded_env(spec)
+    if missing_env and name in STARTUP_ENV_REQUIRED:
+        message = f"{name}: startup skipped; missing env: {', '.join(missing_env)}"
+        if allow_missing_env:
+            return "skip", message
+        raise ProbeFailure(message)
 
     async def body(session: ClientSession, missing_env: list[str]) -> None:
         if missing_env and not allow_missing_env:
