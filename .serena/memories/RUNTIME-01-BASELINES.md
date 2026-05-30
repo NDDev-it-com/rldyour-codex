@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 7df63a3ba7302bad4af6c7a6d2e26703cec76a03 chore(release): codex 1.1.6 (source)
+Last commit: fe7566ebc15149d57d9f1d65bf792e66d90daa26 chore(release): codex 1.1.7 (release_metadata)
 Scope: CLI runtime and package baselines
 Area: RUNTIME
 -->
@@ -20,14 +20,14 @@ CLI runtime and package baselines
 
 ## Last verified
 - date: 2026-05-30
-- commit: `7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
+- commit: `fe7566ebc15149d57d9f1d65bf792e66d90daa26`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Runtime memories record pinned CLI/package baselines and freshness checks.
 
 ## Evidence
-- `commit:7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
+- `commit:fe7566ebc15149d57d9f1d65bf792e66d90daa26`
 - `path:references/codex-baseline.json`
 
 ## Known pitfalls

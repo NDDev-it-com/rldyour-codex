@@ -1,6 +1,6 @@
 ---
 name: flow-integration-review
-description: "Оркестрирует integration review для ry-start/ry-review: contracts, schemas, configs и generated types. EN: integration review, contract sync."
+description: "Оркестрирует integration review для explicit ry-start review/ry-review: contracts, schemas, configs и generated types. EN: integration review, contract sync."
 ---
 
 # Flow Integration Review

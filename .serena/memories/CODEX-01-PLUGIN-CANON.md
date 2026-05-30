@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 7df63a3ba7302bad4af6c7a6d2e26703cec76a03 chore(release): codex 1.1.6 (source)
+Last commit: fe7566ebc15149d57d9f1d65bf792e66d90daa26 chore(release): codex 1.1.7 (release_metadata)
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -22,7 +22,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-30
-- commit: `7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
+- commit: `fe7566ebc15149d57d9f1d65bf792e66d90daa26`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -42,7 +42,7 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.6`; the version bump is recorded in
+- Current product/config version is `1.1.7`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
 - All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.6`
@@ -61,7 +61,7 @@ Codex adapter implementation surface
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
+- `commit:fe7566ebc15149d57d9f1d65bf792e66d90daa26`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`
@@ -100,7 +100,7 @@ Codex adapter implementation surface
 - Commit `818d3c19388978564b29724488678cd803b99867` moved the adapter to
   `1.0.3`, aligned active descriptions with the root
   `config/repository-description-policy.json` template, kept plugin manifest
-  versions in parity with `VERSION`, and published GitHub Release `1.1.6`.
+  versions in parity with `VERSION`, and published GitHub Release `1.1.7`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.

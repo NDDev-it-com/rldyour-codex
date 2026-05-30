@@ -1,6 +1,6 @@
 ---
 name: flow-security-review
-description: "Оркестрирует security review для ry-start/ry-review: auth, secrets, OWASP, injection, SSRF/XSS. EN: security review, OWASP, sensitive scope."
+description: "Оркестрирует security review для explicit ry-start review/ry-review: auth, secrets, OWASP, injection, SSRF/XSS. EN: security review, OWASP, sensitive scope."
 ---
 
 # Flow Security Review
