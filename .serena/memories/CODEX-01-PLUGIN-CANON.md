@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
+Last commit: 7df63a3ba7302bad4af6c7a6d2e26703cec76a03 chore(release): codex 1.1.6 (source)
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -22,7 +22,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-30
-- commit: `b64239591f7e6af0c5d6a7682039a8b45683732a`
+- commit: `7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -42,7 +42,7 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.5`; the version bump is recorded in
+- Current product/config version is `1.1.6`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
 - All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.5`
@@ -59,7 +59,7 @@ Codex adapter implementation surface
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
+- `commit:7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`
@@ -98,7 +98,7 @@ Codex adapter implementation surface
 - Commit `818d3c19388978564b29724488678cd803b99867` moved the adapter to
   `1.0.3`, aligned active descriptions with the root
   `config/repository-description-policy.json` template, kept plugin manifest
-  versions in parity with `VERSION`, and published GitHub Release `1.1.5`.
+  versions in parity with `VERSION`, and published GitHub Release `1.1.6`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.

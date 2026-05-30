@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
+Last commit: 7df63a3ba7302bad4af6c7a6d2e26703cec76a03 chore(release): codex 1.1.6 (source)
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -22,7 +22,7 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-05-30
-- commit: `b64239591f7e6af0c5d6a7682039a8b45683732a`
+- commit: `7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,7 +32,7 @@ GitHub Actions and local CI policy
   single PR through `.github/dependabot.yml`.
 
 ## Evidence
-- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
+- `commit:7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
 - `path:.github/workflows`
 - `path:.github/dependabot.yml`
 - `path:README.md`

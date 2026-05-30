@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.6] - 2026-05-30
+
+### Fixed
+
+- Fix Codex installer cleanup for managed MCP env forwarding.
+
 ## [1.1.5] - 2026-05-30
 
 ### Fixed

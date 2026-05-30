@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
+Last commit: 7df63a3ba7302bad4af6c7a6d2e26703cec76a03 chore(release): codex 1.1.6 (source)
 Scope: architecture decisions and owner-approved policy changes
 Area: ADR
 -->
@@ -20,14 +20,14 @@ architecture decisions and owner-approved policy changes
 
 ## Last verified
 - date: 2026-05-30
-- commit: `b64239591f7e6af0c5d6a7682039a8b45683732a`
+- commit: `7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - ADR memories record decisions and policy shape. Meaning changes require explicit owner approval.
 
 ## Evidence
-- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
+- `commit:7df63a3ba7302bad4af6c7a6d2e26703cec76a03`
 - `path:docs/adr`
 
 ## Known pitfalls
