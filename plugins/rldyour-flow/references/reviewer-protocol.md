@@ -1,10 +1,10 @@
 # Reviewer Protocol
 
-Reviewer tracks are designed to be run as parallel subagents when `ry-start` or `ry-review` explicitly invokes the review phase.
+Reviewer tracks are designed to be run as parallel subagents when `ry-review` or an explicit-review `ry-start` request invokes the review phase.
 
 ## Subagent Permission
 
-The owner explicitly approved subagent usage for `ry-start` and `ry-review` review phases. Each spawned subagent must receive a self-contained prompt with task, scope, diff, constraints, expected output, and read-only status.
+The owner explicitly approved subagent usage for `ry-review` and for `ry-start` only when the user explicitly asks for review, audit, security review, or rules review. Each spawned subagent must receive a self-contained prompt with task, scope, diff, constraints, expected output, and read-only status.
 
 Managed rldyour reviewer roles are installed as Codex custom agents from `system/agents/*.toml` into `${CODEX_HOME:-$HOME/.codex}/agents/*.toml`. They must use `model = "gpt-5.5"` and `model_reasoning_effort = "medium"` so the parent workflow gets predictable reviewer behavior. If a parent workflow spawns an ad hoc review role that is not backed by a managed agent TOML file, set the spawn override to `model = "gpt-5.5"` and `reasoning_effort = "medium"`.
 

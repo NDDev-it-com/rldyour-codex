@@ -5,7 +5,7 @@
 It provides Russian-first command skills:
 
 - `ry-init`: initialize project, module, or feature scope with Serena-first context.
-- `ry-start`: implement a task through context sufficiency, research, plan, worktree, commits, quality gates, reviews, and sync.
+- `ry-start`: implement a task through context sufficiency, research, plan, worktree, commits, quality gates, explicit-review routing, and sync.
 - `ry-newp`: design and optionally scaffold a new project after deep questioning.
 - `ry-review`: review a diff/scope plus affected integration graph.
 - `ry-repair`: normalize stale docs, memories, contracts, hooks, MCP/LSP config, CI, and AI-tool context while asking the owner for ADR/business decisions.
@@ -58,7 +58,7 @@ Loop prevention uses `.serena/.flow_sync_marker`, which is ignored by git. If th
 - `flow-verification-review`
 - `flow-security-review`
 
-`ry-start` and `ry-review` orchestrate these as parallel subagent review tracks when the command workflow calls for review agents. They are not broad implicit-entry skills; this keeps normal Russian prompts routed through command and domain skills first.
+`ry-review` and explicit-review `ry-start` requests orchestrate these as parallel subagent review tracks when the command workflow calls for review agents. They are not broad implicit-entry skills; this keeps normal Russian prompts routed through command and domain skills first.
 
 ## Sources
 

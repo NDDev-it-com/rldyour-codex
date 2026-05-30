@@ -49,7 +49,7 @@ Core order:
 8. Create or select branch/worktree and implement through atomic commits.
 9. Run progress checkpoints after meaningful milestones or every 2-3 plan groups: compare implementation against the plan, context pack, existing patterns, and touched integration path.
 10. Run quality gates and fix all issues in touched scope plus integration path.
-11. Run reviewer workflow. Use subagents when the `ry-start` workflow calls for parallel review.
+11. Run reviewer workflow only when the user explicitly asks for review, audit, security review, rules review, or `ry-review`. Use subagents only for that explicit review path.
 12. Run browser/security/design/LSP workflows when triggered by the change type.
 13. Synchronize Serena memories, agent-only files, AGENTS.md/CLAUDE.md when present, git, GitHub, `fullrepo`, and worktree cleanup through `flow-post-task-sync`.
 
