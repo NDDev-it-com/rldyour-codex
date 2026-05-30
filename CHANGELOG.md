@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.5] - 2026-05-30
+
+### Fixed
+
+- Harden Codex MCP env forwarding, managed-agent routing metadata, and validation diagnostics.
+
 ## [1.1.4] - 2026-05-30
 
 ### Fixed

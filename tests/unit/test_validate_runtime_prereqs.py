@@ -26,6 +26,14 @@ def test_missing_launchers_groups_affected_servers(monkeypatch) -> None:
     }
 
 
+def test_missing_launchers_reports_shellcheck_when_required(monkeypatch) -> None:
+    monkeypatch.setattr(mod, "executable_exists", lambda command: command != "shellcheck")
+
+    assert mod.missing_launchers({}, require_codex=False, require_shellcheck=True) == {
+        "shellcheck": ["shell validation"],
+    }
+
+
 def test_load_mcp_servers_accepts_registry_shape(tmp_path: Path) -> None:
     path = tmp_path / ".mcp.json"
     path.write_text(json.dumps({"mcpServers": {"serena": {"command": "uvx"}}}), encoding="utf-8")
