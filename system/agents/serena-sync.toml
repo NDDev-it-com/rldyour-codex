@@ -1,5 +1,5 @@
 name = "serena-sync"
-description = "Codex-native memory-maintenance agent for auditing and updating numbered .serena/memories without touching source code. RU: агент синхронизации Serena memories без правки исходного кода."
+description = "Агент синхронизации Serena memories без правки исходного кода. EN: Codex-native memory-maintenance agent."
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
@@ -47,7 +47,7 @@ mcp_servers.figma.tool_timeout_sec = 120
 mcp_servers.github.enabled = false
 mcp_servers.github.command = "github-mcp-server"
 mcp_servers.github.args = ["stdio", "--toolsets", "context,repos,issues,pull_requests,users"]
-mcp_servers.github.env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+mcp_servers.github.env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]
 mcp_servers.github.startup_timeout_sec = 90
 mcp_servers.github.tool_timeout_sec = 180
 

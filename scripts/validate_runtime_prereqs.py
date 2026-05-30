@@ -18,6 +18,7 @@ LAUNCHER_ENV = {
     "dart": "DART_BIN",
     "github-mcp-server": "GITHUB_MCP_SERVER_BIN",
     "codex": "CODEX_BIN",
+    "shellcheck": "SHELLCHECK_BIN",
 }
 REMEDIATION = {
     "uvx": "Install uv/uvx or set UVX_BIN to an executable uvx-compatible launcher.",
@@ -25,6 +26,7 @@ REMEDIATION = {
     "dart": "Install the Dart SDK or disable the dart-flutter MCP server for this profile.",
     "github-mcp-server": "Install GitHub's official MCP server binary or disable the github MCP server for this profile.",
     "codex": "Install the pinned @openai/codex CLI or set CODEX_BIN to its executable path.",
+    "shellcheck": "Install ShellCheck with brew install shellcheck or apt-get install shellcheck.",
 }
 
 
@@ -54,7 +56,12 @@ def executable_exists(command: str) -> bool:
     return shutil.which(value) is not None
 
 
-def missing_launchers(servers: dict[str, dict[str, object]], *, require_codex: bool) -> dict[str, list[str]]:
+def missing_launchers(
+    servers: dict[str, dict[str, object]],
+    *,
+    require_codex: bool,
+    require_shellcheck: bool = False,
+) -> dict[str, list[str]]:
     affected: dict[str, list[str]] = {}
     for name, spec in sorted(servers.items()):
         if spec.get("enabled") is False:
@@ -66,6 +73,8 @@ def missing_launchers(servers: dict[str, dict[str, object]], *, require_codex: b
             affected.setdefault(command, []).append(name)
     if require_codex and not executable_exists("codex"):
         affected.setdefault("codex", []).append("installer/doctor")
+    if require_shellcheck and not executable_exists("shellcheck"):
+        affected.setdefault("shellcheck", []).append("shell validation")
     return affected
 
 
@@ -78,6 +87,7 @@ def main() -> int:
         help="Path to the rldyour MCP registry.",
     )
     parser.add_argument("--require-codex", action="store_true", help="Require the codex CLI itself.")
+    parser.add_argument("--require-shellcheck", action="store_true", help="Require ShellCheck for shell validators.")
     parser.add_argument("--strict", action="store_true", help="Exit non-zero when prerequisites are missing.")
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
     parser.add_argument(
@@ -89,7 +99,15 @@ def main() -> int:
     args = parser.parse_args()
 
     servers = load_mcp_servers(args.mcp_config)
-    missing = {} if args.mode == "static" else missing_launchers(servers, require_codex=args.require_codex)
+    missing = (
+        missing_launchers({}, require_codex=False, require_shellcheck=args.require_shellcheck)
+        if args.mode == "static"
+        else missing_launchers(
+            servers,
+            require_codex=args.require_codex,
+            require_shellcheck=args.require_shellcheck,
+        )
+    )
 
     payload = {
         "ok": not missing,

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
+Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -22,7 +22,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-30
-- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
+- commit: `b64239591f7e6af0c5d6a7682039a8b45683732a`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -42,24 +42,24 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.4`; the version bump is recorded in
+- Current product/config version is `1.1.5`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.4`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.5`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity and requires user-facing plugin manifest metadata
   to stay Russian-first and English-compatible.
-- Commit `e029de0004fc0ae6e62d337dc387103e01e1e823` moves the adapter to
-  `1.1.4`, keeps plugin manifest versions in parity with `VERSION`, makes
-  `scripts/codex_openai_metadata_policy.py` the shared OpenAI skill metadata
-  policy for `validate_agent_tools.py` and `validate_marketplace.sh`, enforces
-  compact Russian-first `agents/openai.yaml` routing metadata, and adds
-  `scripts/validate_agents_context_budget.py`.
+- Commit `b64239591f7e6af0c5d6a7682039a8b45683732a` moves the adapter to
+  `1.1.5`, keeps plugin manifest versions in parity with `VERSION`, forwards
+  GitHub MCP token access through Codex `env_vars`, adds
+  `scripts/validate_codex_mcp_env_forwarding.py`, makes managed subagent
+  descriptions Russian-first, and adds
+  `scripts/validate_codex_managed_agents_bilingual.py`.
 - `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`

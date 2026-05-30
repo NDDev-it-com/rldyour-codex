@@ -74,6 +74,7 @@ fi
 
 scripts/install_system_codex.sh --dry-run --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
 scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
+python3 scripts/validate_codex_mcp_env_forwarding.py --codex-home "$CODEX_HOME_DIR"
 
 python3 - "$CODEX_HOME_DIR" <<'PY'
 from __future__ import annotations

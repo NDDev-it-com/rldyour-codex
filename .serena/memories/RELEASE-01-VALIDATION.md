@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
+Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -26,35 +26,34 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
+- commit: `b64239591f7e6af0c5d6a7682039a8b45683732a`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.4`; `VERSION`, `pyproject.toml`,
+- Current product/config version is `1.1.5`; `VERSION`, `pyproject.toml`,
   `uv.lock`, plugin manifests, and `CHANGELOG.md` are the source of truth for
   the adapter-local SemVer state.
-- Release `1.1.4` hardens Codex skill `agents/openai.yaml` UI metadata:
-  `interface.short_description` is compact, Russian-first, English-compatible,
-  and 25-64 characters; `interface.default_prompt` is Russian-first,
-  English-compatible, includes the exact `$<skill>` mention, and is at most
-  128 characters. The shared source of truth is
-  `scripts/codex_openai_metadata_policy.py`.
-- Release `1.1.4` keeps the Codex CLI runtime baseline at `0.135.0`, keeps the
-  owner-standard legacy sandbox permission dialect, makes plugin manifest
-  user-facing metadata Russian-first, and adds
-  `scripts/validate_agents_context_budget.py` so system/project instruction
-  docs stay safely below Codex's default project-doc budget.
-- Verified gates for this sync included `bash scripts/validate_marketplace.sh`,
-  `scripts/validate_fast.sh`, `scripts/validate_release.sh`,
-  `scripts/doctor_system_codex.sh --quick --strict-runtime`,
+- Release `1.1.5` hardens Codex MCP runtime materialization: GitHub MCP now
+  forwards `GITHUB_PERSONAL_ACCESS_TOKEN` through Codex `env_vars`, the
+  installer normalizes legacy exact `${NAME}` env placeholders to forwarded
+  env vars, and `scripts/validate_codex_mcp_env_forwarding.py` rejects literal
+  secret placeholders in source, installed runtime config, and managed-agent
+  MCP overrides.
+- Release `1.1.5` keeps the Codex CLI runtime baseline at `0.135.0`, keeps the
+  owner-standard legacy sandbox permission dialect, makes managed subagent
+  descriptions Russian-first with compact `EN:` suffixes, and validates that
+  policy through `scripts/validate_codex_managed_agents_bilingual.py`.
+- Verified gates for this sync included `bash scripts/validate_marketplace.sh`
+  with a temporary installed `CODEX_HOME`, `scripts/validate_fast.sh`,
+  `scripts/validate_release.sh`, `scripts/validate_runtime.sh --mode static`,
   `validate_contract.py`, `validate_agent_tools.py`,
-  `validate_plugin_versions.py`, `validate_agents_context_budget.py
-  --require-project-agents`, and `validate_instruction_docs.py
-  --require-agent-docs`.
+  `validate_plugin_versions.py`, `validate_codex_mcp_env_forwarding.py`,
+  `validate_codex_managed_agents_bilingual.py`, and
+  `validate_instruction_docs.py --require-agent-docs`.
 
 ## Evidence
-- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

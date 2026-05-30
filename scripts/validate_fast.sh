@@ -31,6 +31,7 @@ else
   python3 scripts/validate_instruction_docs.py
 fi
 "$UV_BIN" run --with pyyaml python scripts/validate_agent_tools.py
+python3 scripts/validate_codex_mcp_env_forwarding.py
 
 step "Supply-chain and text security"
 python3 scripts/validate_action_pins.py

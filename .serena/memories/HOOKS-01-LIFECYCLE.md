@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
+Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -24,7 +24,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-05-30
-- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
+- commit: `b64239591f7e6af0c5d6a7682039a8b45683732a`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   `plugins/cache/rldyour-codex/<plugin>/local/hooks.json` source paths.
 
 ## Evidence
-- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
 - `path:scripts/smoke_codex_hook_listing.py`

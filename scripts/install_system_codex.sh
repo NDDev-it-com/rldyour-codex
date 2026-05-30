@@ -340,9 +340,37 @@ command_overrides = {
     "bunx": bunx_cmd,
     "dart": dart_cmd,
 }
+secret_placeholder_re = re.compile(r"^\$\{([A-Z0-9_]+)\}$")
+
+
+def normalized_mcp_spec(raw_spec: dict[str, object]) -> dict[str, object]:
+    spec = dict(raw_spec)
+    env = spec.get("env")
+    if not isinstance(env, dict):
+        return spec
+
+    static_env: dict[str, object] = {}
+    raw_env_vars = spec.get("env_vars")
+    env_vars = list(raw_env_vars) if isinstance(raw_env_vars, list) else []
+    for key, value in env.items():
+        if isinstance(key, str) and isinstance(value, str) and secret_placeholder_re.match(value):
+            if key not in env_vars:
+                env_vars.append(key)
+            continue
+        static_env[key] = value
+
+    if static_env:
+        spec["env"] = static_env
+    else:
+        spec.pop("env", None)
+    if env_vars:
+        spec["env_vars"] = env_vars
+    return spec
+
+
 mcp_servers = {}
 for name, raw_spec in mcp_source.items():
-    spec = dict(raw_spec)
+    spec = normalized_mcp_spec(raw_spec)
     command = spec.get("command")
     if isinstance(command, str) and command in command_overrides:
         spec["command"] = command_overrides[command]

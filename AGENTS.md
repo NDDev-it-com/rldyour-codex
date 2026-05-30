@@ -55,7 +55,7 @@ Maintainer: Danil Silantyev (`@rldyourmnd`), CEO NDDev.
 
 - Owner-standard mode is full-auto/YOLO: `approval_policy = "never"` plus `sandbox_mode = "danger-full-access"`.
 - Safe mode is explicit only through `scripts/install_system_codex.sh --apply --safe-mode`.
-- Do not mix beta permission profiles (`default_permissions` or `[permissions]`) with legacy `sandbox_mode` in the same active config layer.
+- Do not mix Codex permission profiles (`default_permissions` or `[permissions]`) with legacy `sandbox_mode` in the same active config layer.
 - Required Codex features are `hooks = true` and `multi_agent = true`.
 - Parent owner profile uses `gpt-5.5` with `model_reasoning_effort = "xhigh"`.
 - Managed subagents use `gpt-5.5` with `model_reasoning_effort = "medium"` unless the owner explicitly changes policy.

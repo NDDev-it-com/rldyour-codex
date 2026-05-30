@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
+Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -29,12 +29,12 @@ repository identity and source-of-truth map
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
-- Current product/config version is `1.1.4`; root control-plane must pin
-  `e029de0004fc0ae6e62d337dc387103e01e1e823` for this adapter after the
+- Current product/config version is `1.1.5`; root control-plane must pin
+  `b64239591f7e6af0c5d6a7682039a8b45683732a` for this adapter after the
   Codex metadata hardening release.
 
 ## Evidence
-- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: e029de0004fc0ae6e62d337dc387103e01e1e823 chore(release): codex 1.1.4
+Last commit: b64239591f7e6af0c5d6a7682039a8b45683732a fix(codex): harden mcp env forwarding and agent routing
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -22,12 +22,12 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-30
-- commit: `e029de0004fc0ae6e62d337dc387103e01e1e823`
+- commit: `b64239591f7e6af0c5d6a7682039a8b45683732a`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Current Codex product/config version is `1.1.4`; root control-plane pins must
-  reference commit `e029de0004fc0ae6e62d337dc387103e01e1e823`, and plugin
+- Current Codex product/config version is `1.1.5`; root control-plane pins must
+  reference commit `b64239591f7e6af0c5d6a7682039a8b45683732a`, and plugin
   manifest versions must match the adapter `VERSION`.
 - The audited marketplace metadata blocker is closed in current source:
   `scripts/codex_openai_metadata_policy.py` is the shared policy for direct
@@ -45,7 +45,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:e029de0004fc0ae6e62d337dc387103e01e1e823`
+- `commit:b64239591f7e6af0c5d6a7682039a8b45683732a`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
@@ -62,7 +62,7 @@ verified current technical debt
 
 ## Historical evidence
 - Historical OpenAI skill metadata compactness drift was closed at adapter
-  `1.1.4` and commit `e029de0004fc0ae6e62d337dc387103e01e1e823`.
+  `1.1.5` and commit `b64239591f7e6af0c5d6a7682039a8b45683732a`.
 - Historical `plugin_hooks` active-doc drift was closed by the
   `.claude/CLAUDE.md` fullrepo update and by tracked active-doc forbidden-claim
   validation in `scripts/validate_instruction_docs.py`.

@@ -1,5 +1,5 @@
 name = "research-explorer"
-description = "Read-only research agent for current docs, upstream architecture, and real-world implementation patterns. RU: исследователь актуальной документации, upstream-архитектуры и production patterns."
+description = "Исследователь актуальной документации, upstream-архитектуры и production patterns. EN: read-only research agent for current docs."
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
@@ -48,7 +48,7 @@ mcp_servers.figma.tool_timeout_sec = 120
 mcp_servers.github.enabled = false
 mcp_servers.github.command = "github-mcp-server"
 mcp_servers.github.args = ["stdio", "--toolsets", "context,repos,issues,pull_requests,users"]
-mcp_servers.github.env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+mcp_servers.github.env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]
 mcp_servers.github.startup_timeout_sec = 90
 mcp_servers.github.tool_timeout_sec = 180
 

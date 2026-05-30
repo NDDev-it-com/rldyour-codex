@@ -149,7 +149,7 @@ which writes `~/.codex/rldyour-safe.config.toml` with
 Current Codex documentation treats
 `sandbox_mode` as the active older sandbox model when it is present, so this
 repository does not write active `default_permissions` permission-profile fields
-or migrate the owner full-auto profile to beta permission profiles without an
+or migrate the owner full-auto profile to Codex permission profiles without an
 explicit policy decision. Managed subagent roles in
 `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
 `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
