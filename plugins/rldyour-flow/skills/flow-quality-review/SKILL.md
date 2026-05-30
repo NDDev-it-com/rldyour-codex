@@ -1,6 +1,6 @@
 ---
 name: flow-quality-review
-description: "Оркестрирует quality review для ry-start/ry-review: correctness, edge cases, errors, no hacks. EN: quality review, technical debt, correctness."
+description: "Оркестрирует quality review для explicit ry-start review/ry-review: correctness, edge cases, errors, no hacks. EN: quality review, technical debt, correctness."
 ---
 
 # Flow Quality Review
