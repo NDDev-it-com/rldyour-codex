@@ -30,8 +30,8 @@ repository identity and source-of-truth map
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 - Current product/config version is `1.1.6`; root control-plane must pin
-  `b64239591f7e6af0c5d6a7682039a8b45683732a` for this adapter after the
-  Codex metadata hardening release.
+  `7df63a3ba7302bad4af6c7a6d2e26703cec76a03` for this adapter after the
+  Codex installer cleanup release.
 
 ## Evidence
 - `commit:7df63a3ba7302bad4af6c7a6d2e26703cec76a03`

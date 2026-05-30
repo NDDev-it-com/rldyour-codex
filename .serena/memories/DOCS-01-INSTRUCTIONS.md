@@ -33,7 +33,7 @@ instruction docs and durable operator documentation
 - Docs memories record which instruction and operator docs must change after durable behavior changes.
 - `system/AGENTS.md` is the compact global Codex owner/runtime contract and
   fullrepo `AGENTS.md` is the compact project-specific contract. The
-  `1.1.5` hardening keeps each file below 10 KiB and validates the combined
+  `1.1.6` hardening keeps each file below 10 KiB and validates the combined
   pair with `scripts/validate_agents_context_budget.py`; deep operational
   detail belongs in skills, references, and Serena memories rather than
   bloating AGENTS context.

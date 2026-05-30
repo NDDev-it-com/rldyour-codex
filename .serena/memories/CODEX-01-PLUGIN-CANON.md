@@ -45,16 +45,18 @@ Codex adapter implementation surface
 - Current product/config version is `1.1.6`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.5`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.6`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity and requires user-facing plugin manifest metadata
   to stay Russian-first and English-compatible.
-- Commit `b64239591f7e6af0c5d6a7682039a8b45683732a` moves the adapter to
-  `1.1.5`, keeps plugin manifest versions in parity with `VERSION`, forwards
-  GitHub MCP token access through Codex `env_vars`, adds
-  `scripts/validate_codex_mcp_env_forwarding.py`, makes managed subagent
-  descriptions Russian-first, and adds
-  `scripts/validate_codex_managed_agents_bilingual.py`.
+- Commit `7df63a3ba7302bad4af6c7a6d2e26703cec76a03` moves the adapter to
+  `1.1.6`, keeps plugin manifest versions in parity with `VERSION`, forwards
+  GitHub MCP token access through Codex `env_vars`, validates MCP env
+  forwarding with `scripts/validate_codex_mcp_env_forwarding.py`, makes
+  managed subagent descriptions Russian-first, validates that policy with
+  `scripts/validate_codex_managed_agents_bilingual.py`, and makes the installer
+  replace managed MCP server subtrees during upgrades so stale nested `env`
+  placeholder tables cannot survive.
 - `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
