@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.7] - 2026-05-30
+
+### Changed
+
+- Make `ry-start` reviewer fanout explicit-opt-in while keeping `ry-review` reviewer orchestration available.
+
 ## [1.1.6] - 2026-05-30
 
 ### Fixed
