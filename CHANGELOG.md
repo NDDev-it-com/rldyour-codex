@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.10] - 2026-05-30
+
+### Fixed
+
+- Classify current MCP safe-call runtime noise.
+
 ## [1.1.9] - 2026-05-30
 
 ### Fixed

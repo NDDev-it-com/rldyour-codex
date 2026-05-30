@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
+Last commit: 6946af99905464a1ba4ef90052854eaaf9239d08 fix: classify MCP safe-call runtime noise
 Scope: security posture and blocking/warning policy
 Area: SECURITY
 -->
@@ -22,14 +22,14 @@ security posture and blocking/warning policy
 
 ## Last verified
 - date: 2026-05-30
-- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
+- commit: `6946af99905464a1ba4ef90052854eaaf9239d08`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Security memories record block/warn/review classes and defensive-only review policy.
 
 ## Evidence
-- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
+- `commit:6946af99905464a1ba4ef90052854eaaf9239d08`
 - `path:plugins/rldyour-security`
 - `path:README.md`
 

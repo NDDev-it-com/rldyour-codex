@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
+Last commit: 6946af99905464a1ba4ef90052854eaaf9239d08 fix: classify MCP safe-call runtime noise
 Scope: language-server setup and diagnostic proof
 Area: LSP
 -->
@@ -22,14 +22,14 @@ language-server setup and diagnostic proof
 
 ## Last verified
 - date: 2026-05-30
-- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
+- commit: `6946af99905464a1ba4ef90052854eaaf9239d08`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - LSP memories record language-server coverage and diagnostic proof requirements.
 
 ## Evidence
-- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
+- `commit:6946af99905464a1ba4ef90052854eaaf9239d08`
 - `path:plugins/rldyour-lsps`
 - `path:README.md`
 

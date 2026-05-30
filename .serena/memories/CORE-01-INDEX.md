@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
+Last commit: 6946af99905464a1ba4ef90052854eaaf9239d08 fix: classify MCP safe-call runtime noise
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -24,17 +24,17 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-30
-- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
+- commit: `6946af99905464a1ba4ef90052854eaaf9239d08`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
-- Current product/config version is `1.1.9`; root control-plane must pin
-  `160d6d910421ef26e246a3d9c8cf1e4c782c0b50` for this adapter after the
+- Current product/config version is `1.1.10`; root control-plane must pin
+  `6946af99905464a1ba4ef90052854eaaf9239d08` for this adapter after the
   Codex plugin-cache alias sync release.
 
 ## Evidence
-- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
+- `commit:6946af99905464a1ba4ef90052854eaaf9239d08`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

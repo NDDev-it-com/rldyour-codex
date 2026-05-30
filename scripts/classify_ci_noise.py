@@ -58,7 +58,8 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
             r"Sequential Thinking MCP Server running on stdio|"
             r"Starting Semgrep MCP server version|"
             r"Tracing initialized|"
-            r"get_supported_languages succeeded"
+            r"get_supported_languages succeeded|"
+            r"\(Use `node --trace-warnings \.\.\.` to show where the warning was created\)"
         ),
         "MCP servers print startup banners and successful safe-call traces to stderr.",
     ),
@@ -71,7 +72,7 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         "github-mcp-server-runtime",
         re.compile(
             r"GitHub MCP Server running on stdio|"
-            r'time=\d{4}-\d{2}-\d{2}T[0-9:.]+Z level=INFO msg="'
+            r'time=\d{4}-\d{2}-\d{2}T[0-9:.]+(?:Z|[+-]\d{2}:\d{2}) level=INFO msg="'
             r"(starting server|server run start|server connecting|server session connected|"
             r"session initialized|server session disconnected|server session ended)"
         ),
