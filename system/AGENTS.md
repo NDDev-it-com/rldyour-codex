@@ -56,7 +56,7 @@ OpenAI Docs MCP before general web search when it is available.
 
 - Owner-standard profile is full-auto/YOLO: `approval_policy = "never"` and `sandbox_mode = "danger-full-access"`.
 - Safe mode is explicit only: `scripts/install_system_codex.sh --apply --safe-mode`.
-- Do not mix beta `default_permissions` or `[permissions]` with legacy `sandbox_mode` in the same active config layer.
+- Do not mix Codex permission profiles (`default_permissions` or `[permissions]`) with legacy `sandbox_mode` in the same active config layer.
 - Current profile files are `$CODEX_HOME/<name>.config.toml`; do not restore legacy `profile = "..."` or `[profiles.*]`.
 - Required features: `[features].hooks = true` and `[features].multi_agent = true`.
 - Parent model default is `gpt-5.5` with `model_reasoning_effort = "xhigh"`.

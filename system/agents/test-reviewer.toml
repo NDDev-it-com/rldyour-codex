@@ -1,5 +1,5 @@
 name = "test-reviewer"
-description = "Read-only reviewer for test coverage gaps, weak assertions, and missing edge-case validation. RU: ревьюер тестов, слабых assert и пропущенных edge cases."
+description = "Ревьюер тестов, слабых assert и пропущенных edge cases. EN: read-only reviewer for coverage gaps and edge validation."
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
@@ -47,7 +47,7 @@ mcp_servers.figma.tool_timeout_sec = 120
 mcp_servers.github.enabled = false
 mcp_servers.github.command = "github-mcp-server"
 mcp_servers.github.args = ["stdio", "--toolsets", "context,repos,issues,pull_requests,users"]
-mcp_servers.github.env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+mcp_servers.github.env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]
 mcp_servers.github.startup_timeout_sec = 90
 mcp_servers.github.tool_timeout_sec = 180
 

@@ -4,13 +4,41 @@ set -euo pipefail
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 cd "$ROOT"
 
+require_cmd() {
+  command -v "$1" >/dev/null 2>&1 && return 0
+  printf 'missing required command: %s\n' "$1" >&2
+  case "$1" in
+    jq)
+      printf 'install: brew install jq / apt-get install jq\n' >&2
+      ;;
+    python3)
+      printf 'install: brew install python / apt-get install python3\n' >&2
+      ;;
+    shellcheck)
+      printf 'install: brew install shellcheck / apt-get install shellcheck\n' >&2
+      ;;
+    uv)
+      printf 'install: brew install uv / pipx install uv\n' >&2
+      ;;
+    *)
+      printf 'install the missing executable or put it on PATH\n' >&2
+      ;;
+  esac
+  exit 127
+}
+
+require_cmd jq
+require_cmd python3
+require_cmd shellcheck
 UV_BIN=${UV_BIN:-$(command -v uv 2>/dev/null || true)}
 if [ -z "$UV_BIN" ]; then
-  printf 'uv command not found\n' >&2
-  exit 1
+  printf 'missing required command: uv\n' >&2
+  printf 'install: brew install uv / pipx install uv\n' >&2
+  exit 127
 fi
 CODEX_HOME_DIR=${CODEX_HOME:-"$HOME/.codex"}
 CACHE_ROOT=${CACHE_ROOT:-"$CODEX_HOME_DIR/plugins/cache/rldyour-codex"}
+python3 scripts/validate_runtime_prereqs.py --mode static --strict --require-shellcheck >/dev/null
 
 step() {
   printf '\n== %s ==\n' "$1"
@@ -188,6 +216,8 @@ PY
 
 step "Codex agent tool surfaces"
 "$UV_BIN" run --with pyyaml python scripts/validate_agent_tools.py
+python3 scripts/validate_codex_managed_agents_bilingual.py
+python3 scripts/validate_codex_mcp_env_forwarding.py
 
 step "Shell scripts"
 shellcheck plugins/rldyour-serena-mcp/hooks/*.sh plugins/rldyour-serena-mcp/scripts/*.sh plugins/rldyour-flow/hooks/*.sh plugins/rldyour-flow/scripts/*.sh plugins/rldyour-lsps/scripts/*.sh scripts/*.sh
@@ -215,6 +245,8 @@ paths = [
     Path("scripts/smoke_codex_hook_listing.py"),
     Path("scripts/validate_contract.py"),
     Path("scripts/validate_agent_tools.py"),
+    Path("scripts/validate_codex_managed_agents_bilingual.py"),
+    Path("scripts/validate_codex_mcp_env_forwarding.py"),
     Path("scripts/validate_action_pins.py"),
     Path("scripts/scan_text_security.py"),
     Path("scripts/classify_ci_noise.py"),
@@ -230,7 +262,7 @@ step "GitHub Action SHA pins"
 python3 scripts/validate_action_pins.py
 
 step "Runtime prerequisites policy"
-python3 scripts/validate_runtime_prereqs.py --json >/dev/null
+python3 scripts/validate_runtime_prereqs.py --require-shellcheck --json >/dev/null
 
 step "Codex execpolicy rules"
 if command -v codex >/dev/null 2>&1; then
@@ -275,6 +307,7 @@ step "MCP registration"
 codex mcp list >/dev/null
 
 step "MCP config sync"
+python3 scripts/validate_codex_mcp_env_forwarding.py --codex-home "$CODEX_HOME_DIR"
 python3 - "$CODEX_HOME_DIR" <<'PY'
 from __future__ import annotations
 

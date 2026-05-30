@@ -28,7 +28,7 @@ Source of truth:
 ## Owner Full-Auto Policy
 
 The owner-standard Codex mode intentionally uses `approval_policy = "never"` and
-`sandbox_mode = "danger-full-access"`. Do not migrate to beta permission
+`sandbox_mode = "danger-full-access"`. Do not migrate to Codex permission
 profiles or add active `default_permissions` without an explicit policy
 decision that updates installer, doctor, contracts, docs, and validators in one
 change.

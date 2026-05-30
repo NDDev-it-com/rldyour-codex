@@ -82,9 +82,9 @@
         "--toolsets",
         "context,repos,issues,pull_requests,users"
       ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-      },
+      "env_vars": [
+        "GITHUB_PERSONAL_ACCESS_TOKEN"
+      ],
       "startup_timeout_sec": 90,
       "tool_timeout_sec": 180
     },
