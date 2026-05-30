@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: fe7566ebc15149d57d9f1d65bf792e66d90daa26 chore(release): codex 1.1.7 (release_metadata)
+Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -22,12 +22,12 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-30
-- commit: `fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Current Codex product/config version is `1.1.7`; root control-plane pins must
-  reference commit `fe7566ebc15149d57d9f1d65bf792e66d90daa26`, and plugin
+- Current Codex product/config version is `1.1.9`; root control-plane pins must
+  reference commit `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`, and plugin
   manifest versions must match the adapter `VERSION`.
 - The audited marketplace metadata blocker is closed in current source:
   `scripts/codex_openai_metadata_policy.py` is the shared policy for direct
@@ -45,7 +45,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

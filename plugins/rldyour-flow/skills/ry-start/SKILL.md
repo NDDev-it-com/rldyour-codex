@@ -31,7 +31,6 @@ Implement a task to a high-quality, scalable, synchronized state. Speed is secon
 
 If the owner request includes deploy, production, server rollout,
 sync-and-deploy, or a named deployment target, do not finish after
-implementation. After code validation and Serena/docs sync,
 implementation. After code validation and Serena/docs sync, route into
 `ry-deploy` with the same scope and target. If the deploy contract is
 incomplete, ask for the missing server, branch, environment, health-check,

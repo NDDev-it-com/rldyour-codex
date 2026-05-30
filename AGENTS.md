@@ -49,6 +49,9 @@ Maintainer: Danil Silantyev (`@rldyourmnd`), CEO NDDev.
   - `dependencies.tools[*].description`: Russian-first, English-compatible, compact.
   - reviewer track skills are orchestrated-only and set `allow_implicit_invocation: false`.
 - Plugin manifest user-facing fields are Russian-first with English compatibility: `description`, `interface.shortDescription`, `interface.longDescription`, and `interface.defaultPrompt`.
+- Installed plugin cache parity covers both versioned cache entries and active
+  `plugins/cache/rldyour-codex/<plugin>/local` aliases, because local
+  marketplace sessions load skills from the `local` alias.
 - Keep metadata compact. Put detailed instructions in skill bodies, references, docs, or Serena memories.
 
 ## Permission And Runtime Policy

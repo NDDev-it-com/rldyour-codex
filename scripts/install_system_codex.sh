@@ -810,11 +810,11 @@ sync_plugin_cache() {
     if [ "$APPLY" -eq 1 ]; then
       mkdir -p "$cache_dir"
       rsync -a --delete "$plugin_dir/" "$cache_dir/"
-      printf 'synced plugin cache %s@%s\n' "$plugin_name" "$plugin_version"
+      printf 'synced plugin cache %s@%s -> %s\n' "$plugin_name" "$plugin_version" "$cache_dir"
     else
       printf 'dry-run: sync %s -> %s\n' "$plugin_dir/" "$cache_dir/"
     fi
-  done < <(python3 "$ROOT/scripts/plugin_cache_contract.py" --cache-root "$CACHE_ROOT" list --format tsv)
+  done < <(python3 "$ROOT/scripts/plugin_cache_contract.py" --cache-root "$CACHE_ROOT" --include-local list --format tsv)
 }
 
 trust_plugin_hooks() {

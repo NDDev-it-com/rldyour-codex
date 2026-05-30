@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: fe7566ebc15149d57d9f1d65bf792e66d90daa26 chore(release): codex 1.1.7 (release_metadata)
+Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
 Scope: language-server setup and diagnostic proof
 Area: LSP
 -->
@@ -22,14 +22,14 @@ language-server setup and diagnostic proof
 
 ## Last verified
 - date: 2026-05-30
-- commit: `fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - LSP memories record language-server coverage and diagnostic proof requirements.
 
 ## Evidence
-- `commit:fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - `path:plugins/rldyour-lsps`
 - `path:README.md`
 

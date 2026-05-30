@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: fe7566ebc15149d57d9f1d65bf792e66d90daa26 chore(release): codex 1.1.7 (release_metadata)
+Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -22,7 +22,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-30
-- commit: `fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -42,26 +42,24 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.7`; the version bump is recorded in
+- Current product/config version is `1.1.9`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.6`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.9`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity and requires user-facing plugin manifest metadata
   to stay Russian-first and English-compatible.
-- Commit `7df63a3ba7302bad4af6c7a6d2e26703cec76a03` moves the adapter to
-  `1.1.6`, keeps plugin manifest versions in parity with `VERSION`, forwards
-  GitHub MCP token access through Codex `env_vars`, validates MCP env
-  forwarding with `scripts/validate_codex_mcp_env_forwarding.py`, makes
-  managed subagent descriptions Russian-first, validates that policy with
-  `scripts/validate_codex_managed_agents_bilingual.py`, and makes the installer
-  replace managed MCP server subtrees during upgrades so stale nested `env`
-  placeholder tables cannot survive.
+- Commit `160d6d910421ef26e246a3d9c8cf1e4c782c0b50` moves the adapter to
+  `1.1.9`, keeps plugin manifest versions in parity with `VERSION`, keeps
+  GitHub MCP token access through Codex `env_vars`, keeps managed subagent
+  descriptions Russian-first, keeps `ry-start` reviewer fanout explicit
+  opt-in, and makes installer/doctor/marketplace plugin-cache validation cover
+  both versioned cache directories and active `local` aliases.
 - `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`

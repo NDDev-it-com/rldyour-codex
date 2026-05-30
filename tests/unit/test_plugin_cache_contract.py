@@ -33,6 +33,28 @@ def test_discover_entries_uses_manifest_versioned_cache_path(tmp_path: Path) -> 
     ]
 
 
+def test_discover_entries_can_include_local_cache_alias(tmp_path: Path) -> None:
+    plugin_dir = tmp_path / "plugins/rldyour-demo"
+    write_manifest(plugin_dir, "rldyour-demo", "1.2.3")
+
+    entries = mod.discover_entries(tmp_path, tmp_path / "cache", include_local=True)
+
+    assert entries == [
+        mod.PluginCacheEntry(
+            name="rldyour-demo",
+            version="1.2.3",
+            source_dir=plugin_dir,
+            cache_dir=tmp_path / "cache/rldyour-demo/1.2.3",
+        ),
+        mod.PluginCacheEntry(
+            name="rldyour-demo",
+            version="1.2.3",
+            source_dir=plugin_dir,
+            cache_dir=tmp_path / "cache/rldyour-demo/local",
+        ),
+    ]
+
+
 def test_verify_reports_missing_cache(tmp_path: Path, capsys) -> None:
     entry = mod.PluginCacheEntry(
         name="rldyour-demo",

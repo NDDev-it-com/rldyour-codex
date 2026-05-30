@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: fe7566ebc15149d57d9f1d65bf792e66d90daa26 chore(release): codex 1.1.7 (release_metadata)
+Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -26,24 +26,19 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.7`; `VERSION`, `pyproject.toml`,
+- Current product/config version is `1.1.9`; `VERSION`, `pyproject.toml`,
   `uv.lock`, plugin manifests, and `CHANGELOG.md` are the source of truth for
   the adapter-local SemVer state.
-- Release `1.1.7` hardens Codex MCP runtime materialization: GitHub MCP now
-  forwards `GITHUB_PERSONAL_ACCESS_TOKEN` through Codex `env_vars`, the
-  installer normalizes legacy exact `${NAME}` env placeholders to forwarded
-  env vars, and `scripts/validate_codex_mcp_env_forwarding.py` rejects literal
-  secret placeholders in source, installed runtime config, and managed-agent
-  MCP overrides.
-- Release `1.1.7` keeps the Codex CLI runtime baseline at `0.135.0`, keeps the
-  owner-standard legacy sandbox permission dialect, makes managed subagent
-  descriptions Russian-first with compact `EN:` suffixes, and validates that
-  policy through `scripts/validate_codex_managed_agents_bilingual.py`.
+- Release `1.1.9` keeps the Codex CLI runtime baseline at `0.135.0`, keeps the
+  owner-standard legacy sandbox permission dialect, keeps `ry-start` reviewer
+  fanout explicit opt-in, and makes versioned plus active `local` plugin cache
+  aliases part of installer/doctor/marketplace validation through
+  `scripts/plugin_cache_contract.py --include-local`.
 - Verified gates for this sync included `bash scripts/validate_marketplace.sh`
   with a temporary installed `CODEX_HOME`, `scripts/validate_fast.sh`,
   `scripts/validate_release.sh`, `scripts/validate_runtime.sh --mode static`,
@@ -53,7 +48,7 @@ release readiness, versioning, and artifact hygiene
   `validate_instruction_docs.py --require-agent-docs`.
 
 ## Evidence
-- `commit:fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

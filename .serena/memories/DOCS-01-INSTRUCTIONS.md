@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: fe7566ebc15149d57d9f1d65bf792e66d90daa26 chore(release): codex 1.1.7 (release_metadata)
+Last commit: 160d6d910421ef26e246a3d9c8cf1e4c782c0b50 fix: sync Codex plugin cache aliases
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -26,7 +26,7 @@ instruction docs and durable operator documentation
 
 ## Last verified
 - date: 2026-05-30
-- commit: `fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- commit: `160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -39,7 +39,7 @@ instruction docs and durable operator documentation
   bloating AGENTS context.
 
 ## Evidence
-- `commit:fe7566ebc15149d57d9f1d65bf792e66d90daa26`
+- `commit:160d6d910421ef26e246a3d9c8cf1e4c782c0b50`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
