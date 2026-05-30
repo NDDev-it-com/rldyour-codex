@@ -15,7 +15,7 @@ Find real issues before merge or deploy. Default mode is report-only: do not edi
 2. Initialize missing context with `ry-init` if needed.
 3. Use Serena to map changed symbols and affected integration graph.
 4. Use `rldyour-explore` for current implementation best practices when the review depends on external technology behavior.
-5. Run reviewer tracks. Use subagents when the review request or `ry-start` review phase calls for parallel review.
+5. Run reviewer tracks. Use subagents when this review request or an explicit-review `ry-start` request calls for parallel review.
 6. Consolidate findings by severity and confidence. Validate uncertain findings with code evidence.
 7. Output Russian report with exact paths, impact, suggested fixes, and whether each finding is must-fix.
 
