@@ -280,7 +280,7 @@ async def _stdio_session(
                 await session.initialize()
                 await body(session, missing_env)
                 completed = True
-    except BaseException:
+    except Exception:
         if completed:
             return
         raise
@@ -303,7 +303,7 @@ async def _http_session(
                 await session.initialize()
                 await body(session, [])
                 completed = True
-    except BaseException:
+    except Exception:
         if completed:
             return
         raise
@@ -377,7 +377,7 @@ async def _probe_with_retries(
                 include_auth=include_auth,
                 timeout=timeout,
             )
-        except BaseException as exc:
+        except Exception as exc:
             last_error = exc
             if attempt < retries:
                 print(f"retry   {name} attempt {attempt} failed: {exc}", file=sys.stderr)

@@ -63,16 +63,20 @@ def test_candidate_files_uses_fallback_when_git_is_unavailable(monkeypatch, tmp_
     safe = tmp_path / "safe.md"
     safe.write_text("safe", encoding="utf-8")
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(mod, "tracked_files", lambda: set())
-    monkeypatch.setattr(mod, "extra_files", lambda: set())
+    monkeypatch.setattr(mod, "tracked_files", set)
+    monkeypatch.setattr(mod, "extra_files", set)
     assert mod.candidate_files() == {Path("safe.md")}
 
 
 def test_main_scans_tracked_and_extra_files(monkeypatch, tmp_path: Path, capsys) -> None:
     safe = tmp_path / "safe.md"
     safe.write_text("safe", encoding="utf-8")
+
+    def tracked_safe_file() -> set[Path]:
+        return {safe.relative_to(tmp_path)}
+
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(mod, "tracked_files", lambda: {Path("safe.md")})
-    monkeypatch.setattr(mod, "extra_files", lambda: set())
+    monkeypatch.setattr(mod, "tracked_files", tracked_safe_file)
+    monkeypatch.setattr(mod, "extra_files", set)
     assert mod.main() == 0
     assert "1 files checked" in capsys.readouterr().out
