@@ -18,7 +18,9 @@ The repository had a strong smoke/static validation gate but no conventional uni
 - Keep a 75% repository coverage threshold for the `0.3.0` runtime-determinism release.
 - Keep `scripts/validate_marketplace.sh` as the complete local acceptance gate, and run pytest inside it.
 - Add modular gates for agent-driven manual CI: `scripts/validate_fast.sh`, `scripts/validate_runtime.sh`, and `scripts/validate_release.sh`.
-- Split manual CI into fast, runtime, release, MCP, and full scopes with Ubuntu as the default runner and opt-in macOS parity.
+- Split manual CI into fast, runtime, release, MCP, and full scopes with Ubuntu
+  as the heavy runtime runner, and add lightweight standard public Ubuntu,
+  Windows, and macOS smoke for path/archive/metadata portability.
 - Keep the no-paid static security workflow manual-only, using ShellCheck, Pyright, Semgrep CLI, action SHA-pin validation, and text security scanning.
 - Exclude Semgrep's global `IFS` tampering rule from the no-paid gate because the repository intentionally uses `IFS=$'\n\t'` as part of its strict shell prologue and relies on ShellCheck plus project validators for shell safety.
 - Keep the upstream repository public and standard-runner-only so normal push,
@@ -32,8 +34,10 @@ The repository had a strong smoke/static validation gate but no conventional uni
 
 - Local failures should usually be diagnosable from targeted unit tests before reaching smoke checks.
 - Public upstream CI does not consume paid private-repository Actions minutes
-  while it uses standard runners. macOS coverage remains opt-in for manual
-  dispatch scopes because it is slower and more resource-heavy than Ubuntu.
+  while it uses standard public runners. Lightweight macOS and Windows smoke is
+  part of the required public/free baseline; heavy runtime and release jobs stay
+  Ubuntu-hosted when the local script is OS-independent or the toolchain is
+  Linux-oriented.
 - Private forks must review the workflow set before enabling Actions because
   private-repository usage is billed to the repository owner.
 - Coverage threshold can rise again after the highest-risk shell/Python boundaries have dedicated tests.

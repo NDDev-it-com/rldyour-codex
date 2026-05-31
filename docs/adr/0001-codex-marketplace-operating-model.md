@@ -22,7 +22,11 @@ The repository has several durable decisions that were previously spread across 
 - Serialize dependent Stop lifecycle behavior inside Flow's ordered dispatcher: Serena memory gating runs first, and Flow post-task synchronization runs only after Serena is current.
 - Keep agent-only context out of normal branches and publish it through the `fullrepo` branch with safe `--force-with-lease`.
 - Treat Serena memories as operational fact knowledge and ADRs as durable architecture-decision authority. Memories may summarize decisions but should point back to ADRs when the decision is structural.
-- Use GitHub-hosted Actions with least-privilege permissions and SHA-pinned external actions. CodeQL or repository-side secret scanning can be added only when the required GitHub Code Security / Secret Protection entitlement is confirmed.
+- Use public GitHub-hosted Actions with least-privilege permissions and
+  SHA-pinned external actions. CodeQL, dependency review, Gitleaks, and
+  GitHub-native public repository secret scanning are part of the public adapter
+  security baseline; live GitHub settings are validated from the private root
+  control plane when an owner token is available.
 - Treat Dart/Flutter MCP as an external local Dart SDK runtime exception unless a package-level pin becomes available in the Codex MCP registry.
 
 ## Consequences
