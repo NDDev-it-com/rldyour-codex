@@ -97,7 +97,7 @@ Codex adapter implementation surface
 - Commit `818d3c19388978564b29724488678cd803b99867` moved the adapter to
   `1.0.3`, aligned active descriptions with the root
   `config/repository-description-policy.json` template, kept plugin manifest
-  versions in parity with `VERSION`, and published GitHub Release `1.1.14`.
+  versions in parity with `VERSION`, and published GitHub Release `1.1.3`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.
