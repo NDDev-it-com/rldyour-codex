@@ -103,9 +103,9 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
     NoiseRule(
         "serena-mcp-runtime-log",
         re.compile(
-            r"^(INFO|WARNING)  \d{4}-\d{2}-\d{2} .*"
+            r"^(?:(INFO|WARNING)  \d{4}-\d{2}-\d{2} .*"
             r"(serena|solidlsp|sensai|mcp\.server)\."
-            r"|^CRITICAL: Before starting to work on a coding task, call the `initial_instructions` tool"
+            r"|CRITICAL: Before starting to work on a coding task, call the `initial_instructions` tool)"
         ),
         "Serena MCP and its language-server dependencies log normal startup/shutdown detail to stderr.",
     ),
