@@ -9,7 +9,7 @@ runner labels and keep third-party actions pinned to full commit SHAs.
 
 | Workflow | Purpose |
 | --- | --- |
-| `validate.yml` | Fast validation, optional runtime/release/MCP scopes, Linux and macOS coverage. |
+| `validate.yml` | Fast validation and optional runtime/release/MCP scopes on Ubuntu standard runners. |
 | `security-static.yml` | Action pin validation, actionlint, text security scan, ShellCheck, Pyright, Semgrep. |
 | `secret-scan.yml` | Gitleaks history scan for accidental secrets. |
 | `codeql.yml` | CodeQL code scanning for the adapter source surface. |
@@ -33,5 +33,7 @@ runner labels and keep third-party actions pinned to full commit SHAs.
 
 - Public adapter CI must stay on standard GitHub-hosted runner labels only.
 - No self-hosted or non-standard runner labels.
+- Default, required, scheduled, and release workflows use Ubuntu standard
+  runners only under the owner zero-paid-risk policy.
 - Workflow artifacts must set explicit retention and stay at or below 30 days.
 - Heavy or drift-oriented checks use schedules/manual dispatch where practical.
