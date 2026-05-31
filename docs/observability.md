@@ -41,7 +41,10 @@ GitHub Actions writes:
 - failure diagnostic artifacts under `diagnostics/ci`;
 - standard workflow logs for validation, doctor, bootstrap, and dependency checks.
 
-The `validate` workflow is manual-only. Ubuntu is the default runner for cost control; macOS is enabled only when the manual `include_macos` input is true because macOS runner minutes are materially more expensive. The workflow exposes `fast`, `runtime`, `release`, `mcp`, and `full` scopes so an agent can run exactly the requested gate instead of paying for every gate on every push.
+The `validate` workflow uses Ubuntu standard runners only under the owner
+zero-paid-risk public adapter policy. It exposes `fast`, `runtime`, `release`,
+`mcp`, and `full` scopes so an agent can run exactly the requested gate instead
+of running every gate on every push.
 
 The manual `dependency-check` workflow and the `validate` workflow's `mcp`/`full` scopes upload `dependency-check.json` for MCP pin freshness diagnostics.
 
