@@ -50,10 +50,10 @@ Codex adapter implementation surface
   release-coordinate parity and requires user-facing plugin manifest metadata
   to stay Russian-first and English-compatible.
 - Commit `1252b518c85b3d3ea359109062c6d804696ef7f7` moves the adapter to
-  `1.1.13`, keeps plugin manifest versions in parity with `VERSION`, removes
-  hosted macOS jobs from default public adapter CI, and removes macOS required
-  branch-protection contexts while preserving Codex-native plugin, MCP, hook,
-  managed-agent, and owner-yolo runtime semantics.
+  `1.1.14`, keeps plugin manifest versions in parity with `VERSION`, adds
+  standard public Ubuntu/Windows/macOS cross-platform smoke coverage, and
+  preserves Codex-native plugin, MCP, hook, managed-agent, and owner-yolo
+  runtime semantics.
 - `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
