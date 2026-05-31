@@ -45,11 +45,11 @@ Codex adapter implementation surface
 - Current product/config version is `1.1.14`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.13`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.14`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity and requires user-facing plugin manifest metadata
   to stay Russian-first and English-compatible.
-- Commit `67e05455d3e35449d070874257acdfa13520f886` moves the adapter to
+- Commit `1252b518c85b3d3ea359109062c6d804696ef7f7` moves the adapter to
   `1.1.13`, keeps plugin manifest versions in parity with `VERSION`, removes
   hosted macOS jobs from default public adapter CI, and removes macOS required
   branch-protection contexts while preserving Codex-native plugin, MCP, hook,

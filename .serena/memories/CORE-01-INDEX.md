@@ -30,8 +30,8 @@ repository identity and source-of-truth map
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 - Current product/config version is `1.1.14`; root control-plane must pin
-  `67e05455d3e35449d070874257acdfa13520f886` for this adapter after the
-  public free CI coverage and release metadata sync.
+  `1252b518c85b3d3ea359109062c6d804696ef7f7` for this adapter after the
+  public-free standard runner coverage and release metadata sync.
 
 ## Evidence
 - `commit:1252b518c85b3d3ea359109062c6d804696ef7f7`
