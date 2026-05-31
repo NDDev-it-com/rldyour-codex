@@ -23,8 +23,8 @@ release readiness, versioning, and artifact hygiene
 - checked by: Codex ry-start enterprise hardening
 
 ## Facts
-- Current Codex product/config version is `1.1.13`; root control-plane pins
-  must reference commit `67e05455d3e35449d070874257acdfa13520f886` for this
+- Current Codex product/config version is `1.1.14`; root control-plane pins
+  must reference commit `1252b518c85b3d3ea359109062c6d804696ef7f7` for this
   adapter.
 - `VERSION`, `CHANGELOG.md`, `pyproject.toml`, `uv.lock`, and every
   `plugins/*/.codex-plugin/plugin.json` manifest must keep the same publishable
