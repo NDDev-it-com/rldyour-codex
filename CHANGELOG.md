@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.16] - 2026-06-01
+
+### Security
+
+- Route Scorecard to JSON artifacts instead of code scanning alerts, and fix CodeQL findings in CI-noise and MCP smoke helpers.
+
 ## [1.1.15] - 2026-05-31
 
 ### Changed
