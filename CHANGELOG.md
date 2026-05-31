@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.15] - 2026-05-31
+
+### Changed
+
+- Refresh shared MCP runtime pins to current validated upstream versions.
+
 ## [1.1.14] - 2026-05-31
 
 ### Changed
@@ -90,7 +96,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ### Changed
 
 - Adopt Codex CLI 0.135.0 runtime baseline.
-- Refresh GitHub MCP Server host-binary pin to 1.1.0.
+- Refresh GitHub MCP Server host-binary pin to 1.1.2.
 
 ## [1.0.3] - 2026-05-29
 
@@ -117,7 +123,7 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 
 ### Changed
 
-- Shared MCP runtime pins now track `semgrep==1.164.0` and `shadcn@4.8.2`;
+- Shared MCP runtime pins now track `semgrep==1.164.0` and `shadcn@4.9.0`;
   managed Codex subagent TOML files and fixture tests were updated in lockstep.
 
 ## [0.5.0] - 2026-05-27
