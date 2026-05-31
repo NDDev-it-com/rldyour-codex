@@ -9,6 +9,7 @@ import shutil
 import sys
 import tomllib
 from collections.abc import Awaitable, Callable
+from contextlib import AsyncExitStack, suppress
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -273,17 +274,18 @@ async def _stdio_session(
 
     env, missing_env = _merged_env(spec)
     params = StdioServerParameters(command=command, args=[str(arg) for arg in spec.get("args") or []], env=env)
-    completed = False
+    stack = AsyncExitStack()
     try:
-        async with stdio_client(params) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-                await body(session, missing_env)
-                completed = True
+        read, write = await stack.enter_async_context(stdio_client(params))
+        session = await stack.enter_async_context(ClientSession(read, write))
+        await session.initialize()
+        await body(session, missing_env)
     except Exception:
-        if completed:
-            return
+        with suppress(Exception):
+            await stack.aclose()
         raise
+    with suppress(Exception):
+        await stack.aclose()
 
 
 async def _http_session(
@@ -296,17 +298,18 @@ async def _http_session(
     url = str(spec.get("url") or "")
     if not url:
         raise ProbeFailure("missing url")
-    completed = False
+    stack = AsyncExitStack()
     try:
-        async with streamablehttp_client(url) as (read, write, _):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-                await body(session, [])
-                completed = True
+        read, write, _ = await stack.enter_async_context(streamablehttp_client(url))
+        session = await stack.enter_async_context(ClientSession(read, write))
+        await session.initialize()
+        await body(session, [])
     except Exception:
-        if completed:
-            return
+        with suppress(Exception):
+            await stack.aclose()
         raise
+    with suppress(Exception):
+        await stack.aclose()
 
 
 async def _probe_server(
