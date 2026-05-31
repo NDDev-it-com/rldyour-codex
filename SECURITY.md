@@ -51,7 +51,10 @@ These targets are best-effort and not contractual.
 - **OpenSSF Scorecard** runs weekly and on push to `main`. Results are uploaded to the Security tab as SARIF and published to `scorecard.dev` for the public Scorecard badge.
 - **Dependency Review** runs on pull requests through `actions/dependency-review-action` with `fail-on-severity: high` and a license allow-list compatible with AGPL-3.0-or-later.
 - **Dependabot** is enabled for vulnerability alerts and automated security updates, plus a weekly GitHub Actions update schedule.
-- **GitHub Secret Scanning** and **Secret Scanning Push Protection** are managed at the organization level (`NDDev-it-com`); when enabled by the org owner, they protect this repository automatically.
+- **GitHub Secret Scanning** runs automatically for public repositories. Secret
+  Scanning Push Protection and related live repository settings are required
+  public-adapter controls and are verified from the private root control plane
+  when an owner token is available.
 - No-paid static security gates use ShellCheck, Pyright, Semgrep CLI, action pin validation, repository text security scanning, and custom repository validators.
 - Semgrep excludes only the `bash.lang.security.ifs-tampering.ifs-tampering` rule because the repository intentionally uses `IFS=$'\n\t'` as part of its strict shell prologue and validates shell scripts separately with ShellCheck.
 - Release bundles use deterministic archives, release manifests, generated SPDX 2.3 SBOMs, GitHub artifact attestations, and (when available) GitHub dependency-graph SBOM export.
