@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-31
 Last verified: 2026-05-31
-Last commit: 1252b518c85b3d3ea359109062c6d804696ef7f7 chore(release): codex 1.1.14 (other)
+Last commit: 1967439fb622dd7617160607e332cedd534b6b0e chore(release): codex 1.1.15 (other)
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -22,12 +22,12 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-31
-- commit: `1252b518c85b3d3ea359109062c6d804696ef7f7`
+- commit: `1967439fb622dd7617160607e332cedd534b6b0e`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Current Codex product/config version is `1.1.14`; root control-plane pins must
-  reference commit `1252b518c85b3d3ea359109062c6d804696ef7f7`, and plugin
+- Current Codex product/config version is `1.1.15`; root control-plane pins must
+  reference commit `1967439fb622dd7617160607e332cedd534b6b0e`, and plugin
   manifest versions must match the adapter `VERSION`.
 - The audited marketplace metadata blocker is closed in current source:
   `scripts/codex_openai_metadata_policy.py` is the shared policy for direct
@@ -45,7 +45,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:1252b518c85b3d3ea359109062c6d804696ef7f7`
+- `commit:1967439fb622dd7617160607e332cedd534b6b0e`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`
@@ -87,7 +87,7 @@ verified current technical debt
 - Historical public metadata wording drift was closed at
   `d35c3c90d7341d5ab9c94b868bfe47bb41858c74`.
 - Historical Semgrep MCP freshness drift was closed for Codex at
-  `semgrep==1.164.0`, and shadcn MCP freshness was closed at `shadcn@4.8.2`.
+  `semgrep==1.164.0`, and shadcn MCP freshness was closed at `shadcn@4.9.0`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.

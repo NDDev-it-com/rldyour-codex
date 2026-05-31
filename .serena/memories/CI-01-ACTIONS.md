@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-31
 Last verified: 2026-05-31
-Last commit: 1252b518c85b3d3ea359109062c6d804696ef7f7 chore(release): codex 1.1.14 (other)
+Last commit: 1967439fb622dd7617160607e332cedd534b6b0e chore(release): codex 1.1.15 (other)
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -22,7 +22,7 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-05-31
-- commit: `1252b518c85b3d3ea359109062c6d804696ef7f7`
+- commit: `1967439fb622dd7617160607e332cedd534b6b0e`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -36,7 +36,7 @@ GitHub Actions and local CI policy
   branch-protection contexts were removed in commit `67e05455d3e35449d070874257acdfa13520f886`.
 
 ## Evidence
-- `commit:1252b518c85b3d3ea359109062c6d804696ef7f7`
+- `commit:1967439fb622dd7617160607e332cedd534b6b0e`
 - `path:.github/workflows`
 - `path:.github/dependabot.yml`
 - `path:README.md`

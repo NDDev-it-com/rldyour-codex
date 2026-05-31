@@ -20,6 +20,6 @@ if [ -z "$UV_BIN" ]; then
   exit 1
 fi
 
-MCP_PYTHON_SDK_VERSION=${MCP_PYTHON_SDK_VERSION:-1.27.1}
+MCP_PYTHON_SDK_VERSION=${MCP_PYTHON_SDK_VERSION:-1.27.2}
 
 exec "$UV_BIN" run --with "mcp==${MCP_PYTHON_SDK_VERSION}" python "$ROOT/scripts/smoke_mcp_capabilities.py" --root "$ROOT" "$@"

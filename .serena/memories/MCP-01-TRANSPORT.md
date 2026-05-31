@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-31
 Last verified: 2026-05-31
-Last commit: 1252b518c85b3d3ea359109062c6d804696ef7f7 chore(release): codex 1.1.14 (other)
+Last commit: 1967439fb622dd7617160607e332cedd534b6b0e chore(release): codex 1.1.15 (other)
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -22,7 +22,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-31
-- commit: `1252b518c85b3d3ea359109062c6d804696ef7f7`
+- commit: `1967439fb622dd7617160607e332cedd534b6b0e`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -34,7 +34,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`, the MCP source manifest, and all managed
   agent disabled specialist-MCP transport metadata.
 - Semgrep MCP is pinned to `semgrep==1.164.0` and shadcn MCP is pinned to
-  `shadcn@4.8.2` in `config/mcp-runtime-versions.env`,
+  `shadcn@4.9.0` in `config/mcp-runtime-versions.env`,
   `plugins/rldyour-mcps/.mcp.json`, and all managed agent disabled
   specialist-MCP transport metadata.
 - Dart/Flutter MCP is provided by the local Dart SDK. On Dart SDK `3.12.0`,
@@ -43,7 +43,7 @@ MCP runtime transport and pin policy
   not a global smoke requirement.
 
 ## Evidence
-- `commit:1252b518c85b3d3ea359109062c6d804696ef7f7`
+- `commit:1967439fb622dd7617160607e332cedd534b6b0e`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/smoke_mcp_capabilities.py`
