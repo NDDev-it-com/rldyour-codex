@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-31
 Last verified: 2026-05-31
-Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
+Last commit: 1252b518c85b3d3ea359109062c6d804696ef7f7 chore(release): codex 1.1.14 (other)
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -22,7 +22,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-31
-- commit: `67e05455d3e35449d070874257acdfa13520f886`
+- commit: `1252b518c85b3d3ea359109062c6d804696ef7f7`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -43,7 +43,7 @@ MCP runtime transport and pin policy
   not a global smoke requirement.
 
 ## Evidence
-- `commit:67e05455d3e35449d070874257acdfa13520f886`
+- `commit:1252b518c85b3d3ea359109062c6d804696ef7f7`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:scripts/smoke_mcp_capabilities.py`

@@ -1,0 +1,71 @@
+name: cross-platform
+
+# Free public standard-runner portability smoke. Runtime-heavy Codex/MCP jobs
+# stay in validate.yml on Ubuntu, while this workflow proves repository
+# metadata and Python validators are portable across the standard public
+# Ubuntu, Windows, and macOS runner families.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '20 4 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cross-platform-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: cross-platform smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.13'
+
+      - name: Cross-platform metadata smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import compileall
+          import json
+
+          required = [
+              "VERSION",
+              "README.md",
+              ".agents/plugins/marketplace.json",
+              ".github/branch-protection/main.json",
+              ".github/branch-protection/fullrepo.json",
+          ]
+          missing = [path for path in required if not Path(path).exists()]
+          if missing:
+              raise SystemExit("missing required path(s): " + ", ".join(missing))
+
+          json.loads(Path(".agents/plugins/marketplace.json").read_text(encoding="utf-8"))
+          json.loads(Path(".github/branch-protection/main.json").read_text(encoding="utf-8"))
+          json.loads(Path(".github/branch-protection/fullrepo.json").read_text(encoding="utf-8"))
+
+          if not compileall.compile_dir("scripts", quiet=1):
+              raise SystemExit("scripts/ Python compile failed")
+          print("cross-platform metadata smoke passed")
+          PY

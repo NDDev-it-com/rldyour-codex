@@ -41,10 +41,11 @@ GitHub Actions writes:
 - failure diagnostic artifacts under `diagnostics/ci`;
 - standard workflow logs for validation, doctor, bootstrap, and dependency checks.
 
-The `validate` workflow uses Ubuntu standard runners only under the owner
-zero-paid-risk public adapter policy. It exposes `fast`, `runtime`, `release`,
-`mcp`, and `full` scopes so an agent can run exactly the requested gate instead
-of running every gate on every push.
+The `cross-platform` workflow runs a lightweight public/free smoke on standard
+Ubuntu, Windows, and macOS GitHub-hosted runners. The heavier `validate`
+workflow keeps Ubuntu as its runtime host and exposes `fast`, `runtime`,
+`release`, `mcp`, and `full` scopes so an agent can run exactly the requested
+gate instead of running every gate on every push.
 
 The manual `dependency-check` workflow and the `validate` workflow's `mcp`/`full` scopes upload `dependency-check.json` for MCP pin freshness diagnostics.
 

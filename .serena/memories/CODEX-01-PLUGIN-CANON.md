@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-31
 Last verified: 2026-05-31
-Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
+Last commit: 1252b518c85b3d3ea359109062c6d804696ef7f7 chore(release): codex 1.1.14 (other)
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -22,7 +22,7 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-05-31
-- commit: `67e05455d3e35449d070874257acdfa13520f886`
+- commit: `1252b518c85b3d3ea359109062c6d804696ef7f7`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -42,7 +42,7 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.13`; the version bump is recorded in
+- Current product/config version is `1.1.14`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
 - All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.13`
@@ -58,7 +58,7 @@ Codex adapter implementation surface
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:67e05455d3e35449d070874257acdfa13520f886`
+- `commit:1252b518c85b3d3ea359109062c6d804696ef7f7`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`
@@ -97,7 +97,7 @@ Codex adapter implementation surface
 - Commit `818d3c19388978564b29724488678cd803b99867` moved the adapter to
   `1.0.3`, aligned active descriptions with the root
   `config/repository-description-policy.json` template, kept plugin manifest
-  versions in parity with `VERSION`, and published GitHub Release `1.1.13`.
+  versions in parity with `VERSION`, and published GitHub Release `1.1.14`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.
