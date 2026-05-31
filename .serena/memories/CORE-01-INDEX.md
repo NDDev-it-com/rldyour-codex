@@ -31,7 +31,7 @@ repository identity and source-of-truth map
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 - Current product/config version is `1.1.12`; root control-plane must pin
   `6daebd91be6351fe76b0cb5b3d060917b5faec58` for this adapter after the
-  Codex plugin-cache alias sync release.
+  public free CI coverage and release metadata sync.
 
 ## Evidence
 - `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
