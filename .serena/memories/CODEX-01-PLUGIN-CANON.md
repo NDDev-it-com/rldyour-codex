@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -21,8 +21,8 @@ Codex adapter implementation surface
 - `path:.agents/plugins/marketplace.json`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- date: 2026-05-31
+- commit: `67e05455d3e35449d070874257acdfa13520f886`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -42,24 +42,23 @@ Codex adapter implementation surface
 - `scripts/validate_instruction_docs.py` scans active instruction surfaces for
   stale Codex/OpenCode claims such as `[features].plugin_hooks = true`,
   `:danger-no-sandbox`, and current-pin wording drift.
-- Current product/config version is `1.1.12`; the version bump is recorded in
+- Current product/config version is `1.1.13`; the version bump is recorded in
   `VERSION`, `pyproject.toml`, `uv.lock`, and `CHANGELOG.md` without changing
   MCP, hook, or managed-agent runtime semantics.
-- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.12`
+- All `plugins/*/.codex-plugin/plugin.json` manifests record the same `1.1.13`
   version as `VERSION`; `scripts/validate_plugin_versions.py` enforces this
   release-coordinate parity and requires user-facing plugin manifest metadata
   to stay Russian-first and English-compatible.
-- Commit `6daebd91be6351fe76b0cb5b3d060917b5faec58` moves the adapter to
-  `1.1.12`, keeps plugin manifest versions in parity with `VERSION`, keeps
-  GitHub MCP token access through Codex `env_vars`, keeps managed subagent
-  descriptions Russian-first, keeps `ry-start` reviewer fanout explicit
-  opt-in, and makes installer/doctor/marketplace plugin-cache validation cover
-  both versioned cache directories and active `local` aliases.
+- Commit `67e05455d3e35449d070874257acdfa13520f886` moves the adapter to
+  `1.1.13`, keeps plugin manifest versions in parity with `VERSION`, removes
+  hosted macOS jobs from default public adapter CI, and removes macOS required
+  branch-protection contexts while preserving Codex-native plugin, MCP, hook,
+  managed-agent, and owner-yolo runtime semantics.
 - `scripts/validate_instruction_docs.py` also scans `.serena/research/*.md`
   for current-tense stale `plugin_hooks` claims unless the research file has a
   `SUPERSEDED` banner.
 ## Evidence
-- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- `commit:67e05455d3e35449d070874257acdfa13520f886`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:references/codex-surface-adoption.md`
@@ -98,7 +97,7 @@ Codex adapter implementation surface
 - Commit `818d3c19388978564b29724488678cd803b99867` moved the adapter to
   `1.0.3`, aligned active descriptions with the root
   `config/repository-description-policy.json` template, kept plugin manifest
-  versions in parity with `VERSION`, and published GitHub Release `1.1.3`.
+  versions in parity with `VERSION`, and published GitHub Release `1.1.13`.
 
 ## Update policy
 Update after verified changes to the referenced source-of-truth files.

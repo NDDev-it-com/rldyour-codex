@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -21,13 +21,13 @@ verified current technical debt
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- date: 2026-05-31
+- commit: `67e05455d3e35449d070874257acdfa13520f886`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Current Codex product/config version is `1.1.12`; root control-plane pins must
-  reference commit `6daebd91be6351fe76b0cb5b3d060917b5faec58`, and plugin
+- Current Codex product/config version is `1.1.13`; root control-plane pins must
+  reference commit `67e05455d3e35449d070874257acdfa13520f886`, and plugin
   manifest versions must match the adapter `VERSION`.
 - The audited marketplace metadata blocker is closed in current source:
   `scripts/codex_openai_metadata_policy.py` is the shared policy for direct
@@ -45,7 +45,7 @@ verified current technical debt
   proves it is still open.
 
 ## Evidence
-- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- `commit:67e05455d3e35449d070874257acdfa13520f886`
 - `path:README.md`
 - `path:CHANGELOG.md`
 - `path:references/codex-surface-adoption.md`

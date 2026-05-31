@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-31
 Last verified: 2026-05-31
-Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
+Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
 Scope: architecture decisions and owner-approved policy changes
 Area: ADR
 -->
@@ -16,7 +16,7 @@ architecture decisions and owner-approved policy changes
 
 ## Last verified
 - date: 2026-05-31
-- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- commit: `67e05455d3e35449d070874257acdfa13520f886`
 - checked by: Codex ry-start memory freshness repair
 
 ## Facts
@@ -24,7 +24,7 @@ architecture decisions and owner-approved policy changes
 - Current Codex adapter ADRs live under `docs/adr`.
 
 ## Evidence
-- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- `commit:67e05455d3e35449d070874257acdfa13520f886`
 - `path:docs/adr`
 
 ## Known pitfalls

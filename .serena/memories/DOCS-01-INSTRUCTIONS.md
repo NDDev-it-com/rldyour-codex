@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -25,8 +25,8 @@ instruction docs and durable operator documentation
 - `path:system/AGENTS.md`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- date: 2026-05-31
+- commit: `67e05455d3e35449d070874257acdfa13520f886`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -39,7 +39,7 @@ instruction docs and durable operator documentation
   bloating AGENTS context.
 
 ## Evidence
-- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- `commit:67e05455d3e35449d070874257acdfa13520f886`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`

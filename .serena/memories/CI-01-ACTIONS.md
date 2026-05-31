@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -21,8 +21,8 @@ GitHub Actions and local CI policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- date: 2026-05-31
+- commit: `67e05455d3e35449d070874257acdfa13520f886`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -30,9 +30,13 @@ GitHub Actions and local CI policy
 - GitHub Actions workflows pin third-party actions to full commit SHAs. Dependabot
   monitors `github-actions` monthly and groups all action version updates into a
   single PR through `.github/dependabot.yml`.
+- Public adapter CI now follows the owner zero-paid-risk runner policy:
+  default, required, scheduled, and release workflows use Ubuntu standard
+  runners only. The former manual macOS `validate` jobs and macOS required
+  branch-protection contexts were removed in commit `67e05455d3e35449d070874257acdfa13520f886`.
 
 ## Evidence
-- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- `commit:67e05455d3e35449d070874257acdfa13520f886`
 - `path:.github/workflows`
 - `path:.github/dependabot.yml`
 - `path:README.md`

@@ -3,9 +3,7 @@
   "maintainer_access": "maintainer can administer; required checks still apply to pushes",
   "required_status_checks": [
     "Fast validation (ubuntu)",
-    "Fast validation (macos)",
     "Runtime smoke (ubuntu)",
-    "Runtime smoke (macos)",
     "Release dry-run",
     "MCP runtime pin freshness",
     "No-paid static security",

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-31
 Last verified: 2026-05-31
-Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
+Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -19,12 +19,12 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-31
-- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- commit: `67e05455d3e35449d070874257acdfa13520f886`
 - checked by: Codex ry-start enterprise hardening
 
 ## Facts
-- Current Codex product/config version is `1.1.12`; root control-plane pins
-  must reference commit `6daebd91be6351fe76b0cb5b3d060917b5faec58` for this
+- Current Codex product/config version is `1.1.13`; root control-plane pins
+  must reference commit `67e05455d3e35449d070874257acdfa13520f886` for this
   adapter.
 - `VERSION`, `CHANGELOG.md`, `pyproject.toml`, `uv.lock`, and every
   `plugins/*/.codex-plugin/plugin.json` manifest must keep the same publishable
@@ -44,7 +44,7 @@ release readiness, versioning, and artifact hygiene
   prerequisites are available.
 
 ## Evidence
-- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- `commit:67e05455d3e35449d070874257acdfa13520f886`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:plugins/*/.codex-plugin/plugin.json`

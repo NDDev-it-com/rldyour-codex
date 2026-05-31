@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 67e05455d3e35449d070874257acdfa13520f886 ci: enforce ubuntu-only public runners
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -23,8 +23,8 @@ deterministic hook lifecycle behavior
 - `path:scripts/smoke_codex_hook_listing.py`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- date: 2026-05-31
+- commit: `67e05455d3e35449d070874257acdfa13520f886`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   `plugins/cache/rldyour-codex/<plugin>/local/hooks.json` source paths.
 
 ## Evidence
-- `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
+- `commit:67e05455d3e35449d070874257acdfa13520f886`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
 - `path:scripts/smoke_codex_hook_listing.py`
