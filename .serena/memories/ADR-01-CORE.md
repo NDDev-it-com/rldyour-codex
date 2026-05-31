@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
+Last updated: 2026-05-31
+Last verified: 2026-05-31
 Last commit: 6daebd91be6351fe76b0cb5b3d060917b5faec58 ci: align public free CI coverage
 Scope: architecture decisions and owner-approved policy changes
 Area: ADR
@@ -14,17 +14,14 @@ architecture decisions and owner-approved policy changes
 ## Current source of truth
 - `path:docs/adr`
 
-
-## Source Of Truth
-- `path:docs/adr`
-
 ## Last verified
-- date: 2026-05-30
+- date: 2026-05-31
 - commit: `6daebd91be6351fe76b0cb5b3d060917b5faec58`
-- checked by: Codex ry-start automated release and metadata sync
+- checked by: Codex ry-start memory freshness repair
 
 ## Facts
 - ADR memories record decisions and policy shape. Meaning changes require explicit owner approval.
+- Current Codex adapter ADRs live under `docs/adr`.
 
 ## Evidence
 - `commit:6daebd91be6351fe76b0cb5b3d060917b5faec58`
@@ -39,13 +36,11 @@ ADR meaning changes require explicit owner approval; format-only normalization m
 ## Delete / merge policy
 - Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
 
-## Cross-References
-- `CORE-01-INDEX.md`
-- `CONTEXT-01-CORE.md`
-- `PATTERNS-01-CANONICAL.md`
-
 ## Applies to
 - The scope declared in this memory and the source-of-truth paths listed below.
+
+## Source of truth
+- The `Current source of truth` section above, plus current code/config/tests/git state for the scoped repository.
 
 ## Invariants
 - Code, configuration, tests, and git state override this memory when they disagree.
