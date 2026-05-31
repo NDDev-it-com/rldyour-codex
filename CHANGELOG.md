@@ -7,11 +7,17 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.14] - 2026-05-31
+
+### Changed
+
+- Correct public-free GitHub Actions runner coverage and CI policy.
+
 ## [1.1.13] - 2026-05-31
 
 ### Changed
 
-- Align public adapter CI with Ubuntu-only zero-paid-risk runner policy.
+- Align public adapter CI with the then-current standard-runner cost guardrail.
 
 ## [1.1.12] - 2026-05-30
 
