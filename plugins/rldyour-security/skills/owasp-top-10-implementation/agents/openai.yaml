@@ -7,8 +7,5 @@ dependencies:
   - type: mcp
     value: serena
     description: 'Семантика Serena. EN: code symbols, refs, memory.'
-  - type: mcp
-    value: semgrep
-    description: 'Скан Semgrep. EN: static security analysis.'
 policy:
   allow_implicit_invocation: true

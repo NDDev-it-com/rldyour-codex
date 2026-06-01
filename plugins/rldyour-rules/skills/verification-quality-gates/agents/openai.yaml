@@ -10,8 +10,5 @@ dependencies:
   - type: mcp
     value: playwright
     description: 'Браузерные flows. EN: screenshots and assertions.'
-  - type: mcp
-    value: semgrep
-    description: 'Скан Semgrep. EN: static security analysis.'
 policy:
   allow_implicit_invocation: true
