@@ -560,6 +560,11 @@ if "unified_exec" not in existing_features and isinstance(existing_data.get("exp
 out.append("")
 
 
+def add_blank() -> None:
+    if out and out[-1] != "":
+        out.append("")
+
+
 def append_managed_features() -> None:
     global hooks_written, multi_agent_written
     if not hooks_written:
@@ -599,6 +604,29 @@ def is_managed_header(header: str, header_path: list[str]) -> bool:
         and header_path[1] in {"rldyour-safe", "rldyour-yolo"}
     )
 
+
+def append_preserved_toml_table(header_path: list[str], table: dict[object, object]) -> None:
+    scalar_items: list[tuple[str, object]] = []
+    nested_items: list[tuple[str, dict[object, object]]] = []
+    for key, value in table.items():
+        key_text = str(key)
+        if isinstance(value, dict):
+            nested_items.append((key_text, value))
+        else:
+            scalar_items.append((key_text, value))
+
+    add_blank()
+    out.append("[" + ".".join(toml_key(str(segment)) for segment in header_path) + "]")
+    for key, value in scalar_items:
+        out.append(f"{toml_key(key)} = {toml_value(value)}")
+    for key, value in nested_items:
+        append_preserved_toml_table([*header_path, key], value)
+
+
+def should_drop_mcp_server_name(server_name: str) -> bool:
+    return server_name in retired_mcp_servers or server_name in mcp_servers
+
+
 for raw_line in existing.splitlines():
     if raw_line.strip() == SCHEMA_COMMENT:
         continue
@@ -633,6 +661,33 @@ for raw_line in existing.splitlines():
             continue
         if len(key_path) == 1 and key_path[0] in deprecated_root_keys:
             continue
+        if len(key_path) >= 2 and key_path[0] == "mcp_servers" and should_drop_mcp_server_name(key_path[1]):
+            continue
+        if len(key_path) == 1 and key_path[0] == "mcp_servers":
+            try:
+                inline_mcp_servers = tomllib.loads(raw_line).get("mcp_servers") or {}
+            except Exception as exc:
+                raise SystemExit(
+                    "Could not safely migrate inline mcp_servers assignment in "
+                    f"{config_path}: {exc}. Rewrite it as [mcp_servers.<name>] tables "
+                    "or restore an installer backup before running install_system_codex.sh."
+                )
+            if not isinstance(inline_mcp_servers, dict):
+                raise SystemExit(
+                    f"{config_path}: mcp_servers inline assignment must be a table "
+                    "so retired/managed servers can be migrated safely."
+                )
+            for server, spec in inline_mcp_servers.items():
+                server_name = str(server)
+                if should_drop_mcp_server_name(server_name):
+                    continue
+                if not isinstance(spec, dict):
+                    raise SystemExit(
+                        f"{config_path}: mcp_servers.{server_name} must be a table "
+                        "so it can be preserved while managed servers are regenerated."
+                    )
+                append_preserved_toml_table(["mcp_servers", server_name], spec)
+            continue
         if len(key_path) == 1 and key_path[0] == "features":
             try:
                 inline_features = tomllib.loads(raw_line).get("features") or {}
@@ -659,6 +714,12 @@ for raw_line in existing.splitlines():
             if not memories_external_context_written:
                 out.append(f"memories.disable_on_external_context = {key_info[1]}")
                 memories_external_context_written = True
+            continue
+
+    if current_header and split_toml_key(current_header) == ["mcp_servers"]:
+        key_info = assignment_key_path(raw_line)
+        key_path = key_info[0] if key_info else []
+        if key_path and should_drop_mcp_server_name(key_path[0]):
             continue
 
     if in_features:
@@ -701,10 +762,6 @@ if in_features:
 
 while out and out[-1] == "":
     out.pop()
-
-def add_blank() -> None:
-    if out and out[-1] != "":
-        out.append("")
 
 if not features_table_seen:
     append_features_block()
