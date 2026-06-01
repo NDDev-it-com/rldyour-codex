@@ -298,6 +298,8 @@ mcp_servers = sorted(json.loads(mcp_config_path.read_text(encoding="utf-8"))["mc
 configured_mcp_servers = config_data.get("mcp_servers") or {}
 for server in mcp_servers:
     checks.append((f"mcp configured {server}", server in configured_mcp_servers))
+for server in ("semgrep",):
+    checks.append((f"retired MCP absent {server}", server not in configured_mcp_servers))
 
 tool_approvals = {
     "sequential-thinking": {"sequentialthinking": "approve"},

@@ -310,6 +310,7 @@ mcp_tool_approvals = {
     },
     "grep": {"searchGitHub": "approve"},
 }
+retired_mcp_servers = {"semgrep"}
 
 managed_agents = []
 for agent_path in sorted(system_agent_dir.glob("*.toml")):
@@ -587,6 +588,8 @@ def is_rldyour_plugin_header(header_path: list[str]) -> bool:
 
 def is_managed_header(header: str, header_path: list[str]) -> bool:
     if header in managed_headers:
+        return True
+    if len(header_path) >= 2 and header_path[0] == "mcp_servers" and header_path[1] in retired_mcp_servers:
         return True
     if len(header_path) >= 2 and header_path[0] == "mcp_servers" and header_path[1] in mcp_servers:
         return True
