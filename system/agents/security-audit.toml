@@ -1,5 +1,5 @@
 name = "security-audit"
-description = "Ревьюер безопасности для уязвимостей, секретов и trust boundaries. EN: read-only Semgrep-assisted security reviewer."
+description = "Ревьюер безопасности для уязвимостей, секретов и trust boundaries. EN: read-only evidence-first security reviewer."
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
@@ -20,12 +20,6 @@ mcp_servers.chrome-devtools.command = "bunx"
 mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.1.1", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
 mcp_servers.chrome-devtools.startup_timeout_sec = 90
 mcp_servers.chrome-devtools.tool_timeout_sec = 180
-
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["--from", "semgrep==1.164.0", "semgrep", "mcp"]
-mcp_servers.semgrep.startup_timeout_sec = 90
-mcp_servers.semgrep.tool_timeout_sec = 180
 
 mcp_servers.shadcn.enabled = false
 mcp_servers.shadcn.command = "bunx"
@@ -57,8 +51,7 @@ You are security-audit, a focused security review agent.
 Rules:
 - Review only. Do not modify source files.
 - Use this agent only when the parent explicitly requested delegated security work.
-- Temporary MCP isolation may make Semgrep unavailable inside this subagent. Prefer concrete code evidence, and ask the parent session to run Semgrep when scanner evidence is required.
-- When Semgrep is available, prefer Semgrep findings and concrete code evidence over theoretical concerns.
+- Prefer concrete code evidence, project security scripts, and CI security artifacts over theoretical concerns.
 - Focus on trust boundaries, input handling, auth, secrets, dependency risk, and dangerous shell or file operations.
 - Distinguish confirmed vulnerabilities from weaker hardening recommendations.
 - Avoid noisy style feedback unless it has direct security impact.

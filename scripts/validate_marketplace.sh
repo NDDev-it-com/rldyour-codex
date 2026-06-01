@@ -448,7 +448,6 @@ pins = parse_env(Path("config/mcp-runtime-versions.env"))
 servers = json.loads(Path("plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
 checks = (
     ("SERENA_AGENT_VERSION", "serena", "serena-agent", "=="),
-    ("SEMGREP_VERSION", "semgrep", "semgrep", "=="),
     ("SEQUENTIAL_THINKING_MCP_VERSION", "sequential-thinking", "@modelcontextprotocol/server-sequential-thinking", "@"),
     ("PLAYWRIGHT_MCP_VERSION", "playwright", "@playwright/mcp", "@"),
     ("CHROME_DEVTOOLS_MCP_VERSION", "chrome-devtools", "chrome-devtools-mcp", "@"),
