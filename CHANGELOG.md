@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.20] - 2026-06-01
+
+### Fixed
+
+- Remove retired Semgrep MCP entries from installed Codex runtime config during system install.
+
 ## [1.1.19] - 2026-06-01
 
 ### Changed
