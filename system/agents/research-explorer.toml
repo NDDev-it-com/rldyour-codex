@@ -22,12 +22,6 @@ mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.1.1", "--headless", "
 mcp_servers.chrome-devtools.startup_timeout_sec = 90
 mcp_servers.chrome-devtools.tool_timeout_sec = 180
 
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["--from", "semgrep==1.164.0", "semgrep", "mcp"]
-mcp_servers.semgrep.startup_timeout_sec = 90
-mcp_servers.semgrep.tool_timeout_sec = 180
-
 mcp_servers.shadcn.enabled = false
 mcp_servers.shadcn.command = "bunx"
 mcp_servers.shadcn.args = ["shadcn@4.9.0", "mcp"]

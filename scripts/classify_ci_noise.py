@@ -56,9 +56,7 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         re.compile(
             r"Context7 Documentation MCP Server .* running on stdio|"
             r"Sequential Thinking MCP Server running on stdio|"
-            r"Starting Semgrep MCP server version|"
             r"Tracing initialized|"
-            r"get_supported_languages succeeded|"
             r"\(Use `node --trace-warnings \.\.\.` to show where the warning was created\)"
         ),
         "MCP servers print startup banners and successful safe-call traces to stderr.",
