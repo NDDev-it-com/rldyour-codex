@@ -154,7 +154,7 @@ explicit policy decision. Managed subagent roles in
 `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
 `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
 
-Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `semgrep`, `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit security, design, browser, Flutter, or shadcn work.
+Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit design, browser, Flutter, or shadcn work.
 
 Managed execpolicy rules in `system/rules/*.rules` install to `~/.codex/rules/` and are validated with `codex execpolicy check`. They add hard rails for root deletion, direct forced Git pushes, secret-key disclosure, and release/deploy side effects without changing the maintainer-required permission defaults.
 
