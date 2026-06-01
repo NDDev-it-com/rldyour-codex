@@ -8,9 +8,6 @@ dependencies:
     value: serena
     description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
-    value: semgrep
-    description: 'Скан Semgrep. EN: static security analysis.'
-  - type: mcp
     value: context7
     description: 'Документация Context7. EN: current library/API docs.'
 policy:

@@ -67,6 +67,6 @@ For ordinary implementation, keep security comments short and actionable:
 - `Security comments`: only relevant high-signal notes.
 - `Applied fixes`: security improvements already implemented.
 - `Residual risks`: real risks outside current scope or requiring owner decision.
-- `Suggested verification`: exact tests, lint, Semgrep, manual checks, or review steps.
+- `Suggested verification`: exact tests, lint, project security scripts, CI security artifacts, manual checks, or review steps.
 
 If there are no meaningful security notes, say that briefly and do not invent risks.

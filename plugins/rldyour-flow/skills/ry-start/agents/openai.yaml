@@ -22,8 +22,5 @@ dependencies:
   - type: mcp
     value: chrome-devtools
     description: 'Браузерный DevTools. EN: console, network, DOM.'
-  - type: mcp
-    value: semgrep
-    description: 'Скан Semgrep. EN: static security analysis.'
 policy:
   allow_implicit_invocation: true
