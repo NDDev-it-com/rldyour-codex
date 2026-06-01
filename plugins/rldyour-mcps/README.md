@@ -57,7 +57,6 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | `deepwiki` | Repository documentation and explanations | remote URL |
 | `grep` | Search across public GitHub repositories | remote URL |
 | `github` | GitHub repositories, issues, pull requests, users, and context | `github-mcp-server stdio`, `GITHUB_PERSONAL_ACCESS_TOKEN` |
-| `semgrep` | Static analysis and security checks | `uvx --from semgrep==1.164.0 semgrep mcp` |
 | `shadcn` | shadcn/ui registry work | `bunx` |
 | `dart-flutter` | Dart/Flutter MCP for Dart and Flutter projects | `dart` |
 | `figma` | Figma design context | remote URL, OAuth |
@@ -109,7 +108,6 @@ Expected state:
 - `playwright` starts through `bunx` with `--caps=network,storage,testing,devtools`.
 - `figma` uses OAuth.
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
-- `semgrep` starts through the current official `semgrep mcp`, not the archived `semgrep-mcp`.
 - `openaiDeveloperDocs` uses the official OpenAI Docs MCP endpoint for OpenAI and Codex product documentation.
 - Runtime smoke checks remote URL servers with a Streamable HTTP `initialize` POST preflight. Auth-gated endpoints may return `401`/`403`; `405` is treated as a GET/SSE compatibility signal, not a passing POST result.
 - Local MCP servers do not use `npx`, `npm`, or direct `node` commands.
@@ -157,8 +155,6 @@ If the dashboard is needed manually, change this runtime policy intentionally an
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - DeepWiki MCP: https://mcp.deepwiki.com/
 - Grep by Vercel: https://vercel.com/blog/grep-a-million-github-repositories-via-mcp-1H5Bmvo4XKswf0TpZIOmEI
-- Semgrep MCP: https://semgrep.dev/docs/mcp
-- Semgrep MCP legacy repo: https://github.com/semgrep/mcp
 - shadcn MCP: https://ui.shadcn.com/docs/mcp
 - Dart/Flutter MCP: https://docs.flutter.dev/ai/mcp-server
 - Figma MCP: https://help.figma.com/hc/en-us/articles/39888629089175-Codex-and-Figma-Set-up-the-MCP-server

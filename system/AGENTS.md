@@ -50,7 +50,7 @@ OpenAI Docs MCP before general web search when it is available.
 - Repo architecture: DeepWiki/source reads when appropriate.
 - Planning: Sequential Thinking when available for non-trivial decisions.
 - Browser-visible changes: Playwright MCP and/or Chrome DevTools MCP validation.
-- Security-sensitive changes: Semgrep plus manual review where applicable.
+- Security-sensitive changes: project security scripts, CI security artifacts, and manual review where applicable.
 
 ## Codex System Contract
 
