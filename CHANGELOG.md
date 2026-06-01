@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.19] - 2026-06-01
+
+### Changed
+
+- Remove the retired Semgrep MCP server from active adapter runtime, agent, and generated tool surfaces.
+
 ## [1.1.18] - 2026-06-01
 
 ### Security
