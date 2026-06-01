@@ -6,11 +6,12 @@ Security reporting covers this repository's Codex marketplace, plugin manifests,
 
 ## Supported Versions
 
-Only the latest released minor line receives security fixes. Older releases are out of scope.
+Only the current numeric product release line receives security fixes. The
+current supported line is `1.1.x`; older releases are out of scope.
 
 | Version | Supported |
 | --- | --- |
-| Latest minor (e.g. `0.4.x`) | Yes |
+| Current `1.1.x` | Yes |
 | Previous releases | No |
 
 ## Reporting A Vulnerability
@@ -46,9 +47,9 @@ These targets are best-effort and not contractual.
 ## Baseline Controls
 
 - External GitHub Actions are pinned to full commit SHAs. `scripts/validate_action_pins.py` enforces this in CI.
-- CI uses least-privilege `GITHUB_TOKEN` permissions by default. Release jobs request `contents: write`, `id-token: write`, and `attestations: write`. CodeQL and Scorecard jobs request `security-events: write`.
+- CI uses least-privilege `GITHUB_TOKEN` permissions by default. Release jobs request `contents: write`, `id-token: write`, and `attestations: write`. CodeQL jobs request `security-events: write`.
 - **GitHub CodeQL** runs on every push and pull request for Python and GitHub Actions languages with the `security-and-quality` query suite.
-- **OpenSSF Scorecard** runs weekly and on push to `main`. Results are uploaded to the Security tab as SARIF and published to `scorecard.dev` for the public Scorecard badge.
+- **OpenSSF Scorecard** runs weekly and on push to `main` in JSON artifact/check mode, with public results published to `scorecard.dev` for the public Scorecard badge.
 - **Dependency Review** runs on pull requests through `actions/dependency-review-action` with `fail-on-severity: high` and a license allow-list compatible with AGPL-3.0-or-later.
 - **Dependabot** is enabled for vulnerability alerts and automated security updates, plus a weekly GitHub Actions update schedule.
 - **GitHub Secret Scanning** runs automatically for public repositories. Secret
