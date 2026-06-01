@@ -20,7 +20,7 @@ runner labels and keep third-party actions pinned to full commit SHAs.
 
 | Workflow | Trigger | Purpose |
 | --- | --- | --- |
-| `scorecard.yml` | push, weekly, manual, branch-protection changes | OpenSSF Scorecard SARIF and code-scanning upload. |
+| `scorecard.yml` | push, weekly, manual, branch-protection changes | OpenSSF Scorecard JSON artifact/check-mode supply-chain signal. |
 | `dependency-check.yml` | daily, config changes, manual | MCP/runtime pin freshness and dependency report. |
 | `labeler.yml` | pull requests | Unprivileged PR labels, skipped for forks. |
 

@@ -192,12 +192,13 @@ python3 scripts/validate_instruction_docs.py --require-agent-docs
 
 GitHub Actions run automatically on this public repository:
 
-- `validate.yml`: on every push to `main` and every pull request targeting `main`, runs fast validation on Ubuntu and macOS, runtime smoke on Ubuntu and macOS, release dry-run, MCP runtime pin freshness, and MCP safe-call smoke. `workflow_dispatch` is available for narrower scopes.
+- `validate.yml`: on every push to `main` and every pull request targeting `main`, runs Ubuntu-hosted fast validation, optional runtime/release/MCP scopes, MCP runtime pin freshness, and MCP safe-call smoke. `workflow_dispatch` is available for narrower scopes.
+- `cross-platform.yml`: runs lightweight metadata/path smoke on standard Ubuntu, Windows, and macOS public runners.
 - `security-static.yml`: on push to `main`, pull requests, and weekly schedule, runs action pin validation, actionlint, repository text security scan, ShellCheck, Pyright, and Semgrep CLI without paid GitHub Code Security.
 - `codeql.yml`: on push to `main`, pull requests, and weekly schedule, runs GitHub CodeQL analysis with `security-and-quality` queries for Python and GitHub Actions.
 - `dependency-check.yml`: on daily schedule and on push to MCP runtime pin sources, checks pinned MCP runtime versions through `scripts/check_mcp_runtime_versions.py --fail-on-outdated`. Surfaces stale pins as a maintainer-visible signal without blocking pull requests.
 - `release.yml`: on push of a SemVer tag matching `X.Y.Z[-pre]`, validates `VERSION` and `CHANGELOG.md`, builds a deterministic bundle, generates a release manifest and SPDX 2.3 SBOM, exports the GitHub dependency-graph SBOM when available, attaches artifact attestations, and publishes the GitHub Release. `workflow_dispatch` remains available as a fallback.
-- `scorecard.yml`: weekly OSSF Scorecard analysis, also on push to `main` and branch protection rule changes. Uploads SARIF to the GitHub Security tab and publishes results to `scorecard.dev`.
+- `scorecard.yml`: weekly OSSF Scorecard analysis, also on push to `main` and branch protection rule changes. It runs in JSON artifact/check mode and publishes public results to `scorecard.dev`.
 - `dependency-review.yml`: on pull requests, blocks merges that introduce dependencies with known high-severity vulnerabilities or licenses outside the allow-list (AGPL-3.0-or-later compatible).
 - `labeler.yml`: on pull requests, applies area labels (ci-cd / scripts / plugin / docs / tests / release / security) based on changed paths defined in `.github/labeler.yml`.
 
