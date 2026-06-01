@@ -10,7 +10,6 @@ mod = import_script("scripts/validate_agent_tools.py")
 
 MCP_REGISTRY = {
     "serena": {"command": "uvx", "args": ["serena", "start-mcp-server"]},
-    "semgrep": {"command": "uvx", "args": ["--from", "semgrep==1.164.0", "semgrep", "mcp"]},
     "figma": {"url": "https://mcp.figma.com/mcp"},
 }
 
@@ -71,9 +70,6 @@ def test_managed_agent_accepts_temporary_mcp_policy_with_disabled_transport(tmp_
         valid_agent_text(
             "demo",
             """
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["--from", "semgrep==1.164.0", "semgrep", "mcp"]
 mcp_servers.figma.enabled = false
 mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 """,
@@ -91,9 +87,6 @@ def test_managed_agent_does_not_require_explicit_codex_apps_policy(tmp_path: Pat
         valid_agent_text(
             "demo",
             """
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["--from", "semgrep==1.164.0", "semgrep", "mcp"]
 mcp_servers.figma.enabled = false
 mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 """,
@@ -119,14 +112,14 @@ def test_managed_agent_rejects_non_allowlisted_enabled_mcp(tmp_path: Path) -> No
         valid_agent_text(
             "demo",
             """
-mcp_servers.semgrep.enabled = true
+mcp_servers.figma.enabled = true
 """,
         ),
     )
 
     failures: list[str] = []
     mod.validate_managed_agent(path, MCP_REGISTRY, failures)
-    assert any("mcp_servers.semgrep.enabled = false" in failure for failure in failures)
+    assert any("mcp_servers.figma.enabled = false" in failure for failure in failures)
 
 
 def test_managed_agent_rejects_disabled_mcp_without_transport(tmp_path: Path) -> None:
@@ -135,16 +128,14 @@ def test_managed_agent_rejects_disabled_mcp_without_transport(tmp_path: Path) ->
         valid_agent_text(
             "demo",
             """
-mcp_servers.semgrep.enabled = false
 mcp_servers.figma.enabled = false
-mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 """,
         ),
     )
 
     failures: list[str] = []
     mod.validate_managed_agent(path, MCP_REGISTRY, failures)
-    assert any("semgrep must include a valid disabled transport" in failure for failure in failures)
+    assert any("figma must include a valid disabled transport" in failure for failure in failures)
 
 
 def test_managed_agent_rejects_disabled_mcp_transport_drift(tmp_path: Path) -> None:
@@ -153,18 +144,15 @@ def test_managed_agent_rejects_disabled_mcp_transport_drift(tmp_path: Path) -> N
         valid_agent_text(
             "demo",
             """
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["semgrep", "mcp"]
 mcp_servers.figma.enabled = false
-mcp_servers.figma.url = "https://mcp.figma.com/mcp"
+mcp_servers.figma.url = "https://wrong.example.com/mcp"
 """,
         ),
     )
 
     failures: list[str] = []
     mod.validate_managed_agent(path, MCP_REGISTRY, failures)
-    assert any("semgrep must copy args" in failure for failure in failures)
+    assert any("figma must copy url" in failure for failure in failures)
 
 
 def test_managed_agent_rejects_disabled_allowlisted_mcp(tmp_path: Path) -> None:
@@ -174,9 +162,6 @@ def test_managed_agent_rejects_disabled_allowlisted_mcp(tmp_path: Path) -> None:
             "demo",
             """
 mcp_servers.serena.enabled = false
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["--from", "semgrep==1.164.0", "semgrep", "mcp"]
 mcp_servers.figma.enabled = false
 mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 """,
@@ -194,9 +179,6 @@ def test_managed_agent_rejects_explicit_codex_apps_mcp_table(tmp_path: Path) -> 
         valid_agent_text(
             "demo",
             """
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["--from", "semgrep==1.164.0", "semgrep", "mcp"]
 mcp_servers.figma.enabled = false
 mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 mcp_servers.codex_apps.enabled = true
@@ -215,9 +197,6 @@ def test_managed_agent_rejects_unknown_mcp_policy(tmp_path: Path) -> None:
         valid_agent_text(
             "demo",
             """
-mcp_servers.semgrep.enabled = false
-mcp_servers.semgrep.command = "uvx"
-mcp_servers.semgrep.args = ["--from", "semgrep==1.164.0", "semgrep", "mcp"]
 mcp_servers.figma.enabled = false
 mcp_servers.figma.url = "https://mcp.figma.com/mcp"
 mcp_servers.unknown-server.enabled = false
