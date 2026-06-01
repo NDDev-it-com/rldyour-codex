@@ -25,7 +25,6 @@ EXPECTED_TOOLS: dict[str, set[str]] = {
     "context7": {"resolve-library-id", "query-docs"},
     "deepwiki": {"read_wiki_structure", "ask_question"},
     "grep": {"searchGitHub"},
-    "semgrep": {"get_supported_languages", "semgrep_scan", "semgrep_findings"},
     "shadcn": {"get_project_registries", "search_items_in_registries"},
     "dart-flutter": {"analyze_files", "pub_dev_search"},
     "figma": {"get_design_context", "get_screenshot"},
@@ -231,12 +230,6 @@ async def _safe_call(name: str, session: "ClientSession", missing_env: list[str]
         if result.isError or _content_len(result) == 0:
             raise ProbeFailure("searchGitHub returned an empty or error result")
         return "searchGitHub"
-
-    if name == "semgrep":
-        result = await session.call_tool("get_supported_languages", {})
-        if result.isError or _content_len(result) == 0:
-            raise ProbeFailure("get_supported_languages returned an empty or error result")
-        return "get_supported_languages"
 
     if name == "shadcn":
         result = await session.call_tool("get_project_registries", {})

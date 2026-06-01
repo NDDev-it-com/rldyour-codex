@@ -27,7 +27,6 @@ PINS: tuple[Pin, ...] = (
     Pin("BUN_VERSION", "npm", "bun"),
     Pin("MCP_PYTHON_SDK_VERSION", "pypi", "mcp"),
     Pin("SERENA_AGENT_VERSION", "pypi", "serena-agent"),
-    Pin("SEMGREP_VERSION", "pypi", "semgrep"),
     Pin("SEQUENTIAL_THINKING_MCP_VERSION", "npm", "@modelcontextprotocol/server-sequential-thinking"),
     Pin("PLAYWRIGHT_MCP_VERSION", "npm", "@playwright/mcp"),
     Pin("CHROME_DEVTOOLS_MCP_VERSION", "npm", "chrome-devtools-mcp"),
