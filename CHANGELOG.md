@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.18] - 2026-06-01
+
+### Security
+
+- Refresh public security and Scorecard documentation after release audit.
+
 ## [1.1.17] - 2026-06-01
 
 ### Fixed
