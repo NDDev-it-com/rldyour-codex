@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.21] - 2026-06-02
+
+### Fixed
+
+- Harden ry-repair system sync and retired Semgrep server migration.
+
 ## [1.1.20] - 2026-06-01
 
 ### Fixed
