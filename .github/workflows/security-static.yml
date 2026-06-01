@@ -61,7 +61,7 @@ jobs:
         run: |
           # shellcheck source=config/mcp-runtime-versions.env
           . config/mcp-runtime-versions.env
-          uvx "semgrep==${SEMGREP_VERSION}" \
+          uvx "semgrep==${SEMGREP_CLI_VERSION}" \
             --config auto \
             --exclude-rule bash.lang.security.ifs-tampering.ifs-tampering \
             --error \
