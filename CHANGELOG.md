@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.23] - 2026-06-02
+
+### Changed
+
+- Refresh MCP runtime pins for Context7 and shadcn current upstream releases.
+
 ## [1.1.22] - 2026-06-02
 
 ### Changed
