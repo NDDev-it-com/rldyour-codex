@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_version": 1,
-  "verified_on": "2026-05-29",
+  "verified_on": "2026-06-02",
   "baseline": {
     "codex_cli": {
-      "version": "0.135.0",
+      "version": "0.136.0",
       "npm_package": "@openai/codex",
-      "ref": "https://github.com/openai/codex/releases/tag/rust-v0.135.0"
+      "ref": "https://github.com/openai/codex/releases/tag/rust-v0.136.0"
     },
     "runtime_contract": {
       "hooks": "command-only",

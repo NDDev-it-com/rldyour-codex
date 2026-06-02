@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.22] - 2026-06-02
+
+### Changed
+
+- Refresh Codex CLI runtime baseline to 0.136.0 with current upstream release evidence.
+
 ## [1.1.21] - 2026-06-02
 
 ### Fixed

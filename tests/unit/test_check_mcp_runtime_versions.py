@@ -18,7 +18,7 @@ def test_parse_env_file_handles_comments_quotes_and_blanks(tmp_path: Path) -> No
     env_file.write_text(
         """
 # comment
-CODEX_CLI_VERSION=0.135.0
+CODEX_CLI_VERSION=0.136.0
 SERENA_AGENT_VERSION='1.5.1'
 EMPTY_LINE_IGNORED
 SHADCN_VERSION="3.5.0"
@@ -27,7 +27,7 @@ GITHUB_MCP_SERVER_VERSION="1.1.0"
         encoding="utf-8",
     )
     assert mod.parse_env_file(env_file) == {
-        "CODEX_CLI_VERSION": "0.135.0",
+        "CODEX_CLI_VERSION": "0.136.0",
         "SERENA_AGENT_VERSION": "1.5.1",
         "SHADCN_VERSION": "3.5.0",
         "GITHUB_MCP_SERVER_VERSION": "1.1.0",
