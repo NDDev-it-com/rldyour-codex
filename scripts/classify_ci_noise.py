@@ -82,11 +82,6 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         "Chrome DevTools MCP warns about optional local storage in ephemeral CI.",
     ),
     NoiseRule(
-        "semgrep-pro-engine-advisory",
-        re.compile(r"Pro Engine|Semgrep Pro", re.IGNORECASE),
-        "Semgrep community runtime can print a non-blocking Pro Engine advisory.",
-    ),
-    NoiseRule(
         "serena-lsp-configuration",
         re.compile(
             r"workspace/configuration|"

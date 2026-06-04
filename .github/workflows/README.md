@@ -11,7 +11,7 @@ runner labels and keep third-party actions pinned to full commit SHAs.
 | --- | --- |
 | `validate.yml` | Fast validation and optional runtime/release/MCP scopes on Ubuntu standard runners. |
 | `cross-platform.yml` | Lightweight metadata/path smoke on standard Ubuntu, Windows, and macOS public runners. |
-| `security-static.yml` | Action pin validation, actionlint, text security scan, ShellCheck, Pyright, Semgrep. |
+| `security-static.yml` | Action pin validation, actionlint, text security scan, ShellCheck, and Pyright. |
 | `secret-scan.yml` | Gitleaks history scan for accidental secrets. |
 | `codeql.yml` | CodeQL code scanning for the adapter source surface. |
 | `dependency-review.yml` | Pull-request dependency diff review. |

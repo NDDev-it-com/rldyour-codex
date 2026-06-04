@@ -12,7 +12,7 @@ historical patch in the line.
 
 | Version | Supported |
 | --- | --- |
-| Current exact tag `1.1.23` | Yes |
+| Current exact tag `1.1.24` | Yes |
 | Older `1.1.*` tags | No; upgrade to current exact tag |
 | Older minor / major lines | No |
 
@@ -58,8 +58,7 @@ These targets are best-effort and not contractual.
   Scanning Push Protection and related live repository settings are required
   public-adapter controls and are verified from the private root control plane
   when an owner token is available.
-- No-paid static security gates use ShellCheck, Pyright, Semgrep CLI, action pin validation, repository text security scanning, and custom repository validators.
-- Semgrep excludes only the `bash.lang.security.ifs-tampering.ifs-tampering` rule because the repository intentionally uses `IFS=$'\n\t'` as part of its strict shell prologue and validates shell scripts separately with ShellCheck.
+- No-paid static security gates use ShellCheck, Pyright, action pin validation, repository text security scanning, CodeQL, Gitleaks, dependency review, and custom repository validators.
 - Release bundles use deterministic archives, release manifests, generated SPDX 2.3 SBOMs, GitHub artifact attestations, and (when available) GitHub dependency-graph SBOM export.
 - `scripts/scan_text_security.py` scans tracked text and agent-only paths for credential patterns and hidden Unicode controls without printing matched values.
 - The full git history was scanned with `gitleaks` (8.30.1) before the public release; 190 commits, 0 leaks found.

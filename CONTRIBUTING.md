@@ -50,7 +50,7 @@ All pull requests run the following workflows automatically:
 
 - `validate`: Ubuntu-hosted fast/runtime/release/MCP scopes, MCP runtime pin freshness (advisory only on pull requests), and MCP safe-call smoke.
 - `cross-platform`: lightweight metadata/path smoke on standard Ubuntu, Windows, and macOS public runners.
-- `security-static`: action pins, actionlint, text security scan, ShellCheck, Pyright, Semgrep CLI. Also runs on a weekly schedule.
+- `security-static`: action pins, actionlint, text security scan, ShellCheck, and Pyright. Also runs on a weekly schedule.
 - `codeql`: GitHub CodeQL analysis for Python and GitHub Actions with `security-and-quality` queries. Also runs on a weekly schedule.
 - `dependency-review`: blocks merges that introduce dependencies with high-severity vulnerabilities or licenses outside the AGPL-3.0-or-later compatible allow-list.
 - `labeler`: applies area labels based on changed paths.

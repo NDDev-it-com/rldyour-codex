@@ -64,7 +64,7 @@ def npm_latest(package: str) -> str:
 def pypi_latest(package: str) -> str:
     url = f"https://pypi.org/pypi/{package}/json"
     # PINS is a hardcoded repository allowlist, so package cannot be user-controlled.
-    with urllib.request.urlopen(url, timeout=45) as response:  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
+    with urllib.request.urlopen(url, timeout=45) as response:
         data = json.load(response)
     version = data.get("info", {}).get("version")
     if not isinstance(version, str) or not version:
@@ -75,7 +75,7 @@ def pypi_latest(package: str) -> str:
 def github_release_latest(repository: str) -> str:
     url = f"https://api.github.com/repos/{repository}/releases/latest"
     # PINS is a repository allowlist, so repository cannot be user-controlled.
-    with urllib.request.urlopen(url, timeout=45) as response:  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
+    with urllib.request.urlopen(url, timeout=45) as response:
         data = json.load(response)
     tag = data.get("tag_name")
     if not isinstance(tag, str) or not tag:
