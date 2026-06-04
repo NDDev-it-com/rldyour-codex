@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.24] - 2026-06-04
+
+### Changed
+
+- Sync upstream runtime baselines and remove active Semgrep usage.
+
 ## [1.1.23] - 2026-06-02
 
 ### Changed

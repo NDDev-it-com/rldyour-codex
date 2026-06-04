@@ -1,24 +1,24 @@
 # Codex Surface Adoption
 
-Verified: 2026-06-02
+Verified: 2026-06-04
 
 Source of truth:
 - Runtime baseline: `references/codex-baseline.json`
 - Runtime package pin: package metadata for `@openai/codex`
-- Official changelog and config docs: `https://github.com/openai/codex/releases/tag/rust-v0.136.0` and `https://developers.openai.com/codex/`
+- Official changelog and config docs: `https://github.com/openai/codex/releases/tag/rust-v0.137.0` and `https://developers.openai.com/codex/`
 
 ## Decisions
 
 | Surface | Introduced | Decision | Implementation | Validator |
 | --- | --- | --- | --- | --- |
-| Codex CLI runtime baseline | 0.136.0 | Adopted | Root contract and adapter runtime pins require `@openai/codex` / `codex-cli` `0.136.0`; local installed runtime must report `codex-cli 0.136.0`. | `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
-| Clickable TUI web links and readable cramped markdown tables | 0.136.0 | Adopt implicitly | This is runtime rendering behavior. No repository config migration is required; keep docs and reviewer output link-heavy but bounded. | n/a |
-| Session archive and unarchive commands | 0.136.0 | Operational | Treat `codex archive` / `codex unarchive` and `/archive` as user-facing session lifecycle tools. Do not add repository automation that archives sessions without explicit owner action. | n/a |
-| App-server stdio and richer MCP server status | 0.136.0 | Future | Keep current MCP materialization through `[mcp_servers.*]`. Adopt app-server stdio only after a repo-owned bridge needs it and validators cover the transport boundary. | `scripts/validate_contract.py` |
-| Remote execution API-key registration and short-lived remote-control tokens | 0.136.0 | Future | No remote-exec host registration is committed in this adapter. Treat remote credentials as external runtime state and never store them in repo config or memories. | `scripts/validate_instruction_docs.py` |
-| Command-safety hardening for `/diff`, PowerShell parsing, websocket origins, sandbox cleanup, and deny-read rules | 0.136.0 | Adopt implicitly | Preserve owner YOLO semantics while relying on the newer runtime's hardening for command paths. Do not weaken repo permission validators or reintroduce active `default_permissions` with `sandbox_mode`. | `scripts/validate_contract.py`; `scripts/validate_execpolicy_rules.sh` |
-| Bedrock region fallback and GPT service-tier filtering | 0.136.0 | Not applicable | Provider behavior is runtime-local. No adapter config migration is required for the owner-local default. | n/a |
-| `codex doctor` richer diagnostics | 0.135.0 | Operational | Owner doctor flow remains `scripts/doctor_system_codex.sh`; no config migration is required. | `scripts/doctor_system_codex.sh --quick --strict-runtime` |
+| Codex CLI runtime baseline | 0.137.0 | Adopted | Root contract and adapter runtime pins require `@openai/codex` / `codex-cli` `0.137.0`; local installed runtime must report `codex-cli 0.137.0`. | `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
+| Official standalone installer with non-interactive mode | 0.137.0 | Operational | `/ry-repair --apply-system` plans the official `CODEX_NON_INTERACTIVE=1` installer path and keeps the npm stable pin as an explicit fallback. Repository system install still writes managed config/profile files; it does not store credentials. | root `scripts/ry_repair_sync.py --plan --apply-system --json` |
+| `codex plugin list --json` inventory | 0.137.0 | Operational | Installed-runtime diagnostics may use JSON plugin inventory when `codex` is available. Static validators must report `NOT PROVEN` rather than inventing installed plugin state. | root `scripts/ry_repair_sync.py --plan --apply-system --json` |
+| Hosted web/image tools in more code-mode flows | 0.137.0 | Capability-dependent | Treat hosted tools as account/runtime capability. Do not add unconditional repository config claims unless installed-runtime checks prove availability. | n/a |
+| Remote-control v2 RPC grants | 0.137.0 | Future | No remote-control host registration or grant policy is committed in this adapter. Treat remote credentials as external runtime state and never store them in repo config or memories. | `scripts/validate_instruction_docs.py` |
+| MultiAgentV2 runtime choice and follow-up metadata | 0.137.0 | Capability-dependent | Managed subagent role files remain static TOML installed by this adapter. Runtime thread metadata is observed only through installed Codex diagnostics. | `scripts/validate_agent_tools.py` |
+| Stable release boundary vs. alpha prereleases | 0.137.0 | Adopted | `0.138.0-alpha.1` is intentionally not a release-grade baseline unless the owner explicitly enables prerelease runtime policy. | `scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
+| `codex doctor` diagnostics | 0.135.0 | Operational | Owner doctor flow remains `scripts/doctor_system_codex.sh`; `/ry-repair --apply-system` also plans direct `codex doctor` when installed runtime is available. | `scripts/doctor_system_codex.sh --quick --strict-runtime`; root `scripts/ry_repair_sync.py --plan --apply-system --json` |
 | Remote `/status` server-version details | 0.135.0 | Not applicable | Remote TUI status output is user-facing runtime behavior and does not change repository config. | n/a |
 | `/permissions` named/custom profile display | 0.135.0 | Operational | Use `/permissions` and `codex doctor` to inspect resolved permission profiles. Do not migrate the owner profile from the legacy `sandbox_mode` dialect without an explicit policy change. | `scripts/validate_instruction_docs.py` |
 | Packaged patched zsh helper discovery | 0.135.0 | Operational | Treat as installed-runtime diagnostic behavior only; no config migration is required. | `scripts/doctor_system_codex.sh --quick --strict-runtime` |

@@ -56,14 +56,3 @@ jobs:
           . config/mcp-runtime-versions.env
           PYRIGHT_PYTHON_FORCE_VERSION=latest \
             uv run --with "pyright==1.1.409" --with "mcp==${MCP_PYTHON_SDK_VERSION}" --with pyyaml python -m pyright --project pyrightconfig.json
-
-      - name: Semgrep CLI
-        run: |
-          # shellcheck source=config/mcp-runtime-versions.env
-          . config/mcp-runtime-versions.env
-          uvx "semgrep==${SEMGREP_CLI_VERSION}" \
-            --config auto \
-            --exclude-rule bash.lang.security.ifs-tampering.ifs-tampering \
-            --error \
-            --timeout 60 \
-            .

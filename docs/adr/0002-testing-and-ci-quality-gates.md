@@ -21,8 +21,8 @@ The repository had a strong smoke/static validation gate but no conventional uni
 - Split manual CI into fast, runtime, release, MCP, and full scopes with Ubuntu
   as the heavy runtime runner, and add lightweight standard public Ubuntu,
   Windows, and macOS smoke for path/archive/metadata portability.
-- Keep the no-paid static security workflow manual-only, using ShellCheck, Pyright, Semgrep CLI, action SHA-pin validation, and text security scanning.
-- Exclude Semgrep's global `IFS` tampering rule from the no-paid gate because the repository intentionally uses `IFS=$'\n\t'` as part of its strict shell prologue and relies on ShellCheck plus project validators for shell safety.
+- Keep the no-paid static security workflow manual-only, using ShellCheck, Pyright, action SHA-pin validation, and text security scanning.
+- Keep shell safety covered through ShellCheck plus project validators; the repository intentionally uses `IFS=$'\n\t'` as part of its strict shell prologue.
 - Keep the upstream repository public and standard-runner-only so normal push,
   PR, scheduled, CodeQL, Scorecard, and dependency-review workflows stay in the
   free public-repository GitHub Actions policy.

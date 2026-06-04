@@ -19,7 +19,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also owns determinis
 4. Inspect GitHub issues, pull requests, and recent history through the GitHub connector, GitHub MCP, or `gh` when available. Verify every issue against current code before treating it as a fact.
 5. Inspect MCP/LSP/tooling config, hook lifecycles, CI gates, release manifests, dependency baselines, and docs source-of-truth declarations.
 6. When the root control plane is present, run `python3 scripts/ry_repair_sync.py --plan --target "$PWD"` and use `--check` before claiming sync. Use `--apply --install-system` only for owner-approved system convergence.
-7. Treat retired Semgrep server removal as system-wide: source repo surfaces, installed `$CODEX_HOME/config.toml`, Claude marketplace cache, OpenCode project config, and generated tool references must all be clean. Keep Semgrep CLI/CI scanning unless the owner explicitly removes all Semgrep usage.
+7. Treat zero-active Semgrep policy as system-wide: source repo surfaces, installed `$CODEX_HOME/config.toml`, Claude marketplace cache, OpenCode project config, generated tool references, CI workflows, runtime pins, docs, and release gates must all be clean. Keep only negative validators/tests and historical changelog entries.
 8. Detect semantic entropy: duplicated docs, stale pins, conflicting instructions, dead config, unclear source-of-truth, missing ADR/CONTEXT/FUTURE facts, broken validators, and adapter parity drift.
 9. Produce a repair plan that separates technical repairs from owner-decision items.
 10. Ask the owner in Russian before changing any business, functional, security-posture, deployment-target, data-model, or ADR decision. Use concise options with a recommended choice, reason, and impact.

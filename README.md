@@ -69,6 +69,22 @@ scripts/install_system_codex.sh --apply
 scripts/doctor_system_codex.sh
 ```
 
+The Codex CLI runtime baseline is `0.137.0`. On machines that need a runtime
+install or update, use the official non-interactive installer or the explicit
+npm stable pin before running the repository config installer:
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
+npm install -g @openai/codex@0.137.0
+codex --version
+codex doctor
+codex plugin list --json
+```
+
+`scripts/ry_repair_sync.py --plan --apply-system --latest-from-github --json`
+plans these installed-runtime diagnostics and reports `NOT PROVEN` when `codex`
+is not available locally.
+
 The default install posture is owner-standard full-auto:
 `~/.codex/config.toml` receives the active owner defaults, and
 `~/.codex/rldyour-yolo.config.toml` is the explicit `--profile rldyour-yolo`
@@ -194,7 +210,7 @@ GitHub Actions run automatically on this public repository:
 
 - `validate.yml`: on every push to `main` and every pull request targeting `main`, runs Ubuntu-hosted fast validation, optional runtime/release/MCP scopes, MCP runtime pin freshness, and MCP safe-call smoke. `workflow_dispatch` is available for narrower scopes.
 - `cross-platform.yml`: runs lightweight metadata/path smoke on standard Ubuntu, Windows, and macOS public runners.
-- `security-static.yml`: on push to `main`, pull requests, and weekly schedule, runs action pin validation, actionlint, repository text security scan, ShellCheck, Pyright, and Semgrep CLI without paid GitHub Code Security.
+- `security-static.yml`: on push to `main`, pull requests, and weekly schedule, runs action pin validation, actionlint, repository text security scan, ShellCheck, and Pyright without paid GitHub Code Security.
 - `codeql.yml`: on push to `main`, pull requests, and weekly schedule, runs GitHub CodeQL analysis with `security-and-quality` queries for Python and GitHub Actions.
 - `dependency-check.yml`: on daily schedule and on push to MCP runtime pin sources, checks pinned MCP runtime versions through `scripts/check_mcp_runtime_versions.py --fail-on-outdated`. Surfaces stale pins as a maintainer-visible signal without blocking pull requests.
 - `release.yml`: on push of a SemVer tag matching `X.Y.Z[-pre]`, validates `VERSION` and `CHANGELOG.md`, builds a deterministic bundle, generates a release manifest and SPDX 2.3 SBOM, exports the GitHub dependency-graph SBOM when available, attaches artifact attestations, and publishes the GitHub Release. `workflow_dispatch` remains available as a fallback.
