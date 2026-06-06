@@ -308,6 +308,40 @@
       ]
     },
     {
+      "id": "ru-cmux-orchestrator",
+      "prompt": "cmux orchestrator запусти оркестратор и делегируй worker задачи",
+      "prompt_terms": [
+        "cmux",
+        "orchestrator"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-flow:cmux-orchestrator",
+          "description_terms": [
+            "macOS cmux orchestrator",
+            "multi-agent terminal workflow"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-cmux-worker",
+      "prompt": "cmux worker выполни scoped worker report",
+      "prompt_terms": [
+        "cmux",
+        "worker"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-flow:cmux-worker",
+          "description_terms": [
+            "cmux worker role",
+            "JSON report"
+          ]
+        }
+      ]
+    },
+    {
       "id": "ru-ry-deploy",
       "prompt": "ry-deploy задеплой на сервер проверь логи и прод",
       "prompt_terms": [
@@ -568,6 +602,8 @@
     "rldyour-flow:flow-quality-review": "reviewer-only",
     "rldyour-flow:flow-security-review": "reviewer-only",
     "rldyour-flow:flow-verification-review": "reviewer-only",
+    "rldyour-flow:cmux-orchestrator": "explicit-only",
+    "rldyour-flow:cmux-worker": "explicit-only",
     "rldyour-flow:instruction-docs-sync": "finalization",
     "rldyour-flow:ry-deploy": "explicit-only",
     "rldyour-flow:ry-init": "explicit-only",

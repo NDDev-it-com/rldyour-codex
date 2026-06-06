@@ -7,6 +7,21 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.26] - 2026-06-06
+
+### Added
+
+- Add macOS cmux orchestrator/worker Flow policy, Stop-hook role handling, Codex-native cmux skills, and project-policy execution/cmux schema support.
+
+### Fixed
+
+- Preserve standard post-task sync blockers while restricting worker agents to scoped reports in orchestrator mode.
+
+### Changed
+
+- Make `/ry-repair` and launcher planning OS/mode aware for standard and macOS cmux orchestrator installs.
+
+
 ## [1.1.25] - 2026-06-06
 
 ### Fixed
