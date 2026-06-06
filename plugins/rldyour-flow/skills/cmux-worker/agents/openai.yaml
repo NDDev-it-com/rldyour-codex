@@ -1,0 +1,8 @@
+interface:
+  display_name: cmux-worker
+  short_description: 'Рабочий cmux. EN: scoped worker report'
+  default_prompt: 'Используй $cmux-worker: выполняй только делегированный scope и верни JSON report. EN: scoped cmux worker.'
+dependencies:
+  tools: []
+policy:
+  allow_implicit_invocation: true

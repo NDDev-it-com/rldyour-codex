@@ -35,6 +35,9 @@ SERENA_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(
 NEEDS_SYNC=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("needs_flow_sync") else "false")' 2>/dev/null || echo "false")
 FINGERPRINT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("fingerprint", ""))' 2>/dev/null || true)
 HEAD_SHA=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
+EXECUTION_MODE=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; p=json.load(sys.stdin).get("execution", {}); print(p.get("execution_mode", "standard") if isinstance(p, dict) else "standard")' 2>/dev/null || echo "standard")
+AGENT_ROLE=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; p=json.load(sys.stdin).get("execution", {}); print(p.get("agent_role", "standalone") if isinstance(p, dict) else "standalone")' 2>/dev/null || echo "standalone")
+WORKER_ID=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; p=json.load(sys.stdin).get("execution", {}); print(p.get("worker_id") or p.get("agent_role", "worker") if isinstance(p, dict) else "worker")' 2>/dev/null || echo "worker")
 
 # Serena owns memory freshness. Flow waits for Serena Stop hook to finish first.
 if [ "$SERENA_CURRENT" != "true" ]; then
@@ -86,6 +89,10 @@ Path(os.environ["ACK_MARKER"]).write_text(json.dumps(ack, sort_keys=True) + "\n"
 
 print(json.dumps({
     "systemMessage": (
+        "rldyour-flow worker report was already requested for this state. "
+        "Allowing stop now to avoid a Stop-hook loop."
+        if state.get("execution", {}).get("agent_role") == "worker"
+        else
         "rldyour-flow post-task sync was already requested for this state. "
         "Allowing stop now to avoid a Stop-hook loop."
     )
@@ -118,6 +125,7 @@ if not isinstance(branch_cleanup_state, dict):
 print(json.dumps({
     "branch": payload.get("branch"),
     "head": payload.get("head_sha"),
+    "execution": payload.get("execution", {}),
     "dirty_files": payload.get("dirty_files", []),
     "doc_files_present": payload.get("doc_files_present", []),
     "doc_files_changed": payload.get("doc_files_changed", []),
@@ -205,7 +213,34 @@ else:
 print("\n".join(lines))
 ')
 
-MESSAGE="[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD ${HEAD_SHA:-unknown}; now synchronize project docs and git state.
+if [ "$EXECUTION_MODE" = "orchestrator" ] && [ "$AGENT_ROLE" = "worker" ]; then
+  MESSAGE="[RLDYOUR-FLOW CMUX WORKER REPORT REQUIRED] Worker state has policy-scoped blockers for HEAD ${HEAD_SHA:-unknown}; report to the orchestrator instead of running global sync.
+
+Current state:
+${SUMMARY}
+
+Worker role: ${WORKER_ID}
+
+Effective policy:
+${POLICY_GUIDANCE}
+
+Worker rules:
+1. Do not run fullrepo publish/migrate/install-exclude.
+2. Do not push, force-push, delete branches, install system configs, or mutate project policy.
+3. Do not run \$flow-post-task-sync unless the orchestrator explicitly delegates final sync.
+4. If dirty files are outside assigned scope, stop and report the exact paths.
+5. Return a structured worker report to the orchestrator:
+{
+  \"status\": \"pass|fail|blocked|not_proven\",
+  \"files_changed\": [],
+  \"commands_run\": [],
+  \"findings\": [],
+  \"risks\": [],
+  \"needs_orchestrator_action\": []
+}
+6. Stop again after reporting or after the orchestrator delegates a specific cleanup."
+else
+  MESSAGE="[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD ${HEAD_SHA:-unknown}; now synchronize project docs and git state.
 
 Current state:
 ${SUMMARY}
@@ -233,6 +268,7 @@ Required order:
 7. Follow the effective fullrepo policy above; publish or migrate fullrepo only when policy and current user instruction allow it.
 8. Treat branch cleanup according to policy; never delete protected branches or remote branches without explicit confirmation.
 9. Stop again after sync or report the exact blocker."
+fi
 
 echo "$MESSAGE" >&2
 exit 2

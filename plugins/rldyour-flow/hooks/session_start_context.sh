@@ -14,6 +14,9 @@ fi
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 cd "$ROOT"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 HOOK_INPUT_FILE=$(mktemp "${TMPDIR:-/tmp}/rldyour-session-context-input.XXXXXX")
 trap 'rm -f "$HOOK_INPUT_FILE"' EXIT
 cat > "$HOOK_INPUT_FILE"
@@ -22,6 +25,7 @@ python3 - "$ROOT" "$HOOK_INPUT_FILE" "$PLUGIN_DIR/scripts/project_flow_policy.py
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -196,6 +200,16 @@ def main() -> int:
         if isinstance(effective_policy.get("branch_cleanup"), dict)
         else {}
     )
+    execution_policy = (
+        effective_policy.get("execution", {})
+        if isinstance(effective_policy.get("execution"), dict)
+        else {}
+    )
+    cmux_policy = (
+        effective_policy.get("cmux", {})
+        if isinstance(effective_policy.get("cmux"), dict)
+        else {}
+    )
     instruction_docs_policy = (
         effective_policy.get("instruction_docs", {})
         if isinstance(effective_policy.get("instruction_docs"), dict)
@@ -239,6 +253,14 @@ def main() -> int:
             f"agent_files {normal_policy.get('agent_files', 'strict-fullrepo-default')}, "
             f"instruction_docs.mode {instruction_docs_policy.get('mode', 'auto')}, "
             f"branch_cleanup.mode {branch_cleanup_policy.get('mode', 'advisory')}."
+        ),
+        (
+            "- Execution policy: "
+            f"mode {os.environ.get('RLDYOUR_EXECUTION_MODE') or execution_policy.get('mode', 'standard')}, "
+            f"agent_role {os.environ.get('RLDYOUR_AGENT_ROLE') or execution_policy.get('agent_role', 'auto')}, "
+            f"cmux.enabled {cmux_policy.get('enabled', False)}, "
+            f"workspace {os.environ.get('CMUX_WORKSPACE_ID') or 'none'}, "
+            f"surface {os.environ.get('CMUX_SURFACE_ID') or 'none'}."
         ),
         "- Fullrepo network state: not checked during SessionStart; run ry-init or flow-post-task-sync for full sync status.",
         "- Branch cleanup: not evaluated during SessionStart; run flow-post-task-sync before final delivery.",

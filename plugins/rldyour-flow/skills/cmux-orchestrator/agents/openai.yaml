@@ -1,0 +1,8 @@
+interface:
+  display_name: cmux-orchestrator
+  short_description: 'Оркестратор cmux. EN: worker delegation'
+  default_prompt: 'Используй $cmux-orchestrator: policy, worker tasks, JSON reports, final sync. EN: cmux orchestrator.'
+dependencies:
+  tools: []
+policy:
+  allow_implicit_invocation: true

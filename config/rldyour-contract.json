@@ -15,12 +15,14 @@
     "rldyour-serena-mcp"
   ],
   "skills": {
-    "count": 39,
+    "count": 41,
     "names": [
       "architecture-boundaries",
       "browser-debug",
       "browser-tool-routing",
       "browser-validation",
+      "cmux-orchestrator",
+      "cmux-worker",
       "dependency-compatibility-policy",
       "design-system-implementation",
       "design-validation",

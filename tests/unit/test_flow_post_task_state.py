@@ -247,6 +247,91 @@ def test_strict_branch_cleanup_blocks_workflow_branches(monkeypatch, tmp_path: P
     assert state["needs_cleanup"] is True
 
 
+def test_orchestrator_worker_reports_dirty_without_global_fullrepo_block(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
+    monkeypatch.setenv("RLDYOUR_EXECUTION_MODE", "orchestrator")
+    monkeypatch.setenv("RLDYOUR_AGENT_ROLE", "worker")
+    monkeypatch.setenv("RLDYOUR_WORKER_ID", "worker-codex-test")
+    init_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "README.md").write_text("repo\nworker change\n", encoding="utf-8")
+
+    monkeypatch.setattr(mod, "_serena_current", lambda: (False, {"reason": "stale"}))
+    monkeypatch.setattr(mod, "_instruction_docs_state", lambda: {"needs_instruction_docs_review": True})
+    monkeypatch.setattr(
+        mod,
+        "_branch_cleanup_state",
+        lambda _branch, _policy: {
+            "needs_cleanup": True,
+            "blocking_candidates": ["codex/merged"],
+            "advisory_candidates": [],
+        },
+    )
+    monkeypatch.setattr(
+        mod,
+        "_fullrepo_state",
+        lambda: {
+            "exclude_installed": False,
+            "network_checked": False,
+            "remote_configured": False,
+            "remote_fullrepo_exists": False,
+            "local_fullrepo_sha": None,
+            "fullrepo_matches_worktree": False,
+            "local_fullrepo_matches_worktree": False,
+            "tracked_agent_paths": [],
+            "worktree_agent_paths": ["AGENTS.md"],
+        },
+    )
+
+    payload = mod.state()
+
+    assert payload["execution"]["agent_role"] == "worker"
+    assert payload["execution"]["worker_id"] == "worker-codex-test"
+    assert "worker-report-required" in payload["blocking_reasons"]
+    assert "fullrepo-required" not in payload["blocking_reasons"]
+    assert "branch-cleanup-required" not in payload["blocking_reasons"]
+    assert "serena-stale" not in payload["blocking_reasons"]
+    assert "worker-fullrepo-report" in payload["advisory_reasons"]
+    assert "worker-branch-cleanup-report" in payload["advisory_reasons"]
+    assert "worker-serena-stale-report" in payload["advisory_reasons"]
+    assert payload["needs_flow_sync"] is True
+
+
+def test_orchestrator_worker_dirty_outside_assigned_scope_blocks_report(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
+    monkeypatch.setenv("RLDYOUR_EXECUTION_MODE", "orchestrator")
+    monkeypatch.setenv("RLDYOUR_AGENT_ROLE", "worker")
+    monkeypatch.setenv("RLDYOUR_WORKER_ALLOWED_PATHS", "docs/")
+    init_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "README.md").write_text("repo\nout of scope\n", encoding="utf-8")
+
+    monkeypatch.setattr(mod, "_serena_current", lambda: (True, {}))
+    monkeypatch.setattr(mod, "_instruction_docs_state", lambda: {})
+    monkeypatch.setattr(mod, "_branch_cleanup_state", lambda _branch, _policy: {"needs_cleanup": False})
+    monkeypatch.setattr(
+        mod,
+        "_fullrepo_state",
+        lambda: {
+            "exclude_installed": True,
+            "network_checked": False,
+            "remote_configured": False,
+            "remote_fullrepo_exists": False,
+            "local_fullrepo_sha": None,
+            "fullrepo_matches_worktree": True,
+            "local_fullrepo_matches_worktree": True,
+            "tracked_agent_paths": [],
+            "worktree_agent_paths": [],
+        },
+    )
+
+    payload = mod.state()
+
+    assert payload["execution"]["worker_allowed_paths"] == ["docs"]
+    assert "worker-dirty-out-of-scope" in payload["blocking_reasons"]
+    assert "worker-report-required" in payload["blocking_reasons"]
+
+
 def json_policy(**sections: object) -> str:
     import json
 

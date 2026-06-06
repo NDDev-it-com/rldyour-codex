@@ -43,6 +43,12 @@ def test_default_policy_is_non_destructive(tmp_path: Path, monkeypatch) -> None:
     effective = payload["effective"]
     assert effective["fullrepo"]["mode"] == "auto"
     assert effective["fullrepo"]["create_if_missing"] is False
+    assert effective["execution"]["mode"] == "standard"
+    assert effective["execution"]["agent_role"] == "auto"
+    assert effective["execution"]["task_delegation"] == "direct"
+    assert effective["cmux"]["enabled"] is False
+    assert effective["cmux"]["version_policy"] == "latest-compatible"
+    assert effective["orchestrator"]["concurrency"]["default_strategy"] == "single-writer"
     assert effective["branch_cleanup"]["mode"] == "advisory"
     assert "dev" in effective["branch_cleanup"]["protected_branches"]
 
@@ -118,3 +124,55 @@ def test_invalid_policy_fails_closed_for_runtime_markers_and_secrets(tmp_path: P
     assert normal["secrets"] == "forbidden"
     assert payload["effective"]["fullrepo"]["mode"] == "auto"
     assert payload["effective"]["branch_cleanup"]["mode"] == "advisory"
+
+
+def test_execution_and_cmux_policy_are_validated(tmp_path: Path, monkeypatch) -> None:
+    init_repo(tmp_path)
+    write_policy(
+        tmp_path,
+        ".rldyour/project-policy.json",
+        {
+            "schema_version": 1,
+            "execution": {
+                "mode": "orchestrator",
+                "agent_role": "auto",
+                "worker_agents": ["codex", "claude", "opencode"],
+                "worker_count_min": 1,
+                "worker_count_max": 4,
+                "task_delegation": "explicit-orchestrator-only",
+            },
+            "cmux": {"enabled": True, "install_method": "brew-cask"},
+        },
+    )
+    monkeypatch.chdir(tmp_path)
+
+    payload = mod.load_policy(tmp_path)
+
+    assert payload["valid"] is True
+    assert payload["effective"]["execution"]["mode"] == "orchestrator"
+    assert payload["effective"]["execution"]["worker_count_max"] == 4
+    assert payload["effective"]["cmux"]["enabled"] is True
+    assert payload["effective"]["cmux"]["install_method"] == "brew-cask"
+
+
+def test_invalid_worker_count_fails_non_destructively(tmp_path: Path, monkeypatch) -> None:
+    init_repo(tmp_path)
+    write_policy(
+        tmp_path,
+        ".rldyour/project-policy.json",
+        {
+            "schema_version": 1,
+            "execution": {
+                "mode": "orchestrator",
+                "worker_count_min": 5,
+                "worker_count_max": 2,
+            },
+        },
+    )
+    monkeypatch.chdir(tmp_path)
+
+    payload = mod.load_policy(tmp_path)
+
+    assert payload["valid"] is False
+    assert "execution.worker_count_min must be <= execution.worker_count_max" in payload["errors"]
+    assert payload["effective"]["execution"]["mode"] == "orchestrator"
