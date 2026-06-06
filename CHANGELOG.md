@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.27] - 2026-06-07
+
+### Fixed
+
+- Fix CI static analysis gates.
+
 ## [1.1.26] - 2026-06-06
 
 ### Added
