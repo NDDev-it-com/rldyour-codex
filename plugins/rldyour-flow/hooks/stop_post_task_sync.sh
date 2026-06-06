@@ -20,6 +20,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 STATE_SCRIPT="$PLUGIN_DIR/scripts/flow_post_task_state.py"
 SYNC_MARKER=".serena/.flow_sync_marker"
+ACK_MARKER=".serena/.flow_blocker_ack.json"
 
 if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
@@ -41,7 +42,7 @@ if [ "$SERENA_CURRENT" != "true" ]; then
 fi
 
 if [ "$NEEDS_SYNC" != "true" ] || [ -z "$FINGERPRINT" ]; then
-  rm -f "$SYNC_MARKER" .serena/.flow_post_task_state.json
+  rm -f "$SYNC_MARKER" "$ACK_MARKER" .serena/.flow_post_task_state.json
   exit 0
 fi
 
@@ -58,8 +59,30 @@ print("true" if payload.get("stop_hook_active") is True else "false")
 ' 2>/dev/null || echo "false")
 
 if [ "$STOP_HOOK_ACTIVE" = "true" ] && [ -f "$SYNC_MARKER" ] && [ "$(cat "$SYNC_MARKER" 2>/dev/null || true)" = "$FINGERPRINT" ]; then
-  python3 <<'PY'
+  mkdir -p .serena
+  printf "%s" "$STATE_JSON" > .serena/.flow_post_task_state.json
+  STATE_PATH=".serena/.flow_post_task_state.json" FINGERPRINT="$FINGERPRINT" HEAD_SHA="$HEAD_SHA" ACK_MARKER="$ACK_MARKER" python3 <<'PY'
 import json
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+
+state_path = Path(os.environ["STATE_PATH"])
+try:
+    state = json.loads(state_path.read_text(encoding="utf-8"))
+except Exception:
+    state = {}
+policy = state.get("project_policy", {})
+ack = {
+    "schema_version": 1,
+    "fingerprint": os.environ.get("FINGERPRINT", ""),
+    "head": state.get("head_full") or os.environ.get("HEAD_SHA", ""),
+    "reported_at": datetime.now(timezone.utc).isoformat(),
+    "blocked_reasons": state.get("blocking_reasons", []),
+    "advisory_reasons": state.get("advisory_reasons", []),
+    "policy_source": policy.get("source", "built-in defaults") if isinstance(policy, dict) else "built-in defaults",
+}
+Path(os.environ["ACK_MARKER"]).write_text(json.dumps(ack, sort_keys=True) + "\n", encoding="utf-8")
 
 print(json.dumps({
     "systemMessage": (
@@ -101,7 +124,16 @@ print(json.dumps({
     "ahead": payload.get("ahead", 0),
     "behind": payload.get("behind", 0),
     "worktree_count": payload.get("worktree_count", 0),
+    "project_policy": {
+        "source": payload.get("project_policy", {}).get("source") if isinstance(payload.get("project_policy"), dict) else None,
+        "source_kind": payload.get("project_policy", {}).get("source_kind") if isinstance(payload.get("project_policy"), dict) else None,
+        "profile": payload.get("project_policy", {}).get("profile") if isinstance(payload.get("project_policy"), dict) else None,
+        "valid": payload.get("project_policy", {}).get("valid") if isinstance(payload.get("project_policy"), dict) else None,
+    },
+    "blocking_reasons": payload.get("blocking_reasons", []),
+    "advisory_reasons": payload.get("advisory_reasons", []),
     "instruction_docs": {
+        "mode": instruction_docs_state.get("instruction_docs_mode", "auto"),
         "required": instruction_docs_state.get("required_docs", []),
         "present": instruction_docs_state.get("present_docs", []),
         "missing": instruction_docs_state.get("missing_docs", []),
@@ -109,25 +141,77 @@ print(json.dumps({
         "review_reasons": instruction_docs_state.get("review_reasons", []),
     },
     "fullrepo": {
+        "mode": fullrepo_state.get("mode", "auto"),
         "branch": fullrepo_state.get("fullrepo_branch", "fullrepo"),
         "remote_exists": bool(fullrepo_state.get("remote_fullrepo_exists")),
         "exclude_installed": bool(fullrepo_state.get("exclude_installed", False)),
         "tracked_agent_paths": len(tracked_agent_paths),
     },
     "branch_cleanup": {
+        "mode": branch_cleanup_state.get("mode", "advisory"),
         "base": branch_cleanup_state.get("base"),
         "local_merged_branches": branch_cleanup_state.get("local_merged_branches", []),
         "remote_merged_branches": branch_cleanup_state.get("remote_merged_branches", []),
+        "blocking_candidates": branch_cleanup_state.get("blocking_candidates", []),
+        "advisory_candidates": branch_cleanup_state.get("advisory_candidates", []),
         "worktree_cleanup_candidates": branch_cleanup_state.get("worktree_cleanup_candidates", []),
         "needs_cleanup": bool(branch_cleanup_state.get("needs_cleanup")),
     },
 }, ensure_ascii=False, indent=2))
 ')
 
+POLICY_GUIDANCE=$(printf "%s" "$STATE_JSON" | python3 -c '
+import json
+import sys
+
+payload = json.load(sys.stdin)
+policy = payload.get("project_policy", {})
+effective = policy.get("effective", {}) if isinstance(policy, dict) else {}
+fullrepo = effective.get("fullrepo", {}) if isinstance(effective.get("fullrepo"), dict) else {}
+normal = effective.get("normal_branch_policy", {}) if isinstance(effective.get("normal_branch_policy"), dict) else {}
+branch_cleanup = effective.get("branch_cleanup", {}) if isinstance(effective.get("branch_cleanup"), dict) else {}
+instruction_docs = effective.get("instruction_docs", {}) if isinstance(effective.get("instruction_docs"), dict) else {}
+
+policy_source = policy.get("source", "built-in defaults")
+policy_source_kind = policy.get("source_kind", "default")
+lines = [
+    f"Project policy source: {policy_source} ({policy_source_kind}).",
+]
+fullrepo_mode = fullrepo.get("mode", "auto")
+if fullrepo_mode == "disabled":
+    lines.append("Fullrepo is disabled by project policy; do not restore, migrate, publish, create, or install fullrepo excludes.")
+elif fullrepo_mode == "advisory":
+    lines.append("Fullrepo is advisory; report drift but do not block Stop or publish without explicit user instruction.")
+else:
+    lines.append("Use fullrepo only when the effective project policy requires or allows it; do not create a missing fullrepo branch unless policy or current user instruction explicitly allows creation.")
+
+if normal.get("agent_files") == "allowed":
+    lines.append("Configured AI instruction files may be tracked in normal branches; do not migrate them to fullrepo.")
+
+doc_mode = instruction_docs.get("mode", "auto")
+if doc_mode == "tracked-normal-branch":
+    lines.append("Instruction docs are tracked normal-branch files for this project.")
+elif doc_mode == "disabled":
+    lines.append("Instruction docs sync is disabled unless the user explicitly requests it.")
+
+cleanup_mode = branch_cleanup.get("mode", "advisory")
+if cleanup_mode == "disabled":
+    lines.append("Branch cleanup is disabled by project policy.")
+elif cleanup_mode == "advisory":
+    lines.append("Merged branch cleanup is advisory; do not delete local or remote branches without explicit user confirmation.")
+else:
+    lines.append("Branch cleanup is strict only for configured workflow prefixes; never delete protected branches.")
+
+print("\n".join(lines))
+')
+
 MESSAGE="[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD ${HEAD_SHA:-unknown}; now synchronize project docs and git state.
 
 Current state:
 ${SUMMARY}
+
+Effective policy:
+${POLICY_GUIDANCE}
 
 Continue this turn and run the \$flow-post-task-sync workflow now.
 
@@ -146,8 +230,8 @@ Required order:
 4. Run applicable quality checks or document why a check is unavailable.
 5. Commit atomically with Conventional Commits. Keep Serena knowledge/docs sync commits separate when useful.
 6. Push/synchronize with GitHub using git/gh when an upstream exists.
-7. Restore or install .git/info/exclude for agent-only files, keep normal branch history clean, and publish fullrepo with safe --force-with-lease when agent-only files exist.
-8. Clean merged worktrees and merged local/remote workflow branches only after confirming they are merged and safe to remove. Leave protected branches such as main and fullrepo.
+7. Follow the effective fullrepo policy above; publish or migrate fullrepo only when policy and current user instruction allow it.
+8. Treat branch cleanup according to policy; never delete protected branches or remote branches without explicit confirmation.
 9. Stop again after sync or report the exact blocker."
 
 echo "$MESSAGE" >&2

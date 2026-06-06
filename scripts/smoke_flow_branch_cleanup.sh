@@ -46,16 +46,36 @@ git -C "$TMP_ROOT/work" config user.name "Flow Branch Cleanup"
 git -C "$TMP_ROOT/work" remote add origin "$TMP_ROOT/origin.git"
 
 printf '# Fixture\n' > "$TMP_ROOT/work/README.md"
+mkdir -p "$TMP_ROOT/work/.rldyour"
+cat > "$TMP_ROOT/work/.rldyour/project-policy.json" <<'JSON'
+{
+  "schema_version": 1,
+  "branch_cleanup": {
+    "mode": "strict",
+    "block_stop": true,
+    "protected_branches": ["main", "dev", "fullrepo"]
+  }
+}
+JSON
 git -C "$TMP_ROOT/work" add README.md
+git -C "$TMP_ROOT/work" add .rldyour/project-policy.json
 git -C "$TMP_ROOT/work" commit -q -m "chore: initial fixture"
 git -C "$TMP_ROOT/work" branch -M main
 git -C "$TMP_ROOT/work" push -q -u origin main
+git -C "$TMP_ROOT/work" checkout -q -b dev
+git -C "$TMP_ROOT/work" push -q -u origin dev
+git -C "$TMP_ROOT/work" checkout -q main
 
 audit_output=$(cd "$TMP_ROOT/work" && "$AUDIT_SCRIPT")
 if printf '%s\n' "$audit_output" | grep -Fx "origin" >/dev/null; then
   fail "git sync audit reported remote HEAD symref as cleanup candidate"
 fi
 ok "git sync audit ignores remote HEAD symref"
+
+payload=$(state_json)
+printf '%s' "$payload" | json_contains "branch_cleanup_state.remote_merged_branches" "origin/dev" | grep -Fx false >/dev/null \
+  || fail "state reported protected origin/dev as cleanup candidate"
+ok "flow state protects origin/dev from branch cleanup"
 
 git -C "$TMP_ROOT/work" checkout -q -b ai/ry-start-cleanup-fixture
 printf 'workflow branch\n' > "$TMP_ROOT/work/feature.txt"

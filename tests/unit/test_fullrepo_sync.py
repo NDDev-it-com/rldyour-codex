@@ -204,3 +204,40 @@ def test_publish_refuses_non_agent_dirty(tmp_path: Path, monkeypatch) -> None:
         assert "non-agent files are dirty" in str(exc)
     else:
         raise AssertionError("publish should refuse non-agent dirty files")
+
+
+def test_fullrepo_disabled_policy_refuses_publish_and_returns_stub_status(tmp_path: Path, monkeypatch) -> None:
+    _, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    (work / ".rldyour").mkdir()
+    (work / ".rldyour/project-policy.json").write_text(
+        '{"schema_version":1,"fullrepo":{"mode":"disabled"}}',
+        encoding="utf-8",
+    )
+    git(work, "add", ".rldyour/project-policy.json")
+    git(work, "commit", "-m", "policy")
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+
+    payload = mod.status("origin", "fullrepo")
+
+    assert payload["mode"] == "disabled"
+    assert payload["fullrepo_needs_attention"] is False
+    assert payload["worktree_agent_paths"] == []
+    try:
+        mod.publish("origin", "fullrepo")
+    except mod.FullrepoError as exc:
+        assert "fullrepo disabled by project policy" in str(exc)
+    else:
+        raise AssertionError("publish should be refused when fullrepo is disabled")
+
+
+def test_bootstrap_init_does_not_create_missing_fullrepo_without_explicit_policy(tmp_path: Path, monkeypatch) -> None:
+    remote, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+
+    mod.bootstrap_init("origin", "fullrepo")
+
+    assert mod.remote_branch_sha("origin", "fullrepo") == ""
+    assert mod.local_ref_sha("refs/heads/fullrepo") == ""
+    assert remote.is_dir()

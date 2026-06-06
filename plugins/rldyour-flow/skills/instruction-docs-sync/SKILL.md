@@ -7,7 +7,7 @@ description: "Синхронизирует AGENTS.md и .claude/CLAUDE.md из v
 
 ## Purpose
 
-Keep project instruction files current after meaningful work without creating a second source of truth or leaking agent-only files into normal branches.
+Keep project instruction files current after meaningful work without creating a second source of truth or violating the effective project policy for agent files.
 
 This skill runs after Serena memory sync and before quality checks, commits, GitHub sync, and `fullrepo` publish.
 
@@ -16,7 +16,7 @@ This skill runs after Serena memory sync and before quality checks, commits, Git
 - `AGENTS.md`: Codex-native project instructions.
 - `.claude/CLAUDE.md`: Claude Code-native project memory.
 
-Both files are agent-only in normal product repositories: keep them local, ignore them through `.git/info/exclude`, and publish them through `fullrepo`.
+By default these files are agent-only in rldyour-managed product repositories: keep them local, ignore them through `.git/info/exclude`, and publish them through `fullrepo`. If project policy sets `instruction_docs.mode=tracked-normal-branch` or `normal_branch_policy.agent_files=allowed`, treat them as normal tracked project files.
 
 ## Source Of Truth
 
@@ -44,7 +44,7 @@ Do not copy chat history, future plans, speculation, secrets, tokens, cookies, o
    - no generic Codex-only instructions unless they also matter to Claude Code.
 5. Keep both files independently useful. Do not reduce `.claude/CLAUDE.md` to only `@AGENTS.md`; shared facts may overlap, but each file must be optimized for its own CLI.
 6. Run `python3 scripts/validate_instruction_docs.py --require-agent-docs` when the repository has restored agent-only context. In CI or normal-branch-only clones, run it without `--require-agent-docs`.
-7. Let `flow-post-task-sync` commit normal tracked files, then publish agent-only instruction files through `fullrepo`.
+7. Let `flow-post-task-sync` commit tracked instruction files or publish agent-only instruction files through `fullrepo` according to effective project policy.
 
 ## Freshness Rules
 

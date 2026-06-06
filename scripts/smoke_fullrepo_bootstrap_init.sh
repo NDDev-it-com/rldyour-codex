@@ -37,7 +37,7 @@ git clone --quiet "$REMOTE" "$WORK"
   printf '# Project Agent Instructions\n\nCodex Validation Git\n' > AGENTS.md
   printf '# Claude Code Project Memory\n\nClaude Code Validation Git\n' > .claude/CLAUDE.md
   printf '# Memory\n' > .serena/memories/CORE_01_project.md
-  python3 "$FULLREPO_SCRIPT" --bootstrap-init
+  python3 "$FULLREPO_SCRIPT" --bootstrap-init --create-missing
 
   git ls-remote --exit-code --heads origin fullrepo >/dev/null
   git check-ignore -q AGENTS.md

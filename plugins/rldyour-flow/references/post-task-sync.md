@@ -32,7 +32,7 @@ Claude Code reads project memory from `.claude/CLAUDE.md` in rldyour fullrepo-ma
 
 Both files must contain verified facts, not chat history or speculative plans.
 
-For normal projects, root `AGENTS.md`, `.claude/CLAUDE.md`, and `REVIEW.md` are agent-only files and should be restored from `fullrepo`, ignored through `.git/info/exclude`, and excluded from normal branch history. Repositories that are themselves agent tooling may intentionally track selected instruction templates as product files, such as `system/AGENTS.md` in `rldyour-codex`.
+For default rldyour-managed projects, root `AGENTS.md`, `.claude/CLAUDE.md`, and `REVIEW.md` are agent-only files restored from `fullrepo`, ignored through `.git/info/exclude`, and excluded from normal branch history. Project policy may explicitly allow tracked instruction/AI files in normal branches; scripts read `.rldyour/project-policy.json`, `.rldyour/project-policy.local.json`, or `RLDYOUR_PROJECT_POLICY`.
 
 Use `plugins/rldyour-flow/scripts/instruction_docs_state.py --json` to decide whether review is needed and `python3 scripts/validate_instruction_docs.py --require-agent-docs` when agent-only context is restored.
 
@@ -44,24 +44,24 @@ Post-task flow:
 
 1. Commit and push normal source/test/docs/config changes to the current upstream branch.
 2. Ensure `.git/info/exclude` has the rldyour fullrepo block.
-3. If the project is ready to clean its main branch, run `fullrepo_sync.py --migrate-main` once and commit that index cleanup.
-4. Run `fullrepo_sync.py --publish` after the normal branch is at its final `HEAD`.
+3. If policy keeps agent files out of the normal branch and the project is ready, run `fullrepo_sync.py --migrate-main` once and commit that index cleanup.
+4. Run `fullrepo_sync.py --publish` after the normal branch is at its final `HEAD` only when policy requires or allows fullrepo.
 5. Verify `fullrepo_sync.py --status-json` and branch refs before final delivery.
 
 Resolve helper scripts before running them. Prefer repo-local `plugins/rldyour-flow/scripts/*` in this repository or any repo that vendors the plugin; otherwise use `${CODEX_HOME:-$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/*`. Stop-hook continuation messages include absolute installed paths for product repositories.
 
 Initialization flow:
 
-1. Run `fullrepo_sync.py --bootstrap-init` before relying on missing agent-only context.
+1. Resolve project policy with `project_flow_policy.py --json`, then run `fullrepo_sync.py --bootstrap-init` only when fullrepo restore/bootstrap is allowed.
 2. If `origin/fullrepo` exists, restore its agent-only files and install excludes.
-3. If `origin/fullrepo` does not exist but local agent-only files exist, publish the initial generated `fullrepo` snapshot.
-4. If the current branch tracks agent-only files, remove them from the index and commit that cleanup on the normal branch before final delivery.
+3. If `origin/fullrepo` does not exist, do not create it unless `fullrepo.create_if_missing=true`, `--create-missing`, or the current user instruction explicitly allows creation.
+4. If the current branch tracks agent-only files, remove them from the index only when policy says they should be fullrepo-managed.
 
 `fullrepo` uses safe force updates because it is a generated snapshot branch. Use `--force-with-lease`, not a blind `--force`, so an unexpected remote update cannot be silently overwritten.
 
 ## Loop Prevention
 
-The Stop hook writes `.serena/.flow_sync_marker` with a fingerprint of HEAD, dirty files, ahead/behind, branch, and Serena freshness. If the same fingerprint already requested a continuation during active Stop processing, the hook allows stop to avoid a loop. Stop-state checks use local-only fullrepo status; network fetch/push/publish checks belong to explicit sync and validation commands.
+The Stop hook writes `.serena/.flow_sync_marker` with a fingerprint of HEAD, dirty files, ahead/behind, branch, policy, and blocking/advisory reasons. If the same fingerprint already requested a continuation during active Stop processing, the hook writes `.serena/.flow_blocker_ack.json` and allows stop to avoid a loop. Stop-state checks use local-only fullrepo status; network fetch/push/publish checks belong to explicit sync and validation commands.
 
 Bootstrap-only `.serena` files created by tool startup, such as an untracked `.serena/project.yml` plus runtime markers, are not meaningful work by themselves and must not trigger a post-task sync continuation.
 
@@ -69,6 +69,7 @@ Runtime markers are ignored by git:
 
 - `.serena/.flow_sync_marker`
 - `.serena/.flow_post_task_state.json`
+- `.serena/.flow_blocker_ack.json`
 
 ## Commit Rules
 
@@ -81,6 +82,6 @@ Runtime markers are ignored by git:
 ## Cleanup Rules
 
 - Remove merged worktrees and branches only after verifying they are merged into `main` and pushed if needed.
-- `flow_post_task_state.py` exposes `branch_cleanup_state`; merged local branches, merged remote branches, and merged workflow worktree candidates keep `needs_flow_sync` true until cleaned or reported as blockers.
-- Delete remote branches after merge when the branch was created for this workflow and no open PR depends on it. Protected branches such as `main` and `fullrepo` are never cleanup candidates.
+- `flow_post_task_state.py` exposes `branch_cleanup_state.blocking_candidates` and `advisory_candidates`; only policy-allowed blocking candidates keep `needs_flow_sync` true.
+- Delete remote branches after merge only when policy allows it, the branch was created for this workflow, and no open PR depends on it. Protected branches such as `main`, `dev`, and `fullrepo` are never cleanup candidates.
 - Ask the user if branch ownership, merge status, or remote state is unclear.

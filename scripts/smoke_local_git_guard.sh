@@ -65,6 +65,44 @@ run_guard_expect \
   "refs/heads/main ${agent_commit} refs/heads/main ${base}" \
   "blocked agent-only path"
 
+mkdir -p "$TMP_ROOT/repo/.rldyour"
+cat > "$TMP_ROOT/repo/.rldyour/project-policy.json" <<'JSON'
+{
+  "schema_version": 1,
+  "fullrepo": { "mode": "disabled" },
+  "normal_branch_policy": {
+    "agent_files": "allowed",
+    "ai_marker_additions": "allowed",
+    "instruction_docs": "tracked-normal-branch",
+    "runtime_markers": "forbidden",
+    "secrets": "forbidden"
+  },
+  "instruction_docs": { "mode": "tracked-normal-branch" }
+}
+JSON
+git -C "$TMP_ROOT/repo" add .rldyour/project-policy.json
+git -C "$TMP_ROOT/repo" commit -q -m "chore: allow tracked ai docs"
+policy_agent_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
+
+run_guard_expect \
+  "project policy allows agent docs on product branch" \
+  0 \
+  "refs/heads/main ${policy_agent_commit} refs/heads/main ${base}"
+
+mkdir -p "$TMP_ROOT/repo/.serena"
+printf 'runtime marker\n' > "$TMP_ROOT/repo/.serena/.flow_blocker_ack.json"
+git -C "$TMP_ROOT/repo" add -f .serena/.flow_blocker_ack.json
+git -C "$TMP_ROOT/repo" commit -q -m "test: add blocked runtime ack"
+policy_runtime_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
+
+run_guard_expect \
+  "project policy still blocks runtime markers on product branch" \
+  1 \
+  "refs/heads/main ${policy_runtime_commit} refs/heads/main ${policy_agent_commit}" \
+  "blocked runtime/local-only path"
+
+git -C "$TMP_ROOT/repo" reset -q --hard "$policy_agent_commit"
+
 run_guard_expect \
   "fullrepo allows agent docs with advisory marker warning" \
   0 \

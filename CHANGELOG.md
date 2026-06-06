@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.25] - 2026-06-06
+
+### Fixed
+
+- Add schema-backed project Flow policy so Stop hooks, fullrepo sync, branch cleanup, instruction docs, and local Git guards honor repository-specific workflow constraints.
+
 ## [1.1.24] - 2026-06-04
 
 ### Changed

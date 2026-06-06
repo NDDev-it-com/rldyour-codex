@@ -18,7 +18,7 @@ HOOK_INPUT_FILE=$(mktemp "${TMPDIR:-/tmp}/rldyour-session-context-input.XXXXXX")
 trap 'rm -f "$HOOK_INPUT_FILE"' EXIT
 cat > "$HOOK_INPUT_FILE"
 
-python3 - "$ROOT" "$HOOK_INPUT_FILE" <<'PY'
+python3 - "$ROOT" "$HOOK_INPUT_FILE" "$PLUGIN_DIR/scripts/project_flow_policy.py" <<'PY'
 from __future__ import annotations
 
 import json
@@ -28,6 +28,7 @@ from pathlib import Path
 
 ROOT = Path(sys.argv[1])
 HOOK_INPUT = Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
+POLICY_SCRIPT = Path(sys.argv[3])
 GIT_TIMEOUT = 0.8
 FULLREPO_REMOTE = "origin"
 FULLREPO_BRANCH = "fullrepo"
@@ -143,6 +144,29 @@ def memory_count() -> int | None:
         return None
 
 
+def project_policy() -> dict:
+    if not POLICY_SCRIPT.is_file():
+        return {}
+    try:
+        proc = subprocess.run(
+            ["python3", str(POLICY_SCRIPT), "--json"],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=1.2,
+        )
+    except subprocess.TimeoutExpired:
+        return {}
+    if proc.returncode != 0 and not proc.stdout.strip():
+        return {}
+    try:
+        payload = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
 def main() -> int:
     source = parse_source(HOOK_INPUT)
     branch = git_stdout(["branch", "--show-current"], "detached")
@@ -157,6 +181,26 @@ def main() -> int:
     remaining_dirty = max(len(dirty) - len(shown_dirty), 0)
     wt_count, wt_timeout = worktree_count()
     tracked_agents, tracked_timeout = tracked_agent_count()
+    policy = project_policy()
+    effective_policy = policy.get("effective", {}) if isinstance(policy.get("effective"), dict) else {}
+    fullrepo_policy = (
+        effective_policy.get("fullrepo", {}) if isinstance(effective_policy.get("fullrepo"), dict) else {}
+    )
+    normal_policy = (
+        effective_policy.get("normal_branch_policy", {})
+        if isinstance(effective_policy.get("normal_branch_policy"), dict)
+        else {}
+    )
+    branch_cleanup_policy = (
+        effective_policy.get("branch_cleanup", {})
+        if isinstance(effective_policy.get("branch_cleanup"), dict)
+        else {}
+    )
+    instruction_docs_policy = (
+        effective_policy.get("instruction_docs", {})
+        if isinstance(effective_policy.get("instruction_docs"), dict)
+        else {}
+    )
     fullrepo_ref = f"refs/remotes/{FULLREPO_REMOTE}/{FULLREPO_BRANCH}"
     fullrepo_local_ref = git_bool(["show-ref", "--verify", "--quiet", fullrepo_ref])
     docs_present = [path for path in DOC_FILES if (ROOT / path).is_file()]
@@ -188,6 +232,14 @@ def main() -> int:
             f"exclude installed {exclude_installed()}, "
             f"tracked agent-only paths {'unknown' if tracked_timeout else tracked_agents}."
         ),
+        (
+            "- Project policy: "
+            f"source {policy.get('source', 'built-in defaults')}, "
+            f"fullrepo.mode {fullrepo_policy.get('mode', 'auto')}, "
+            f"agent_files {normal_policy.get('agent_files', 'strict-fullrepo-default')}, "
+            f"instruction_docs.mode {instruction_docs_policy.get('mode', 'auto')}, "
+            f"branch_cleanup.mode {branch_cleanup_policy.get('mode', 'advisory')}."
+        ),
         "- Fullrepo network state: not checked during SessionStart; run ry-init or flow-post-task-sync for full sync status.",
         "- Branch cleanup: not evaluated during SessionStart; run flow-post-task-sync before final delivery.",
     ]
@@ -208,16 +260,14 @@ def main() -> int:
         lines.append("- Project instruction docs present: " + ", ".join(docs_present) + ".")
 
     if needs_attention:
-        lines.append(
-            "- Flow sync signal: maybe pending. Before final delivery, run flow-post-task-sync after Serena memories are current and publish fullrepo when agent-only files exist."
-        )
+        lines.append("- Flow sync signal: maybe pending. Before final delivery, run flow-post-task-sync after Serena memories are current and follow the effective project policy.")
     else:
         lines.append("- Flow sync signal: no startup marker or tracked dirty signal detected.")
 
     lines.extend(
         [
             "- If a task starts with insufficient context, trigger scoped ry-init before editing.",
-            "- At init, restore agent-only context from fullrepo when available before relying on AGENTS.md, CLAUDE.md, or .serena knowledge.",
+            "- At init, restore agent-only context from fullrepo only when effective project policy allows it.",
             "- Before edits, pass the context sufficiency gate: code paths, symbols, data contracts, integration points, existing patterns, checks, and research evidence must be known or explicitly marked as unknown.",
             "- This context is advisory only. Do not block execution only because this hook emitted warnings.",
         ]
