@@ -14,7 +14,7 @@ Create or update `AGENTS.md` when durable Codex instructions change:
 
 Keep it concise. Codex reads it before work, so it should contain high-signal project rules only.
 
-For normal product repositories, project-root `AGENTS.md` is agent-only context. Keep it local and in the `fullrepo` branch, and add it to `.git/info/exclude` through the rldyour fullrepo workflow instead of tracking it in normal branches. Repositories that are themselves agent tooling may intentionally track instruction templates as product artifacts.
+For default rldyour-managed product repositories, project-root `AGENTS.md` is agent-only context. Keep it local and in the `fullrepo` branch, and add it to `.git/info/exclude` through the rldyour fullrepo workflow instead of tracking it in normal branches. Project policy may explicitly set `normal_branch_policy.agent_files=allowed` or `instruction_docs.mode=tracked-normal-branch`; then `AGENTS.md` is a normal tracked project file.
 
 ## .claude/CLAUDE.md
 
@@ -29,7 +29,7 @@ Include:
 
 Keep it concise and first-class. Do not make the file only `@AGENTS.md`. Do not create root `CLAUDE.md` by default; it is a legacy location in the rldyour workflow.
 
-For normal product repositories, `.claude/CLAUDE.md` is agent-only context and follows the same `fullrepo` branch policy as project-root `AGENTS.md`.
+For default rldyour-managed product repositories, `.claude/CLAUDE.md` is agent-only context and follows the same `fullrepo` branch policy as project-root `AGENTS.md`. In tracked-normal-branch projects, it may be committed as a first-class project instruction file.
 
 ## REVIEW.md
 
@@ -62,7 +62,7 @@ ADRs must capture why the decision was made and what tradeoffs future agents mus
 
 ## Agent-Only Files And Fullrepo
 
-Agent-only files that reveal or preserve AI workflow state should not be committed to normal project branches. Store them locally, ignore them through `.git/info/exclude`, and publish them to the `fullrepo` branch through `rldyour-flow`.
+Default rldyour-managed policy keeps agent-only files that reveal or preserve AI workflow state out of normal project branches. Store them locally, ignore them through `.git/info/exclude`, and publish them to the `fullrepo` branch through `rldyour-flow`. Foreign or colleague-owned repositories may opt into tracked AI instruction files through `.rldyour/project-policy.json`.
 
 Default agent-only paths include:
 

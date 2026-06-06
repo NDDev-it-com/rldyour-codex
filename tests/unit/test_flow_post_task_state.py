@@ -89,6 +89,7 @@ def test_state_ignores_bootstrap_only_serena_files(monkeypatch, tmp_path: Path) 
     (tmp_path / ".serena/.gitignore").write_text("/cache\n", encoding="utf-8")
     (tmp_path / ".serena/.flow_sync_marker").write_text("marker\n", encoding="utf-8")
     (tmp_path / ".serena/.flow_post_task_state.json").write_text('{"needs_flow_sync": true}', encoding="utf-8")
+    (tmp_path / ".serena/.flow_blocker_ack.json").write_text('{"fingerprint": "same"}', encoding="utf-8")
 
     payload = mod.state()
     assert payload["is_git_repo"] is True
@@ -103,7 +104,7 @@ def test_state_does_not_loop_on_local_only_fullrepo_without_remote(monkeypatch, 
 
     monkeypatch.setattr(mod, "_serena_current", lambda: (True, {}))
     monkeypatch.setattr(mod, "_instruction_docs_state", lambda: {})
-    monkeypatch.setattr(mod, "_branch_cleanup_state", lambda _branch: {"needs_cleanup": False})
+    monkeypatch.setattr(mod, "_branch_cleanup_state", lambda _branch, _policy: {"needs_cleanup": False})
     monkeypatch.setattr(
         mod,
         "_fullrepo_state",
@@ -126,14 +127,22 @@ def test_state_does_not_loop_on_local_only_fullrepo_without_remote(monkeypatch, 
     assert payload["needs_flow_sync"] is False
 
 
-def test_state_requires_remote_fullrepo_when_network_remote_is_configured(monkeypatch, tmp_path: Path) -> None:
+def test_state_requires_remote_fullrepo_only_when_policy_requires_it(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
     init_repo(tmp_path)
     monkeypatch.chdir(tmp_path)
 
     monkeypatch.setattr(mod, "_serena_current", lambda: (True, {}))
     monkeypatch.setattr(mod, "_instruction_docs_state", lambda: {})
-    monkeypatch.setattr(mod, "_branch_cleanup_state", lambda _branch: {"needs_cleanup": False})
+    (tmp_path / ".rldyour").mkdir()
+    (tmp_path / ".rldyour/project-policy.json").write_text(
+        '{"schema_version":1,"fullrepo":{"mode":"required"}}',
+        encoding="utf-8",
+    )
+    git(tmp_path, "add", ".rldyour/project-policy.json")
+    git(tmp_path, "commit", "-m", "policy")
+
+    monkeypatch.setattr(mod, "_branch_cleanup_state", lambda _branch, _policy: {"needs_cleanup": False})
     monkeypatch.setattr(
         mod,
         "_fullrepo_state",
@@ -154,3 +163,93 @@ def test_state_requires_remote_fullrepo_when_network_remote_is_configured(monkey
 
     assert payload["fullrepo_needs_attention"] is True
     assert payload["needs_flow_sync"] is True
+
+
+def test_foreign_policy_allows_tracked_ai_docs_without_fullrepo_loop(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
+    init_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / ".rldyour").mkdir()
+    (tmp_path / ".rldyour/project-policy.json").write_text(
+        json_policy(
+            fullrepo={"mode": "disabled"},
+            normal_branch_policy={
+                "agent_files": "allowed",
+                "ai_marker_additions": "allowed",
+                "instruction_docs": "tracked-normal-branch",
+            },
+            instruction_docs={"mode": "tracked-normal-branch"},
+            branch_cleanup={"mode": "advisory", "protected_branches": ["main", "dev"]},
+            stop_hook={"block_on_fullrepo": False, "block_on_branch_cleanup": False},
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+    (tmp_path / ".claude").mkdir()
+    (tmp_path / ".claude/CLAUDE.md").write_text("claude docs\n", encoding="utf-8")
+    (tmp_path / ".serena/memories").mkdir(parents=True)
+    (tmp_path / ".serena/memories/CORE-01-INDEX.md").write_text("memory\n", encoding="utf-8")
+    git(tmp_path, "add", ".")
+    git(tmp_path, "commit", "-m", "track project ai docs")
+
+    monkeypatch.setattr(mod, "_serena_current", lambda: (True, {}))
+    monkeypatch.setattr(mod, "_instruction_docs_state", lambda: {"needs_instruction_docs_review": False})
+
+    payload = mod.state()
+
+    assert payload["project_policy"]["source"] == ".rldyour/project-policy.json"
+    assert payload["fullrepo_needs_attention"] is False
+    assert payload["branch_cleanup_state"]["protected_branches"].count("dev") == 1
+    assert payload["blocking_reasons"] == []
+    assert payload["needs_flow_sync"] is False
+
+
+def test_branch_cleanup_dev_is_protected_and_nonworkflow_is_advisory(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
+    init_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    git(tmp_path, "checkout", "-b", "dev")
+    git(tmp_path, "checkout", "main")
+    git(tmp_path, "checkout", "-b", "feature/merged")
+    (tmp_path / "feature.txt").write_text("feature\n", encoding="utf-8")
+    git(tmp_path, "add", "feature.txt")
+    git(tmp_path, "commit", "-m", "feature")
+    git(tmp_path, "checkout", "main")
+    git(tmp_path, "merge", "--no-ff", "feature/merged", "-m", "merge feature")
+
+    state = mod._branch_cleanup_state("main", mod.load_policy(tmp_path))
+
+    assert "dev" not in state["local_merged_branches"]
+    assert "feature/merged" in state["advisory_local_branches"]
+    assert state["blocking_candidates"] == []
+    assert state["needs_cleanup"] is False
+
+
+def test_strict_branch_cleanup_blocks_workflow_branches(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "codex-home"))
+    init_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / ".rldyour").mkdir()
+    (tmp_path / ".rldyour/project-policy.json").write_text(
+        json_policy(branch_cleanup={"mode": "strict", "block_stop": True}),
+        encoding="utf-8",
+    )
+    git(tmp_path, "checkout", "-b", "codex/merged")
+    (tmp_path / "workflow.txt").write_text("workflow\n", encoding="utf-8")
+    git(tmp_path, "add", "workflow.txt")
+    git(tmp_path, "commit", "-m", "workflow")
+    git(tmp_path, "checkout", "main")
+    git(tmp_path, "merge", "--no-ff", "codex/merged", "-m", "merge workflow")
+
+    state = mod._branch_cleanup_state("main", mod.load_policy(tmp_path))
+
+    assert "codex/merged" in state["blocking_local_branches"]
+    assert state["needs_cleanup"] is True
+
+
+def json_policy(**sections: object) -> str:
+    import json
+
+    payload = {"schema_version": 1}
+    payload.update(sections)
+    return json.dumps(payload)

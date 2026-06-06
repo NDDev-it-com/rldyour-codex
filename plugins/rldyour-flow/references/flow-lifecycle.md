@@ -65,7 +65,7 @@ The Stop lifecycle dispatcher drains stdin before any early exit, runs Serena an
 
 ## Fullrepo Branch Standard
 
-Normal project branches such as `main` should contain product source, tests, public docs, CI, and deployable configuration. Agent-only files that reveal or preserve AI workflow state should live locally and in the `fullrepo` branch, not in normal branch history.
+Default rldyour-managed product branches such as `main` contain product source, tests, public docs, CI, and deployable configuration. Agent-only files that reveal or preserve AI workflow state normally live locally and in the `fullrepo` branch. A repository may override this with `.rldyour/project-policy.json`: `normal_branch_policy.agent_files=allowed` and `instruction_docs.mode=tracked-normal-branch` make configured AI instruction files normal tracked project files.
 
 Agent-only examples:
 
@@ -80,8 +80,8 @@ Use `plugins/rldyour-flow/scripts/fullrepo_sync.py` or `scripts/sync_fullrepo_br
 - `--restore`: fetch and restore agent-only files from `origin/fullrepo` into the worktree and install `.git/info/exclude`.
 - `--restore-local`: restore agent-only files from an existing local `origin/fullrepo` tracking ref without fetching; this is the only restore mode used by SessionStart.
 - `--migrate-main`: remove currently tracked agent-only files from the current branch index through `git rm --cached`, leaving files in the worktree.
-- `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`.
-- `--bootstrap-init`: install excludes, restore existing remote `fullrepo` context, publish local agent-only files when no remote `fullrepo` exists, and run `--migrate-main` when the current branch still tracks agent-only files.
+- `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`; refused when project policy disables fullrepo.
+- `--bootstrap-init`: install excludes and restore existing remote `fullrepo` context when policy allows it. Creating a missing fullrepo branch requires explicit `--create-missing` or policy `fullrepo.create_if_missing=true`.
 - `--status-json`: emit machine-readable state for hooks and diagnostics.
 
 Use `--force-with-lease` for `fullrepo` because it protects against overwriting unexpected remote changes. Never force-push `main`.
@@ -90,7 +90,7 @@ Use `--force-with-lease` for `fullrepo` because it protects against overwriting 
 
 Use `scripts/install_local_git_hooks.sh --apply` in product repositories that need local protection before pushes. The installer writes a managed `.git/hooks/pre-push` wrapper and delegates policy to `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`.
 
-The guard reads Git pre-push stdin per ref. For normal product refs it blocks agent-only paths, runtime/local-only paths, definite secrets, and AI-marker additions. For `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` it allows durable AI context and emits advisory warnings for AI markers or suspicious security wording, but still blocks definite secrets, runtime markers, browser artifacts, and local env files. Mixed pushes are evaluated per ref.
+The guard reads Git pre-push stdin per ref. For normal product refs it blocks runtime/local-only paths, definite secrets, and, by default, agent-only paths plus AI-marker additions. If project policy allows tracked agent files, those paths are allowed while runtime markers, browser artifacts, local env files, and definite secrets remain blocked. Mixed pushes are evaluated per ref.
 
 ## ry-newp
 
