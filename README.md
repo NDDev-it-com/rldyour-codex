@@ -226,6 +226,8 @@ All external GitHub Actions are pinned by full commit SHA, with the human-readab
 
 In rldyour-managed projects, `AGENTS.md` is the Codex-native project instruction file and `.claude/CLAUDE.md` is the Claude Code-native project memory file. Both are agent-only context: keep them out of normal branch history and publish them through `fullrepo`.
 
+This is the default rldyour-owned repository policy. In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may disable fullrepo, allow instruction docs on normal branches, and disable branch-cleanup blockers.
+
 Use:
 
 ```bash
