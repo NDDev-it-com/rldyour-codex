@@ -621,12 +621,26 @@ from __future__ import annotations
 
 import json
 import os
+import queue
 import subprocess
+import threading
+import time
 from pathlib import Path
 
 codex_cmd = os.environ["RLDYOUR_CODEX_CMD"]
 codex_home = os.environ["RLDYOUR_CODEX_HOME"]
 repo_root = Path(os.environ["RLDYOUR_REPO_ROOT"])
+
+
+def timeout_seconds() -> float:
+    raw = os.environ.get("CODEX_APP_SERVER_TIMEOUT_SECONDS", "10")
+    try:
+        return max(0.1, float(raw))
+    except ValueError:
+        return 10.0
+
+
+app_server_timeout = timeout_seconds()
 
 
 def expected_hook_count() -> int:
@@ -654,6 +668,19 @@ proc = subprocess.Popen(
 assert proc.stdin is not None
 assert proc.stdout is not None
 
+line_queue = queue.Queue()
+
+
+def read_stdout() -> None:
+    try:
+        for stdout_line in proc.stdout:
+            line_queue.put(stdout_line)
+    finally:
+        line_queue.put(None)
+
+
+threading.Thread(target=read_stdout, daemon=True).start()
+
 
 def send(payload: dict[str, object]) -> None:
     proc.stdin.write(json.dumps(payload) + "\n")
@@ -661,10 +688,19 @@ def send(payload: dict[str, object]) -> None:
 
 
 def recv(target_id: int) -> dict[str, object]:
+    deadline = time.monotonic() + app_server_timeout
     while True:
-        line = proc.stdout.readline()
-        if not line:
-            stderr = proc.stderr.read() if proc.stderr is not None else ""
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError(f"codex app-server did not respond to request {target_id} within {app_server_timeout:g}s")
+        try:
+            line = line_queue.get(timeout=remaining)
+        except queue.Empty as exc:
+            raise TimeoutError(
+                f"codex app-server did not respond to request {target_id} within {app_server_timeout:g}s"
+            ) from exc
+        if line is None:
+            stderr = proc.stderr.read() if proc.stderr is not None and proc.poll() is not None else ""
             raise RuntimeError(f"codex app-server exited before response {target_id}: {stderr}")
         payload = json.loads(line)
         if payload.get("id") == target_id:
