@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.28] - 2026-06-07
+
+### Fixed
+
+- Bound validation subprocesses and clarify release gates.
+
 ## [1.1.27] - 2026-06-07
 
 ### Fixed
