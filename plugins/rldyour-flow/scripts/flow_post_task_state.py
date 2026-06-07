@@ -93,6 +93,14 @@ def _stdout(*args: str) -> str:
     return _git(*args).stdout.strip()
 
 
+def _subprocess_timeout() -> float:
+    raw = os.environ.get("RLDYOUR_FLOW_SUBPROCESS_TIMEOUT_SECONDS", "10")
+    try:
+        return max(0.1, float(raw))
+    except ValueError:
+        return 10.0
+
+
 def _head_commit() -> str:
     proc = _git("rev-parse", "--verify", "HEAD^{commit}")
     if proc.returncode != 0:
@@ -350,7 +358,16 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
     for candidate in candidates:
         if not candidate.is_file():
             continue
-        proc = subprocess.run(["python3", str(candidate)], check=False, capture_output=True, text=True)
+        try:
+            proc = subprocess.run(
+                ["python3", str(candidate)],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=_subprocess_timeout(),
+            )
+        except subprocess.TimeoutExpired:
+            continue
         if proc.returncode != 0 or not proc.stdout.strip():
             continue
         try:
@@ -373,12 +390,16 @@ def _fullrepo_state() -> dict[str, Any]:
         args = ["python3", str(candidate), "--status-json"]
         if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
             args.append("--local-only")
-        proc = subprocess.run(
-            args,
-            check=False,
-            capture_output=True,
-            text=True,
-        )
+        try:
+            proc = subprocess.run(
+                args,
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=_subprocess_timeout(),
+            )
+        except subprocess.TimeoutExpired:
+            continue
         if proc.returncode != 0 or not proc.stdout.strip():
             continue
         try:
@@ -401,13 +422,17 @@ def _instruction_docs_state() -> dict[str, Any]:
         env = os.environ.copy()
         if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
             env["RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY"] = "1"
-        proc = subprocess.run(
-            ["python3", str(candidate), "--json"],
-            check=False,
-            capture_output=True,
-            text=True,
-            env=env,
-        )
+        try:
+            proc = subprocess.run(
+                ["python3", str(candidate), "--json"],
+                check=False,
+                capture_output=True,
+                text=True,
+                env=env,
+                timeout=_subprocess_timeout(),
+            )
+        except subprocess.TimeoutExpired:
+            continue
         if proc.returncode != 0 or not proc.stdout.strip():
             continue
         try:
