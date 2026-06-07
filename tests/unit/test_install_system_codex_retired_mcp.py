@@ -8,6 +8,7 @@ import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_TIMEOUT = 60
 
 
 @pytest.mark.parametrize(
@@ -55,6 +56,7 @@ def test_installer_removes_retired_semgrep_mcp_forms(tmp_path: Path, name: str, 
         check=True,
         text=True,
         capture_output=True,
+        timeout=DEFAULT_TIMEOUT,
     )
     text = config.read_text(encoding="utf-8")
 
@@ -70,6 +72,7 @@ def test_installer_removes_retired_semgrep_mcp_forms(tmp_path: Path, name: str, 
         check=True,
         text=True,
         capture_output=True,
+        timeout=DEFAULT_TIMEOUT,
     )
 
 
@@ -91,6 +94,7 @@ mcp_servers = { custom = { command = "custom-mcp", args = ["--ok"], env = { SAFE
         check=True,
         text=True,
         capture_output=True,
+        timeout=DEFAULT_TIMEOUT,
     )
     data = tomllib.loads(config.read_text(encoding="utf-8"))
 
