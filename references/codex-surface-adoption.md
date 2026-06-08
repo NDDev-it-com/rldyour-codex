@@ -1,6 +1,6 @@
 # Codex Surface Adoption
 
-Verified: 2026-06-04
+Verified: 2026-06-08
 
 Source of truth:
 - Runtime baseline: `references/codex-baseline.json`
