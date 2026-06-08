@@ -5,10 +5,7 @@ interface:
 dependencies:
   tools:
   - type: mcp
-    value: playwright
-    description: 'Браузерные flows. EN: screenshots and assertions.'
-  - type: mcp
     value: chrome-devtools
-    description: 'Браузерный DevTools. EN: console, network, DOM.'
+    description: 'Браузерный DevTools при диагностике. EN: console, network, DOM.'
 policy:
   allow_implicit_invocation: true

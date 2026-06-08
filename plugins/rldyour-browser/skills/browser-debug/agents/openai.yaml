@@ -7,8 +7,5 @@ dependencies:
   - type: mcp
     value: chrome-devtools
     description: 'Браузерный DevTools. EN: console, network, DOM.'
-  - type: mcp
-    value: playwright
-    description: 'Браузерные flows. EN: screenshots and assertions.'
 policy:
   allow_implicit_invocation: true
