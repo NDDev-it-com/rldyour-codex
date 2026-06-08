@@ -1,6 +1,6 @@
 ---
 name: playwright-cli-validation
-description: "Низкоуровневая browser automation через Playwright CLI. Используй для: screenshots, snapshots, headed sessions, traces, responsive, UI flow proof. EN triggers: Playwright CLI validation, screenshots, snapshots, headed browser, traces, responsive."
+description: "Низкоуровневая browser automation через Playwright CLI. Используй для: screenshots, snapshots, headed sessions, traces, responsive, UI proof. EN triggers: Playwright CLI validation, screenshots, snapshots, traces."
 ---
 
 # Playwright CLI Validation

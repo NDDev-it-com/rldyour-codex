@@ -1,6 +1,6 @@
 ---
 name: visual-diff-review
-description: "Проводит surgical visual QA для Figma, screenshots и reference images. Используй для: pixel-perfect, сравни с Figma, сравни с фото, diff, deviation report. EN triggers: visual diff, pixel-perfect, compare with Figma, compare with reference image."
+description: "Проводит visual QA для Figma, screenshots и reference images. Используй для: pixel-perfect, сравни с Figma, сравни с фото, diff. EN triggers: visual diff, pixel-perfect, compare Figma, reference image."
 ---
 
 # Visual Diff Review

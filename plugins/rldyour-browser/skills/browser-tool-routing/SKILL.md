@@ -1,6 +1,6 @@
 ---
 name: browser-tool-routing
-description: "Маршрутизирует browser tasks между Webwright, Playwright CLI и Chrome DevTools MCP. Используй для: браузер, UI, визуально, скриншот, Figma, фото, консоль, сеть, перфоманс, Lighthouse. EN triggers: browser tool routing, UI validation, screenshots, visual QA, console, network, performance."
+description: "Маршрутизирует browser tasks: Webwright, Playwright CLI, Chrome DevTools MCP. Используй для: UI, визуально, скриншот, Figma, консоль, сеть, перфоманс. EN triggers: browser routing, UI validation, screenshots, visual QA, console, network."
 ---
 
 # Browser Tool Routing
