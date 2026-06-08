@@ -16,10 +16,24 @@ node_modules/
 diagnostics/
 dist/
 
-# Browser MCP screenshots, videos, traces, PDFs, and temporary evidence are local artifacts.
+# Browser / Webwright / Playwright CLI runtime artifacts
 browser/**
 !browser/
 !browser/.gitkeep
+.playwright-cli/
+.playwright-mcp/
+playwright-report/
+test-results/
+.webwright-runs/
+outputs/webwright/
+final_runs/
+**/final_script_log.txt
+**/trajectory.json
+**/raw_responses.jsonl
+**/screenshots/*.png
+**/screenshots/*.jpg
+**/screenshots/*.jpeg
+**/screenshots/*.webp
 
 # Serena project knowledge is trackable; runtime/cache state is not.
 .serena/cache/

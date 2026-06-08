@@ -90,6 +90,60 @@
       ]
     },
     {
+      "id": "ru-playwright-cli-validation",
+      "prompt": "сделай скриншоты и snapshots через Playwright CLI для UI proof",
+      "prompt_terms": [
+        "скриншоты",
+        "Playwright CLI"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-browser:playwright-cli-validation",
+          "description_terms": [
+            "Playwright CLI",
+            "screenshots",
+            "snapshots"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-webwright-task",
+      "prompt": "сделай длинную web-задачу найти сравнить выгрузить и сохранить reusable script",
+      "prompt_terms": [
+        "web-задачу",
+        "reusable script"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-browser:webwright-task",
+          "description_terms": [
+            "Webwright",
+            "reusable script",
+            "final_script.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ru-visual-diff-review",
+      "prompt": "сравни с Figma pixel-perfect и сделай visual diff deviation report",
+      "prompt_terms": [
+        "сравни с Figma",
+        "pixel-perfect"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-browser:visual-diff-review",
+          "description_terms": [
+            "pixel-perfect",
+            "сравни с Figma",
+            "reference image"
+          ]
+        }
+      ]
+    },
+    {
       "id": "ru-security-review",
       "prompt": "$ry-sec-review проверь безопасность auth и OWASP",
       "prompt_terms": [
@@ -625,6 +679,9 @@
     "rldyour-security:owasp-top-10-implementation": "implicit",
     "rldyour-security:ry-sec-review": "implicit",
     "rldyour-serena-mcp:serena-code-workflow": "implicit",
-    "rldyour-serena-mcp:serena-memory-sync": "finalization"
+    "rldyour-serena-mcp:serena-memory-sync": "finalization",
+    "rldyour-browser:playwright-cli-validation": "implicit",
+    "rldyour-browser:webwright-task": "implicit",
+    "rldyour-browser:visual-diff-review": "implicit"
   }
 }

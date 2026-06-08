@@ -15,7 +15,7 @@
     "rldyour-serena-mcp"
   ],
   "skills": {
-    "count": 41,
+    "count": 44,
     "names": [
       "architecture-boundaries",
       "browser-debug",
@@ -41,6 +41,7 @@
       "lsp-routing",
       "lsp-setup",
       "owasp-top-10-implementation",
+      "playwright-cli-validation",
       "project-instructions-policy",
       "quality-first-engineering",
       "ry-deploy",
@@ -57,7 +58,9 @@
       "serena-memory-sync",
       "tech-research",
       "verification-quality-gates",
-      "web-research"
+      "visual-diff-review",
+      "web-research",
+      "webwright-task"
     ],
     "reviewer_track_skills": [
       "flow-architecture-review",
@@ -146,11 +149,11 @@
       "grep",
       "github",
       "openaiDeveloperDocs",
-      "playwright",
       "sequential-thinking",
       "serena",
       "shadcn"
-    ]
+    ],
+    "required_servers": []
   },
   "security": {
     "default_profile": "rldyour-yolo",
@@ -171,5 +174,23 @@
   "cache": {
     "layout": "versioned",
     "path_template": "${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>"
+  },
+  "browser_providers": {
+    "policy": "root config/browser-automation-policy.json",
+    "required_common_providers": [
+      "webwright",
+      "playwright-cli",
+      "chrome-devtools-mcp"
+    ],
+    "mcp_providers": [
+      "chrome-devtools-mcp"
+    ],
+    "cli_providers": [
+      "playwright-cli"
+    ],
+    "task_harness_providers": [
+      "webwright"
+    ],
+    "opencode_webwright_support": "adapter-owned-cli-wrapper; upstream-native NOT_PROVEN"
   }
 }
