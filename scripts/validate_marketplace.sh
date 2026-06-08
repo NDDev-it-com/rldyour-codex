@@ -449,7 +449,6 @@ servers = json.loads(Path("plugins/rldyour-mcps/.mcp.json").read_text(encoding="
 checks = (
     ("SERENA_AGENT_VERSION", "serena", "serena-agent", "=="),
     ("SEQUENTIAL_THINKING_MCP_VERSION", "sequential-thinking", "@modelcontextprotocol/server-sequential-thinking", "@"),
-    ("PLAYWRIGHT_MCP_VERSION", "playwright", "@playwright/mcp", "@"),
     ("CHROME_DEVTOOLS_MCP_VERSION", "chrome-devtools", "chrome-devtools-mcp", "@"),
     ("CONTEXT7_MCP_VERSION", "context7", "@upstash/context7-mcp", "@"),
     ("SHADCN_VERSION", "shadcn", "shadcn", "@"),
