@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.36] - 2026-06-09
+
+### Fixed
+
+- Harden Serena memory sync target selection for nested repositories.
+
 ## [1.1.35] - 2026-06-09
 
 ### Changed
