@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.30] - 2026-06-08
+
+### Fixed
+
+- Retire Playwright MCP from installed Codex configs.
+
 ## [1.1.29] - 2026-06-08
 
 ### Changed
