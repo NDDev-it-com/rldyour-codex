@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.29] - 2026-06-08
+
+### Changed
+
+- Re-architect browser providers around Webwright, Playwright CLI, and Chrome DevTools MCP.
+
 ## [1.1.28] - 2026-06-07
 
 ### Fixed
