@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.31] - 2026-06-08
+
+### Fixed
+
+- Tighten browser provider and visual QA contracts.
+
 ## [1.1.30] - 2026-06-08
 
 ### Fixed
