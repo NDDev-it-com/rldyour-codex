@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.35] - 2026-06-09
+
+### Changed
+
+- Resolve GitHub alert and CI drift.
+
 ## [1.1.34] - 2026-06-09
 
 ### Changed
