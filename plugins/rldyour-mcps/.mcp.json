@@ -32,16 +32,6 @@
       "startup_timeout_sec": 90,
       "tool_timeout_sec": 120
     },
-    "playwright": {
-      "command": "bunx",
-      "args": [
-        "@playwright/mcp@0.0.75",
-        "--headless",
-        "--caps=network,storage,testing,devtools"
-      ],
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 180
-    },
     "chrome-devtools": {
       "command": "bunx",
       "args": [
