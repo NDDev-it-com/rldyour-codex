@@ -2,58 +2,33 @@
 
 `rldyour-browser` is a skills-only browser workflow plugin for Codex.
 
-It does not configure MCP servers directly. The Playwright MCP and Chrome DevTools MCP transports belong to `rldyour-mcps`; this plugin defines how Codex should use them.
+It does not configure MCP servers directly. Browser automation is provider-routed:
+
+- Webwright handles high-level long-horizon web tasks, RPA, extraction, comparison, and reusable `final_script.py` workflows.
+- Playwright CLI handles low-level browser flow validation, screenshots, snapshots, traces, headed sessions, responsive matrices, and post-fix proof.
+- Chrome DevTools MCP handles console, network, runtime, layout, performance, memory, Lighthouse, and live Chrome debugging.
 
 User-facing conversation stays in Russian unless the owner asks otherwise. Repository documentation is written in English.
 
-## Auto Invocation
-
-The plugin is optimized for automatic browser skill selection. Codex should route browser work to these skills when a task asks to check in the browser, verify visually, validate a UI, prove a user flow, inspect screenshots, compare pixel-perfect output, debug console/network/runtime/layout issues, or analyze browser performance.
-
-`policy.allow_implicit_invocation` is enabled for every skill. The primary trigger surface is each `SKILL.md` frontmatter `description`; plugin manifest descriptions and `agents/openai.yaml` metadata mirror the same intent for marketplace and UI discovery.
-
 ## Scope
 
-- Use Playwright MCP as the primary tool for user-flow reproduction, functional checks, business-logic verification, screenshots, accessibility snapshots, storage/network/testing assertions, and pixel-perfect UI validation.
-- Use Chrome DevTools MCP as the primary tool for console errors, network analysis, DOM/runtime debugging, layout inspection, Lighthouse, performance traces, and deeper browser diagnosis.
-- Use both tools together when the right workflow is: reproduce with Playwright, diagnose with Chrome DevTools, then re-validate with Playwright.
-- Store all browser artifacts under `browser/`.
-- Treat `browser/` artifacts as temporary and ignored by git. Delete screenshots, videos, traces, PDFs, and temporary evidence after the task unless the owner explicitly asks to keep them.
+- Use Webwright when the expected output is a rerunnable web workflow with `plan.md`, logs, screenshots, and `final_script.py`.
+- Use Playwright CLI when the expected output is deterministic browser evidence under `browser/`.
+- Use Chrome DevTools MCP when the task requires DevTools diagnosis or live Chrome inspection.
+- Store all browser artifacts under `browser/` and do not commit them.
 
 ## Skills
 
-- `browser-tool-routing`: chooses Playwright, Chrome DevTools, or both based on the task.
-- `browser-validation`: verifies UI, pixel-perfect behavior, functionality, and business logic in the browser.
-- `browser-debug`: diagnoses runtime, console, network, layout, and performance problems through Chrome DevTools, with Playwright reproduction when useful.
-
-## Trigger Map
-
-- Check in browser, verify visually, validate UI, take screenshots, prove responsive states, test flows, or confirm business behavior: use `browser-validation`.
-- Console errors, network failures, runtime exceptions, hydration, layout diagnosis, Lighthouse, performance, or memory problems: use `browser-debug`.
-- Unclear browser request, mixed validation/debugging, or tool-choice decision: use `browser-tool-routing` first.
-
-## Artifact Rule
-
-All MCP browser screenshots and related artifacts must go under `browser/`. Do not scatter screenshots into the repo root, feature folders, or plugin directories.
-
-Ignored artifact examples:
-
-- `browser/*.png`
-- `browser/*.jpg`
-- `browser/*.webp`
-- `browser/*.mp4`
-- `browser/*.webm`
-- `browser/*.zip`
-- `browser/*.trace`
-- `browser/*.har`
-- `browser/*.pdf`
-
-The directory exists only as a local working area. Commit text summaries, not binary evidence, unless the owner explicitly asks otherwise.
+- `browser-tool-routing`: chooses Webwright, Playwright CLI, Chrome DevTools MCP, or a staged combination.
+- `browser-validation`: verifies UI, visual behavior, functionality, and business logic with Playwright CLI evidence.
+- `playwright-cli-validation`: low-level screenshot/snapshot/session provider workflow.
+- `webwright-task`: long-horizon reusable browser-task workflow.
+- `visual-diff-review`: Figma/photo/reference-image deviation workflow.
+- `browser-debug`: Chrome DevTools MCP diagnosis with Playwright CLI reproduction when useful.
 
 ## Sources
 
-- Playwright MCP introduction: https://playwright.dev/mcp/introduction
-- Playwright MCP capabilities: https://playwright.dev/mcp/capabilities
-- Playwright MCP configuration: https://playwright.dev/mcp/configuration/options
+- Webwright: https://github.com/microsoft/Webwright
+- Playwright CLI: https://github.com/microsoft/playwright-cli
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - Chrome DevTools MCP announcement: https://developer.chrome.com/blog/chrome-devtools-mcp

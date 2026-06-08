@@ -49,7 +49,7 @@ OpenAI Docs MCP before general web search when it is available.
 - Technical docs: Context7/OpenAI Docs MCP/official sources first; web search only when needed.
 - Repo architecture: DeepWiki/source reads when appropriate.
 - Planning: Sequential Thinking when available for non-trivial decisions.
-- Browser-visible changes: Playwright MCP and/or Chrome DevTools MCP validation.
+- Browser-visible changes: Playwright CLI validation and Chrome DevTools MCP diagnosis when relevant.
 - Security-sensitive changes: project security scripts, CI security artifacts, and manual review where applicable.
 
 ## Codex System Contract

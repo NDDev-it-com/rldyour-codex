@@ -51,7 +51,6 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | --- | --- | --- |
 | `serena` | Semantic navigation, analysis, and precise code editing | `uvx`, headless |
 | `sequential-thinking` | Structured reasoning and planning | `bunx` |
-| `playwright` | Browser automation, UI checks, network/storage/testing/devtools workflows | `bunx`, headless |
 | `chrome-devtools` | Page diagnostics through Chrome DevTools | `bunx`, headless, isolated |
 | `context7` | Current library documentation | `bunx`, `CONTEXT7_API_KEY` |
 | `deepwiki` | Repository documentation and explanations | remote URL |
@@ -105,7 +104,6 @@ scripts/smoke_mcp_capabilities.sh
 Expected state:
 
 - `serena` starts through `uvx` with the web dashboard disabled.
-- `playwright` starts through `bunx` with `--caps=network,storage,testing,devtools`.
 - `figma` uses OAuth.
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
 - `openaiDeveloperDocs` uses the official OpenAI Docs MCP endpoint for OpenAI and Codex product documentation.
@@ -151,7 +149,7 @@ If the dashboard is needed manually, change this runtime policy intentionally an
 - Serena dashboard: https://oraios.github.io/serena/02-usage/060_dashboard.html
 - Context7: https://www.mintlify.com/upstash/context7/mcp/configuration
 - Codex MCP configuration: https://developers.openai.com/codex/mcp
-- Playwright MCP: https://playwright.dev/mcp/configuration/options
+- Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - DeepWiki MCP: https://mcp.deepwiki.com/
 - Grep by Vercel: https://vercel.com/blog/grep-a-million-github-repositories-via-mcp-1H5Bmvo4XKswf0TpZIOmEI
