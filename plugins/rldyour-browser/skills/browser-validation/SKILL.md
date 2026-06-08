@@ -1,6 +1,6 @@
 ---
 name: browser-validation
-description: "Валидация UI и пользовательских сценариев в браузере через Playwright CLI evidence. Используй для: проверь UI, проверь в браузере, скриншот, регрессия, адаптив, бизнес-логика, визуально. EN triggers: validate UI, browser check, regression test, responsive check, business logic in browser, screenshot, visual QA."
+description: "Валидирует UI и сценарии через Playwright CLI evidence. Используй для: проверь UI, браузер, скриншот, регрессия, адаптив, бизнес-логика, визуально. EN triggers: validate UI, browser check, regression, responsive, screenshot."
 ---
 
 # Browser Validation
