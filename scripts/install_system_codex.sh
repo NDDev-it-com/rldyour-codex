@@ -310,7 +310,7 @@ mcp_tool_approvals = {
     },
     "grep": {"searchGitHub": "approve"},
 }
-retired_mcp_servers = {"semgrep"}
+retired_mcp_servers = {"semgrep", "playwright"}
 
 managed_agents = []
 for agent_path in sorted(system_agent_dir.glob("*.toml")):
