@@ -74,7 +74,7 @@ def validate() -> None:
     mcp = json.loads((ROOT / "plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
     require("playwright" not in mcp, "playwright must not be an active MCP server")
     chrome = mcp.get("chrome-devtools") or {}
-    require(chrome, "chrome-devtools MCP server is required")
+    require(bool(chrome), "chrome-devtools MCP server is required")
     require(SAFE_CHROME_ARGS <= set(map(str, chrome.get("args") or [])), "chrome-devtools MCP args must keep safe defaults")
 
     skills_root = ROOT / "plugins/rldyour-browser/skills"
