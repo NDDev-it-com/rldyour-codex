@@ -37,10 +37,13 @@ def require(condition: bool, message: str) -> None:
 
 def text_files() -> list[Path]:
     paths: list[Path] = []
+    ignored_report_names = {"coverage.xml", "pytest.xml", "junit.xml"}
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
         if any(part in {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache"} for part in path.parts):
+            continue
+        if path.name in ignored_report_names or "htmlcov" in path.parts:
             continue
         if ".serena" in path.parts and "cache" in path.parts:
             continue
@@ -54,12 +57,18 @@ def text_files() -> list[Path]:
 
 def validate() -> None:
     hits: list[str] = []
+    allowed_negative_surfaces = (
+        "scripts/validate_browser_provider_policy.py",
+        "tests/",
+    )
     for path in text_files():
         text = path.read_text(encoding="utf-8", errors="ignore")
         for line_no, line in enumerate(text.splitlines(), start=1):
             for pattern in FORBIDDEN:
                 if pattern in line:
-                    hits.append(f"{path.relative_to(ROOT)}:{line_no}: {line.strip()}")
+                    hit = f"{path.relative_to(ROOT)}:{line_no}: {line.strip()}"
+                    if not any(surface in hit for surface in allowed_negative_surfaces):
+                        hits.append(hit)
     require(not hits, "retired browser MCP references remain:\n" + "\n".join(hits[:40]))
 
     mcp = json.loads((ROOT / "plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
