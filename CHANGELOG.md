@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.34] - 2026-06-09
+
+### Changed
+
+- Refresh Chrome DevTools MCP baseline to 1.2.0.
+
 ## [1.1.33] - 2026-06-09
 
 ### Changed
