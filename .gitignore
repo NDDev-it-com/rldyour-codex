@@ -12,7 +12,6 @@ pytest.xml
 *.stderr.log
 .pytest_cache/
 node_modules/
-.playwright-mcp/
 diagnostics/
 dist/
 
@@ -21,7 +20,6 @@ browser/**
 !browser/
 !browser/.gitkeep
 .playwright-cli/
-.playwright-mcp/
 playwright-report/
 test-results/
 .webwright-runs/
