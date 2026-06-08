@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.32] - 2026-06-08
+
+### Fixed
+
+- Synchronize documentation and memory facts with current browser provider policy.
+
 ## [1.1.31] - 2026-06-08
 
 ### Fixed
