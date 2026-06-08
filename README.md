@@ -35,7 +35,7 @@ The active marketplace currently contains:
 - `rldyour-explore`: research skills for technical MCP research and authoritative web research.
 - `rldyour-serena-mcp`: Serena-first semantic code workflow, fact-only `.serena` memory sync, plans, research archive, and lifecycle hooks.
 - `rldyour-security`: non-blocking OWASP-oriented secure implementation guidance and `ry-sec-review` security review skill.
-- `rldyour-browser`: browser validation and debugging workflows for Playwright MCP and Chrome DevTools MCP.
+- `rldyour-browser`: provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
 - `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation gates.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-repair`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
@@ -170,7 +170,7 @@ explicit policy decision. Managed subagent roles in
 `system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
 `model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
 
-Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `figma`, `playwright`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit design, browser, Flutter, or shadcn work.
+Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `figma`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit design, browser, Flutter, or shadcn work. Playwright CLI and Webwright are browser providers outside MCP.
 
 Managed execpolicy rules in `system/rules/*.rules` install to `~/.codex/rules/` and are validated with `codex execpolicy check`. They add hard rails for root deletion, direct forced Git pushes, secret-key disclosure, and release/deploy side effects without changing the maintainer-required permission defaults.
 
