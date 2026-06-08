@@ -1,0 +1,8 @@
+interface:
+  display_name: Webwright Task
+  short_description: 'Длинный Webwright web workflow. EN: reusable browser task'
+  default_prompt: 'Используй $webwright-task: reusable browser workflow.'
+dependencies:
+  tools: []
+policy:
+  allow_implicit_invocation: true

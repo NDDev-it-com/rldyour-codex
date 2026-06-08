@@ -14,9 +14,6 @@ dependencies:
     value: serena
     description: 'Семантика Serena. EN: code symbols, refs, memory.'
   - type: mcp
-    value: playwright
-    description: 'Браузерные flows. EN: screenshots and assertions.'
-  - type: mcp
     value: chrome-devtools
     description: 'Браузерный DevTools. EN: console, network, DOM.'
 policy:

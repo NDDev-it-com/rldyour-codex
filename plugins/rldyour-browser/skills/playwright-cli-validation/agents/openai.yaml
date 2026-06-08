@@ -1,0 +1,8 @@
+interface:
+  display_name: Playwright CLI Validation
+  short_description: 'Браузер proof через Playwright CLI. EN: screenshots'
+  default_prompt: 'Используй $playwright-cli-validation: low-level browser evidence.'
+dependencies:
+  tools: []
+policy:
+  allow_implicit_invocation: true

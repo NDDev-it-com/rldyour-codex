@@ -1,0 +1,11 @@
+interface:
+  display_name: Visual Diff Review
+  short_description: 'Визуальный diff. EN: pixel-perfect visual QA'
+  default_prompt: 'Используй $visual-diff-review: compare visual reference and actual screenshot.'
+dependencies:
+  tools:
+  - type: mcp
+    value: chrome-devtools
+    description: 'Диагностика computed style/layout. EN: when deviations require debugging.'
+policy:
+  allow_implicit_invocation: true

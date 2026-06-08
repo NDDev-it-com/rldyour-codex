@@ -54,12 +54,12 @@ Do not commit browser artifacts. Delete them after the task unless the owner exp
 
 ## Validation Workflow
 
-1. Use Playwright MCP for browser flow reproduction, screenshots, accessibility snapshots, and assertions.
-2. Use Chrome DevTools MCP for console/network/runtime/layout/performance diagnosis when relevant.
-3. Compare against Figma context and screenshots.
-4. Run or manually perform static scans for raw visible text, raw design values, placeholders, duplicate generated components, and missing assets in the touched scope.
+1. Use Figma source inspection for frame, token, component, text, and constraint facts.
+2. Use Playwright CLI for browser flow reproduction, screenshots, snapshots, viewport matrices, accessibility-relevant visual evidence, and visual diff evidence.
+3. Use Chrome DevTools MCP for computed style, layout, console, network, runtime, performance, memory, or Lighthouse diagnosis when relevant.
+4. Compare reference and actual screenshot evidence, then run static scans for raw visible text, raw design values, placeholders, duplicate generated components, and missing assets in the touched scope.
 5. Fix mismatches and re-run checks.
-6. Report remaining mismatches or blockers explicitly.
+6. Report remaining mismatches or blockers explicitly with reference, actual screenshot, diff/deviation, and evidence paths.
 
 ## Done Criteria
 
