@@ -76,6 +76,69 @@ def test_installer_removes_retired_semgrep_mcp_forms(tmp_path: Path, name: str, 
     )
 
 
+@pytest.mark.parametrize(
+    ("name", "config_text"),
+    [
+        (
+            "table",
+            """
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@0.0.75", "--headless"]
+""",
+        ),
+        (
+            "dotted",
+            """
+mcp_servers.playwright.command = "npx"
+mcp_servers.playwright.args = ["@playwright/mcp@0.0.75", "--headless"]
+""",
+        ),
+        (
+            "inline",
+            """
+mcp_servers = { playwright = { command = "npx", args = ["@playwright/mcp@0.0.75", "--headless"] } }
+""",
+        ),
+        (
+            "parent-table",
+            """
+[mcp_servers]
+playwright = { command = "npx", args = ["@playwright/mcp@0.0.75", "--headless"] }
+""",
+        ),
+    ],
+)
+def test_installer_removes_retired_playwright_mcp_forms(tmp_path: Path, name: str, config_text: str) -> None:
+    codex_home = tmp_path / f"playwright-{name}"
+    codex_home.mkdir()
+    config = codex_home / "config.toml"
+    config.write_text(config_text.strip() + "\n", encoding="utf-8")
+
+    subprocess.run(
+        ["bash", "scripts/install_system_codex.sh", "--apply", "--codex-home", str(codex_home)],
+        cwd=ROOT,
+        check=True,
+        text=True,
+        capture_output=True,
+        timeout=DEFAULT_TIMEOUT,
+    )
+    text = config.read_text(encoding="utf-8")
+
+    assert "mcp_servers.playwright" not in text
+    assert "@playwright/mcp" not in text
+    data = tomllib.loads(text)
+    assert "playwright" not in data.get("mcp_servers", {})
+    subprocess.run(
+        ["bash", "scripts/doctor_system_codex.sh", "--quick", "--codex-home", str(codex_home)],
+        cwd=ROOT,
+        check=True,
+        text=True,
+        capture_output=True,
+        timeout=DEFAULT_TIMEOUT,
+    )
+
+
 def test_installer_preserves_custom_inline_mcp_server_while_removing_semgrep(tmp_path: Path) -> None:
     codex_home = tmp_path / "custom-inline"
     codex_home.mkdir()
