@@ -23,4 +23,5 @@ def test_plugin_manifests_include_known_plugins() -> None:
 
 def test_mcp_servers_include_known_servers() -> None:
     servers = mod.mcp_servers()
-    assert {"serena", "playwright", "openaiDeveloperDocs"} <= set(servers)
+    assert {"serena", "chrome-devtools", "openaiDeveloperDocs"} <= set(servers)
+    assert "playwright" not in servers

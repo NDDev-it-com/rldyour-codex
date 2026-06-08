@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 EXPECTED_TOOLS: dict[str, set[str]] = {
     "serena": {"initial_instructions", "onboarding", "list_memories", "get_symbols_overview", "find_symbol", "read_memory"},
     "sequential-thinking": {"sequentialthinking"},
-    "playwright": {"browser_navigate", "browser_close", "browser_console_messages"},
     "chrome-devtools": {"new_page", "list_console_messages", "take_screenshot"},
     "context7": {"resolve-library-id", "query-docs"},
     "deepwiki": {"read_wiki_structure", "ask_question"},
@@ -182,16 +181,6 @@ async def _safe_call(name: str, session: "ClientSession", missing_env: list[str]
         if result.isError:
             raise ProbeFailure("sequentialthinking returned isError=true")
         return "sequentialthinking"
-
-    if name == "playwright":
-        result = await session.call_tool(
-            "browser_navigate",
-            {"url": "data:text/html,<title>mcp-smoke</title><h1>ok</h1>"},
-        )
-        if result.isError:
-            raise ProbeFailure("browser_navigate returned isError=true")
-        await session.call_tool("browser_close", {})
-        return "browser_navigate"
 
     if name == "chrome-devtools":
         result = await session.call_tool(

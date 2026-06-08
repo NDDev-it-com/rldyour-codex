@@ -14,14 +14,14 @@ def test_missing_launchers_groups_affected_servers(monkeypatch) -> None:
     servers = {
         "serena": {"command": "uvx"},
         "context7": {"command": "bunx"},
-        "playwright": {"command": "bunx"},
+        "chrome-devtools": {"command": "bunx"},
         "deepwiki": {"url": "https://example.invalid/mcp"},
         "disabled": {"command": "dart", "enabled": False},
     }
     monkeypatch.setattr(mod, "executable_exists", lambda command: command == "uvx")
 
     assert mod.missing_launchers(servers, require_codex=True) == {
-        "bunx": ["context7", "playwright"],
+        "bunx": ["chrome-devtools", "context7"],
         "codex": ["installer/doctor"],
     }
 
