@@ -310,7 +310,6 @@ mcp_tool_approvals = {
     },
     "grep": {"searchGitHub": "approve"},
 }
-retired_mcp_servers = {"semgrep", "playwright"}
 
 managed_agents = []
 for agent_path in sorted(system_agent_dir.glob("*.toml")):
@@ -594,9 +593,7 @@ def is_rldyour_plugin_header(header_path: list[str]) -> bool:
 def is_managed_header(header: str, header_path: list[str]) -> bool:
     if header in managed_headers:
         return True
-    if len(header_path) >= 2 and header_path[0] == "mcp_servers" and header_path[1] in retired_mcp_servers:
-        return True
-    if len(header_path) >= 2 and header_path[0] == "mcp_servers" and header_path[1] in mcp_servers:
+    if len(header_path) >= 2 and header_path[0] == "mcp_servers":
         return True
     return (
         len(header_path) >= 2
@@ -624,7 +621,7 @@ def append_preserved_toml_table(header_path: list[str], table: dict[object, obje
 
 
 def should_drop_mcp_server_name(server_name: str) -> bool:
-    return server_name in retired_mcp_servers or server_name in mcp_servers
+    return True
 
 
 for raw_line in existing.splitlines():
@@ -675,7 +672,7 @@ for raw_line in existing.splitlines():
             if not isinstance(inline_mcp_servers, dict):
                 raise SystemExit(
                     f"{config_path}: mcp_servers inline assignment must be a table "
-                    "so retired/managed servers can be migrated safely."
+                    "so managed servers can be migrated safely."
                 )
             for server, spec in inline_mcp_servers.items():
                 server_name = str(server)

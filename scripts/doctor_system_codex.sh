@@ -299,21 +299,8 @@ mcp_servers = sorted(json.loads(mcp_config_path.read_text(encoding="utf-8"))["mc
 configured_mcp_servers = config_data.get("mcp_servers") or {}
 for server in mcp_servers:
     checks.append((f"mcp configured {server}", server in configured_mcp_servers))
-for server in ("semgrep", "playwright"):
-    checks.append((f"retired MCP absent {server}", server not in configured_mcp_servers))
-    retired_patterns = [
-        rf"(?im)^\s*\[mcp_servers\.{re.escape(server)}\]",
-        rf"(?im)^\s*mcp_servers\.{re.escape(server)}\.",
-        rf"(?im)^\s*mcp_servers\s*=\s*\{{[^\n]*\b{re.escape(server)}\b",
-        rf"(?i)\b{re.escape(server)}\s+mcp\b",
-        rf"(?i)@{re.escape(server)}/mcp\b",
-        rf"(?i)\b{re.escape(server)}==",
-        rf"(?i)\b{re.escape(server)}_{re.escape(server)}_scan\b",
-    ]
-    checks.append((
-        f"retired MCP text trace absent {server}",
-        not any(re.search(pattern, text) for pattern in retired_patterns),
-    ))
+for server in sorted(configured_mcp_servers):
+    checks.append((f"mcp server approved {server}", server in set(mcp_servers)))
 
 tool_approvals = {
     "sequential-thinking": {"sequentialthinking": "approve"},

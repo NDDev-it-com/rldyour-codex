@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.33] - 2026-06-09
+
+### Changed
+
+- Replace retired-tool negative gates with approved active inventory validation and tighten browser provider evidence routing.
+
 ## [1.1.32] - 2026-06-08
 
 ### Fixed
