@@ -32,10 +32,50 @@ EXPECTED_TOOLS: dict[str, set[str]] = {
 
 AUTH_REQUIRED = {"figma"}
 STARTUP_ENV_REQUIRED = {"github"}
+TRANSIENT_EXTERNAL_MCP_SERVERS = {"grep"}
+TRANSIENT_EXTERNAL_FAILURE_MARKERS = (
+    "504 Gateway Timeout",
+    "Server error '504",
+    "timed out after",
+    "Cancelled via cancel scope",
+    "aclose(): asynchronous generator is already running",
+    "Attempted to exit cancel scope",
+)
 
 
 class ProbeFailure(Exception):
     pass
+
+
+def _exception_chain_text(exc: BaseException) -> str:
+    parts: list[str] = []
+    stack: list[BaseException] = [exc]
+    seen: set[int] = set()
+    while stack:
+        current = stack.pop()
+        ident = id(current)
+        if ident in seen:
+            continue
+        seen.add(ident)
+        parts.append(f"{type(current).__name__}: {current}")
+        if isinstance(current, BaseExceptionGroup):
+            stack.extend(current.exceptions)
+        if current.__cause__ is not None:
+            stack.append(current.__cause__)
+        if current.__context__ is not None:
+            stack.append(current.__context__)
+    return "\n".join(parts)
+
+
+def _is_transient_external_failure(name: str, exc: BaseException) -> bool:
+    if name not in TRANSIENT_EXTERNAL_MCP_SERVERS:
+        return False
+    if isinstance(exc, (KeyboardInterrupt, SystemExit)):
+        return False
+    if isinstance(exc, (TimeoutError, asyncio.CancelledError)):
+        return True
+    text = _exception_chain_text(exc)
+    return any(marker in text for marker in TRANSIENT_EXTERNAL_FAILURE_MARKERS)
 
 
 def _load_servers(root: Path, codex_home: Path) -> dict[str, dict[str, Any]]:
@@ -362,8 +402,17 @@ async def _probe_with_retries(
                 include_auth=include_auth,
                 timeout=timeout,
             )
+        except asyncio.CancelledError as exc:
+            last_error = exc
+            if _is_transient_external_failure(name, exc):
+                detail = _exception_chain_text(exc).splitlines()[0]
+                return "skip", f"{name}: transient external MCP unavailable ({detail})"
+            raise
         except Exception as exc:
             last_error = exc
+            if _is_transient_external_failure(name, exc):
+                detail = _exception_chain_text(exc).splitlines()[0]
+                return "skip", f"{name}: transient external MCP unavailable ({detail})"
             if attempt < retries:
                 print(f"retry   {name} attempt {attempt} failed: {exc}", file=sys.stderr)
                 await asyncio.sleep(min(2 * attempt, 5))
