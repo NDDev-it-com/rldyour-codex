@@ -7,7 +7,7 @@
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Latest Release](https://img.shields.io/github/v/release/NDDev-it-com/rldyour-codex)](https://github.com/NDDev-it-com/rldyour-codex/releases/latest)
 
-`rldyour-codex` is a rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory. It is maintained by Danil Silantyev (github:rldyourmnd), CEO NDDev and owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
+`rldyour-codex` is a rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory. It is authored by Danil Silantyev (github:rldyourmnd), CEO NDDev and owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
 
 It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog where nothing is treated as enabled or correct unless explicitly decided by the maintainer.
 
@@ -23,7 +23,7 @@ AGPL-3.0 includes a Remote Network Interaction clause (Section 13): if you run a
 - Planned plugins stay documented here and are not added to `marketplace.json` until explicitly created.
 - Each plugin has a clear responsibility boundary.
 - Each tool or workflow describes its purpose, access model, risks, and usage rules.
-- Repository artifacts are written in English; technical identifiers stay stable and ASCII.
+- Repository artifacts are written in English; technical identifiers stay stable and ASCII. User-facing communication with the owner is Russian unless explicitly requested otherwise.
 - Every callable rldyour skill includes compact Russian and English trigger phrases in the `SKILL.md` frontmatter `description`; Codex uses descriptions as the primary routing surface, and details belong in the skill body or references.
 - Secrets, tokens, cookies, and private keys are never stored in this repository.
 
@@ -34,9 +34,9 @@ The active marketplace currently contains:
 - `rldyour-mcps`: the maintainer's approved MCP server set for Codex.
 - `rldyour-explore`: research skills for technical MCP research and authoritative web research.
 - `rldyour-serena-mcp`: Serena-first semantic code workflow, fact-only `.serena` memory sync, plans, research archive, and lifecycle hooks.
-- `rldyour-security`: non-blocking OWASP-oriented secure implementation guidance and `ry-sec-review` security review skill.
+- `rldyour-security`: non-blocking OWASP Top 10 2025 secure-implementation guidance and `ry-sec-review` security review skill.
 - `rldyour-browser`: provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
-- `rldyour-design`: Figma-to-code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation gates.
+- `rldyour-design`: Figma → code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-repair`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, Codex and Claude Code project instructions, ADR policy, and `ry-rules-review`.
@@ -117,7 +117,7 @@ scripts/install_system_codex.sh --apply
 Apply the owner-standard full-access profile:
 
 ```bash
-scripts/install_system_codex.sh --apply
+scripts/install_system_codex.sh --apply --owner-mode
 ```
 
 Verify the installed system state:
