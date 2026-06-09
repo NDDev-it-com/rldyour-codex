@@ -191,6 +191,6 @@
     "task_harness_providers": [
       "webwright"
     ],
-    "opencode_webwright_support": "adapter-owned-cli-wrapper; upstream-native NOT_PROVEN"
+    "webwright_support": "adapter-owned-cli-wrapper; upstream-native NOT_PROVEN"
   }
 }
