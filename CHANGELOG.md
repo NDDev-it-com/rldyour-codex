@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.37] - 2026-06-09
+
+### Fixed
+
+- Adopt Codex CLI 0.138.0 and harden validation ergonomics.
+
 ## [1.1.36] - 2026-06-09
 
 ### Fixed
