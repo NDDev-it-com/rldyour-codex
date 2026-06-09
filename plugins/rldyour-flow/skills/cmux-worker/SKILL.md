@@ -17,6 +17,16 @@ Run a bounded worker task delegated by the cmux orchestrator.
 - Do not commit unless the orchestrator explicitly delegates commit permission for the task ID.
 - If assigned scope is unclear or dirty files are outside scope, stop and report.
 
+## Completion Signal
+
+The orchestrator exports `RLDYOUR_TASK_ID` and `RLDYOUR_WORKER_ALLOWED_PATHS` at
+delegation time; an empty `RLDYOUR_WORKER_ALLOWED_PATHS` means no delegated
+write scope. Finish every task with both signals:
+
+1. The JSON report (file path below when requested; create the directory on demand).
+2. `cmux notify --title "worker ${RLDYOUR_WORKER_ID}" --body "task ${RLDYOUR_TASK_ID} exit <code>"`
+   with the real exit code, because cmux emits no per-command exit-code event.
+
 ## Report
 
 Return this JSON plus concise notes:
