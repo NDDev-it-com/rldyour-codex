@@ -445,10 +445,14 @@ out: list[str] = [
 skip_managed = False
 in_features = False
 in_memories = False
+in_tui = False
 features_table_seen = False
+tui_table_seen = False
 feature_dotted_lines: list[str] = []
+tui_preserved_lines: list[str] = []
 hooks_written = False
 multi_agent_written = False
+tui_managed_written = False
 memories_external_context_written = "disable_on_external_context" in existing_memories
 current_header: str | None = None
 managed_feature_keys = {
@@ -461,6 +465,15 @@ managed_feature_keys = {
     "web_search_cached",
     "web_search_request",
 }
+# Owner-standard TUI status line (Codex CLI 0.119.0+ [tui].status_line):
+# model + reasoning, context left, five-hour/weekly rate-limit remainder,
+# git branch, and working directory. Only these two keys are managed; any
+# other user [tui] keys (notifications, animations, terminal_title) survive.
+managed_tui_keys = {"status_line", "status_line_use_colors"}
+managed_tui_lines = [
+    'status_line = ["model-with-reasoning", "context-remaining", "five-hour-limit", "weekly-limit", "git-branch", "current-dir"]',
+    "status_line_use_colors = true",
+]
 legacy_hook_feature_keys = {"codex_hooks"}
 deprecated_root_keys = {
     "background_terminal_timeout",
@@ -581,6 +594,20 @@ def append_features_block() -> None:
     append_managed_features()
 
 
+def append_managed_tui() -> None:
+    global tui_managed_written
+    if not tui_managed_written:
+        out.extend(managed_tui_lines)
+        tui_managed_written = True
+
+
+def append_tui_block() -> None:
+    add_blank()
+    out.append("[tui]")
+    out.extend(tui_preserved_lines)
+    append_managed_tui()
+
+
 def is_rldyour_plugin_header(header_path: list[str]) -> bool:
     return (
         len(header_path) == 2
@@ -632,18 +659,24 @@ for raw_line in existing.splitlines():
     if match:
         if in_features:
             append_managed_features()
+        if in_tui:
+            append_managed_tui()
         header = match.group(1)
         header_path = split_toml_key(header)
         if is_managed_header(header, header_path) or is_rldyour_plugin_header(header_path):
             skip_managed = True
             in_features = False
             in_memories = False
+            in_tui = False
             continue
         skip_managed = False
         in_features = header_path == ["features"]
         in_memories = header_path == ["memories"]
+        in_tui = header_path == ["tui"]
         if in_features:
             features_table_seen = True
+        if in_tui:
+            tui_table_seen = True
         current_header = header
         out.append(raw_line)
         continue
@@ -703,6 +736,24 @@ for raw_line in existing.splitlines():
                 continue
             feature_dotted_lines.append(f"{toml_key(feature_key)} = {key_info[1]}")
             continue
+        if len(key_path) == 1 and key_path[0] == "tui":
+            try:
+                inline_tui = tomllib.loads(raw_line).get("tui") or {}
+            except Exception:
+                inline_tui = {}
+            if not isinstance(inline_tui, dict):
+                continue
+            for tui_key, tui_value in inline_tui.items():
+                if tui_key in managed_tui_keys:
+                    continue
+                tui_preserved_lines.append(f"{toml_key(str(tui_key))} = {toml_value(tui_value)}")
+            continue
+        if len(key_path) >= 2 and key_path[0] == "tui":
+            if key_path[1] in managed_tui_keys:
+                continue
+            tui_subkey = ".".join(toml_key(segment) for segment in key_path[1:])
+            tui_preserved_lines.append(f"{tui_subkey} = {key_info[1]}")
+            continue
         if (
             len(key_path) == 2
             and key_path[0] == "memories"
@@ -740,6 +791,12 @@ for raw_line in existing.splitlines():
                 multi_agent_written = True
             continue
 
+    if in_tui:
+        key_info = assignment_key_path(raw_line)
+        key_path = key_info[0] if key_info else []
+        if key_path and key_path[0] in managed_tui_keys:
+            continue
+
     if in_memories:
         key_info = assignment_key_path(raw_line)
         key_path = key_info[0] if key_info else []
@@ -756,12 +813,17 @@ for raw_line in existing.splitlines():
 
 if in_features:
     append_managed_features()
+if in_tui:
+    append_managed_tui()
 
 while out and out[-1] == "":
     out.pop()
 
 if not features_table_seen:
     append_features_block()
+
+if not tui_table_seen:
+    append_tui_block()
 
 add_blank()
 out.extend([
@@ -836,6 +898,9 @@ def profile_config_text(*, yolo: bool) -> str:
         f"model = {json.dumps(managed_model)}",
         f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
         "suppress_unstable_features_warning = true",
+        "",
+        "[tui]",
+        *managed_tui_lines,
         "",
     ])
     return "\n".join(lines)
