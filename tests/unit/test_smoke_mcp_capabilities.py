@@ -1,12 +1,29 @@
 from __future__ import annotations
 
+import asyncio
+import importlib.util
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
+from types import ModuleType
+
+import pytest
 
 from tests.support.importing import REPO_ROOT
+
+
+def _load_smoke_module() -> ModuleType:
+    spec = importlib.util.spec_from_file_location(
+        "smoke_mcp_capabilities",
+        REPO_ROOT / "scripts" / "smoke_mcp_capabilities.py",
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def test_static_mode_parses_repo_config_without_installed_codex_home(
@@ -102,3 +119,30 @@ env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]
 
     assert proc.returncode == 0, proc.stderr
     assert "skip    github: startup skipped; missing env: GITHUB_PERSONAL_ACCESS_TOKEN" in proc.stdout
+
+
+@pytest.mark.no_cover
+def test_transient_grep_cancelled_error_is_skip(monkeypatch) -> None:
+    # Direct import verifies the retry helper without enrolling the whole CLI
+    # runner in aggregate coverage; the CLI surface is covered by subprocess tests.
+    module = _load_smoke_module()
+
+    async def fail_probe(*args, **kwargs) -> tuple[str, str]:
+        raise asyncio.CancelledError("Cancelled via cancel scope 123")
+
+    monkeypatch.setattr(module, "_probe_server", fail_probe)
+
+    status, message = asyncio.run(
+        module._probe_with_retries(
+            "grep",
+            {"url": "https://mcp.grep.app"},
+            list_only=False,
+            allow_missing_env=True,
+            include_auth=False,
+            timeout=1.0,
+            retries=1,
+        )
+    )
+
+    assert status == "skip"
+    assert "grep: transient external MCP unavailable" in message
