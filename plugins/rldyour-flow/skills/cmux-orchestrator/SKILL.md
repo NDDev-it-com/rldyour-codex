@@ -37,6 +37,17 @@ Run the rldyour macOS cmux orchestrator workflow. This skill is distinct from `r
 
 6. Review diffs, resolve conflicts, run final validation, and own commits/push/fullrepo/Serena sync when policy allows them.
 
+## Delegation Mechanics (cmux)
+
+- Delegate by sending the task into the worker surface with per-task scope:
+  `cmux send --surface <surface-id> "export RLDYOUR_TASK_ID=<task-id> RLDYOUR_WORKER_ALLOWED_PATHS=<colon-separated-paths>; <task instruction>\n"`.
+- Observe workers without taking over their terminals:
+  `cmux read-screen --workspace <workspace-id> --surface <surface-id> --scrollback --lines <n>`,
+  or subscribe to `cmux events --cursor-file <file> --reconnect`.
+- Treat a task as finished only after both completion signals: the JSON report
+  and the worker's `cmux notify --title "worker <worker-id>" --body "task <task-id> exit <code>"`.
+  cmux emits no per-command exit-code event on its own.
+
 ## Worker Prompt Template
 
 ```markdown
@@ -53,7 +64,9 @@ Forbidden actions: push, branch deletion, fullrepo publish, system install, proj
 Allowed commands: <exact list or class>
 Validation expected: <command or NOT_PROVEN>
 
-Return a JSON report plus concise notes. Do not perform global sync.
+Return a JSON report plus concise notes, then run
+`cmux notify --title "worker ${RLDYOUR_WORKER_ID}" --body "task ${RLDYOUR_TASK_ID} exit <code>"`.
+Do not perform global sync.
 ```
 
 ## Non-Negotiables
