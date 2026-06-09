@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.41] - 2026-06-10
+
+### Fixed
+
+- Add the owner status line: Claude Code statusLine installer stage, Codex managed [tui].status_line, and the OpenCode status-line non-availability adoption decision.
+
 ## [1.1.40] - 2026-06-09
 
 ### Fixed
