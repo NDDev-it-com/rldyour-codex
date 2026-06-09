@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.39] - 2026-06-09
+
+### Fixed
+
+- Remove unused CancelledError assignment from Codex MCP smoke.
+
 ## [1.1.38] - 2026-06-09
 
 ### Fixed
