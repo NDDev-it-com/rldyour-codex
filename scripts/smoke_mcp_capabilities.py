@@ -403,7 +403,6 @@ async def _probe_with_retries(
                 timeout=timeout,
             )
         except asyncio.CancelledError as exc:
-            last_error = exc
             if _is_transient_external_failure(name, exc):
                 detail = _exception_chain_text(exc).splitlines()[0]
                 return "skip", f"{name}: transient external MCP unavailable ({detail})"
