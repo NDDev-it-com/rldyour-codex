@@ -1,23 +1,23 @@
 # Codex Surface Adoption
 
-Verified: 2026-06-08
+Verified: 2026-06-09
 
 Source of truth:
 - Runtime baseline: `references/codex-baseline.json`
 - Runtime package pin: package metadata for `@openai/codex`
-- Official changelog and config docs: `https://github.com/openai/codex/releases/tag/rust-v0.137.0` and `https://developers.openai.com/codex/`
+- Official changelog and config docs: `https://github.com/openai/codex/releases/tag/rust-v0.138.0` and `https://developers.openai.com/codex/changelog`
 
 ## Decisions
 
 | Surface | Introduced | Decision | Implementation | Validator |
 | --- | --- | --- | --- | --- |
-| Codex CLI runtime baseline | 0.137.0 | Adopted | Root contract and adapter runtime pins require `@openai/codex` / `codex-cli` `0.137.0`; local installed runtime must report `codex-cli 0.137.0`. | `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
-| Official standalone installer with non-interactive mode | 0.137.0 | Operational | `/ry-repair --apply-system` plans the official `CODEX_NON_INTERACTIVE=1` installer path and keeps the npm stable pin as an explicit fallback. Repository system install still writes managed config/profile files; it does not store credentials. | root `scripts/ry_repair_sync.py --plan --apply-system --json` |
-| `codex plugin list --json` inventory | 0.137.0 | Operational | Installed-runtime diagnostics may use JSON plugin inventory when `codex` is available. Static validators must report `NOT PROVEN` rather than inventing installed plugin state. | root `scripts/ry_repair_sync.py --plan --apply-system --json` |
-| Hosted web/image tools in more code-mode flows | 0.137.0 | Capability-dependent | Treat hosted tools as account/runtime capability. Do not add unconditional repository config claims unless installed-runtime checks prove availability. | n/a |
-| Remote-control v2 RPC grants | 0.137.0 | Future | No remote-control host registration or grant policy is committed in this adapter. Treat remote credentials as external runtime state and never store them in repo config or memories. | `scripts/validate_instruction_docs.py` |
-| MultiAgentV2 runtime choice and follow-up metadata | 0.137.0 | Capability-dependent | Managed subagent role files remain static TOML installed by this adapter. Runtime thread metadata is observed only through installed Codex diagnostics. | `scripts/validate_agent_tools.py` |
-| Stable release boundary vs. alpha prereleases | 0.137.0 | Adopted | `0.138.0-alpha.1` is intentionally not a release-grade baseline unless the owner explicitly enables prerelease runtime policy. | `scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
+| Codex CLI runtime baseline | 0.138.0 | Adopted | Root contract and adapter runtime pins require `@openai/codex` / `codex-cli` `0.138.0`; local installed runtime must report `codex-cli 0.138.0`. | `python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
+| `/app` desktop handoff and Windows workspace launch | 0.138.0 | Operational | Treat as runtime capability. Repository config does not hard-code Desktop handoff state, but installed-runtime smoke may rely on the `codex` binary being at the 0.138.0 baseline before diagnosing app/server integration behavior. | `scripts/doctor_system_codex.sh --quick --strict-runtime` |
+| Local image file paths exposed to the model | 0.138.0 | Capability-dependent | Local image attachment and generated-image path exposure is runtime behavior. Do not add repository claims about availability unless installed-runtime checks prove the active account/session supports the capability. | n/a |
+| Plugin command JSON and richer plugin metadata | 0.138.0 | Operational | 0.138.0 documents richer plugin JSON surfaces. The adapter already treats JSON plugin inventory as installed-runtime evidence and keeps static validators from inventing runtime plugin state. | root `scripts/ry_repair_sync.py --plan --apply-system --json` |
+| App-server token-usage and v2 personal access token support | 0.138.0 | Capability-dependent | Authentication tokens and account usage data remain external runtime state. Do not store PATs, OAuth tokens, or account usage in repository config, logs, memories, or fixtures. | `scripts/validate_instruction_docs.py` |
+| Model-defined reasoning effort ordering | 0.138.0 | Operational | Keep managed subagent TOML defaults static unless the owner changes model policy. Runtime-provided effort ordering is accepted as CLI behavior, not a repository schema migration. | `scripts/validate_agent_tools.py` |
+| Stable release boundary vs. prereleases | 0.138.0 | Adopted | Stable `0.138.0` is the release-grade baseline. `0.139.0-alpha.*` and later alpha tags remain excluded unless the owner explicitly enables prerelease runtime policy. | `scripts/check_mcp_runtime_versions.py --fail-on-outdated` |
 | `codex doctor` diagnostics | 0.135.0 | Operational | Owner doctor flow remains `scripts/doctor_system_codex.sh`; `/ry-repair --apply-system` also plans direct `codex doctor` when installed runtime is available. | `scripts/doctor_system_codex.sh --quick --strict-runtime`; root `scripts/ry_repair_sync.py --plan --apply-system --json` |
 | Remote `/status` server-version details | 0.135.0 | Not applicable | Remote TUI status output is user-facing runtime behavior and does not change repository config. | n/a |
 | `/permissions` named/custom profile display | 0.135.0 | Operational | Use `/permissions` and `codex doctor` to inspect resolved permission profiles. Do not migrate the owner profile from the legacy `sandbox_mode` dialect without an explicit policy change. | `scripts/validate_instruction_docs.py` |
