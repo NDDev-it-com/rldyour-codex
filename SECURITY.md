@@ -11,12 +11,12 @@ The `1.1.x` line label tracks only the latest released patch, not every
 historical patch in the line.
 
 | Version | Supported |
-| --- | --- |
-| Current exact tag `1.1.39` | Yes |
-| Older `1.1.*` tags | No; upgrade to current exact tag |
-| Older minor / major lines | No |
+|---|---|
+| Current exact tag `1.1.39` | yes |
+| Older `1.1.*` tags | no; upgrade to current exact tag |
+| Older minor / major lines | no |
 
-## Reporting A Vulnerability
+## Reporting a Vulnerability
 
 Please report vulnerabilities privately. Do not open public issues or pull requests describing them.
 

@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-The format follows Keep a Changelog, and marketplace/plugin versions follow Semantic Versioning.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and marketplace/plugin versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
