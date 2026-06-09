@@ -7,6 +7,12 @@ The format follows Keep a Changelog, and marketplace/plugin versions follow Sema
 ## [Unreleased]
 
 
+## [1.1.38] - 2026-06-09
+
+### Fixed
+
+- Tolerate transient external Grep MCP provider timeouts in Codex smoke.
+
 ## [1.1.37] - 2026-06-09
 
 ### Fixed
