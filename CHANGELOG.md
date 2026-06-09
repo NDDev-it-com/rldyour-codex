@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.40] - 2026-06-09
+
+### Fixed
+
+- Align Codex public docs for cross-adapter parity, widen the Stop lifecycle hook timeout, and normalize the contract webwright field.
+
 ## [1.1.39] - 2026-06-09
 
 ### Fixed
