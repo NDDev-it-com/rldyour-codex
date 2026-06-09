@@ -69,13 +69,13 @@ scripts/install_system_codex.sh --apply
 scripts/doctor_system_codex.sh
 ```
 
-The Codex CLI runtime baseline is `0.137.0`. On machines that need a runtime
+The Codex CLI runtime baseline is `0.138.0`. On machines that need a runtime
 install or update, use the official non-interactive installer or the explicit
 npm stable pin before running the repository config installer:
 
 ```bash
 curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
-npm install -g @openai/codex@0.137.0
+npm install -g @openai/codex@0.138.0
 codex --version
 codex doctor
 codex plugin list --json
