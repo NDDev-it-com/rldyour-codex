@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.44] - 2026-06-10
+
+### Fixed
+
+- Register the new Stop-lifecycle runtime markers in the fullrepo and knowledge-commit runtime registries and untrack the leaked blocker ack marker.
+
 ## [1.1.43] - 2026-06-10
 
 ### Added
