@@ -1,6 +1,6 @@
 ---
 name: ry-start
-description: "Выполняет полный lifecycle задачи: init, research, plan, implement, verify, commit и sync; ревью только по явному запросу. EN: ry-start, implement, build, fix, lifecycle; explicit review only."
+description: "Полный lifecycle задачи: init→research→plan→implement→quality gates→post-task sync; ревью только по явному запросу. Используй для: /rldyour-flow:ry-start, реализуй, доработай, исправь качественно, сделай задачу, реализуй фичу. EN triggers: full SDLC, implement task, build feature, complete lifecycle; explicit review only."
 ---
 
 # ry-start
@@ -24,7 +24,7 @@ Implement a task to a high-quality, scalable, synchronized state. Speed is secon
 11. Run quality gates using project scripts, `rldyour-lsps`, and detected stack checks.
 12. Trigger browser validation for UI/browser-visible work unless auth blocks it; if auth blocks, report the limitation and use available evidence.
 13. Apply security implementation guidance for security-sensitive changes; run security review only when the owner explicitly asks for review/audit/security review.
-14. Run reviewer subagents only when the owner explicitly asks for review, audit, security review, rules review, or `ry-review`; otherwise skip the expensive review phase.
+14. Run reviewer subagents only when the owner explicitly asks for review, audit, security review, rules review, or `ry-review`; otherwise skip the expensive review phase. Reviewer output transport follows `references/reviewer-protocol.md`: file-first reports plus compact summaries.
 15. Run `flow-post-task-sync` before final response.
 
 ## Deploy Intent Routing

@@ -1,6 +1,6 @@
 ---
 name: serena-lsp-integration
-description: "Настраивает Serena LSP, индексация и semantic analysis через Serena MCP: project languages, symbol tools, .serena/project.yml и ls_specific_settings. EN: Serena LSP integration, project languages, symbols."
+description: "Конфигурация Serena MCP под languages проекта - LSP keys, .serena/project.yml, ls_specific_settings. Используй для: настрой Serena LSP, индексация, семантический анализ, project.yml серены. EN triggers: configure Serena, Serena LSP keys, project.yml, semantic index, ls_specific_settings, set up Serena project, Serena onboarding."
 ---
 
 # Serena LSP Integration

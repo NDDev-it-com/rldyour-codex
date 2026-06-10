@@ -1,6 +1,6 @@
 ---
 name: ry-rules-review
-description: "Проводит аудит реализации по rldyour rules: качество, архитектура, границы, проверки и отсутствие скрытого долга. EN: ry-rules-review, hard rules review."
+description: "Аудит реализации против rldyour rules. Используй для: /rldyour-rules:ry-rules-review, проверь по правилам, аудит правил, проверь жесткие правила, качество по правилам. EN triggers: rules review, hard rules audit, check against rules, rldyour rules check, policy compliance audit, rules audit."
 ---
 
 # ry-rules-review

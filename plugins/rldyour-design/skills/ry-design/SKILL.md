@@ -1,6 +1,6 @@
 ---
 name: ry-design
-description: "Выполняет end-to-end design/UI workflow с Figma, i18n, tokens, data classification и full validation. EN: ry-design, pixel-perfect, UI workflow."
+description: "Сквозной дизайн-воркфлоу: Figma → код → data classification (dynamic/static) → i18n → токены → FSD → shadcn/ui → ReactBits → full validation в браузере. Используй для: /rldyour-design:ry-design, сделай дизайн, реализуй UI, сверстай страницу, перенеси Figma макет, лендинг, дашборд, редизайн. EN triggers: end-to-end design, build UI, ship landing page, ship dashboard, redesign feature, production-ready UI, pixel-perfect implementation, design workflow."
 ---
 
 # ry-design

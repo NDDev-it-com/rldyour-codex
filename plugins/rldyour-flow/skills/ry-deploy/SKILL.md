@@ -1,6 +1,6 @@
 ---
 name: ry-deploy
-description: "Выполняет deploy с local/GitHub/server sync, checks, logs, fixes и memory/docs/git finalization. EN: ry-deploy, production deploy, server rollout."
+description: "Развёртывание с sync local↔GitHub↔server, проверками логов, fix-forward и docs/git финализацией. Используй для: /rldyour-flow:ry-deploy, задеплой, прод, продакшен, деплой на сервер, выкатить. EN triggers: deploy to server, ship to prod, production deploy, deploy and verify, deployment lifecycle, sync local to server, ship release, fix-forward deploy."
 ---
 
 # ry-deploy

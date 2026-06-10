@@ -1,6 +1,6 @@
 ---
 name: lsp-routing
-description: "Маршрутизирует language-server usage для реализации, типов, diagnostics, symbols и semantic refactors. EN: LSP routing, type checking, symbols."
+description: "Маршрутизация LSP-воркфлоу для type checking, диагностик, символов, рефакторинга. Используй для: LSP, лсп, language server, проверь типы, type checking, найди символ, диагностики языка, рефакторинг с LSP. EN triggers: route LSP workflow, type checking, semantic diagnostics, symbol search, refactor with LSP, language server choice, Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell LSP."
 ---
 
 # LSP Routing

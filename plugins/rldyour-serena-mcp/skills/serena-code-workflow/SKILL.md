@@ -1,6 +1,6 @@
 ---
 name: serena-code-workflow
-description: "Использует Serena-first semantic code inspection и symbol tools перед raw reads/grep. EN: Serena code workflow, symbols, references, refactor."
+description: "Семантический воркфлоу для кода через Serena MCP - приоритет перед raw reads и grep. Используй для: изучи код, проиндексируй проект, найди символы, найди ссылки на символ, рефакторинг, проследи реализацию, инспектируй файл. EN triggers: navigate code, find symbol, find references, semantic refactor, trace usages, inspect file, code lookup, symbol search, where is X defined."
 ---
 
 # Serena Code Workflow
