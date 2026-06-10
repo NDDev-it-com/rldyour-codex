@@ -65,6 +65,9 @@ RUNTIME_EXCLUDE_PATTERNS = (
     ".serena/.dirty_stop_ack",
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
+    ".serena/.flow_blocker_ack.json",
+    ".serena/.stop_lifecycle_timeout_marker",
+    ".serena/.bootstrap_overrides.log",
 )
 
 SECRET_RE = re.compile(
