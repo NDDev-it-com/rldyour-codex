@@ -35,6 +35,11 @@ def _load_manifest(plugin_dir: Path) -> dict[str, object]:
     return data
 
 
+# Same gating as install_system_codex.sh and doctor_system_codex.sh: cmux is a
+# macOS application, so the orchestrator plugin is never cached on other OSes.
+MACOS_ONLY_PLUGINS = {"rldyour-orchestrator"}
+
+
 def discover_entries(
     root: Path = ROOT,
     cache_root: Path = DEFAULT_CACHE_ROOT,
@@ -44,6 +49,8 @@ def discover_entries(
     entries: list[PluginCacheEntry] = []
     for plugin_dir in sorted((root / "plugins").glob("rldyour-*")):
         if not plugin_dir.is_dir():
+            continue
+        if plugin_dir.name in MACOS_ONLY_PLUGINS and sys.platform != "darwin":
             continue
         manifest = _load_manifest(plugin_dir)
         name = manifest.get("name")

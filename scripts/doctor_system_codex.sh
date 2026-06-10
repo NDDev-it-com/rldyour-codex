@@ -165,6 +165,11 @@ def load_toml(path: Path) -> dict:
     return data if isinstance(data, dict) else {}
 
 
+# Same gating as install_system_codex.sh: cmux is a macOS application, so the
+# orchestrator plugin is never installed or expected on Linux/WSL/Windows.
+MACOS_ONLY_PLUGINS = {"rldyour-orchestrator"}
+
+
 def load_rldyour_plugins(path: Path) -> list[str]:
     data = json.loads(path.read_text(encoding="utf-8"))
     entries = data.get("plugins")
@@ -183,6 +188,8 @@ def load_rldyour_plugins(path: Path) -> list[str]:
         rel_path = source.get("path")
         if source.get("source") != "local" or rel_path != f"./plugins/{name}":
             raise SystemExit(f"{path}: {name} must use local source ./plugins/{name}")
+        if name in MACOS_ONLY_PLUGINS and sys.platform != "darwin":
+            continue
         if name.startswith("rldyour-"):
             result.append(name)
     if not result:
