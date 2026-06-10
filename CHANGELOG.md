@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.49] - 2026-06-10
+
+### Fixed
+
+- Unify skill descriptions to the canonical russian-first shape with routing-term coverage, align runtime-marker sets and review gating wording across adapters, and repair the OpenCode ry-repair inventory step.
+
 ## [1.1.48] - 2026-06-10
 
 ### Fixed
