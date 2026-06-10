@@ -221,7 +221,7 @@ printf '# Agent docs\n' > AGENTS.md
 git add AGENTS.md
 git_commit "docs"
 set +e
-bash "$STOP_HOOK" >stop.out 2>stop.err
+bash "$STOP_HOOK" </dev/null >stop.out 2>stop.err
 STOP_RC=$?
 set -e
 if [ "$STOP_RC" -ne 2 ]; then
