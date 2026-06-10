@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.46] - 2026-06-10
+
+### Fixed
+
+- Remove the runtime blocker ack marker leaked into tracked history by the 1.1.44 release commit; the control-plane commit machinery now drops all .serena paths.
+
 ## [1.1.45] - 2026-06-10
 
 ### Fixed
