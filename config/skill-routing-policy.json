@@ -370,7 +370,7 @@
       ],
       "expected": [
         {
-          "skill": "rldyour-flow:cmux-orchestrator",
+          "skill": "rldyour-orchestrator:cmux-orchestrator",
           "description_terms": [
             "macOS cmux orchestrator",
             "multi-agent terminal workflow"
@@ -387,7 +387,7 @@
       ],
       "expected": [
         {
-          "skill": "rldyour-flow:cmux-worker",
+          "skill": "rldyour-orchestrator:cmux-worker",
           "description_terms": [
             "cmux worker role",
             "JSON report"
@@ -656,8 +656,8 @@
     "rldyour-flow:flow-quality-review": "reviewer-only",
     "rldyour-flow:flow-security-review": "reviewer-only",
     "rldyour-flow:flow-verification-review": "reviewer-only",
-    "rldyour-flow:cmux-orchestrator": "explicit-only",
-    "rldyour-flow:cmux-worker": "explicit-only",
+    "rldyour-orchestrator:cmux-orchestrator": "explicit-only",
+    "rldyour-orchestrator:cmux-worker": "explicit-only",
     "rldyour-flow:instruction-docs-sync": "finalization",
     "rldyour-flow:ry-deploy": "explicit-only",
     "rldyour-flow:ry-init": "explicit-only",

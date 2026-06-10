@@ -1,0 +1,48 @@
+{
+  "name": "rldyour-orchestrator",
+  "version": "1.1.42",
+  "description": "Оркестратор cmux на macOS: терминал-оркестратор делегирует worker-терминалам. EN: cmux orchestrator.",
+  "author": {
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
+    "email": "rldyourmnd@users.noreply.github.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "homepage": "https://github.com/NDDev-it-com/rldyour-codex",
+  "repository": "https://github.com/NDDev-it-com/rldyour-codex",
+  "license": "AGPL-3.0-or-later",
+  "keywords": [
+    "codex",
+    "cmux",
+    "orchestrator",
+    "worker",
+    "macos",
+    "multi-agent",
+    "terminal",
+    "delegation",
+    "russian",
+    "rldyour"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "rldyour Orchestrator",
+    "shortDescription": "Оркестратор cmux macOS. EN: cmux orchestrator",
+    "longDescription": "Режим оркестратора cmux на macOS для Codex: один user-facing терминал-оркестратор делегирует задачи worker-терминалам через cmux send/read-screen/events и собирает JSON-отчёты с обязательным notify-сигналом завершения. EN: This plugin packages the macOS-only cmux orchestrator and worker role skills. The orchestrator role activates only when the user explicitly declares it during ry-init; sessions without the plugin or without the declaration always run in standard mode, so nothing breaks when the plugin is absent. Worker terminals stay machine-identified through launcher and workspace-layout environment variables because worker scope restrictions are enforced by the rldyour-flow Stop lifecycle state scripts. The plugin is installed only on macOS because cmux (manaflow-ai/cmux) is a macOS application; Linux, WSL, and Windows system installs skip it entirely.",
+    "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skills",
+      "macOS cmux workspace orchestration",
+      "Worker task delegation with per-task scope",
+      "Worker JSON reports with notify completion signal"
+    ],
+    "websiteURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "defaultPrompt": [
+      "Используй $cmux-orchestrator: делегируй worker задачи и собери отчеты. EN: orchestrate cmux workers.",
+      "Используй $cmux-worker: выполни scoped task и верни JSON report. EN: run a scoped worker task."
+    ],
+    "brandColor": "#0F172A",
+    "screenshots": []
+  }
+}
