@@ -1,1 +1,0 @@
-{"advisory_reasons": ["branch-cleanup-advisory"], "blocked_reasons": ["dirty-worktree", "fullrepo-sync-required", "instruction-docs-review"], "fingerprint": "d75bff306f9c359a", "head": "692e7fab79641669efe11190021dc577809f6b09", "policy_source": "built-in defaults", "reported_at": "2026-06-09T19:05:30.595966+00:00", "schema_version": 1}
