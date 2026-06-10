@@ -26,6 +26,7 @@ RUNTIME_IGNORED = {
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
     ".serena/.flow_blocker_ack.json",
+    ".serena/.stop_lifecycle_timeout_marker",
 }
 UNTRACKED_BOOTSTRAP_IGNORED = {
     ".serena/.gitignore",

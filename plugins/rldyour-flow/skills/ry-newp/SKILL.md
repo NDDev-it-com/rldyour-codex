@@ -1,6 +1,6 @@
 ---
 name: ry-newp
-description: "Планирует новый проект через skeptical questions, research, architecture docs и optional scaffold after approval. EN: ry-newp, new project, requirements."
+description: "Дизайн нового проекта: скептические вопросы, research, архитектура docs, опциональный scaffold после approval. Используй для: /rldyour-flow:ry-newp, новый проект, новый стартап, ТЗ, проект с нуля, спроектируй сервис. EN triggers: new project, design new project, brief intake, scaffold project, greenfield project, MVP design, architecture docs, project from scratch."
 ---
 
 # ry-newp

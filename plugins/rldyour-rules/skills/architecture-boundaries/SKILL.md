@@ -1,6 +1,6 @@
 ---
 name: architecture-boundaries
-description: "Проверяет архитектурные границы: FSD, VSA, clean architecture, modules, public APIs и imports. EN: architecture boundaries, layers, backend, frontend."
+description: "Архитектурные границы: FSD/VSA/Hexagonal, modules, public APIs, imports. Используй для: архитектура, слои, FSD, VSA, hexagonal, frontend, backend, размещение кода, границы модуля, публичный API. EN triggers: architecture boundaries, module layers, public API design, import discipline, where to place code, ADR worthy, layer policy."
 ---
 
 # Architecture Boundaries

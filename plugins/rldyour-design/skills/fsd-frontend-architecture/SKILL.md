@@ -1,6 +1,6 @@
 ---
 name: fsd-frontend-architecture
-description: "Применяет strict FSD placement для frontend/UI, i18n и data/admin boundaries. EN: FSD frontend architecture, pages, widgets, features, entities."
+description: "Строгая Feature-Sliced Design архитектура для frontend кода. Используй для: FSD, фронтенд архитектура, слои, pages/widgets/features/entities/shared, публичные API, импорты, размещение кода. EN triggers: FSD architecture, frontend layers, place code, slice public API, layer boundaries, where to put component, feature-sliced design."
 ---
 
 # FSD Frontend Architecture

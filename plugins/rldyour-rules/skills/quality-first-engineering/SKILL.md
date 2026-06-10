@@ -1,6 +1,6 @@
 ---
 name: quality-first-engineering
-description: "Обеспечивает quality-first engineering: clean, scalable, consistent code без hacks, костылей и hidden debt. EN: quality-first engineering, clean code."
+description: "Качественно-первый подход: чистый код, масштабируемость, консистентность, без хаков и скрытого техдолга. Используй для: качество кода, чистый код, костыли, техдолг, масштабируемость, жесткие запреты. EN triggers: code quality, clean code, no hacks, no tech debt, scalable code, consistent code, hard bans, quality-first engineering."
 ---
 
 # Quality-First Engineering

@@ -1,6 +1,6 @@
 ---
 name: flow-post-task-sync
-description: "Финализирует task state: Serena memories, agent-only files, fullrepo, git/GitHub, branches и worktrees. EN: post-task sync, finalization."
+description: "Финализация задачи: Serena memories, agent-only files, fullrepo, git/GitHub, branches, worktrees. Используй после ry-start/review/deploy/newp. Используй для: заверши задачу, синхронизируй, финализируй, обнови git и docs, очисти ветки. EN triggers: post-task sync, Stop hook advisory, fullrepo publish, ff-merge to main, branch cleanup, finalize task, end-of-task sync."
 ---
 
 # Flow Post-Task Sync
