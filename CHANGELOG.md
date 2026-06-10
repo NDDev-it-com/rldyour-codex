@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.45] - 2026-06-10
+
+### Fixed
+
+- Close stdin when the taxonomy smoke invokes the Stop hook directly so background and CI wrappers can never hang inside marketplace validation.
+
 ## [1.1.44] - 2026-06-10
 
 ### Fixed
