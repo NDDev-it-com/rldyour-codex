@@ -11,6 +11,18 @@ Normalize a repository so Codex, Claude Code, and OpenCode can work from the sam
 
 For rldyour AI CLI configuration repositories, `/ry-repair` also owns deterministic install/update/sync convergence: local repository state, system Claude/Codex/OpenCode configs, Serena memories, and GitHub/fullrepo state must be checked through the root `config/ry-repair-sync-contract.json` and `scripts/ry_repair_sync.py` contract before being reported as synchronized.
 
+## Mode Selection
+
+- **Work project**: run the full authoring repair workflow below.
+- **rldyour control plane or adapter config repo, goal = converge the installed
+  system**: run consumer mode instead - update the checkout FROM GitHub
+  (`git pull --ff-only`, `git submodule update --init --recursive`), then
+  `python3 scripts/ry_repair_sync.py --check` and `--apply --install-system`.
+  In consumer mode do NOT author changes into the repository: no commits, no
+  doc/contract/memory edits, no fullrepo publication. If fast-forward fails or
+  validators reveal repository drift, report it and switch to authoring repair
+  only on explicit owner instruction.
+
 ## Workflow
 
 1. Detect repository type, active branch/worktree, submodules, CI surface, and effective project policy from `RLDYOUR_PROJECT_POLICY`, `.rldyour/project-policy.local.json`, `.rldyour/project-policy.json`, or built-in defaults.
