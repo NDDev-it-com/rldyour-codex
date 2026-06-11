@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.52] - 2026-06-11
+
+### Fixed
+
+- Harden transient MCP smoke cancellation handling.
+
 ## [1.1.51] - 2026-06-11
 
 ### Fixed
