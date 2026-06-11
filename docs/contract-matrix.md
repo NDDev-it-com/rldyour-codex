@@ -15,7 +15,7 @@ the human-readable matrix for the same facts.
 | Slash commands | 0 by design; Codex uses skills and managed subagents |
 | Managed subagents | 8 TOML roles under `system/agents/` |
 | Hook manifests | `rldyour-flow` and `rldyour-serena-mcp` |
-| MCP profile | 12 servers from `plugins/rldyour-mcps/.mcp.json` |
+| MCP profile | 11 servers from `plugins/rldyour-mcps/.mcp.json` |
 | Plugin cache layout | `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>` |
 
 ## Canonical Agent Roles
