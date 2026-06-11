@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.1.50] - 2026-06-11
+
+### Changed
+
+- Refresh release-readiness baselines and validation boundaries.
+
 ## [1.1.49] - 2026-06-10
 
 ### Fixed
