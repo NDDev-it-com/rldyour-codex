@@ -78,6 +78,14 @@ def _is_transient_external_failure(name: str, exc: BaseException) -> bool:
     return any(marker in text for marker in TRANSIENT_EXTERNAL_FAILURE_MARKERS)
 
 
+def _clear_current_task_cancellation() -> None:
+    task = asyncio.current_task()
+    if task is None or not hasattr(task, "uncancel"):
+        return
+    while task.cancelling():
+        task.uncancel()
+
+
 def _load_servers(root: Path, codex_home: Path) -> dict[str, dict[str, Any]]:
     repo_servers = _load_repo_servers(root)
     config_path = codex_home / "config.toml"
@@ -404,17 +412,28 @@ async def _probe_with_retries(
             )
         except asyncio.CancelledError as exc:
             if _is_transient_external_failure(name, exc):
+                _clear_current_task_cancellation()
                 detail = _exception_chain_text(exc).splitlines()[0]
                 return "skip", f"{name}: transient external MCP unavailable ({detail})"
             raise
         except Exception as exc:
             last_error = exc
             if _is_transient_external_failure(name, exc):
+                _clear_current_task_cancellation()
                 detail = _exception_chain_text(exc).splitlines()[0]
                 return "skip", f"{name}: transient external MCP unavailable ({detail})"
             if attempt < retries:
                 print(f"retry   {name} attempt {attempt} failed: {exc}", file=sys.stderr)
                 await asyncio.sleep(min(2 * attempt, 5))
+        except BaseException as exc:
+            if isinstance(exc, (KeyboardInterrupt, SystemExit)):
+                raise
+            last_error = exc
+            if _is_transient_external_failure(name, exc):
+                _clear_current_task_cancellation()
+                detail = _exception_chain_text(exc).splitlines()[0]
+                return "skip", f"{name}: transient external MCP unavailable ({detail})"
+            raise
     return "fail", f"{name}: {last_error}"
 
 
