@@ -425,10 +425,7 @@ async def _probe_with_retries(
             if attempt < retries:
                 print(f"retry   {name} attempt {attempt} failed: {exc}", file=sys.stderr)
                 await asyncio.sleep(min(2 * attempt, 5))
-        except BaseException as exc:
-            if isinstance(exc, (KeyboardInterrupt, SystemExit)):
-                raise
-            last_error = exc
+        except BaseExceptionGroup as exc:
             if _is_transient_external_failure(name, exc):
                 _clear_current_task_cancellation()
                 detail = _exception_chain_text(exc).splitlines()[0]
