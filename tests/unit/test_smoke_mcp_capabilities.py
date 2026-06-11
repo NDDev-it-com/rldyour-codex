@@ -122,13 +122,49 @@ env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]
 
 
 @pytest.mark.no_cover
-def test_transient_grep_cancelled_error_is_skip(monkeypatch) -> None:
+def test_transient_grep_cancelled_error_is_skip_and_clears_cancellation(monkeypatch) -> None:
     # Direct import verifies the retry helper without enrolling the whole CLI
     # runner in aggregate coverage; the CLI surface is covered by subprocess tests.
     module = _load_smoke_module()
 
     async def fail_probe(*args, **kwargs) -> tuple[str, str]:
-        raise asyncio.CancelledError("Cancelled via cancel scope 123")
+        task = asyncio.current_task()
+        assert task is not None
+        task.cancel()
+        await asyncio.sleep(0)
+
+    async def run_probe() -> tuple[str, str, int]:
+        status, message = await module._probe_with_retries(
+            "grep",
+            {"url": "https://mcp.grep.app"},
+            list_only=False,
+            allow_missing_env=True,
+            include_auth=False,
+            timeout=1.0,
+            retries=1,
+        )
+        task = asyncio.current_task()
+        assert task is not None
+        return status, message, task.cancelling()
+
+    monkeypatch.setattr(module, "_probe_server", fail_probe)
+
+    status, message, cancelling = asyncio.run(run_probe())
+
+    assert status == "skip"
+    assert "grep: transient external MCP unavailable" in message
+    assert cancelling == 0
+
+
+@pytest.mark.no_cover
+def test_transient_grep_base_exception_group_is_skip(monkeypatch) -> None:
+    module = _load_smoke_module()
+
+    async def fail_probe(*args, **kwargs) -> tuple[str, str]:
+        raise BaseExceptionGroup(
+            "unhandled errors in a TaskGroup",
+            [asyncio.CancelledError("Cancelled via cancel scope 123")],
+        )
 
     monkeypatch.setattr(module, "_probe_server", fail_probe)
 
