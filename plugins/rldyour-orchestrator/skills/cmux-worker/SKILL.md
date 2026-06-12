@@ -1,6 +1,6 @@
 ---
 name: cmux-worker
-description: "Роль worker внутри macOS cmux orchestrator: scoped-задача в выделенном скоупе, JSON-отчёт плюс обязательный notify-сигнал с exit-кодом, без push/fullrepo/system install/policy mutation. Используй для: cmux worker, воркер-задача, scoped report, выполнение делегата. EN triggers: cmux worker role, scoped worker task, worker JSON report."
+description: "cmux worker role: scoped task, JSON report, notify, no push/fullrepo. Используй для: worker-задача. EN: cmux worker, scoped report."
 ---
 
 # cmux-worker

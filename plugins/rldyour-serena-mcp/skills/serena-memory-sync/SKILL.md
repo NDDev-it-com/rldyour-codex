@@ -1,6 +1,6 @@
 ---
 name: serena-memory-sync
-description: "Синхронизация .serena/memories - fact-only заметки из кода/диффов/тестов. Используй для: обнови memories, синхронизируй память, после коммита, после Stop-хука, .serena/plans, .serena/research, долгоживущие изменения. EN triggers: sync memories, refresh project knowledge, fact-only memory audit, post-commit sync, post-Stop sync, durable changes, update Serena memories."
+description: "Serena memory sync: fact-only durable project knowledge. Используй для: обнови memories. EN: sync memories, refresh project knowledge."
 ---
 
 # Serena Memory Sync

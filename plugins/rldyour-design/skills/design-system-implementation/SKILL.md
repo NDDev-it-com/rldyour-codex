@@ -1,6 +1,6 @@
 ---
 name: design-system-implementation
-description: "Централизованная дизайн-система с токенами (W3C DTCG / Tailwind v4 CSS-vars), shadcn/ui, ReactBits. Используй для: дизайн-система, токены, тема, цвета, типография, отступы, моушн, примитивы, UI-kit. EN triggers: design system, design tokens, build theme, color palette, typography scale, spacing scale, motion presets, design primitives, UI primitives, shadcn setup."
+description: "Дизайн-система: tokens, theme, shadcn/ui, ReactBits. Используй для: токены, цвета, типографика, UI-kit. EN: design system, tokens, theme, UI primitives."
 ---
 
 # Design System Implementation

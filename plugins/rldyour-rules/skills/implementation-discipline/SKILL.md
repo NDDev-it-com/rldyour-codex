@@ -1,6 +1,6 @@
 ---
 name: implementation-discipline
-description: "Дисциплинированная реализация: код, API, schemas, configs, tests, naming, errors, reuse, sync. Используй для: реализация, доработка, рефакторинг, нейминг, реюз, контракты, интеграционная синхронизация. EN triggers: implementation discipline, refactor cleanup, naming convention, code reuse, integration sync, contract change, error handling pattern."
+description: "Implementation discipline: code, schemas, tests, naming, errors, reuse. Используй для: рефакторинг, контракты. EN: code quality, integration sync."
 ---
 
 # Implementation Discipline

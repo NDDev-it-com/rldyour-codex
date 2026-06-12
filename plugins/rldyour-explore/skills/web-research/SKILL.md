@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: "Интернет-исследование с авторитетными источниками через WebSearch + WebFetch. Покрывает: изучи интернет, latest/current. Используй для: текущие тренды, индустриальные новости, секьюрити-уведомления, анонсы вендоров, информация вне статичных доков, актуальные релизы. EN triggers: current trends, industry news, security advisories, vendor announcements, latest releases, news search, web search, current state of X."
+description: "Web research: изучи интернет, latest/current, релизы, advisories. Используй для: текущая информация. EN: web search, latest releases."
 ---
 
 # Web Research

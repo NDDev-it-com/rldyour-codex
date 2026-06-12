@@ -47,7 +47,7 @@
     "context7": {
       "command": "bunx",
       "args": [
-        "@upstash/context7-mcp@3.1.0"
+        "@upstash/context7-mcp@3.2.0"
       ],
       "env_vars": [
         "CONTEXT7_API_KEY"

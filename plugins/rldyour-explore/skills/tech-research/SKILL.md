@@ -1,6 +1,6 @@
 ---
 name: tech-research
-description: "Технический ресёрч библиотек и кода через Context7/DeepWiki/Grep MCP. Покрывает: исследуй интернет, documentation, best practices. Используй для: изучи библиотеку, исследуй фреймворк, найди официальную доку, найди production-паттерны кода, сравни реализации, разбери архитектуру, миграция версий, что изменилось. EN triggers: library API lookup, framework research, official docs, production code patterns, compare implementations, repo architecture, migration guide, breaking changes, since version, how does X library work."
+description: "Технический ресёрч: исследуй интернет, documentation, best practices. Используй для: docs, API, версии. EN: library research, official docs."
 ---
 
 # Tech Research

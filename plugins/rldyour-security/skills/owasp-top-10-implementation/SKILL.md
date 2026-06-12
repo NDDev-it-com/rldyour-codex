@@ -1,6 +1,6 @@
 ---
 name: owasp-top-10-implementation
-description: "Незаблокирующая проверка по OWASP Top 10 2025 при реализации. Используй для: безопасность, проверь авторизацию, права доступа, секреты, инъекции, XSS, SSRF, цепочка поставок, криптография, заголовки безопасности, CORS. EN triggers: security check, OWASP audit, auth/authz, secrets handling, injection check, XSS prevention, SSRF check, supply chain, crypto, security headers, CORS, secure coding."
+description: "OWASP Top 10 implementation check. Используй для: auth, secrets, injection, XSS, SSRF, CORS. EN: secure coding, OWASP audit."
 ---
 
 # OWASP Top 10 Implementation Guidance

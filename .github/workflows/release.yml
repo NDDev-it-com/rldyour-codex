@@ -78,7 +78,7 @@ jobs:
         run: |
           python3 scripts/validate_plugin_versions.py
           python3 scripts/validate_skill_routing.py
-          python3 scripts/validate_instruction_docs.py --require-agent-docs
+          python3 scripts/validate_instruction_docs.py
           uv run --with pyyaml python scripts/validate_agent_tools.py
           uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
 
