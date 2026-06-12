@@ -1,6 +1,6 @@
 ---
 name: ry-repair
-description: "Нормализация репозитория: source-of-truth scan, semantic entropy audit, repair plan, technical-only fixes, validators, docs/memory sync. Используй для: /rldyour-flow:ry-repair, почини систему, нормализуй репозиторий, убери противоречия, repair repo. EN triggers: repository repair, semantic entropy cleanup, contract normalization, stale docs repair, AI-tool context repair."
+description: "Repository repair: source scan, entropy audit, validators, docs/memory sync. Используй для: почини систему. EN: repo repair, normalize contracts."
 ---
 
 # ry-repair

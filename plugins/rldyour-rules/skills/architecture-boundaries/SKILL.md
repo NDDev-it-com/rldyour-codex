@@ -1,6 +1,6 @@
 ---
 name: architecture-boundaries
-description: "Архитектурные границы: FSD/VSA/Hexagonal, modules, public APIs, imports. Используй для: архитектура, слои, FSD, VSA, hexagonal, frontend, backend, размещение кода, границы модуля, публичный API. EN triggers: architecture boundaries, module layers, public API design, import discipline, where to place code, ADR worthy, layer policy."
+description: "Архитектурные границы: FSD/VSA/Hexagonal, modules, APIs, imports. Используй для: слои, границы. EN: architecture boundaries, public API."
 ---
 
 # Architecture Boundaries

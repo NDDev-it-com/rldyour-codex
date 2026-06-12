@@ -1,6 +1,6 @@
 ---
 name: lsp-setup
-description: "Установка/обновление LSP-серверов через brew + toolchain (rustup, dart, npm). Только по явному запросу. Используй для: установи LSP, обнови лсп, поставь язык-серверы, почини language server. EN triggers: install LSP, install language server, update LSP, fix LSP, brew LSP, set up language server, bootstrap LSPs."
+description: "Установка/обновление LSP через brew/toolchains только по запросу. Используй для: установи LSP. EN: install language server, setup LSP."
 ---
 
 # LSP Setup

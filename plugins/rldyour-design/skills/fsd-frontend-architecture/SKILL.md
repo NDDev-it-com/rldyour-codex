@@ -1,6 +1,6 @@
 ---
 name: fsd-frontend-architecture
-description: "Строгая Feature-Sliced Design архитектура для frontend кода. Используй для: FSD, фронтенд архитектура, слои, pages/widgets/features/entities/shared, публичные API, импорты, размещение кода. EN triggers: FSD architecture, frontend layers, place code, slice public API, layer boundaries, where to put component, feature-sliced design."
+description: "Feature-Sliced Design для frontend слоёв и public APIs. Используй для: FSD, layers, imports, placement. EN: FSD architecture, frontend boundaries."
 ---
 
 # FSD Frontend Architecture

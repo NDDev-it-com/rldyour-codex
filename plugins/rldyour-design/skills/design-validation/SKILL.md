@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: "Браузер-валидация дизайн-имплементации через Figma, Playwright CLI и Chrome DevTools MCP: responsive states, i18n/token/static scans. Используй для: проверь дизайн, проверь верстку, адаптив, скриншоты, visual diff. EN triggers: validate design, responsive validation, pixel-perfect check, design screenshots, compare to Figma frame."
+description: "Design validation: responsive states, i18n/token/static scans. Используй для: проверь дизайн, visual diff. EN: screenshots, compare to Figma."
 ---
 
 # Design Validation

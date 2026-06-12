@@ -1,6 +1,6 @@
 ---
 name: ry-design
-description: "Сквозной дизайн-воркфлоу: Figma → код → data classification (dynamic/static) → i18n → токены → FSD → shadcn/ui → ReactBits → full validation в браузере. Используй для: /rldyour-design:ry-design, сделай дизайн, реализуй UI, сверстай страницу, перенеси Figma макет, лендинг, дашборд, редизайн. EN triggers: end-to-end design, build UI, ship landing page, ship dashboard, redesign feature, production-ready UI, pixel-perfect implementation, design workflow."
+description: "Сквозной дизайн workflow: Figma, code, tokens, i18n, validation. Используй для: /ry-design, UI, лендинг, дашборд. EN: end-to-end design, build UI."
 ---
 
 # ry-design

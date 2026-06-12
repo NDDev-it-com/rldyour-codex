@@ -1,6 +1,6 @@
 ---
 name: ry-start
-description: "Полный lifecycle задачи: init→research→plan→implement→quality gates→post-task sync; ревью только по явному запросу. Используй для: /rldyour-flow:ry-start, реализуй, доработай, исправь качественно, сделай задачу, реализуй фичу. EN triggers: full SDLC, implement task, build feature, complete lifecycle; explicit review only."
+description: "Полный task lifecycle: research, plan, implement, gates, sync. Используй для: реализуй задачу. EN: full SDLC, build feature."
 ---
 
 # ry-start

@@ -1,6 +1,6 @@
 ---
 name: cmux-orchestrator
-description: "Оркестратор cmux на macOS: один user-facing терминал делегирует задачи worker-терминалам, собирает JSON-отчёты с notify-сигналом завершения и владеет финальной валидацией и синком. Используй для: cmux orchestrator, оркестрация терминалов, делегируй воркерам, multi-agent terminal workflow. EN triggers: cmux orchestrator, multi-agent terminal workflow, delegate workers, collect worker reports."
+description: "macOS cmux orchestrator для multi-agent terminal workflow. Используй для: делегируй воркерам. EN: worker reports, visible terminals."
 ---
 
 # cmux-orchestrator

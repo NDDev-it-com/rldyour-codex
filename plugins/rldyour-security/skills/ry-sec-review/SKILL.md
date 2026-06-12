@@ -1,6 +1,6 @@
 ---
 name: ry-sec-review
-description: "Защитный Mythos-style security review для diff/PR/чувствительного кода. Используй для: /rldyour-security:ry-sec-review, проверь безопасность, секьюрити ревью, проверь авторизацию и секреты, найди уязвимости, threat-моделирование. EN triggers: security review, audit security, threat model, OWASP audit, hypothesis-driven security, defensive review, vulnerability review, audit auth/authz/secrets/injection."
+description: "Defensive security review for diff/PR/sensitive code. Используй для: секьюрити ревью, threat model. EN: security review, vulnerability audit."
 ---
 
 # ry-sec-review
