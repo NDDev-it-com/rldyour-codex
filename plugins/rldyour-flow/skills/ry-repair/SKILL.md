@@ -1,6 +1,6 @@
 ---
 name: ry-repair
-description: "Repository repair: source scan, entropy audit, validators, docs/memory sync. Используй для: почини систему. EN: repo repair, normalize contracts."
+description: "Ремонт ry-repair: почини систему, semantic entropy, validators, docs/memory sync. EN: repo repair, contract normalization."
 ---
 
 # ry-repair

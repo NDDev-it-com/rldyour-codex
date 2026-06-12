@@ -1,6 +1,6 @@
 ---
 name: ry-deploy
-description: "Deploy workflow: local, GitHub, server, logs, fix-forward, sync. Используй для: прод, деплой. EN: deploy to prod, verify deployment."
+description: "Деплой ry-deploy: деплой на сервер, prod, логи, fix-forward. Используй для: задеплой. EN: deploy to prod, verify deployment."
 ---
 
 # ry-deploy

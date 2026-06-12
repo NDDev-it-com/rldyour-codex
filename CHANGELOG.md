@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.3.2] - 2026-06-12
+
+### Fixed
+
+- Keep Codex skill descriptions compact, Russian-first, and release-validator compatible while preserving live MCP freshness.
+
 ## [1.3.1] - 2026-06-12
 
 ### Fixed

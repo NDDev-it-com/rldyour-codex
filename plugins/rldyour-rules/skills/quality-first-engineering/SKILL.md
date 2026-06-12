@@ -1,6 +1,6 @@
 ---
 name: quality-first-engineering
-description: "Quality-first engineering: clean, scalable, consistent, no hacks/debt. Используй для: качество, техдолг. EN: clean code, scalable code."
+description: "Качество кода: quality-first, no hacks, technical debt, scalable code. Используй для: clean code. EN: quality-first engineering."
 ---
 
 # Quality-First Engineering

@@ -1,6 +1,6 @@
 ---
 name: cmux-worker
-description: "cmux worker role: scoped task, JSON report, notify, no push/fullrepo. Используй для: worker-задача. EN: cmux worker, scoped report."
+description: "Воркер cmux worker role: scoped task, JSON report, notify, no push/fullrepo. Используй для: worker-задача. EN: cmux worker."
 ---
 
 # cmux-worker

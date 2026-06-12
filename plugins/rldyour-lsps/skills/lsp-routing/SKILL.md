@@ -1,6 +1,6 @@
 ---
 name: lsp-routing
-description: "LSP routing для types, diagnostics, symbols, refactor. Используй для: типы, символы, language server. EN: type check, symbol search."
+description: "Маршрутизация LSP: type checking, symbols, diagnostics, refactor. Используй для: типы, символы. EN: language server routing."
 ---
 
 # LSP Routing

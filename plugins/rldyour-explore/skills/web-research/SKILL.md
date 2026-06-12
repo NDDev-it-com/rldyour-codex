@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: "Web research: изучи интернет, latest/current, релизы, advisories. Используй для: текущая информация. EN: web search, latest releases."
+description: "Интернет-ресёрч: изучи интернет, latest/current, релизы, advisories. Используй для: текущая информация. EN: web search."
 ---
 
 # Web Research

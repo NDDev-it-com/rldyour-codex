@@ -1,6 +1,6 @@
 ---
 name: serena-memory-sync
-description: "Serena memory sync: fact-only durable project knowledge. Используй для: обнови memories. EN: sync memories, refresh project knowledge."
+description: "Синхронизация Serena memories: fact-only durable knowledge. Используй для: обнови memories. EN: sync memories, refresh project knowledge."
 ---
 
 # Serena Memory Sync

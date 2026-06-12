@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: "Design validation: responsive states, i18n/token/static scans. Используй для: проверь дизайн, visual diff. EN: screenshots, compare to Figma."
+description: "Валидация дизайна: responsive states, i18n/token/static scans. Используй для: проверь дизайн, visual diff. EN: screenshots, compare to Figma."
 ---
 
 # Design Validation

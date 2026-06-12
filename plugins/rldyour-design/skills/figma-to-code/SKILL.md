@@ -1,6 +1,6 @@
 ---
 name: figma-to-code
-description: "Figma-to-code с tokens, i18n, FSD, shadcn/ui и browser proof. Используй для: Figma ссылка, сверстай макет. EN: Figma to code, design handoff."
+description: "Перенос Figma в код: Figma, pixel-perfect, перенеси из фигмы, dynamic/static, i18n, browser validation. EN: Figma to code."
 ---
 
 # Figma To Code

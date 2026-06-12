@@ -1,6 +1,6 @@
 ---
 name: verification-quality-gates
-description: "Quality gates: tests, lint, types, LSP, browser/security/design evidence. Используй для: проверки. EN: run checks, verify before delivery."
+description: "Проверки: тесты, quality gates, lint, types, LSP, browser/security evidence. Используй для: verify before delivery. EN: run checks."
 ---
 
 # Verification Quality Gates
