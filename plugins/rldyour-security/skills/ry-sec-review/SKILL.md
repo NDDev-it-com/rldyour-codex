@@ -1,6 +1,6 @@
 ---
 name: ry-sec-review
-description: "Defensive security review for diff/PR/sensitive code. Используй для: секьюрити ревью, threat model. EN: security review, vulnerability audit."
+description: "Секьюрити ревью ry-sec-review: threat model, authz, secrets, vulnerabilities. Используй для: security review. EN: defensive review."
 ---
 
 # ry-sec-review

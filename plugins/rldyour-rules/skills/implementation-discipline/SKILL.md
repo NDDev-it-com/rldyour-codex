@@ -1,6 +1,6 @@
 ---
 name: implementation-discipline
-description: "Implementation discipline: code, schemas, tests, naming, errors, reuse. Используй для: рефакторинг, контракты. EN: code quality, integration sync."
+description: "Реализация: рефакторинг, naming, schemas, tests, errors, reuse. Используй для: доработка, контракты. EN: implementation discipline."
 ---
 
 # Implementation Discipline

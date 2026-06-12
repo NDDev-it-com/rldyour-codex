@@ -1,6 +1,6 @@
 ---
 name: serena-code-workflow
-description: "Serena workflow: изучи код, symbols, ссылки, рефакторинг. Используй для: навигация по коду. EN: find references, symbol search."
+description: "Изучи код через Serena: symbols, ссылки, рефакторинг, навигация. Используй для: symbol search. EN: find references."
 ---
 
 # Serena Code Workflow

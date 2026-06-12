@@ -1,6 +1,6 @@
 ---
 name: ry-review
-description: "ry-review: сделай ревью, report-only diff/PR/scope, find problems. Используй для: найди проблемы. EN: code review, audit changes."
+description: "Ревью ry-review: сделай ревью, report-only diff/PR/scope, find problems. Используй для: найди проблемы. EN: code review."
 ---
 
 # ry-review

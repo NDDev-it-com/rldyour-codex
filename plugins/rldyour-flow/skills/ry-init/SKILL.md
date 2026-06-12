@@ -1,6 +1,6 @@
 ---
 name: ry-init
-description: "Project init: Serena-first discovery и fullrepo bootstrap. Используй для: инициализируй, изучи репо. EN: init project, scope discovery."
+description: "Инициализация ry-init: инициализируй проект, Serena discovery, fullrepo bootstrap. EN: init project, scope discovery."
 ---
 
 # ry-init

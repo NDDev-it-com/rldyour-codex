@@ -1,6 +1,6 @@
 ---
 name: dependency-compatibility-policy
-description: "Dependency policy: latest-compatible, source-backed, SLSA, SBOM, lockfiles. Используй для: версии, deps. EN: dependency bump, supply chain."
+description: "Зависимости: latest-compatible, package updates, SLSA, SBOM, lockfiles. Используй для: обнови зависимости. EN: dependency bump."
 ---
 
 # Dependency Compatibility Policy

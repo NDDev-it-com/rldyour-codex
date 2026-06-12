@@ -1,6 +1,6 @@
 ---
 name: cmux-orchestrator
-description: "macOS cmux orchestrator для multi-agent terminal workflow. Используй для: делегируй воркерам. EN: worker reports, visible terminals."
+description: "Оркестратор macOS cmux orchestrator для multi-agent terminal workflow. Используй для: делегируй воркерам. EN: worker reports."
 ---
 
 # cmux-orchestrator

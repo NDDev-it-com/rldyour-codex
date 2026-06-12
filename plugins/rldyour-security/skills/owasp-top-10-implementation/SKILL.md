@@ -1,6 +1,6 @@
 ---
 name: owasp-top-10-implementation
-description: "OWASP Top 10 implementation check. Используй для: auth, secrets, injection, XSS, SSRF, CORS. EN: secure coding, OWASP audit."
+description: "Безопасность OWASP: auth, secrets, injection, XSS, SSRF, CORS. Используй для: secure coding. EN: OWASP audit."
 ---
 
 # OWASP Top 10 Implementation Guidance
