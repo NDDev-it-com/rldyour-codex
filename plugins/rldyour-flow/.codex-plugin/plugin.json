@@ -1,6 +1,6 @@
 {
   "name": "rldyour-flow",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Автономный SDLC Codex: ry-init/start/review/repair/deploy, hooks и sync. EN: SDLC workflow.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
