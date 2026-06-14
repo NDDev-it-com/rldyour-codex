@@ -7,9 +7,9 @@ description: "Ремонт ry-repair: почини систему, semantic entr
 
 ## Purpose
 
-Normalize a repository so Codex, Claude Code, and OpenCode can work from the same verified facts with minimal semantic entropy. This is a technical repair workflow; it is not permission to change business logic, product semantics, deployment targets, data contracts, security posture, or ADR meaning silently.
+Normalize a repository so Codex, Claude Code, OpenCode, Gemini CLI, and MiMoCode can work from the same verified facts with minimal semantic entropy. This is a technical repair workflow; it is not permission to change business logic, product semantics, deployment targets, data contracts, security posture, or ADR meaning silently.
 
-For rldyour AI CLI configuration repositories, `/ry-repair` also owns deterministic install/update/sync convergence: local repository state, system Claude/Codex/OpenCode configs, Serena memories, and GitHub/fullrepo state must be checked through the root `config/ry-repair-sync-contract.json` and `scripts/ry_repair_sync.py` contract before being reported as synchronized.
+For rldyour AI CLI configuration repositories, `/ry-repair` also owns deterministic install/update/sync convergence: local repository state, system Claude/Codex/OpenCode/Gemini/MiMoCode configs, Serena memories, and GitHub/fullrepo state must be checked through the root `config/ry-repair-sync-contract.json` and `scripts/ry_repair_sync.py` contract before being reported as synchronized.
 
 ## Mode Selection
 
@@ -17,7 +17,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also owns determinis
 - **rldyour control plane or adapter config repo, goal = converge the installed
   system**: run consumer mode instead - update the checkout FROM GitHub
   (`git pull --ff-only`, `git submodule update --init --recursive`), then
-  `python3 scripts/ry_repair_sync.py --check` and `--apply --install-system`.
+  `python3 scripts/ry_repair_sync.py --check` and `--apply-system`.
   In consumer mode do NOT author changes into the repository: no commits, no
   doc/contract/memory edits, no fullrepo publication. If fast-forward fails or
   validators reveal repository drift, report it and switch to authoring repair
@@ -30,7 +30,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also owns determinis
 3. Inspect Serena memories, plans, and research archives for stale facts, unsupported claims, missing taxonomy, duplicated instructions, or contradictions with current code.
 4. Inspect GitHub issues, pull requests, and recent history through the GitHub connector, GitHub MCP, or `gh` when available. Verify every issue against current code before treating it as a fact.
 5. Inspect MCP/LSP/tooling config, hook lifecycles, CI gates, release manifests, dependency baselines, and docs source-of-truth declarations.
-6. When the root control plane is present, run `python3 scripts/ry_repair_sync.py --plan --target "$PWD"` and use `--check` before claiming sync. Use `--apply --install-system` only for owner-approved system convergence. For OS/mode work, pass explicit flags: `--os macos|linux|wsl|windows`, `--mode standard|orchestrator`, and `--cmux` only for macOS orchestrator mode.
+6. When the root control plane is present, run `python3 scripts/ry_repair_sync.py --plan --target "$PWD"` and use `--check` before claiming sync. Use `--apply-system` only for owner-approved system convergence. For OS/mode work, pass explicit flags: `--os macos|linux|wsl|windows`, `--mode standard|orchestrator`, and `--cmux` only for macOS orchestrator mode.
 7. Treat approved active inventories as system-wide: source repo surfaces, installed `$CODEX_HOME/config.toml`, Claude marketplace cache, OpenCode project config, generated tool references, CI workflows, runtime pins, docs, and release gates must match current MCP/provider policies. Do not keep permanent tool-specific absence gates for removed components.
 8. Detect semantic entropy: duplicated docs, stale pins, conflicting instructions, dead config, unclear source-of-truth, missing ADR/CONTEXT/FUTURE facts, broken validators, adapter parity drift, and natural-language policy overrides that are not materialized in project policy JSON.
 9. Produce a repair plan that separates technical repairs from owner-decision items.
