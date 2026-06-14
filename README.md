@@ -1,5 +1,7 @@
 # rldyour-codex
 
+`rldyour-codex` is the rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory.
+
 [![validate](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/validate.yml)
 [![security-static](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/security-static.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/security-static.yml)
 [![CodeQL](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/codeql.yml)
@@ -7,29 +9,107 @@
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Latest Release](https://img.shields.io/github/v/release/NDDev-it-com/rldyour-codex)](https://github.com/NDDev-it-com/rldyour-codex/releases/latest)
 
-`rldyour-codex` is a rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory. It is authored by Danil Silantyev (github:rldyourmnd), CEO NDDev and owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
+`rldyour-codex` is a rldyour AI CLI configuration package for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory. It is authored by Danil Silantyev (github:rldyourmnd), CEO NDDev and owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
 
 It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog where nothing is treated as enabled or correct unless explicitly decided by the maintainer.
 
-## License
+## Current Baseline
 
-This project is licensed under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later). See [LICENSE](LICENSE) for the full text.
+| Field | Value |
+|---|---|
+| Adapter version | 1.3.4 |
+| Runtime baseline | Codex CLI 0.139.0 (`@openai/codex`) |
+| GitHub release tag | `1.3.4` |
+| Pinned commit | `9b889c770936f34d922cfd4ed681d009f6aec317` |
 
-AGPL-3.0 includes a Remote Network Interaction clause (Section 13): if you run a modified version of this software and make it available to others over a network, you must offer them access to the corresponding source code under the same license. Operating the unmodified upstream release does not trigger additional obligations beyond the standard AGPL-3.0 terms.
+The runtime baseline reference is `references/codex-baseline.json`, verified 2026-06-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.139.0`.
 
-## Control Model
+## What This Repository Provides
 
-- The active marketplace contains only plugins that are actually created and ready to install.
-- Planned plugins stay documented here and are not added to `marketplace.json` until explicitly created.
-- Each plugin has a clear responsibility boundary.
-- Each tool or workflow describes its purpose, access model, risks, and usage rules.
-- Repository artifacts are written in English; technical identifiers stay stable and ASCII. User-facing communication with the owner is Russian unless explicitly requested otherwise.
-- Every callable rldyour skill includes compact Russian and English trigger phrases in the `SKILL.md` frontmatter `description`; Codex uses descriptions as the primary routing surface, and details belong in the skill body or references.
-- Secrets, tokens, cookies, and private keys are never stored in this repository.
+`rldyour-codex` is a configuration package for the Codex CLI - it is not a fork of the upstream Codex runtime and does not modify Codex internals. It owns the plugin marketplace definition, system installer and rollback tooling, managed subagent role configs, execpolicy rules, MCP server runtime definitions, lifecycle hooks, skills, runtime validation lanes, CI workflows, and Serena project memory for the Codex adapter. The active catalog currently includes 10 plugins and 44 skills. Slash commands are intentionally absent; Codex uses skills and managed subagents as the public invocation surface.
+
+## Native Boundaries
+
+Codex reads configuration from TOML files rooted at `$CODEX_HOME` (default `~/.codex`):
+
+- `~/.codex/config.toml`: main config - model defaults, `[tui]` status line, global permissions posture, and `[mcp_servers.*]` runtime MCP server entries.
+- `~/.codex/rldyour-yolo.config.toml`: `--profile rldyour-yolo` overlay - `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, owner-standard full-auto defaults.
+- `~/.codex/rldyour-safe.config.toml`: `--profile rldyour-safe` overlay - `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`.
+- `~/.codex/agents/*.toml`: managed subagent role configs, installed from `system/agents/*.toml`.
+- `~/.codex/rules/`: managed execpolicy rules, installed from `system/rules/*.rules`.
+
+The repository's `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands (`uvx`, `bunx`, `dart`) to local executable paths and writes the resolved entries to `[mcp_servers.*]` in `~/.codex/config.toml`; `.mcp.json` is plugin metadata, not a Codex-native runtime format. The Codex plugin format is `plugins/<plugin>/.codex-plugin/plugin.json` with manifest-linked skills, hooks, and assets. The marketplace catalog is `.agents/plugins/marketplace.json`.
+
+MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runtime-versions.env`; marketplace validation fails if these sources drift. Host runtime pins for Node major, Bun, Dart SDK, and GitHub MCP also live in `config/mcp-runtime-versions.env` so local setup, GitHub Actions, and the devcontainer share one source of truth.
+
+## Install / Update / ry-repair
+
+**Runtime install or update** - on machines that need a Codex CLI install or update:
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
+npm install -g @openai/codex@0.139.0
+codex --version
+codex doctor
+```
+
+**System config install** - dry-run first, then apply:
+
+```bash
+scripts/install_system_codex.sh --dry-run
+scripts/install_system_codex.sh --apply
+scripts/doctor_system_codex.sh
+```
+
+Apply the owner-standard full-access profile explicitly:
+
+```bash
+scripts/install_system_codex.sh --apply --owner-mode
+```
+
+Conservative override (safe mode):
+
+```bash
+scripts/install_system_codex.sh --apply --safe-mode
+scripts/doctor_system_codex.sh --safe-mode
+```
+
+Strict runtime mode (fully reproducible environment):
+
+```bash
+scripts/install_system_codex.sh --apply --strict-runtime
+scripts/doctor_system_codex.sh --strict-runtime
+python3 scripts/validate_runtime_prereqs.py --strict --require-codex
+```
+
+Full bootstrap smoke on a new or resynced machine:
+
+```bash
+scripts/bootstrap_check.sh --apply
+```
+
+**ry-repair convergence** - plan and apply installed-runtime diagnostics:
+
+```bash
+scripts/ry_repair_sync.py --plan --apply-system --latest-from-github --json
+```
+
+Reports `NOT PROVEN` when `codex` is not available locally.
+
+**Plugin marketplace local install:**
+
+```bash
+codex plugin marketplace add .
+codex plugin list --json
+```
+
+The installer writes `~/.codex/AGENTS.md`, managed subagent role configs, execpolicy rules, registered marketplace, enabled plugins, approved MCP servers, Codex lifecycle hooks, the official Codex config schema hint, owner-standard full-auto permission defaults (unless `--safe-mode`), both profile layers, maintainer-selected model defaults, approved MCP tool overrides, the owner `[tui]` status line, and the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing managed files are backed up before write operations. Credentials and OAuth tokens are never written.
 
 ## Active Catalog
 
-The active marketplace currently contains:
+The active marketplace contains 10 plugins and 44 skills:
+
+**Plugins:**
 
 - `rldyour-mcps`: the maintainer's approved MCP server set for Codex.
 - `rldyour-explore`: research skills for technical MCP research and authoritative web research.
@@ -40,195 +120,41 @@ The active marketplace currently contains:
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-repair`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
 - `rldyour-rules`: quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility, verification gates, Codex and Claude Code project instructions, ADR policy, and `ry-rules-review`.
+- `rldyour-orchestrator`: cmux orchestrator and worker skills for macOS multi-pane orchestration.
 
-Resolved architecture decisions:
+**MCP servers** (11): `chrome-devtools`, `context7`, `dart-flutter`, `deepwiki`, `figma`, `grep`, `github`, `openaiDeveloperDocs`, `sequential-thinking`, `serena`, `shadcn`.
 
-- No separate `rldyour-hooks` plugin. Hooks live inside the plugin that owns the lifecycle behavior.
-- No separate `rldyour-memories` plugin. Project memory behavior belongs to `rldyour-serena-mcp`.
-- No `rldyour-sec` alias plugin. Security behavior belongs to `rldyour-security`.
+**Managed subagents** (8 roles): `research-explorer`, `architecture-reviewer`, `browser-tester`, `consistency-reviewer`, `quality-reviewer`, `security-audit`, `test-reviewer`, `serena-sync`.
 
-## What Codex Reads
+**Hooks** (9 lifecycles): `UserPromptSubmit` sync-required check, `SessionStart` context dispatcher, `Stop` memory-sync and lifecycle dispatcher, `PostToolUse` commit advice and sync marker, `PreToolUse` cwd guard and git policy.
 
-Codex reads:
+**Execpolicy rules** (`system/rules/*.rules`): hard rails for root deletion, direct forced Git pushes, secret-key disclosure, and release/deploy side effects.
 
-- `.agents/plugins/marketplace.json`: active installable plugin catalog;
-- `plugins/<plugin>/.codex-plugin/plugin.json`: plugin manifest;
-- manifest-linked files such as `skills`, `.mcp.json`, hooks, and assets.
+The Codex adapter contract lives in `config/rldyour-contract.json` and is documented in `docs/contract-matrix.md`. Validate it with `python3 scripts/validate_contract.py`.
 
-## Local Installation
+Architecture decisions:
 
-```bash
-codex plugin marketplace add .
-```
+- No separate `rldyour-hooks` plugin - hooks live inside the plugin that owns the lifecycle behavior.
+- No separate `rldyour-memories` plugin - project memory behavior belongs to `rldyour-serena-mcp`.
+- No `rldyour-sec` alias plugin - security behavior belongs to `rldyour-security`.
 
-After changing `marketplace.json`, a plugin manifest, hooks, skills, or `.mcp.json`, apply the system install workflow and start a new Codex session so the runtime reloads the configuration:
+## Browser / Design / DevTools Routing
 
-```bash
-scripts/install_system_codex.sh --dry-run
-scripts/install_system_codex.sh --apply
-scripts/doctor_system_codex.sh
-```
+Browser automation uses three active providers, routed by task type per `config/browser-automation-policy.json`:
 
-The Codex CLI runtime baseline is `0.139.0`. On machines that need a runtime
-install or update, use the official non-interactive installer or the explicit
-npm stable pin before running the repository config installer:
+- **Webwright** (`rldyour-browser`): task-harness provider for full autonomous browser workflows. Adapter-owned CLI wrapper; upstream-native availability is NOT_PROVEN in this adapter.
+- **Playwright CLI** (`rldyour-browser`): CLI provider for Playwright test execution and browser-driven validation.
+- **Chrome DevTools MCP** (`plugins/rldyour-mcps`): MCP provider for DevTools protocol access - screenshots, network inspection, console, performance traces, and heap snapshots - via the `chrome-devtools` MCP server.
 
-```bash
-curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
-npm install -g @openai/codex@0.139.0
-codex --version
-codex doctor
-codex plugin list --json
-```
+The `rldyour-design` plugin provides Figma → code workflows, FSD frontend architecture, token-based design system implementation, shadcn/ui integration, ReactBits, and browser validation workflows layered on top of these browser providers.
 
-`scripts/ry_repair_sync.py --plan --apply-system --latest-from-github --json`
-plans these installed-runtime diagnostics and reports `NOT PROVEN` when `codex`
-is not available locally.
+Managed subagents (`browser-tester`) handle browser-tester review tracks. Specialist MCP servers (`figma`, `chrome-devtools`, `dart-flutter`, `shadcn`) are disabled inside managed subagents and remain parent-session tools for explicit design, browser, Flutter, or shadcn work.
 
-The default install posture is owner-standard full-auto:
-`~/.codex/config.toml` receives the active owner defaults, and
-`~/.codex/rldyour-yolo.config.toml` is the explicit `--profile rldyour-yolo`
-layer with `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`,
-using Codex's legacy sandbox dialect. It does not write an active
-`default_permissions` permission-profile field while `sandbox_mode` is present.
-The optional conservative override is explicit:
+## Memory / Fullrepo Model
 
-```bash
-scripts/install_system_codex.sh --apply --safe-mode
-scripts/doctor_system_codex.sh --safe-mode
-```
+**Normal `main` branch** carries product history: plugins, scripts, config, CI, docs, and generated skill bridges. Agent-only files (`AGENTS.md`, `.serena/`) are excluded from normal branch history via `.git/info/exclude`.
 
-## System Codex Installation
-
-This repository also stores the canonical global Codex setup for the maintainer.
-
-Dry-run first:
-
-```bash
-scripts/install_system_codex.sh --dry-run
-```
-
-Apply to the active Codex home:
-
-```bash
-scripts/install_system_codex.sh --apply
-```
-
-Apply the owner-standard full-access profile:
-
-```bash
-scripts/install_system_codex.sh --apply --owner-mode
-```
-
-Verify the installed system state:
-
-```bash
-scripts/doctor_system_codex.sh
-scripts/doctor_system_codex.sh --quick --strict-runtime
-scripts/doctor_system_codex.sh --safe-mode
-```
-
-Run the full bootstrap smoke flow on a new or resynced machine:
-
-```bash
-scripts/bootstrap_check.sh --apply
-```
-
-The installer writes `~/.codex/AGENTS.md`, managed `~/.codex/agents/*.toml` subagent role configs, installs managed Codex execpolicy rules from `system/rules/*.rules`, registers this marketplace, enables the approved plugins, configures the approved MCP servers, enables Codex hooks and multi-agent support, writes the official Codex config schema hint, applies the owner-standard full-auto permission defaults unless `--safe-mode` is supplied, writes `~/.codex/rldyour-yolo.config.toml` and `~/.codex/rldyour-safe.config.toml` profile layers for current Codex `--profile` semantics, sets the maintainer-selected parent and subagent model defaults, writes approved MCP tool overrides, manages the owner `[tui]` status line (`status_line` with model, context remainder, five-hour/weekly rate-limit remainder, git branch, and working directory plus `status_line_use_colors`) in the main config and both profile layers while preserving other user `[tui]` keys, and synchronizes the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing `~/.codex/AGENTS.md`, managed subagent configs, managed rule files, `~/.codex/config.toml`, and managed profile files are backed up before write operations. Credentials and OAuth tokens are never written by this repository.
-
-The Codex adapter contract lives in `config/rldyour-contract.json` and is documented in `docs/contract-matrix.md`. It records the intended Codex surface: 9 plugins, 41 skills, no slash commands by design, 8 managed subagents, command-only plugin hook lifecycle mappings, versioned plugin cache layout, and the owner-standard full-auto profile boundary. Validate it with `python3 scripts/validate_contract.py`.
-
-`plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands such as `uvx`, `bunx`, and `dart` to local executable paths in `~/.codex/config.toml`; `scripts/validate_marketplace.sh` checks that the installed MCP config still matches `.mcp.json` apart from that expected command-path resolution.
-
-Local MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runtime-versions.env`; marketplace validation fails if these sources drift. Do not use `@latest` or unpinned `uvx --from` package specs for local MCP runtime definitions; update versions intentionally and rerun capability smoke. The official GitHub MCP server binary is pinned separately as `GITHUB_MCP_SERVER_VERSION` and installed by CI from the matching upstream release artifact with checksum verification.
-
-`dart-flutter` is intentionally declared as an external local Dart SDK runtime in `config/mcp-runtime-versions.env`; all other local package launchers remain package-pinned or binary-release-pinned. Host runtime pins for Node major, Bun, Dart SDK, and GitHub MCP also live in this file so local setup, GitHub Actions, and the devcontainer share one source of truth. GitHub Actions workflows pin external actions to full commit SHAs, with the source tag kept as an inline comment for review.
-
-Strict runtime mode is available when the environment must be fully reproducible instead of warning-only:
-
-```bash
-scripts/install_system_codex.sh --apply --strict-runtime
-scripts/install_system_codex.sh --apply --safe-mode --strict-runtime
-scripts/doctor_system_codex.sh --strict-runtime
-scripts/doctor_system_codex.sh --safe-mode --strict-runtime
-python3 scripts/validate_runtime_prereqs.py --strict --require-codex
-```
-
-System Codex installs owner-standard full-auto defaults:
-`approval_policy = "never"`, `sandbox_mode = "danger-full-access"`,
-`model = "gpt-5.5"`, and `model_reasoning_effort = "xhigh"`. The same values
-are also written to
-`~/.codex/rldyour-yolo.config.toml` for current Codex `--profile rldyour-yolo`
-startup. The optional conservative override is available through `--safe-mode`,
-which writes `~/.codex/rldyour-safe.config.toml` with
-`approval_policy = "on-request"` and `sandbox_mode = "workspace-write"`.
-Current Codex documentation treats
-`sandbox_mode` as the active older sandbox model when it is present, so this
-repository does not write active `default_permissions` permission-profile fields
-or migrate the owner full-auto profile to Codex permission profiles without an
-explicit policy decision. Managed subagent roles in
-`system/agents/*.toml` install to `~/.codex/agents/*.toml` and use
-`model = "gpt-5.5"` with `model_reasoning_effort = "medium"`.
-
-Managed subagents currently include a temporary MCP isolation policy because Codex can eagerly initialize MCP servers per spawned session/subagent. Subagents keep the lightweight core surface available through inherited runtime configuration: `sequential-thinking`, `serena`, `context7`, `grep`, `deepwiki`, `openaiDeveloperDocs`, and built-in `codex_apps`. Specialist MCP servers such as `figma`, `chrome-devtools`, `dart-flutter`, and `shadcn` are explicitly disabled inside managed subagents and remain parent-session tools for explicit design, browser, Flutter, or shadcn work. Playwright CLI and Webwright are browser providers outside MCP.
-
-Managed execpolicy rules in `system/rules/*.rules` install to `~/.codex/rules/` and are validated with `codex execpolicy check`. They add hard rails for root deletion, direct forced Git pushes, secret-key disclosure, and release/deploy side effects without changing the maintainer-required permission defaults.
-
-Runtime smoke checks:
-
-```bash
-scripts/validate_fast.sh
-scripts/validate_runtime.sh --strict-runtime
-scripts/validate_release.sh
-scripts/validate_execpolicy_rules.sh
-scripts/smoke_mcp_runtime.sh
-scripts/smoke_mcp_capabilities.sh
-scripts/smoke_hooks.sh
-scripts/smoke_serena_memory_freshness.sh
-scripts/smoke_serena_memory_taxonomy.sh
-scripts/smoke_local_git_guard.sh
-scripts/smoke_flow_branch_cleanup.sh
-scripts/smoke_clean_bootstrap.sh
-scripts/smoke_fullrepo_sync.sh
-python3 scripts/validate_agent_tools.py
-```
-
-`scripts/smoke_mcp_runtime.sh` validates remote MCP endpoints with a Streamable HTTP `initialize` POST preflight. OAuth-gated endpoints may pass with `401`/`403`; a `405` is valid only for optional GET SSE and is not accepted as a POST initialize result.
-
-Instruction docs checks:
-
-```bash
-plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
-python3 scripts/validate_instruction_docs.py --require-agent-docs
-```
-
-`scripts/smoke_mcp_capabilities.sh` verifies MCP protocol behavior with `initialize`, `list_tools`, and safe `call_tool` probes where a deterministic read-only tool exists. It retries each server five times by default to absorb transient remote MCP failures. Figma is skipped by default because it requires OAuth; pass `--include-auth` only after authorizing that runtime.
-
-## Continuous Integration
-
-GitHub Actions run automatically on this public repository:
-
-- `validate.yml`: on every push to `main` and every pull request targeting `main`, runs Ubuntu-hosted fast validation, optional runtime/release/MCP scopes, MCP runtime pin freshness, and MCP safe-call smoke. `workflow_dispatch` is available for narrower scopes.
-- `cross-platform.yml`: runs lightweight metadata/path smoke on standard Ubuntu, Windows, and macOS public runners.
-- `security-static.yml`: on push to `main`, pull requests, and weekly schedule, runs action pin validation, actionlint, repository text security scan, ShellCheck, and Pyright without paid GitHub Code Security.
-- `codeql.yml`: on push to `main`, pull requests, and weekly schedule, runs GitHub CodeQL analysis with `security-and-quality` queries for Python and GitHub Actions.
-- `dependency-check.yml`: on daily schedule and on push to MCP runtime pin sources, checks pinned MCP runtime versions through `scripts/check_mcp_runtime_versions.py --fail-on-outdated`. Surfaces stale pins as a maintainer-visible signal without blocking pull requests.
-- `release.yml`: on push of a SemVer tag matching `X.Y.Z[-pre]`, validates `VERSION` and `CHANGELOG.md`, builds a deterministic bundle, generates a release manifest and SPDX 2.3 SBOM, exports the GitHub dependency-graph SBOM when available, attaches artifact attestations, and publishes the GitHub Release. `workflow_dispatch` remains available as a fallback.
-- `scorecard.yml`: weekly OSSF Scorecard analysis, also on push to `main` and branch protection rule changes. It runs in JSON artifact/check mode and publishes public results to `scorecard.dev`.
-- `dependency-review.yml`: on pull requests, blocks merges that introduce dependencies with known high-severity vulnerabilities or licenses outside the allow-list (AGPL-3.0-or-later compatible).
-- `labeler.yml`: on pull requests, applies area labels (ci-cd / scripts / plugin / docs / tests / release / security) based on changed paths defined in `.github/labeler.yml`.
-
-All external GitHub Actions are pinned by full commit SHA, with the human-readable tag kept as an inline comment. Pin enforcement is checked by `scripts/validate_action_pins.py` and gated in CI.
-
-## Fullrepo Branch
-
-`fullrepo` is the portable complete-state branch for agent-only files. Normal project branches keep product history clean and exclude project-root AI workflow files through `.git/info/exclude`.
-
-In rldyour-managed projects, `AGENTS.md` is the Codex-native project instruction file and `.claude/CLAUDE.md` is the Claude Code-native project memory file. Both are agent-only context: keep them out of normal branch history and publish them through `fullrepo`.
-
-This is the default rldyour-owned repository policy. In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may disable fullrepo, allow instruction docs on normal branches, and disable branch-cleanup blockers.
-
-Use:
+**`fullrepo` branch** is the portable complete-state branch for agent-only files. It is built from current `HEAD` plus local agent-only files and pushed with `--force-with-lease`.
 
 ```bash
 scripts/worktree_add.sh <branch> [path]
@@ -238,22 +164,99 @@ scripts/sync_fullrepo_branch.sh --publish
 scripts/sync_fullrepo_branch.sh --status
 ```
 
-`scripts/worktree_add.sh` creates a git worktree and runs `fullrepo_sync.py --restore` so parallel Codex sessions start with agent-only context. `--restore` initializes local agent context from `origin/fullrepo`. `--migrate-main` removes tracked agent-only files from the current branch index while keeping them locally. `--publish` builds a snapshot from current `HEAD` plus local agent-only files and pushes it to `fullrepo` with safe `--force-with-lease`.
+`--restore` initializes local agent context from `origin/fullrepo`. `--migrate-main` removes tracked agent-only files from the current branch index while keeping them locally. `--publish` builds and pushes the snapshot.
 
-Local product repositories can install the rldyour Git pre-push guard:
+**Serena memory** is managed by `rldyour-serena-mcp`. Memory is fact-only: verified code, git diffs, and test results - no speculation, plans, chat history, or secrets. The `serena-sync` managed subagent handles memory synchronization on the `Stop` hook advisory.
+
+**Local pre-push guard:**
 
 ```bash
 scripts/install_local_git_hooks.sh --dry-run
 scripts/install_local_git_hooks.sh --apply
 ```
 
-The guard is branch-aware. Product branches keep strict protection against agent-only paths and AI-marker additions. The configured fullrepo branch, `fullrepo` by default or `RLDYOUR_FULLREPO_BRANCH`, allows durable AI context while still blocking definite credentials, runtime markers, browser artifacts, and local env files.
+The guard is branch-aware: product branches enforce strict protection against agent-only paths and AI-marker additions; the `fullrepo` branch allows durable AI context while blocking credentials, runtime markers, browser artifacts, and local env files.
 
-## Release, Rollback, And Observability
+In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may disable fullrepo, allow instruction docs on normal branches, and disable branch-cleanup blockers.
 
-Marketplace release version is stored in `VERSION`. Plugin behavior versions stay in `plugins/<plugin>/.codex-plugin/plugin.json`. Release notes live in `CHANGELOG.md`.
+## Security Boundary
 
-Operational workflows:
+The owner full-auto standard posture is the `rldyour-yolo` profile:
+
+- `approval_policy = "never"`
+- `sandbox_mode = "danger-full-access"` (legacy sandbox dialect)
+- No active `default_permissions` permission-profile field while `sandbox_mode` is present
+
+Launch with the owner-standard full-auto profile:
+
+```bash
+codex --profile rldyour-yolo --dangerously-bypass-approvals-and-sandbox
+```
+
+This posture grants unrestricted shell access on the owner workstation. It is not a sandbox. Permissions are not a security boundary in this mode - they are an ergonomic preference. The conservative override is `--safe-mode` (`approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`).
+
+**Execpolicy rules** (`system/rules/*.rules`) add hard behavioral rails independent of the permission model: they block root deletion, direct forced Git pushes, secret-key disclosure, and release/deploy side effects. Validate with `codex execpolicy check`.
+
+**Secrets policy:** credentials, OAuth tokens, cookies, and private keys are never stored in this repository. MCP server credentials are environment-variable-injected at runtime. GitHub Actions workflows pin external actions to full commit SHAs with the human-readable tag as an inline comment; pin enforcement is checked by `scripts/validate_action_pins.py` and gated in CI.
+
+**MCP trust boundary:** only the servers listed in `plugins/rldyour-mcps/.mcp.json` are approved. Local MCP launcher packages are pinned in `.mcp.json` and `config/mcp-runtime-versions.env`; validation fails on drift. OAuth-gated MCP endpoints are skipped in capability smoke unless `--include-auth` is explicitly passed.
+
+See [SECURITY.md](SECURITY.md) for private disclosure procedure and supported surface. Report vulnerabilities through GitHub Security Advisories.
+
+## Validation
+
+**Fast / static:**
+
+```bash
+scripts/validate_fast.sh
+python3 scripts/validate_contract.py
+python3 scripts/validate_action_pins.py
+python3 scripts/validate_runtime_prereqs.py
+plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool
+python3 scripts/validate_instruction_docs.py --require-agent-docs
+```
+
+**Adapter-deep:**
+
+```bash
+scripts/validate_release.sh
+scripts/validate_execpolicy_rules.sh
+python3 scripts/validate_agent_tools.py
+```
+
+**Installed-runtime:**
+
+```bash
+scripts/validate_runtime.sh --strict-runtime
+scripts/doctor_system_codex.sh
+scripts/doctor_system_codex.sh --quick --strict-runtime
+scripts/smoke_hooks.sh
+scripts/smoke_local_git_guard.sh
+scripts/smoke_flow_branch_cleanup.sh
+scripts/smoke_clean_bootstrap.sh
+scripts/smoke_fullrepo_sync.sh
+scripts/smoke_serena_memory_freshness.sh
+scripts/smoke_serena_memory_taxonomy.sh
+```
+
+**Live-network / MCP:**
+
+```bash
+scripts/smoke_mcp_runtime.sh
+scripts/smoke_mcp_capabilities.sh
+```
+
+`scripts/smoke_mcp_runtime.sh` validates remote MCP endpoints with a Streamable HTTP `initialize` POST preflight. OAuth-gated endpoints may pass with `401`/`403`; `405` is not accepted as a POST initialize result. `scripts/smoke_mcp_capabilities.sh` runs `initialize`, `list_tools`, and safe `call_tool` probes, retrying each server five times to absorb transient failures. Figma is skipped by default; pass `--include-auth` only after authorizing that runtime.
+
+**NOT_PROVEN policy:** any smoke lane that requires a live runtime (`codex`, installed MCP, network endpoints) reports `NOT PROVEN` when the dependency is unavailable locally; it does not fail the static gate.
+
+## Release / Rollback
+
+Adapter version is stored in `VERSION`. Plugin behavior versions stay in `plugins/<plugin>/.codex-plugin/plugin.json`. Release notes live in `CHANGELOG.md`. A numeric GitHub Release is required for every public adapter product version; a `VERSION` file alone is not sufficient.
+
+The `release.yml` GitHub Actions workflow triggers on a SemVer tag matching `X.Y.Z[-pre]`. It validates `VERSION` and `CHANGELOG.md`, builds a deterministic bundle, generates a release manifest and SPDX 2.3 SBOM, exports the GitHub dependency-graph SBOM when available, attaches artifact attestations, and publishes the GitHub Release. `workflow_dispatch` is available as a fallback.
+
+Operational commands:
 
 ```bash
 python3 scripts/release_manifest.py
@@ -262,7 +265,7 @@ scripts/rollback_system_codex.sh --list
 scripts/collect_diagnostics.sh
 ```
 
-Reference documents:
+Reference docs:
 
 - [docs/release-process.md](docs/release-process.md): versioning, changelog, release evidence, and tag flow.
 - [docs/rollback-restore.md](docs/rollback-restore.md): safe restore from installer backups or older Git tags.
@@ -270,22 +273,14 @@ Reference documents:
 - [docs/observability.md](docs/observability.md): diagnostics, CI artifacts, and failure triage.
 - [docs/github-branch-protection.md](docs/github-branch-protection.md): desired branch protection state.
 
-## Contributing
+## Support / License
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, validation, change rules, and pull request expectations. Participants are expected to follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+**License:** AGPL-3.0-or-later. See [LICENSE](LICENSE) for the full text. The AGPL-3.0 Remote Network Interaction clause (Section 13) applies: if you run a modified version and make it available to others over a network, you must offer the corresponding source under the same license. Operating the unmodified upstream release does not trigger additional obligations.
 
-## Security
+**Author:** Danil Silantyev (github:rldyourmnd), CEO NDDev.
 
-See [SECURITY.md](SECURITY.md) for supported surface, private disclosure procedure, and baseline controls.
+**Security contact:** report vulnerabilities privately through GitHub Security Advisories at `https://github.com/NDDev-it-com/rldyour-codex/security/advisories`. See [SECURITY.md](SECURITY.md) for the supported surface and private disclosure procedure.
 
-## Maintainer
+**Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, validation, change rules, and pull request expectations. Participants are expected to follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-Danil Silantyev (github:rldyourmnd), CEO NDDev.
-
-## Copyright
-
-Copyright (C) 2026 Danil Silantyev (github:rldyourmnd), CEO NDDev.
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+Copyright (C) 2026 Danil Silantyev (github:rldyourmnd), CEO NDDev. This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
