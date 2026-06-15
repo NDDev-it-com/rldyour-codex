@@ -20,7 +20,6 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 | Adapter version | 1.3.5 |
 | Runtime baseline | Codex CLI 0.139.0 (`@openai/codex`) |
 | GitHub release tag | `1.3.5` |
-| Pinned commit | `aa43b7eb6398a5ea4d39e5f6c4fbff47ac87f43e` |
 
 The runtime baseline reference is `references/codex-baseline.json`, verified 2026-06-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.139.0`.
 
