@@ -32,6 +32,17 @@ EXPECTED_TOOLS: dict[str, set[str]] = {
 
 AUTH_REQUIRED = {"figma"}
 STARTUP_ENV_REQUIRED = {"github"}
+# Hosted/external MCP resilience is two-layered, and both layers are deliberate:
+#  1. In-probe: _probe_with_retries downgrades transient failures (504s, timeouts,
+#     anyio cancel-scope teardown) from servers in this set to a graceful "skip"
+#     rather than failing the smoke (see tests/unit/test_smoke_mcp_capabilities.py).
+#  2. CI policy: the same external (grep) and localhost (figma) servers are also
+#     passed via --skip-server in CI. GitHub-hosted runners cannot reach them
+#     reliably, AND the MCP client's anyio cancel scope can still raise during
+#     event-loop shutdown (after _main_async has already returned its exit code),
+#     which is outside every per-server handler. Both servers stay statically
+#     config-validated and work in real owner use. Do not drop the CI skips or
+#     this transient set without re-proving both layers.
 TRANSIENT_EXTERNAL_MCP_SERVERS = {"grep"}
 TRANSIENT_EXTERNAL_FAILURE_MARKERS = (
     "504 Gateway Timeout",
