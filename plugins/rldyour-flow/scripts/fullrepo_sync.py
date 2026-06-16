@@ -36,7 +36,6 @@ AGENT_ONLY_PATTERNS = (
     ".claude/**",
     ".codex/**",
     ".cursor/rules/**",
-    ".gemini/**",
     ".roo/**",
     ".windsurf/**",
     ".openhands/**",
@@ -55,6 +54,15 @@ AGENT_ONLY_PATTERNS = (
 )
 
 RUNTIME_EXCLUDE_PATTERNS = (
+    ".gemini/settings.json",
+    ".gemini/antigravity-cli/settings.json",
+    ".gemini/antigravity-cli/mcp_config.json",
+    ".gemini/hooks/hooks.json",
+    ".gemini/hooks/**.sh",
+    ".gemini/commands/**",
+    ".gemini/agents/**",
+    ".gemini/skills/**",
+    ".gemini/policies/**",
     ".serena/cache/**",
     ".serena/.gitignore",
     ".serena/project.local.yml",
