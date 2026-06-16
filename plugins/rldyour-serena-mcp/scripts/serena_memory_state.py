@@ -30,7 +30,7 @@ RUNTIME_IGNORED = {
     ".serena/.flow_blocker_ack.json",
     ".serena/.stop_lifecycle_timeout_marker",
 }
-LAST_COMMIT_RE = re.compile(r"^Last commit:\s+([a-f0-9]{7,40})\b", re.MULTILINE)
+LAST_COMMIT_RE = re.compile(r"^Last commit:\s+`?([a-f0-9]{7,40})\b", re.MULTILINE)
 
 
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
