@@ -7,7 +7,7 @@ description: "Ремонт ry-repair: почини систему, semantic entr
 
 ## Purpose
 
-Normalize a repository so Codex, Claude Code, OpenCode, Gemini CLI, and MiMoCode can work from the same verified facts with minimal semantic entropy. This is a technical repair workflow; it is not permission to change business logic, product semantics, deployment targets, data contracts, security posture, or ADR meaning silently.
+Normalize a repository so Codex, Claude Code, OpenCode, Antigravity CLI, and MiMoCode can work from the same verified facts with minimal semantic entropy. This is a technical repair workflow; it is not permission to change business logic, product semantics, deployment targets, data contracts, security posture, or ADR meaning silently.
 
 For rldyour AI CLI configuration repositories, `/ry-repair` also owns deterministic install/update/sync convergence: local repository state, system Claude/Codex/OpenCode/Gemini/MiMoCode configs, Serena memories, and GitHub/fullrepo state must be checked through the root `config/ry-repair-sync-contract.json` and `scripts/ry_repair_sync.py` contract before being reported as synchronized.
 

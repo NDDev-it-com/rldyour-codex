@@ -21,6 +21,7 @@ from project_flow_policy import load_policy
 
 FULLREPO_BRANCH = "fullrepo"
 DEFAULT_REMOTE = "origin"
+FULLREPO_STATE_PATH = ".rldyour/fullrepo-state.json"
 EXCLUDE_BEGIN = "# >>> rldyour fullrepo agent-only files >>>"
 EXCLUDE_END = "# <<< rldyour fullrepo agent-only files <<<"
 
@@ -51,6 +52,7 @@ AGENT_ONLY_PATTERNS = (
     ".serena/research/**",
     ".serena/newproj/**",
     ".serena/deploy/**",
+    FULLREPO_STATE_PATH,
 )
 
 RUNTIME_EXCLUDE_PATTERNS = (
@@ -282,6 +284,47 @@ def ref_tree_sha(ref: str) -> str:
     return _stdout("rev-parse", "--verify", "--quiet", f"{ref}^{{tree}}", check=False)
 
 
+def fullrepo_state_payload(base_head: str, agent_paths: list[str]) -> dict[str, object]:
+    return {
+        "schema_version": 1,
+        "base_branch": "main",
+        "base_head": base_head,
+        "agent_only_files": len(agent_paths),
+    }
+
+
+def fullrepo_state_text(base_head: str, agent_paths: list[str]) -> str:
+    return json.dumps(fullrepo_state_payload(base_head, agent_paths), indent=2, sort_keys=True) + "\n"
+
+
+def write_fullrepo_state_blob(base_head: str, agent_paths: list[str]) -> str:
+    state_file: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w",
+            encoding="utf-8",
+            prefix="rldyour-fullrepo-state.",
+            delete=False,
+        ) as handle:
+            state_file = Path(handle.name)
+            handle.write(fullrepo_state_text(base_head, agent_paths))
+        return _stdout("hash-object", "-w", str(state_file))
+    finally:
+        if state_file is not None:
+            state_file.unlink(missing_ok=True)
+
+
+def ref_fullrepo_state(ref: str) -> dict[str, object]:
+    proc = _git("show", f"{ref}:{FULLREPO_STATE_PATH}", check=False)
+    if proc.returncode != 0 or not proc.stdout.strip():
+        return {}
+    try:
+        payload = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
 def fetch_fullrepo(remote: str, branch: str) -> bool:
     spec = f"+refs/heads/{branch}:refs/remotes/{remote}/{branch}"
     proc = _git("fetch", "--quiet", remote, spec, check=False)
@@ -322,7 +365,7 @@ def scan_for_secrets(root: Path, paths: Iterable[str]) -> list[str]:
     return hits
 
 
-def build_fullrepo_tree(root: Path) -> tuple[str, list[str]]:
+def build_fullrepo_tree(root: Path, base_head: str) -> tuple[str, list[str]]:
     agent_paths = iter_worktree_agent_files(root)
     secret_hits = scan_for_secrets(root, agent_paths)
     if secret_hits:
@@ -339,6 +382,9 @@ def build_fullrepo_tree(root: Path) -> tuple[str, list[str]]:
         if agent_paths:
             _git("add", "-f", "--", *agent_paths, env=env)
 
+        state_blob = write_fullrepo_state_blob(base_head, agent_paths)
+        _git("update-index", "--add", "--cacheinfo", "100644", state_blob, FULLREPO_STATE_PATH, env=env)
+
         tree = _stdout("write-tree", env=env)
         return tree, agent_paths
 
@@ -354,11 +400,11 @@ def publish(remote: str, branch: str, dry_run: bool = False, *, ignore_project_p
             + ", ".join(non_agent_dirty)
         )
 
-    if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
-        install_exclude(dry_run=dry_run)
-    tree, agent_paths = build_fullrepo_tree(root)
     head = _stdout("rev-parse", "HEAD")
     head_short = head[:7]
+    if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
+        install_exclude(dry_run=dry_run)
+    tree, agent_paths = build_fullrepo_tree(root, head)
 
     expected_remote = remote_branch_sha(remote, branch)
     remote_ref = f"refs/remotes/{remote}/{branch}"
@@ -551,13 +597,19 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
     remote_sha = local_ref_sha(remote_ref) if local_only else remote_branch_sha(remote, branch)
     local_sha = local_ref_sha(f"refs/heads/{branch}")
     remote_tree = ""
+    remote_state: dict[str, object] = {}
     if remote_sha:
         if local_only:
             remote_tree = ref_tree_sha(remote_ref)
         elif fetch_fullrepo(remote, branch):
             remote_tree = ref_tree_sha(remote_ref)
+        if remote_tree:
+            remote_state = ref_fullrepo_state(remote_ref)
     local_tree = ref_tree_sha(f"refs/heads/{branch}") if local_sha else ""
-    expected_tree, agent_paths = build_fullrepo_tree(root)
+    local_state = ref_fullrepo_state(f"refs/heads/{branch}") if local_sha else {}
+    head = _stdout("rev-parse", "HEAD", check=False)
+    expected_tree, agent_paths = build_fullrepo_tree(root, head)
+    expected_state = fullrepo_state_payload(head, agent_paths)
     comparison_tree = remote_tree or local_tree
     return {
         "is_git_repo": True,
@@ -574,6 +626,9 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
         "expected_fullrepo_tree": expected_tree,
         "remote_fullrepo_tree": remote_tree,
         "local_fullrepo_tree": local_tree,
+        "expected_fullrepo_state": expected_state,
+        "remote_fullrepo_state": remote_state,
+        "local_fullrepo_state": local_state,
         "fullrepo_matches_worktree": bool(comparison_tree and comparison_tree == expected_tree),
         "local_fullrepo_matches_worktree": bool(local_tree and local_tree == expected_tree),
         "exclude_installed": exclude_installed(),
