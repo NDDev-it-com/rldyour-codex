@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, cast
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
@@ -555,7 +555,7 @@ def publish(remote: str, branch: str, dry_run: bool = False, *, ignore_project_p
     for attempt in range(1, PUBLISH_RETRIES + 1):
         prepared = prepare_fullrepo_commit(remote, branch)
         head = str(prepared["head"])
-        agent_paths = list(prepared["agent_paths"])
+        agent_paths = list(cast(list[str], prepared["agent_paths"]))
         if prepared.get("noop"):
             resolved = prepared.get("resolved")
             mode = resolved.get("mode") if isinstance(resolved, dict) else "compatible"
@@ -763,13 +763,15 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
         remote_resolved = resolve_fullrepo_ref_or_none(remote_ref, "HEAD")
         if remote_resolved:
             remote_tree = str(remote_resolved.get("tree", ""))
-            remote_state = remote_resolved.get("state", {}) if isinstance(remote_resolved.get("state"), dict) else {}
+            remote_state_value = remote_resolved.get("state")
+            remote_state = cast(dict[str, object], remote_state_value) if isinstance(remote_state_value, dict) else {}
     local_tree = ref_tree_sha(f"refs/heads/{branch}") if local_sha else ""
     local_state = ref_fullrepo_state(f"refs/heads/{branch}") if local_sha else {}
     local_resolved = resolve_fullrepo_ref_or_none(f"refs/heads/{branch}", "HEAD") if local_sha else {}
     if local_resolved:
         local_tree = str(local_resolved.get("tree", ""))
-        local_state = local_resolved.get("state", {}) if isinstance(local_resolved.get("state"), dict) else {}
+        local_state_value = local_resolved.get("state")
+        local_state = cast(dict[str, object], local_state_value) if isinstance(local_state_value, dict) else {}
     head = _stdout("rev-parse", "HEAD", check=False)
     expected_tree, agent_paths = build_fullrepo_tree(root, head)
     expected_agent_tree, _agent_paths = build_agent_content_tree(root)
