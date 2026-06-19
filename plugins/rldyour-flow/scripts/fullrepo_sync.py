@@ -22,6 +22,8 @@ from project_flow_policy import load_policy
 FULLREPO_BRANCH = "fullrepo"
 DEFAULT_REMOTE = "origin"
 FULLREPO_STATE_PATH = ".rldyour/fullrepo-state.json"
+FULLREPO_STATE_SCHEMA_VERSION = 2
+PUBLISH_RETRIES = 3
 EXCLUDE_BEGIN = "# >>> rldyour fullrepo agent-only files >>>"
 EXCLUDE_END = "# <<< rldyour fullrepo agent-only files <<<"
 
@@ -284,11 +286,20 @@ def ref_tree_sha(ref: str) -> str:
     return _stdout("rev-parse", "--verify", "--quiet", f"{ref}^{{tree}}", check=False)
 
 
+def commit_sha(ref: str) -> str:
+    return _stdout("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}", check=False)
+
+
+def commit_message(ref: str) -> str:
+    return _stdout("log", "-1", "--format=%B", ref, check=False)
+
+
 def fullrepo_state_payload(base_head: str, agent_paths: list[str]) -> dict[str, object]:
     return {
-        "schema_version": 1,
+        "schema_version": FULLREPO_STATE_SCHEMA_VERSION,
         "base_branch": "main",
         "base_head": base_head,
+        "base_tree": ref_tree_sha(base_head),
         "agent_only_files": len(agent_paths),
     }
 
@@ -323,6 +334,11 @@ def ref_fullrepo_state(ref: str) -> dict[str, object]:
     except json.JSONDecodeError:
         return {}
     return payload if isinstance(payload, dict) else {}
+
+
+def legacy_base_head(ref: str) -> str:
+    match = re.search(r"^Base-branch-head:\s*([a-f0-9]{40})\s*$", commit_message(ref), re.MULTILINE)
+    return match.group(1) if match else ""
 
 
 def fetch_fullrepo(remote: str, branch: str) -> bool:
@@ -365,12 +381,7 @@ def scan_for_secrets(root: Path, paths: Iterable[str]) -> list[str]:
     return hits
 
 
-def build_fullrepo_tree(root: Path, base_head: str) -> tuple[str, list[str]]:
-    agent_paths = iter_worktree_agent_files(root)
-    secret_hits = scan_for_secrets(root, agent_paths)
-    if secret_hits:
-        raise FullrepoError("refusing to publish secret-looking agent-only files: " + ", ".join(secret_hits))
-
+def write_sparse_agent_tree(agent_paths: list[str]) -> str:
     with tempfile.NamedTemporaryFile(prefix="rldyour-fullrepo-index.") as tmp_index:
         env = os.environ.copy()
         env["GIT_INDEX_FILE"] = tmp_index.name
@@ -382,6 +393,45 @@ def build_fullrepo_tree(root: Path, base_head: str) -> tuple[str, list[str]]:
         if agent_paths:
             _git("add", "-f", "--", *agent_paths, env=env)
 
+        return _stdout("write-tree", env=env)
+
+
+def build_agent_content_tree(root: Path) -> tuple[str, list[str]]:
+    agent_paths = iter_worktree_agent_files(root)
+    secret_hits = scan_for_secrets(root, agent_paths)
+    if secret_hits:
+        raise FullrepoError("refusing to publish secret-looking agent-only files: " + ", ".join(secret_hits))
+    return write_sparse_agent_tree(agent_paths), agent_paths
+
+
+def ref_agent_content_tree(ref: str) -> str:
+    raw = _git("ls-tree", "-r", "-z", ref, check=False).stdout
+    entries: list[tuple[str, str, str]] = []
+    for item in raw.split("\0"):
+        if not item:
+            continue
+        meta, path = item.split("\t", 1)
+        mode, _kind, sha = meta.split(" ", 2)
+        if path == FULLREPO_STATE_PATH:
+            continue
+        if is_agent_path(path):
+            entries.append((mode, sha, path))
+
+    with tempfile.NamedTemporaryFile(prefix="rldyour-fullrepo-ref-index.") as tmp_index:
+        env = os.environ.copy()
+        env["GIT_INDEX_FILE"] = tmp_index.name
+        _git("read-tree", "4b825dc642cb6eb9a060e54bf8d69288fbee4904", env=env)
+        for mode, sha, path in entries:
+            _git("update-index", "--add", "--cacheinfo", mode, sha, path, env=env)
+        return _stdout("write-tree", env=env)
+
+
+def build_fullrepo_tree(root: Path, base_head: str) -> tuple[str, list[str]]:
+    agent_tree, agent_paths = build_agent_content_tree(root)
+    with tempfile.NamedTemporaryFile(prefix="rldyour-fullrepo-index.") as tmp_index:
+        env = os.environ.copy()
+        env["GIT_INDEX_FILE"] = tmp_index.name
+        _git("read-tree", agent_tree, env=env)
         state_blob = write_fullrepo_state_blob(base_head, agent_paths)
         _git("update-index", "--add", "--cacheinfo", "100644", state_blob, FULLREPO_STATE_PATH, env=env)
 
@@ -389,10 +439,108 @@ def build_fullrepo_tree(root: Path, base_head: str) -> tuple[str, list[str]]:
         return tree, agent_paths
 
 
+def fullrepo_match_mode(ref: str, source_head: str, source_tree: str, *, allow_legacy: bool = True) -> tuple[str, dict[str, object]]:
+    state = ref_fullrepo_state(ref)
+    schema_version = state.get("schema_version")
+    if schema_version == FULLREPO_STATE_SCHEMA_VERSION:
+        if state.get("base_head") == source_head:
+            return "exact-head", state
+        if state.get("base_tree") == source_tree:
+            return "exact-tree", state
+    elif schema_version == 1:
+        if state.get("base_head") == source_head:
+            return "schema-v1-exact-head", state
+    if allow_legacy and legacy_base_head(ref) == source_head:
+        return "legacy-trailer", state
+    return "", state
+
+
+def resolve_fullrepo_ref(
+    fullrepo_ref: str,
+    source_ref: str = "HEAD",
+    *,
+    allow_legacy: bool = True,
+) -> dict[str, object]:
+    source_head = commit_sha(source_ref)
+    if not source_head:
+        raise FullrepoError(f"source ref {source_ref} does not resolve to a commit")
+    source_tree = ref_tree_sha(source_head)
+    tip = commit_sha(fullrepo_ref)
+    if not tip:
+        raise FullrepoError(f"fullrepo ref {fullrepo_ref} does not resolve to a commit")
+
+    history = _stdout("rev-list", fullrepo_ref, check=False).splitlines()
+    for commit in history:
+        mode, state = fullrepo_match_mode(commit, source_head, source_tree, allow_legacy=allow_legacy)
+        if not mode:
+            continue
+        return {
+            "commit": commit,
+            "mode": mode,
+            "source_head": source_head,
+            "source_tree": source_tree,
+            "tip": tip,
+            "state": state,
+            "tree": ref_tree_sha(commit),
+            "agent_tree": ref_agent_content_tree(commit),
+        }
+    raise FullrepoError(
+        f"no compatible fullrepo overlay found in {fullrepo_ref} for source {source_head} "
+        f"(tree {source_tree})"
+    )
+
+
+def resolve_fullrepo_ref_or_none(fullrepo_ref: str, source_ref: str = "HEAD") -> dict[str, object]:
+    try:
+        return resolve_fullrepo_ref(fullrepo_ref, source_ref)
+    except FullrepoError:
+        return {}
+
+
+def prepare_fullrepo_commit(remote: str, branch: str) -> dict[str, object]:
+    root = repo_root()
+    head = _stdout("rev-parse", "HEAD")
+    full_tree, agent_paths = build_fullrepo_tree(root, head)
+    agent_tree, _agent_paths = build_agent_content_tree(root)
+
+    expected_remote = remote_branch_sha(remote, branch)
+    remote_ref = f"refs/remotes/{remote}/{branch}"
+    resolved: dict[str, object] = {}
+    if expected_remote:
+        fetch_fullrepo(remote, branch)
+        resolved = resolve_fullrepo_ref_or_none(remote_ref, head)
+
+    if resolved and resolved.get("agent_tree") == agent_tree:
+        return {
+            "noop": True,
+            "head": head,
+            "agent_paths": agent_paths,
+            "expected_remote": expected_remote,
+            "resolved": resolved,
+        }
+
+    parent_args = ["-p", expected_remote] if expected_remote else ["-p", head]
+    message = (
+        f"chore(fullrepo): sync {head[:7]}\n\n"
+        f"Base-branch-head: {head}\n"
+        f"Base-source-tree: {ref_tree_sha(head)}\n"
+        f"Agent-only-files: {len(agent_paths)}\n"
+    )
+    commit = _stdout("commit-tree", full_tree, *parent_args, "-m", message, env=git_identity_env())
+    return {
+        "noop": False,
+        "head": head,
+        "agent_paths": agent_paths,
+        "expected_remote": expected_remote,
+        "commit": commit,
+        "tree": full_tree,
+        "agent_tree": agent_tree,
+    }
+
+
 def publish(remote: str, branch: str, dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
     policy = _project_policy()
     enforce_fullrepo_policy(policy, "publish", ignore_project_policy=ignore_project_policy)
-    root = repo_root()
     non_agent_dirty = dirty_non_agent_paths()
     if non_agent_dirty:
         raise FullrepoError(
@@ -400,46 +548,44 @@ def publish(remote: str, branch: str, dry_run: bool = False, *, ignore_project_p
             + ", ".join(non_agent_dirty)
         )
 
-    head = _stdout("rev-parse", "HEAD")
-    head_short = head[:7]
     if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
         install_exclude(dry_run=dry_run)
-    tree, agent_paths = build_fullrepo_tree(root, head)
 
-    expected_remote = remote_branch_sha(remote, branch)
-    remote_ref = f"refs/remotes/{remote}/{branch}"
-    remote_tree = ""
-    if expected_remote:
-        fetch_fullrepo(remote, branch)
-        remote_tree = _stdout("rev-parse", f"{remote_ref}^{{tree}}", check=False)
+    last_error = ""
+    for attempt in range(1, PUBLISH_RETRIES + 1):
+        prepared = prepare_fullrepo_commit(remote, branch)
+        head = str(prepared["head"])
+        agent_paths = list(prepared["agent_paths"])
+        if prepared.get("noop"):
+            resolved = prepared.get("resolved")
+            mode = resolved.get("mode") if isinstance(resolved, dict) else "compatible"
+            commit = resolved.get("commit", "") if isinstance(resolved, dict) else ""
+            print(
+                f"fullrepo already has {mode} overlay {str(commit)[:12]} "
+                f"for HEAD {head[:7]} plus {len(agent_paths)} agent-only files"
+            )
+            return
 
-    if remote_tree and remote_tree == tree:
-        print(f"fullrepo already matches HEAD {head_short} plus {len(agent_paths)} agent-only files")
-        return
+        commit = str(prepared["commit"])
+        expected_remote = str(prepared.get("expected_remote") or "")
+        if dry_run:
+            print(f"dry-run: would update refs/heads/{branch} to {commit[:12]}")
+            print(f"dry-run: would push {branch} as a normal fast-forward")
+            return
 
-    parent_args: list[str] = []
-    if expected_remote:
-        parent_args = ["-p", expected_remote]
-    else:
-        parent_args = ["-p", head]
-
-    message = (
-        f"chore(fullrepo): sync {head_short}\n\n"
-        f"Base-branch-head: {head}\n"
-        f"Agent-only-files: {len(agent_paths)}\n"
-    )
-    commit = _stdout("commit-tree", tree, *parent_args, "-m", message, env=git_identity_env())
-
-    if dry_run:
-        print(f"dry-run: would update refs/heads/{branch} to {commit[:12]}")
-        print(f"dry-run: would push {branch} with --force-with-lease")
-        return
-
-    _git("update-ref", f"refs/heads/{branch}", commit)
-    lease_value = expected_remote if expected_remote else ""
-    lease = f"--force-with-lease=refs/heads/{branch}:{lease_value}"
-    _git("push", lease, remote, f"{commit}:refs/heads/{branch}")
-    print(f"published {branch} at {commit[:12]} from HEAD {head_short} with {len(agent_paths)} agent-only files")
+        proc = _git("push", remote, f"{commit}:refs/heads/{branch}", check=False)
+        if proc.returncode == 0:
+            _git("update-ref", f"refs/heads/{branch}", commit)
+            fetch_fullrepo(remote, branch)
+            print(f"published {branch} at {commit[:12]} from HEAD {head[:7]} with {len(agent_paths)} agent-only files")
+            return
+        last_error = (proc.stderr or proc.stdout).strip()
+        if attempt < PUBLISH_RETRIES:
+            print(f"fullrepo push lost race against remote update; retrying ({attempt}/{PUBLISH_RETRIES})", file=sys.stderr)
+            fetch_fullrepo(remote, branch)
+            continue
+        expected = expected_remote[:12] if expected_remote else "missing"
+        raise FullrepoError(f"failed to fast-forward {remote}/{branch} from expected {expected}: {last_error}")
 
 
 def restore(remote: str, branch: str, dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
@@ -452,20 +598,25 @@ def restore(remote: str, branch: str, dry_run: bool = False, *, ignore_project_p
         return
 
     ref = f"refs/remotes/{remote}/{branch}"
-    remote_paths = tracked_agent_paths(ref)
+    resolved = resolve_fullrepo_ref(ref, "HEAD")
+    resolved_ref = str(resolved["commit"])
+    remote_paths = tracked_agent_paths(resolved_ref)
     if not remote_paths:
-        print(f"fullrepo branch {remote}/{branch} has no agent-only files")
+        print(f"resolved fullrepo overlay {resolved_ref[:12]} has no agent-only files")
         return
 
     if dry_run:
-        print(f"dry-run: would restore {len(remote_paths)} agent-only files from {remote}/{branch}")
+        print(
+            f"dry-run: would restore {len(remote_paths)} agent-only files from "
+            f"{remote}/{branch}@{resolved_ref[:12]} ({resolved['mode']})"
+        )
         return
 
     for index in range(0, len(remote_paths), 64):
         chunk = remote_paths[index : index + 64]
-        _git("restore", "--source", ref, "--worktree", "--", *chunk)
+        _git("restore", "--source", resolved_ref, "--worktree", "--", *chunk)
 
-    print(f"restored {len(remote_paths)} agent-only files from {remote}/{branch}")
+    print(f"restored {len(remote_paths)} agent-only files from {remote}/{branch}@{resolved_ref[:12]} ({resolved['mode']})")
 
 
 def restore_local(remote: str, branch: str, dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
@@ -478,20 +629,25 @@ def restore_local(remote: str, branch: str, dry_run: bool = False, *, ignore_pro
         print(f"local fullrepo ref {remote}/{branch} does not exist; restore skipped")
         return
 
-    remote_paths = tracked_agent_paths(ref)
+    resolved = resolve_fullrepo_ref(ref, "HEAD")
+    resolved_ref = str(resolved["commit"])
+    remote_paths = tracked_agent_paths(resolved_ref)
     if not remote_paths:
-        print(f"local fullrepo ref {remote}/{branch} has no agent-only files")
+        print(f"resolved local fullrepo overlay {resolved_ref[:12]} has no agent-only files")
         return
 
     if dry_run:
-        print(f"dry-run: would restore {len(remote_paths)} agent-only files from local {remote}/{branch}")
+        print(
+            f"dry-run: would restore {len(remote_paths)} agent-only files from "
+            f"local {remote}/{branch}@{resolved_ref[:12]} ({resolved['mode']})"
+        )
         return
 
     for index in range(0, len(remote_paths), 64):
         chunk = remote_paths[index : index + 64]
-        _git("restore", "--source", ref, "--worktree", "--", *chunk)
+        _git("restore", "--source", resolved_ref, "--worktree", "--", *chunk)
 
-    print(f"restored {len(remote_paths)} agent-only files from local {remote}/{branch}")
+    print(f"restored {len(remote_paths)} agent-only files from local {remote}/{branch}@{resolved_ref[:12]} ({resolved['mode']})")
 
 
 def migrate_main(dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
@@ -598,19 +754,29 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
     local_sha = local_ref_sha(f"refs/heads/{branch}")
     remote_tree = ""
     remote_state: dict[str, object] = {}
+    remote_resolved: dict[str, object] = {}
     if remote_sha:
         if local_only:
-            remote_tree = ref_tree_sha(remote_ref)
+            pass
         elif fetch_fullrepo(remote, branch):
-            remote_tree = ref_tree_sha(remote_ref)
-        if remote_tree:
-            remote_state = ref_fullrepo_state(remote_ref)
+            pass
+        remote_resolved = resolve_fullrepo_ref_or_none(remote_ref, "HEAD")
+        if remote_resolved:
+            remote_tree = str(remote_resolved.get("tree", ""))
+            remote_state = remote_resolved.get("state", {}) if isinstance(remote_resolved.get("state"), dict) else {}
     local_tree = ref_tree_sha(f"refs/heads/{branch}") if local_sha else ""
     local_state = ref_fullrepo_state(f"refs/heads/{branch}") if local_sha else {}
+    local_resolved = resolve_fullrepo_ref_or_none(f"refs/heads/{branch}", "HEAD") if local_sha else {}
+    if local_resolved:
+        local_tree = str(local_resolved.get("tree", ""))
+        local_state = local_resolved.get("state", {}) if isinstance(local_resolved.get("state"), dict) else {}
     head = _stdout("rev-parse", "HEAD", check=False)
     expected_tree, agent_paths = build_fullrepo_tree(root, head)
+    expected_agent_tree, _agent_paths = build_agent_content_tree(root)
     expected_state = fullrepo_state_payload(head, agent_paths)
-    comparison_tree = remote_tree or local_tree
+    remote_agent_tree = str(remote_resolved.get("agent_tree", "")) if remote_resolved else ""
+    local_agent_tree = str(local_resolved.get("agent_tree", "")) if local_resolved else ""
+    comparison_agent_tree = remote_agent_tree or local_agent_tree
     return {
         "is_git_repo": True,
         "root": str(root),
@@ -623,14 +789,21 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
         "remote_fullrepo_exists": bool(remote_sha),
         "remote_fullrepo_sha": remote_sha[:12] if remote_sha else "",
         "local_fullrepo_sha": local_sha[:12] if local_sha else "",
+        "remote_resolved_fullrepo_sha": str(remote_resolved.get("commit", ""))[:12] if remote_resolved else "",
+        "local_resolved_fullrepo_sha": str(local_resolved.get("commit", ""))[:12] if local_resolved else "",
+        "remote_resolution_mode": str(remote_resolved.get("mode", "")) if remote_resolved else "",
+        "local_resolution_mode": str(local_resolved.get("mode", "")) if local_resolved else "",
         "expected_fullrepo_tree": expected_tree,
+        "expected_agent_tree": expected_agent_tree,
         "remote_fullrepo_tree": remote_tree,
         "local_fullrepo_tree": local_tree,
+        "remote_agent_tree": remote_agent_tree,
+        "local_agent_tree": local_agent_tree,
         "expected_fullrepo_state": expected_state,
         "remote_fullrepo_state": remote_state,
         "local_fullrepo_state": local_state,
-        "fullrepo_matches_worktree": bool(comparison_tree and comparison_tree == expected_tree),
-        "local_fullrepo_matches_worktree": bool(local_tree and local_tree == expected_tree),
+        "fullrepo_matches_worktree": bool(comparison_agent_tree and comparison_agent_tree == expected_agent_tree),
+        "local_fullrepo_matches_worktree": bool(local_agent_tree and local_agent_tree == expected_agent_tree),
         "exclude_installed": exclude_installed(),
         "tracked_agent_paths": tracked_agent_paths_in_index(),
         "worktree_agent_paths": agent_paths,
@@ -673,6 +846,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="For status checks, use existing local refs only and do not fetch or query the remote.",
     )
+    parser.add_argument(
+        "--source-ref",
+        default="HEAD",
+        help="Source commit/tree to resolve for --resolve-json (default: HEAD).",
+    )
     actions = parser.add_mutually_exclusive_group(required=True)
     actions.add_argument("--status", action="store_true")
     actions.add_argument("--status-json", action="store_true")
@@ -680,6 +858,8 @@ def parse_args() -> argparse.Namespace:
     actions.add_argument("--restore", action="store_true")
     actions.add_argument("--restore-local", action="store_true")
     actions.add_argument("--publish", action="store_true")
+    actions.add_argument("--prepare-json", action="store_true")
+    actions.add_argument("--resolve-json", action="store_true")
     actions.add_argument("--migrate-main", action="store_true")
     actions.add_argument("--bootstrap-init", action="store_true")
     return parser.parse_args()
@@ -709,6 +889,19 @@ def main() -> int:
             )
         elif args.publish:
             publish(args.remote, args.branch, dry_run=args.dry_run, ignore_project_policy=args.ignore_project_policy)
+        elif args.prepare_json:
+            prepared = prepare_fullrepo_commit(args.remote, args.branch)
+            print(json.dumps(prepared, indent=2, sort_keys=True))
+        elif args.resolve_json:
+            if args.local_only:
+                ref = f"refs/heads/{args.branch}"
+                if _git("show-ref", "--verify", "--quiet", ref, check=False).returncode != 0:
+                    raise FullrepoError(f"local fullrepo branch {args.branch} does not exist")
+            else:
+                if not fetch_fullrepo(args.remote, args.branch):
+                    raise FullrepoError(f"fullrepo branch {args.remote}/{args.branch} does not exist")
+                ref = f"refs/remotes/{args.remote}/{args.branch}"
+            print(json.dumps(resolve_fullrepo_ref(ref, args.source_ref), indent=2, sort_keys=True))
         elif args.migrate_main:
             migrate_main(dry_run=args.dry_run, ignore_project_policy=args.ignore_project_policy)
         elif args.bootstrap_init:
