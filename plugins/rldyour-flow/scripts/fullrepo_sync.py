@@ -54,6 +54,9 @@ AGENT_ONLY_PATTERNS = (
     ".serena/research/**",
     ".serena/newproj/**",
     ".serena/deploy/**",
+)
+
+FULLREPO_METADATA_PATTERNS = (
     FULLREPO_STATE_PATH,
 )
 
@@ -196,6 +199,8 @@ def git_exclude_path() -> Path:
 def exclude_block() -> str:
     lines = [EXCLUDE_BEGIN]
     for pattern in AGENT_ONLY_PATTERNS:
+        lines.append("/" + pattern)
+    for pattern in FULLREPO_METADATA_PATTERNS:
         lines.append("/" + pattern)
     for pattern in RUNTIME_EXCLUDE_PATTERNS:
         lines.append("!/" + pattern)
