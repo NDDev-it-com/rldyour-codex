@@ -11,12 +11,28 @@ fi
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 cd "$ROOT"
 HEAD_FULL=$(git rev-parse HEAD 2>/dev/null || true)
+GIT_COMMON_DIR=$(git rev-parse --git-common-dir 2>/dev/null || true)
+if [ -n "$GIT_COMMON_DIR" ] && [[ "$GIT_COMMON_DIR" != /* ]]; then
+  GIT_COMMON_DIR="$ROOT/$GIT_COMMON_DIR"
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATE_SCRIPT="$SCRIPT_DIR/serena_memory_state.py"
 
 KNOWLEDGE_PATTERN='^.. \.serena/(memories|plans|research)(/|$)'
 RUNTIME_PATTERN='^.. \.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack|\.flow_sync_marker|\.flow_post_task_state\.json|\.flow_blocker_ack\.json|\.stop_lifecycle_timeout_marker|\.bootstrap_overrides\.log)$'
+
+write_sync_ack() {
+  if [ -z "$HEAD_FULL" ]; then
+    return 0
+  fi
+  mkdir -p .serena
+  printf "%s\n" "$HEAD_FULL" > .serena/.auto_sync_head
+  if [ -n "$GIT_COMMON_DIR" ]; then
+    mkdir -p "$GIT_COMMON_DIR/rldyour"
+    printf "%s\n" "$HEAD_FULL" > "$GIT_COMMON_DIR/rldyour/serena_auto_sync_head"
+  fi
+}
 
 STATUS=$(git status --porcelain -uall 2>/dev/null | grep -vE "$RUNTIME_PATTERN" || true)
 if [ -z "$STATUS" ]; then
@@ -32,10 +48,7 @@ if [ -z "$STATUS" ]; then
   MEMORY_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; data=json.load(sys.stdin); print("true" if (data.get("memory_matches_head") or data.get("memory_semantically_current")) else "false")' 2>/dev/null || echo "false")
   if [ "$MEMORY_CURRENT" = "true" ]; then
     rm -f .serena/.sync_marker .serena/.serena_sync_state.json
-    if [ -n "$HEAD_FULL" ]; then
-      mkdir -p .serena
-      printf "%s\n" "$HEAD_FULL" > .serena/.auto_sync_head
-    fi
+    write_sync_ack
     echo "Serena knowledge is current; removed runtime sync markers"
     exit 0
   fi
@@ -86,10 +99,7 @@ if [ -z "$TRACKED_KNOWLEDGE" ]; then
     exit 1
   fi
   rm -f .serena/.sync_marker .serena/.serena_sync_state.json
-  if [ -n "$HEAD_FULL" ]; then
-    mkdir -p .serena
-    printf "%s\n" "$HEAD_FULL" > .serena/.auto_sync_head
-  fi
+  write_sync_ack
   echo "Serena knowledge is fullrepo-managed; removed runtime sync markers without committing to the current branch"
   exit 0
 fi
@@ -103,6 +113,4 @@ fi
 git commit -m "chore(serena): sync project knowledge after ${HEAD_SHORT}"
 HEAD_FULL=$(git rev-parse HEAD 2>/dev/null || true)
 rm -f .serena/.sync_marker .serena/.serena_sync_state.json
-if [ -n "$HEAD_FULL" ]; then
-  printf "%s\n" "$HEAD_FULL" > .serena/.auto_sync_head
-fi
+write_sync_ack

@@ -276,8 +276,13 @@ test "$BEFORE" = "$AFTER" || fail "commit_serena_knowledge created a commit in f
 test ! -e .serena/.sync_marker || fail "sync marker was not cleared"
 test ! -e .serena/.serena_sync_state.json || fail "sync state was not cleared"
 test -e .serena/.auto_sync_head || fail "auto sync acknowledgement was not written"
+GIT_COMMON_DIR=$(git rev-parse --git-common-dir)
+test -e "$GIT_COMMON_DIR/rldyour/serena_auto_sync_head" || fail "git-local auto sync acknowledgement was not written"
 ACK_CURRENT=$(python3 "$STATE_SCRIPT" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")')
 test "$ACK_CURRENT" = "true" || fail "semantic ancestor acknowledgement did not leave Serena state current"
+rm -f .serena/.auto_sync_head
+ACKLESS_CURRENT=$(python3 "$STATE_SCRIPT" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")')
+test "$ACKLESS_CURRENT" = "true" || fail "semantic ancestor state depended on worktree runtime acknowledgement marker"
 
 STALE_REPO="$TMP_ROOT/stale"
 mkdir "$STALE_REPO"
