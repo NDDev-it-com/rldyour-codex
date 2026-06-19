@@ -44,6 +44,7 @@ git clone --quiet "$REMOTE" "$WORK"
   python3 "$FULLREPO_SCRIPT" --migrate-main
   git commit --quiet -m "chore: keep agent files in fullrepo"
   git push --quiet origin main
+  python3 "$FULLREPO_SCRIPT" --publish
 
   git ls-files | grep -q '^src/app.txt$'
   if git ls-files | grep -qE '^(AGENTS.md|CLAUDE.md|\.claude/|\.serena/)'; then
