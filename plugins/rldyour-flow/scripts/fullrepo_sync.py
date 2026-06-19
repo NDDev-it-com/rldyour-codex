@@ -686,7 +686,11 @@ def bootstrap_init(
     if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
         install_exclude(dry_run=dry_run)
 
-    if remote_exists:
+    if tracked_agent_paths_in_index():
+        enforce_fullrepo_policy(policy, "migrate-main", ignore_project_policy=ignore_project_policy)
+        actions.append("migrate-main")
+        migrate_main(dry_run=dry_run, ignore_project_policy=ignore_project_policy)
+    elif remote_exists:
         actions.append("restore")
         restore(remote, branch, dry_run=dry_run, ignore_project_policy=ignore_project_policy)
     elif local_agent_paths:
@@ -701,11 +705,6 @@ def bootstrap_init(
             )
     else:
         print(f"fullrepo branch {remote}/{branch} does not exist and no local agent-only files were found")
-
-    if tracked_agent_paths_in_index():
-        enforce_fullrepo_policy(policy, "migrate-main", ignore_project_policy=ignore_project_policy)
-        actions.append("migrate-main")
-        migrate_main(dry_run=dry_run, ignore_project_policy=ignore_project_policy)
 
     payload = status(remote, branch)
     payload["bootstrap_actions"] = actions
