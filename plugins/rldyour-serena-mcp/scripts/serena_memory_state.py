@@ -12,6 +12,7 @@ from typing import Any
 MEMORY_DIR = Path(".serena/memories")
 SYNC_STATE = Path(".serena/.serena_sync_state.json")
 AUTO_SYNC_HEAD = Path(".serena/.auto_sync_head")
+GIT_LOCAL_AUTO_SYNC_HEAD = Path("rldyour/serena_auto_sync_head")
 ANALYZE_SCRIPT = Path(__file__).resolve().parent / "analyze_sync_scope.py"
 SERENA_KNOWLEDGE_PREFIXES = (
     ".serena/memories/",
@@ -40,6 +41,17 @@ def _git(*args: str) -> subprocess.CompletedProcess[str]:
 
 def _stdout(*args: str) -> str:
     return _git(*args).stdout.strip()
+
+
+def _git_common_dir() -> Path | None:
+    proc = _git("rev-parse", "--git-common-dir")
+    if proc.returncode != 0:
+        return None
+    value = proc.stdout.strip()
+    if not value:
+        return None
+    path = Path(value)
+    return path if path.is_absolute() else Path.cwd() / path
 
 
 def _resolve_commit(ref: str) -> tuple[str, str] | None:
@@ -169,13 +181,20 @@ def _load_sync_state() -> dict[str, Any]:
 
 
 def _acknowledged_head_matches(head_full: str, head_short: str) -> bool:
-    if not AUTO_SYNC_HEAD.is_file():
-        return False
-    try:
-        value = AUTO_SYNC_HEAD.read_text(encoding="utf-8").strip()
-    except OSError:
-        return False
-    return bool(value) and value in {head_full, head_short}
+    candidates = [AUTO_SYNC_HEAD]
+    git_common_dir = _git_common_dir()
+    if git_common_dir is not None:
+        candidates.append(git_common_dir / GIT_LOCAL_AUTO_SYNC_HEAD)
+    for path in candidates:
+        if not path.is_file():
+            continue
+        try:
+            value = path.read_text(encoding="utf-8").strip()
+        except OSError:
+            continue
+        if value and value in {head_full, head_short}:
+            return True
+    return False
 
 
 def _memory_candidates(head_short: str) -> tuple[int, bool, list[tuple[str, str]]]:
