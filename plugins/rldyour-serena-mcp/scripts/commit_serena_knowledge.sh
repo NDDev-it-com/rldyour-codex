@@ -10,6 +10,7 @@ fi
 
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 cd "$ROOT"
+HEAD_FULL=$(git rev-parse HEAD 2>/dev/null || true)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATE_SCRIPT="$SCRIPT_DIR/serena_memory_state.py"
@@ -30,7 +31,11 @@ if [ -z "$STATUS" ]; then
   fi
   MEMORY_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; data=json.load(sys.stdin); print("true" if (data.get("memory_matches_head") or data.get("memory_semantically_current")) else "false")' 2>/dev/null || echo "false")
   if [ "$MEMORY_CURRENT" = "true" ]; then
-    rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+    rm -f .serena/.sync_marker .serena/.serena_sync_state.json
+    if [ -n "$HEAD_FULL" ]; then
+      mkdir -p .serena
+      printf "%s\n" "$HEAD_FULL" > .serena/.auto_sync_head
+    fi
     echo "Serena knowledge is current; removed runtime sync markers"
     exit 0
   fi
@@ -80,7 +85,11 @@ if [ -z "$TRACKED_KNOWLEDGE" ]; then
     echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memories are not semantically current" >&2
     exit 1
   fi
-  rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+  rm -f .serena/.sync_marker .serena/.serena_sync_state.json
+  if [ -n "$HEAD_FULL" ]; then
+    mkdir -p .serena
+    printf "%s\n" "$HEAD_FULL" > .serena/.auto_sync_head
+  fi
   echo "Serena knowledge is fullrepo-managed; removed runtime sync markers without committing to the current branch"
   exit 0
 fi
@@ -92,4 +101,8 @@ if git diff --cached --quiet -- "${KNOWLEDGE_PATHS[@]}"; then
 fi
 
 git commit -m "chore(serena): sync project knowledge after ${HEAD_SHORT}"
-rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+HEAD_FULL=$(git rev-parse HEAD 2>/dev/null || true)
+rm -f .serena/.sync_marker .serena/.serena_sync_state.json
+if [ -n "$HEAD_FULL" ]; then
+  printf "%s\n" "$HEAD_FULL" > .serena/.auto_sync_head
+fi

@@ -11,6 +11,7 @@ from typing import Any
 
 MEMORY_DIR = Path(".serena/memories")
 SYNC_STATE = Path(".serena/.serena_sync_state.json")
+AUTO_SYNC_HEAD = Path(".serena/.auto_sync_head")
 ANALYZE_SCRIPT = Path(__file__).resolve().parent / "analyze_sync_scope.py"
 SERENA_KNOWLEDGE_PREFIXES = (
     ".serena/memories/",
@@ -167,6 +168,16 @@ def _load_sync_state() -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
+def _acknowledged_head_matches(head_full: str, head_short: str) -> bool:
+    if not AUTO_SYNC_HEAD.is_file():
+        return False
+    try:
+        value = AUTO_SYNC_HEAD.read_text(encoding="utf-8").strip()
+    except OSError:
+        return False
+    return bool(value) and value in {head_full, head_short}
+
+
 def _memory_candidates(head_short: str) -> tuple[int, bool, list[tuple[str, str]]]:
     if not MEMORY_DIR.is_dir():
         return 0, False, []
@@ -220,6 +231,7 @@ def status() -> dict[str, Any]:
     analysis, analysis_source = _analysis_from_changed_files(changed_files, sync_state_for_analysis)
     marker_head = str(sync_state.get("head_full") or sync_state.get("head") or "")
     marker_matches_head = marker_requires_sync and bool(head_full) and marker_head in {head_full, head_short}
+    acknowledged_head_matches = _acknowledged_head_matches(head_full, head_short)
 
     memory_matches_head = (
         memory_directly_mentions_head
@@ -238,16 +250,26 @@ def status() -> dict[str, Any]:
         memory_match_reason = "newest-synced-head"
     elif bool(newest_short) and only_knowledge_changes_since_sync:
         memory_match_reason = "knowledge-only-commits-since-sync"
+    elif memory_semantically_current and acknowledged_head_matches:
+        memory_match_reason = "semantic-ancestor-provenance-acknowledged"
+    elif memory_semantically_current and non_knowledge_changed_files:
+        memory_match_reason = "semantic-ancestor-provenance-awaiting-ack"
+    elif memory_semantically_current:
+        memory_match_reason = "semantic-ancestor-provenance"
     else:
         memory_match_reason = "stale-or-missing"
 
-    if memory_count == 0 and not marker_matches_head:
+    if marker_matches_head:
+        is_current = False
+        memory_match_reason = "sync-marker-requires-refresh"
+    elif memory_count == 0:
         is_current = True
+    elif memory_matches_head:
+        is_current = True
+    elif memory_semantically_current:
+        is_current = acknowledged_head_matches or not non_knowledge_changed_files
     else:
-        is_current = memory_matches_head
-        if marker_matches_head:
-            is_current = False
-            memory_match_reason = "sync-marker-requires-refresh"
+        is_current = False
 
     return {
         "is_git_repo": True,
@@ -258,6 +280,7 @@ def status() -> dict[str, Any]:
         "newest_synced_full": newest_full,
         "memory_matches_head": memory_matches_head,
         "memory_semantically_current": memory_semantically_current,
+        "memory_acknowledged_head": acknowledged_head_matches,
         "memory_directly_mentions_head": memory_directly_mentions_head,
         "memory_match_reason": memory_match_reason,
         "changed_files_since_sync": changed_files,
