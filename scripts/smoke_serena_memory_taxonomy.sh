@@ -275,7 +275,9 @@ AFTER=$(git rev-parse HEAD)
 test "$BEFORE" = "$AFTER" || fail "commit_serena_knowledge created a commit in fullrepo-managed ack path"
 test ! -e .serena/.sync_marker || fail "sync marker was not cleared"
 test ! -e .serena/.serena_sync_state.json || fail "sync state was not cleared"
-test ! -e .serena/.auto_sync_head || fail "auto sync marker was not cleared"
+test -e .serena/.auto_sync_head || fail "auto sync acknowledgement was not written"
+ACK_CURRENT=$(python3 "$STATE_SCRIPT" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")')
+test "$ACK_CURRENT" = "true" || fail "semantic ancestor acknowledgement did not leave Serena state current"
 
 STALE_REPO="$TMP_ROOT/stale"
 mkdir "$STALE_REPO"
