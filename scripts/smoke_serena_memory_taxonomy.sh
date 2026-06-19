@@ -250,7 +250,7 @@ git init -q
 printf 'ack\n' > file.txt
 git add file.txt
 git_commit "init"
-CURRENT_SHORT=$(git rev-parse --short=7 HEAD)
+BASE_SHORT=$(git rev-parse --short=7 HEAD)
 mkdir -p .serena/memories .git/info
 cat >> .git/info/exclude <<'EOF'
 .serena/memories/**
@@ -258,13 +258,16 @@ EOF
 cat > .serena/memories/CORE-01-INDEX.md <<EOF
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: ${CURRENT_SHORT} init
+Last commit: ${BASE_SHORT} init
 Scope: smoke
 Area: CORE
 -->
 
 # CORE-01-INDEX
 EOF
+printf 'source-only\n' > file.txt
+git add file.txt
+git_commit "source-only"
 touch .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
 BEFORE=$(git rev-parse HEAD)
 bash "$COMMIT_SCRIPT" >/dev/null
@@ -281,7 +284,7 @@ git init -q
 printf 'old\n' > file.txt
 git add file.txt
 git_commit "old"
-OLD_SHORT=$(git rev-parse --short=7 HEAD)
+UNKNOWN_COMMIT=ffffffffffffffffffffffffffffffffffffffff
 printf 'new\n' > file.txt
 git add file.txt
 git_commit "new"
@@ -292,7 +295,7 @@ EOF
 cat > .serena/memories/CORE-01-INDEX.md <<EOF
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: ${OLD_SHORT} old
+Last commit: ${UNKNOWN_COMMIT} missing
 Scope: smoke
 Area: CORE
 -->
@@ -308,7 +311,7 @@ set -e
 if [ "$STALE_RC" -eq 0 ]; then
   fail "commit_serena_knowledge acknowledged stale fullrepo-managed memory"
 fi
-if ! grep -Eq "do not match HEAD|memories do not match" "$STALE_ERR"; then
+if ! grep -Eq "not semantically current|do not match HEAD|memories do not match" "$STALE_ERR"; then
   cat "$STALE_ERR" >&2
   fail "stale ack error message missing"
 fi

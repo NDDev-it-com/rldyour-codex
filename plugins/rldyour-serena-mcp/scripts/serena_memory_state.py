@@ -63,6 +63,23 @@ def _newest_synced_commit(candidates: list[tuple[str, str]]) -> tuple[str, str] 
     return newest
 
 
+def _all_memory_commits_are_ancestors(
+    candidates: list[tuple[str, str]],
+    *,
+    memory_count: int,
+    head_full: str,
+) -> bool:
+    if memory_count == 0:
+        return True
+    if not head_full or len(candidates) < memory_count:
+        return False
+    for _, full in candidates:
+        proc = _git("merge-base", "--is-ancestor", full, head_full)
+        if proc.returncode != 0:
+            return False
+    return True
+
+
 def _analysis_from_ref_range(from_ref: str, to_ref: str) -> dict[str, Any] | None:
     if not from_ref or not to_ref or not ANALYZE_SCRIPT.is_file():
         return None
@@ -209,6 +226,11 @@ def status() -> dict[str, Any]:
         or (bool(newest_short) and newest_short == head_short)
         or (bool(newest_short) and only_knowledge_changes_since_sync)
     )
+    memory_semantically_current = _all_memory_commits_are_ancestors(
+        candidates,
+        memory_count=memory_count,
+        head_full=head_full,
+    )
 
     if memory_directly_mentions_head:
         memory_match_reason = "direct-head-reference"
@@ -235,6 +257,7 @@ def status() -> dict[str, Any]:
         "newest_synced_sha": newest_short,
         "newest_synced_full": newest_full,
         "memory_matches_head": memory_matches_head,
+        "memory_semantically_current": memory_semantically_current,
         "memory_directly_mentions_head": memory_directly_mentions_head,
         "memory_match_reason": memory_match_reason,
         "changed_files_since_sync": changed_files,
