@@ -28,15 +28,15 @@ if [ -z "$STATUS" ]; then
     echo "No tracked Serena knowledge changes to commit"
     exit 0
   fi
-  MEMORY_MATCHES_HEAD=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("memory_matches_head") else "false")' 2>/dev/null || echo "false")
-  if [ "$MEMORY_MATCHES_HEAD" = "true" ]; then
+  MEMORY_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; data=json.load(sys.stdin); print("true" if (data.get("memory_matches_head") or data.get("memory_semantically_current")) else "false")' 2>/dev/null || echo "false")
+  if [ "$MEMORY_CURRENT" = "true" ]; then
     rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
     echo "Serena knowledge is current; removed runtime sync markers"
     exit 0
   fi
   MEMORY_COUNT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("memory_count", 0))' 2>/dev/null || echo "0")
   if [ "$MEMORY_COUNT" != "0" ]; then
-    echo "Refusing to acknowledge Serena knowledge because memories do not match HEAD" >&2
+    echo "Refusing to acknowledge Serena knowledge because memories are not semantically current" >&2
     exit 1
   fi
   echo "No tracked Serena knowledge changes to commit"
@@ -75,9 +75,9 @@ if [ -z "$TRACKED_KNOWLEDGE" ]; then
     echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memory state script is unavailable" >&2
     exit 1
   fi
-  MEMORY_MATCHES_HEAD=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("memory_matches_head") else "false")' 2>/dev/null || echo "false")
-  if [ "$MEMORY_MATCHES_HEAD" != "true" ]; then
-    echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memories do not match HEAD" >&2
+  MEMORY_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; data=json.load(sys.stdin); print("true" if (data.get("memory_matches_head") or data.get("memory_semantically_current")) else "false")' 2>/dev/null || echo "false")
+  if [ "$MEMORY_CURRENT" != "true" ]; then
+    echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memories are not semantically current" >&2
     exit 1
   fi
   rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
