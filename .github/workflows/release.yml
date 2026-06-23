@@ -40,7 +40,11 @@ jobs:
           install-dart: "false"
 
       - name: Bootstrap fullrepo agent context
-        run: scripts/sync_fullrepo_branch.sh --bootstrap-init
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p dist/gates
+          scripts/sync_fullrepo_branch.sh --bootstrap-ci 2>&1 | tee dist/gates/fullrepo-bootstrap.log
 
       - name: Validate release version
         shell: bash

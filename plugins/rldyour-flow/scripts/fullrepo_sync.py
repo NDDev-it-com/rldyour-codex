@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import Iterable, cast
 
@@ -27,6 +28,9 @@ FULLREPO_STATE_SCHEMA_VERSION = 3
 FULLREPO_PROTOCOL_VERSION = "1.0.0"
 FULLREPO_GENERATOR_DIGEST = "bb2036ac52e20f898a17ab9333099758da690f933a14e720133eb3ba967256a8"
 PUBLISH_RETRIES = 3
+BOOTSTRAP_CI_ATTEMPTS = 6
+BOOTSTRAP_CI_SLEEP_SECONDS = 10.0
+BOOTSTRAP_CI_RECEIPT = "dist/gates/fullrepo-bootstrap-ci.json"
 EXCLUDE_BEGIN = "# >>> rldyour fullrepo agent-only files >>>"
 EXCLUDE_END = "# <<< rldyour fullrepo agent-only files <<<"
 
@@ -705,6 +709,33 @@ def restore_local(remote: str, branch: str, dry_run: bool = False, *, ignore_pro
     print(f"restored {len(remote_paths)} agent-only files from local {remote}/{branch}@{resolved_ref[:12]} ({resolved['mode']})")
 
 
+def restore_resolved_overlay(
+    resolved: dict[str, object],
+    *,
+    label: str,
+    dry_run: bool = False,
+) -> list[str]:
+    resolved_ref = str(resolved["commit"])
+    remote_paths = tracked_agent_paths(resolved_ref)
+    if not remote_paths:
+        print(f"resolved fullrepo overlay {resolved_ref[:12]} has no agent-only files")
+        return []
+
+    if dry_run:
+        print(
+            f"dry-run: would restore {len(remote_paths)} agent-only files from "
+            f"{label}@{resolved_ref[:12]} ({resolved['mode']})"
+        )
+        return remote_paths
+
+    for index in range(0, len(remote_paths), 64):
+        chunk = remote_paths[index : index + 64]
+        _git("restore", "--source", resolved_ref, "--worktree", "--", *chunk)
+
+    print(f"restored {len(remote_paths)} agent-only files from {label}@{resolved_ref[:12]} ({resolved['mode']})")
+    return remote_paths
+
+
 def migrate_main(dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
     policy = _project_policy()
     enforce_fullrepo_policy(policy, "migrate-main", ignore_project_policy=ignore_project_policy)
@@ -770,6 +801,144 @@ def bootstrap_init(
     payload = status(remote, branch)
     payload["bootstrap_actions"] = actions
     print_status(payload, as_json=False)
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+    except ValueError:
+        raise FullrepoError(f"{name} must be an integer")
+    if value < 1:
+        raise FullrepoError(f"{name} must be >= 1")
+    return value
+
+
+def _positive_int(value: int, name: str) -> int:
+    if value < 1:
+        raise FullrepoError(f"{name} must be >= 1")
+    return value
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = os.environ.get(name)
+    if not raw:
+        return default
+    try:
+        value = float(raw)
+    except ValueError:
+        raise FullrepoError(f"{name} must be a number")
+    if value < 0:
+        raise FullrepoError(f"{name} must be >= 0")
+    return value
+
+
+def _non_negative_float(value: float, name: str) -> float:
+    if value < 0:
+        raise FullrepoError(f"{name} must be >= 0")
+    return value
+
+
+def write_bootstrap_ci_receipt(path: Path, payload: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f".{path.name}.tmp")
+    tmp.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def bootstrap_ci(
+    remote: str,
+    branch: str,
+    dry_run: bool = False,
+    *,
+    attempts: int | None = None,
+    sleep_seconds: float | None = None,
+    receipt_path: Path | None = None,
+    ignore_project_policy: bool = False,
+) -> None:
+    policy = _project_policy()
+    enforce_fullrepo_policy(policy, "restore", ignore_project_policy=ignore_project_policy)
+    if tracked_agent_paths_in_index():
+        raise FullrepoError("CI bootstrap refuses to migrate source-tracked agent-only files")
+    if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
+        install_exclude(dry_run=dry_run)
+
+    max_attempts = (
+        _positive_int(attempts, "--bootstrap-attempts")
+        if attempts is not None
+        else _env_int("RLDYOUR_FULLREPO_BOOTSTRAP_CI_ATTEMPTS", BOOTSTRAP_CI_ATTEMPTS)
+    )
+    delay = (
+        _non_negative_float(sleep_seconds, "--bootstrap-sleep-seconds")
+        if sleep_seconds is not None
+        else _env_float("RLDYOUR_FULLREPO_BOOTSTRAP_CI_SLEEP_SECONDS", BOOTSTRAP_CI_SLEEP_SECONDS)
+    )
+    receipt = receipt_path or (repo_root() / BOOTSTRAP_CI_RECEIPT)
+    remote_ref = f"refs/remotes/{remote}/{branch}"
+    source_head = commit_sha("HEAD")
+    source_tree = ref_tree_sha(source_head) if source_head else ""
+    errors: list[str] = []
+
+    for attempt in range(1, max_attempts + 1):
+        fetched = fetch_fullrepo(remote, branch)
+        if not fetched:
+            errors.append(f"attempt {attempt}: fullrepo branch {remote}/{branch} does not exist or could not be fetched")
+        else:
+            try:
+                resolved = resolve_fullrepo_ref(remote_ref, "HEAD")
+            except FullrepoError as exc:
+                errors.append(f"attempt {attempt}: {exc}")
+            else:
+                restored_paths = restore_resolved_overlay(
+                    resolved,
+                    label=f"{remote}/{branch}",
+                    dry_run=dry_run,
+                )
+                payload: dict[str, object] = {
+                    "schema_version": 1,
+                    "state": "PASS",
+                    "mode": "bootstrap-ci",
+                    "remote": remote,
+                    "fullrepo_branch": branch,
+                    "attempt": attempt,
+                    "attempts": max_attempts,
+                    "source_commit": source_head,
+                    "source_tree": source_tree,
+                    "resolved_fullrepo_commit": str(resolved.get("commit", "")),
+                    "resolution_mode": str(resolved.get("mode", "")),
+                    "agent_tree": str(resolved.get("agent_tree", "")),
+                    "restored_agent_paths": restored_paths,
+                    "restore_count": len(restored_paths),
+                    "dry_run": dry_run,
+                    "errors": errors,
+                }
+                write_bootstrap_ci_receipt(receipt, payload)
+                print(json.dumps(payload, indent=2, sort_keys=True))
+                return
+        if attempt < max_attempts and delay > 0:
+            print(
+                f"fullrepo overlay for {source_head[:12]} not ready; retrying "
+                f"({attempt}/{max_attempts}) after {delay:g}s",
+                file=sys.stderr,
+            )
+            time.sleep(delay)
+
+    payload = {
+        "schema_version": 1,
+        "state": "FAIL",
+        "mode": "bootstrap-ci",
+        "remote": remote,
+        "fullrepo_branch": branch,
+        "attempts": max_attempts,
+        "source_commit": source_head,
+        "source_tree": source_tree,
+        "dry_run": dry_run,
+        "errors": errors,
+    }
+    write_bootstrap_ci_receipt(receipt, payload)
+    raise FullrepoError("; ".join(errors) if errors else "CI bootstrap failed without diagnostic")
 
 
 def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, object]:
@@ -924,6 +1093,24 @@ def parse_args() -> argparse.Namespace:
     actions.add_argument("--resolve-json", action="store_true")
     actions.add_argument("--migrate-main", action="store_true")
     actions.add_argument("--bootstrap-init", action="store_true")
+    actions.add_argument("--bootstrap-ci", action="store_true")
+    parser.add_argument(
+        "--bootstrap-attempts",
+        type=int,
+        default=None,
+        help="Maximum fetch/resolve attempts for --bootstrap-ci. Defaults to RLDYOUR_FULLREPO_BOOTSTRAP_CI_ATTEMPTS or 6.",
+    )
+    parser.add_argument(
+        "--bootstrap-sleep-seconds",
+        type=float,
+        default=None,
+        help="Delay between --bootstrap-ci attempts. Defaults to RLDYOUR_FULLREPO_BOOTSTRAP_CI_SLEEP_SECONDS or 10.",
+    )
+    parser.add_argument(
+        "--bootstrap-receipt",
+        default=BOOTSTRAP_CI_RECEIPT,
+        help=f"Receipt path for --bootstrap-ci, relative to the repository root by default ({BOOTSTRAP_CI_RECEIPT}).",
+    )
     return parser.parse_args()
 
 
@@ -972,6 +1159,19 @@ def main() -> int:
                 args.branch,
                 dry_run=args.dry_run,
                 create_missing=args.create_missing,
+                ignore_project_policy=args.ignore_project_policy,
+            )
+        elif args.bootstrap_ci:
+            receipt_path = Path(args.bootstrap_receipt)
+            if not receipt_path.is_absolute():
+                receipt_path = repo_root() / receipt_path
+            bootstrap_ci(
+                args.remote,
+                args.branch,
+                dry_run=args.dry_run,
+                attempts=args.bootstrap_attempts,
+                sleep_seconds=args.bootstrap_sleep_seconds,
+                receipt_path=receipt_path,
                 ignore_project_policy=args.ignore_project_policy,
             )
     except FullrepoError as exc:
