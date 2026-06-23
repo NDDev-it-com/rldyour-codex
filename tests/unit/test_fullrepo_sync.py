@@ -207,6 +207,40 @@ def test_status_reports_missing_remote_without_treating_local_ref_as_network(tmp
     assert payload["remote_fullrepo_exists"] is False
 
 
+def test_bootstrap_init_skips_missing_compatible_overlay(monkeypatch) -> None:
+    printed: list[dict[str, object]] = []
+
+    monkeypatch.setattr(
+        mod,
+        "_project_policy",
+        lambda: {"effective": {"fullrepo": {"mode": "auto", "install_exclude": False}}},
+    )
+    monkeypatch.setattr(mod, "enforce_fullrepo_policy", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(mod, "repo_root", lambda: Path("/repo"))
+    monkeypatch.setattr(mod, "iter_worktree_agent_files", lambda _root: [])
+    monkeypatch.setattr(mod, "fetch_fullrepo", lambda _remote, _branch: True)
+    monkeypatch.setattr(mod, "tracked_agent_paths_in_index", lambda: [])
+    monkeypatch.setattr(mod, "status", lambda _remote, _branch: {"ok": True})
+    monkeypatch.setattr(mod, "print_status", lambda payload, as_json=False: printed.append(payload))
+
+    def fail_restore(*_args, **_kwargs):
+        raise mod.FullrepoError(
+            "no compatible fullrepo overlay found in refs/remotes/origin/fullrepo "
+            "for source abc (tree def)"
+        )
+
+    monkeypatch.setattr(mod, "restore", fail_restore)
+
+    mod.bootstrap_init("origin", "fullrepo")
+
+    assert printed == [
+        {
+            "ok": True,
+            "bootstrap_actions": ["restore-skipped-no-compatible-overlay"],
+        }
+    ]
+
+
 def test_publish_uses_identity_env_fallback(tmp_path: Path, monkeypatch) -> None:
     _, work = init_repo(tmp_path)
     monkeypatch.chdir(work)
