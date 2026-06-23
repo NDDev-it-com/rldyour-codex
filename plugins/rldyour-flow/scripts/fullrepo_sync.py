@@ -22,7 +22,9 @@ from project_flow_policy import load_policy
 FULLREPO_BRANCH = "fullrepo"
 DEFAULT_REMOTE = "origin"
 FULLREPO_STATE_PATH = ".rldyour/fullrepo-state.json"
-FULLREPO_STATE_SCHEMA_VERSION = 2
+FULLREPO_STATE_SCHEMA_VERSION = 3
+FULLREPO_PROTOCOL_VERSION = "1.0.0"
+FULLREPO_GENERATOR_DIGEST = "bb2036ac52e20f898a17ab9333099758da690f933a14e720133eb3ba967256a8"
 PUBLISH_RETRIES = 3
 EXCLUDE_BEGIN = "# >>> rldyour fullrepo agent-only files >>>"
 EXCLUDE_END = "# <<< rldyour fullrepo agent-only files <<<"
@@ -299,21 +301,31 @@ def commit_message(ref: str) -> str:
     return _stdout("log", "-1", "--format=%B", ref, check=False)
 
 
-def fullrepo_state_payload(base_head: str, agent_paths: list[str]) -> dict[str, object]:
+def current_source_ref() -> str:
+    symbolic = _stdout("symbolic-ref", "-q", "HEAD", check=False)
+    return symbolic or "HEAD"
+
+
+def fullrepo_state_payload(source_head: str, agent_paths: list[str], agent_tree: str | None = None) -> dict[str, object]:
+    if agent_tree is None:
+        agent_tree = write_sparse_agent_tree(agent_paths)
     return {
         "schema_version": FULLREPO_STATE_SCHEMA_VERSION,
-        "base_branch": "main",
-        "base_head": base_head,
-        "base_tree": ref_tree_sha(base_head),
-        "agent_only_files": len(agent_paths),
+        "protocol_version": FULLREPO_PROTOCOL_VERSION,
+        "source_commit": source_head,
+        "source_tree": ref_tree_sha(source_head),
+        "source_ref": current_source_ref(),
+        "agent_tree": agent_tree,
+        "agent_file_count": len(agent_paths),
+        "generator_digest": FULLREPO_GENERATOR_DIGEST,
     }
 
 
-def fullrepo_state_text(base_head: str, agent_paths: list[str]) -> str:
-    return json.dumps(fullrepo_state_payload(base_head, agent_paths), indent=2, sort_keys=True) + "\n"
+def fullrepo_state_text(source_head: str, agent_paths: list[str], agent_tree: str) -> str:
+    return json.dumps(fullrepo_state_payload(source_head, agent_paths, agent_tree), indent=2, sort_keys=True) + "\n"
 
 
-def write_fullrepo_state_blob(base_head: str, agent_paths: list[str]) -> str:
+def write_fullrepo_state_blob(source_head: str, agent_paths: list[str], agent_tree: str) -> str:
     state_file: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(
@@ -323,7 +335,7 @@ def write_fullrepo_state_blob(base_head: str, agent_paths: list[str]) -> str:
             delete=False,
         ) as handle:
             state_file = Path(handle.name)
-            handle.write(fullrepo_state_text(base_head, agent_paths))
+            handle.write(fullrepo_state_text(source_head, agent_paths, agent_tree))
         return _stdout("hash-object", "-w", str(state_file))
     finally:
         if state_file is not None:
@@ -437,7 +449,7 @@ def build_fullrepo_tree(root: Path, base_head: str) -> tuple[str, list[str]]:
         env = os.environ.copy()
         env["GIT_INDEX_FILE"] = tmp_index.name
         _git("read-tree", agent_tree, env=env)
-        state_blob = write_fullrepo_state_blob(base_head, agent_paths)
+        state_blob = write_fullrepo_state_blob(base_head, agent_paths, agent_tree)
         _git("update-index", "--add", "--cacheinfo", "100644", state_blob, FULLREPO_STATE_PATH, env=env)
 
         tree = _stdout("write-tree", env=env)
@@ -448,10 +460,15 @@ def fullrepo_match_mode(ref: str, source_head: str, source_tree: str, *, allow_l
     state = ref_fullrepo_state(ref)
     schema_version = state.get("schema_version")
     if schema_version == FULLREPO_STATE_SCHEMA_VERSION:
-        if state.get("base_head") == source_head:
+        if state.get("source_commit") == source_head:
             return "exact-head", state
-        if state.get("base_tree") == source_tree:
+        if state.get("source_tree") == source_tree:
             return "exact-tree", state
+    elif schema_version == 2:
+        if state.get("base_head") == source_head:
+            return "schema-v2-exact-head", state
+        if state.get("base_tree") == source_tree:
+            return "schema-v2-exact-tree", state
     elif schema_version == 1:
         if state.get("base_head") == source_head:
             return "schema-v1-exact-head", state
@@ -779,7 +796,7 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
     head = _stdout("rev-parse", "HEAD", check=False)
     expected_tree, agent_paths = build_fullrepo_tree(root, head)
     expected_agent_tree, _agent_paths = build_agent_content_tree(root)
-    expected_state = fullrepo_state_payload(head, agent_paths)
+    expected_state = fullrepo_state_payload(head, agent_paths, expected_agent_tree)
     remote_agent_tree = str(remote_resolved.get("agent_tree", "")) if remote_resolved else ""
     local_agent_tree = str(local_resolved.get("agent_tree", "")) if local_resolved else ""
     comparison_agent_tree = remote_agent_tree or local_agent_tree
