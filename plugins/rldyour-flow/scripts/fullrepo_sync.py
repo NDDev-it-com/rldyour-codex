@@ -19,6 +19,7 @@ if str(SCRIPT_DIR) not in sys.path:
 from project_flow_policy import load_policy
 
 
+DELEGATION_GUARD_ENV = "RLDYOUR_FLOW_FULLREPO_NO_DELEGATE"
 FULLREPO_BRANCH = "fullrepo"
 DEFAULT_REMOTE = "origin"
 FULLREPO_STATE_PATH = ".rldyour/fullrepo-state.json"
@@ -98,6 +99,38 @@ SECRET_RE = re.compile(
 
 class FullrepoError(RuntimeError):
     pass
+
+
+def repo_local_fullrepo_wrapper() -> Path | None:
+    if os.environ.get(DELEGATION_GUARD_ENV) == "1":
+        return None
+    proc = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode != 0:
+        return None
+    candidate = Path(proc.stdout.strip()) / "scripts" / "fullrepo_sync.py"
+    if not candidate.is_file():
+        return None
+    try:
+        if candidate.resolve() == Path(__file__).resolve():
+            return None
+    except OSError:
+        return None
+    return candidate
+
+
+def delegate_to_repo_local_fullrepo_wrapper(argv: list[str]) -> int | None:
+    wrapper = repo_local_fullrepo_wrapper()
+    if wrapper is None:
+        return None
+    env = os.environ.copy()
+    env[DELEGATION_GUARD_ENV] = "1"
+    proc = subprocess.run([sys.executable, str(wrapper), *argv], check=False, env=env)
+    return proc.returncode
 
 
 def _effective_policy(policy: dict[str, object]) -> dict[str, object]:
@@ -925,4 +958,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    delegated = delegate_to_repo_local_fullrepo_wrapper(sys.argv[1:])
+    if delegated is not None:
+        raise SystemExit(delegated)
     raise SystemExit(main())
