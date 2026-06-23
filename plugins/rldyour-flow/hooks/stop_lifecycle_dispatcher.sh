@@ -106,14 +106,14 @@ if SERENA_PLUGIN_DIR=$(find_serena_plugin_dir); then
 fi
 
 set +e
-FLOW_OUTPUT=$(run_stop_child "$FLOW_PLUGIN_DIR/hooks/stop_post_task_sync.sh" "${RLDYOUR_STOP_FLOW_TIMEOUT:-10}")
+FLOW_OUTPUT=$(run_stop_child "$FLOW_PLUGIN_DIR/hooks/stop_post_task_sync.sh" "${RLDYOUR_STOP_FLOW_TIMEOUT:-30}")
 FLOW_STATUS=$?
 set -e
 if [ -n "$FLOW_OUTPUT" ]; then
   printf '%s\n' "$FLOW_OUTPUT" >&2
 fi
 if [ "$FLOW_STATUS" -eq 124 ]; then
-  printf '%s\n' "[RLDYOUR-FLOW STOP CHECK TIMEOUT] Flow post-task state check exceeded ${RLDYOUR_STOP_FLOW_TIMEOUT:-10}s. Continue this turn and run the flow-post-task-sync workflow or python3 ${FLOW_PLUGIN_DIR}/scripts/flow_post_task_state.py manually, then stop again." >&2
+  printf '%s\n' "[RLDYOUR-FLOW STOP CHECK TIMEOUT] Flow post-task state check exceeded ${RLDYOUR_STOP_FLOW_TIMEOUT:-30}s. Continue this turn and run the flow-post-task-sync workflow or python3 ${FLOW_PLUGIN_DIR}/scripts/flow_post_task_state.py manually, then stop again." >&2
   exit 2
 fi
 exit "$FLOW_STATUS"

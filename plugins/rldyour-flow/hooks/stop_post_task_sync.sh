@@ -26,17 +26,17 @@ if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
 fi
 
-FLOW_STATE_TIMEOUT="${RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS:-10}"
+FLOW_STATE_TIMEOUT="${RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS:-25}"
 STATE_JSON=$(RLDYOUR_FLOW_STATE_LOCAL_ONLY=1 RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1 RLDYOUR_STATE_SCRIPT="$STATE_SCRIPT" RLDYOUR_STATE_PYTHON="${PYTHON_BIN:-python3}" RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS="$FLOW_STATE_TIMEOUT" "${PYTHON_BIN:-python3}" <<'PY' 2>/dev/null || true
 import os
 import subprocess
 import sys
 
-raw_timeout = os.environ.get("RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS", "10")
+raw_timeout = os.environ.get("RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS", "25")
 try:
     timeout = max(0.1, float(raw_timeout))
 except ValueError:
-    timeout = 10.0
+    timeout = 25.0
 try:
     proc = subprocess.run(
         [os.environ["RLDYOUR_STATE_PYTHON"], os.environ["RLDYOUR_STATE_SCRIPT"]],
