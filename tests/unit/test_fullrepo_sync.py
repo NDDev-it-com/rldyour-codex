@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import subprocess
+import sys
 
 from tests.support.importing import import_script
 
@@ -43,6 +45,41 @@ def test_agent_only_and_runtime_paths() -> None:
     assert mod.is_agent_path(".serena/.sync_marker") is False
     assert mod.is_agent_path(".serena/cache/symbols.pkl") is False
     assert mod.is_agent_path("plugins/rldyour-flow/hooks.json") is False
+
+
+def test_cli_delegates_to_repo_local_fullrepo_wrapper(tmp_path: Path) -> None:
+    git(tmp_path, "init")
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts/fullrepo_sync.py").write_text(
+        "\n".join(
+            [
+                "#!/usr/bin/env python3",
+                "import json",
+                "import os",
+                "import sys",
+                "print(json.dumps({",
+                "    'argv': sys.argv[1:],",
+                f"    'guard': os.environ.get({mod.DELEGATION_GUARD_ENV!r}),",
+                "}, sort_keys=True))",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    proc = subprocess.run(
+        [sys.executable, str(Path(mod.__file__)), "--status-json"],
+        cwd=tmp_path,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert proc.returncode == 0, proc.stderr
+    assert json.loads(proc.stdout) == {
+        "argv": ["--status-json"],
+        "guard": "1",
+    }
 
 
 def test_exclude_block_contains_runtime_negations() -> None:
