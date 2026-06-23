@@ -746,8 +746,14 @@ def bootstrap_init(
         actions.append("migrate-main")
         migrate_main(dry_run=dry_run, ignore_project_policy=ignore_project_policy)
     elif remote_exists:
-        actions.append("restore")
-        restore(remote, branch, dry_run=dry_run, ignore_project_policy=ignore_project_policy)
+        try:
+            restore(remote, branch, dry_run=dry_run, ignore_project_policy=ignore_project_policy)
+            actions.append("restore")
+        except FullrepoError as exc:
+            if "no compatible fullrepo overlay found" not in str(exc):
+                raise
+            actions.append("restore-skipped-no-compatible-overlay")
+            print(f"{exc}; restore skipped for source-only checkout")
     elif local_agent_paths:
         may_create = create_missing or _policy_value(policy, "create_if_missing", False) or ignore_project_policy
         if may_create:
