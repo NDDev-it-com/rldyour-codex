@@ -36,6 +36,13 @@ def init_repo(tmp_path: Path) -> tuple[Path, Path]:
     return remote, work
 
 
+def clone_repo(remote: Path, clone: Path) -> Path:
+    git(clone.parent, "clone", str(remote), str(clone))
+    configure_git_identity(clone)
+    git(clone, "checkout", "main")
+    return clone
+
+
 def test_agent_only_and_runtime_paths() -> None:
     assert mod.is_agent_path("AGENTS.md") is True
     assert mod.is_agent_path(".claude/CLAUDE.md") is True
@@ -312,3 +319,101 @@ def test_bootstrap_init_does_not_create_missing_fullrepo_without_explicit_policy
     assert mod.remote_branch_sha("origin", "fullrepo") == ""
     assert mod.local_ref_sha("refs/heads/fullrepo") == ""
     assert remote.is_dir()
+
+
+def test_bootstrap_ci_restores_exact_head_overlay_without_publish(tmp_path: Path, monkeypatch) -> None:
+    remote, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+    (work / ".serena/memories").mkdir(parents=True)
+    (work / ".serena/memories/CORE-01-INDEX.md").write_text("memory\n", encoding="utf-8")
+    mod.publish("origin", "fullrepo")
+
+    clone = clone_repo(remote, tmp_path / "clone-bootstrap-ci")
+    monkeypatch.chdir(clone)
+    receipt = clone / "receipt.json"
+
+    mod.bootstrap_ci("origin", "fullrepo", attempts=1, sleep_seconds=0, receipt_path=receipt)
+
+    assert (clone / "AGENTS.md").read_text(encoding="utf-8") == "agent docs\n"
+    payload = json.loads(receipt.read_text(encoding="utf-8"))
+    assert payload["state"] == "PASS"
+    assert payload["mode"] == "bootstrap-ci"
+    assert payload["resolution_mode"] == "exact-head"
+    assert payload["restore_count"] == 2
+    assert mod.local_ref_sha("refs/heads/fullrepo") == ""
+
+
+def test_bootstrap_ci_works_from_detached_head(tmp_path: Path, monkeypatch) -> None:
+    remote, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+    mod.publish("origin", "fullrepo")
+
+    clone = clone_repo(remote, tmp_path / "clone-bootstrap-ci-detached")
+    commit = git(clone, "rev-parse", "HEAD")
+    git(clone, "checkout", "--detach", commit)
+    monkeypatch.chdir(clone)
+
+    mod.bootstrap_ci(
+        "origin",
+        "fullrepo",
+        attempts=1,
+        sleep_seconds=0,
+        receipt_path=clone / "receipt.json",
+    )
+
+    assert (clone / "AGENTS.md").read_text(encoding="utf-8") == "agent docs\n"
+
+
+def test_bootstrap_ci_retries_until_overlay_resolves(tmp_path: Path, monkeypatch) -> None:
+    remote, work = init_repo(tmp_path)
+    monkeypatch.chdir(work)
+    (work / "AGENTS.md").write_text("agent docs\n", encoding="utf-8")
+    mod.publish("origin", "fullrepo")
+
+    clone = clone_repo(remote, tmp_path / "clone-bootstrap-ci-retry")
+    monkeypatch.chdir(clone)
+    original_resolve = mod.resolve_fullrepo_ref
+    calls = {"count": 0}
+
+    def flaky_resolve(*args, **kwargs):
+        calls["count"] += 1
+        if calls["count"] == 1:
+            raise mod.FullrepoError("overlay not ready yet")
+        return original_resolve(*args, **kwargs)
+
+    monkeypatch.setattr(mod, "resolve_fullrepo_ref", flaky_resolve)
+
+    mod.bootstrap_ci(
+        "origin",
+        "fullrepo",
+        attempts=2,
+        sleep_seconds=0,
+        receipt_path=clone / "receipt.json",
+    )
+
+    payload = json.loads((clone / "receipt.json").read_text(encoding="utf-8"))
+    assert calls["count"] == 2
+    assert payload["state"] == "PASS"
+    assert payload["attempt"] == 2
+    assert payload["errors"] == ["attempt 1: overlay not ready yet"]
+
+
+def test_bootstrap_ci_fails_missing_overlay_without_publish(tmp_path: Path, monkeypatch) -> None:
+    remote, work = init_repo(tmp_path)
+    clone = clone_repo(remote, tmp_path / "clone-bootstrap-ci-missing")
+    monkeypatch.chdir(clone)
+    receipt = clone / "receipt.json"
+
+    try:
+        mod.bootstrap_ci("origin", "fullrepo", attempts=1, sleep_seconds=0, receipt_path=receipt)
+    except mod.FullrepoError as exc:
+        assert "fullrepo branch origin/fullrepo does not exist or could not be fetched" in str(exc)
+    else:
+        raise AssertionError("bootstrap_ci should fail without a compatible fullrepo overlay")
+
+    payload = json.loads(receipt.read_text(encoding="utf-8"))
+    assert payload["state"] == "FAIL"
+    assert mod.remote_branch_sha("origin", "fullrepo") == ""
+    assert mod.local_ref_sha("refs/heads/fullrepo") == ""
