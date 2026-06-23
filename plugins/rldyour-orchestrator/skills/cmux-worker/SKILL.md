@@ -1,46 +1,59 @@
 ---
 name: cmux-worker
-description: "Воркер cmux worker role: scoped task, JSON report, notify, no push/fullrepo. Используй для: worker-задача. EN: cmux worker."
+description: "Воркер cmux v3 для Codex: cmux worker role, typed task envelope, heartbeat, scoped JSON report, no push/fullrepo. Используй для: cmux worker, worker report. EN: cmux v3 worker."
 ---
 
 # cmux-worker
 
-## Purpose
+Generated from root `config/cmux-adapter-projections.json`. Do not edit manually.
 
-Run a bounded worker task delegated by the cmux orchestrator.
+Use this skill only when Codex is assigned as a visible cmux worker terminal. A worker is not the user-facing head and must not orchestrate other sessions.
 
-## Worker Rules
+## Native Adapter Notes
 
-- Work only inside explicitly assigned file/directory scope.
-- Do not talk to the user as the primary respondent.
-- Do not push, force-push, delete branches, publish fullrepo, install system configs, mutate project policy, or run final flow sync.
-- Do not commit unless the orchestrator explicitly delegates commit permission for the task ID.
-- If assigned scope is unclear or dirty files are outside scope, stop and report.
+- Codex may be a visible head or a visible worker when the root run manifest assigns that role.
+- Repo-local source remains authority over installed plugin cache projections.
 
-## Completion Signal
+## Current Implementation Status
 
-The orchestrator exports `RLDYOUR_TASK_ID` and `RLDYOUR_WORKER_ALLOWED_PATHS` at
-delegation time; an empty `RLDYOUR_WORKER_ALLOWED_PATHS` means no delegated
-write scope. Finish every task with both signals:
+- `typed-task-report-protocol`: `IMPLEMENTED`.
+- `live-start-fail-closed`: `IMPLEMENTED`.
+- `compact-template`: `IMPLEMENTED`.
+- `workspace-group-topology`: `PLANNED`.
+- `delegation-command`: `PLANNED`.
+- `worktree-scheduler`: `PLANNED`.
+- `adapter-native-projections`: `IMPLEMENTED`.
+- `stop-finalization-receipt`: `PLANNED`.
 
-1. The JSON report (file path below when requested; create the directory on demand).
-2. `cmux notify --title "worker ${RLDYOUR_WORKER_ID}" --body "task ${RLDYOUR_TASK_ID} exit <code>"`
-   with the real exit code, because cmux emits no per-command exit-code event.
+Treat `PLANNED` and `NOT_PROVEN` entries as unavailable in production.
 
-## Report
+## Required Runtime Identity
 
-Return this JSON plus concise notes:
+- `RLDYOUR_EXECUTION_MODE=orchestrator`.
+- `RLDYOUR_AGENT_ROLE=worker`.
+- `RLDYOUR_WORKER_ID` matches the immutable task assignment.
+- `CMUX_WORKSPACE_ID` and `CMUX_SURFACE_ID`, when present, match the task assignment.
 
-```json
-{
-  "task_id": "...",
-  "status": "pass|fail|blocked|not_proven",
-  "files_changed": [],
-  "commands_run": [],
-  "findings": [],
-  "risks": [],
-  "needs_orchestrator_action": []
-}
-```
+## Task Authority
 
-Runtime report files, when requested, go under `.serena/cache/cmux-orchestrator/<workspace-id>/<task-id>.json` and must not be committed.
+- Task content lives in the root-owned immutable task envelope and task-local instructions file.
+- Allowed paths are a JSON array in the task envelope, not shell text.
+- The worker helper claims the task, records heartbeat state, and validates the report.
+- Completion authority is a schema-valid report at `$(git rev-parse --git-common-dir)/rldyour/cmux/<run-id>/tasks/<task-id>/report.json` with `report_digest`.
+- `cmux notify` may contain only bounded identifiers, status, and exit code; it is not authority.
+
+## Worker Duties
+
+1. Accept only the assigned run/task through the worker helper.
+2. Work only inside the assigned repository/worktree and scope.
+3. Stop and report `blocked` or `not_proven` when scope, identity, or evidence is ambiguous.
+4. Record commands and checks in the report.
+5. Report changed paths, out-of-scope paths, diff digest, findings, risks, and needed head actions.
+
+## Forbidden Actions
+
+- Do not push, force-push, tag, publish fullrepo, delete branches, mutate project policy, run system install, or run final sync.
+- Do not delegate nested visible workers.
+- Do not create hidden or daemon-style orchestration processes.
+- Do not treat native subagents, compose jobs, hooks, or background tasks as rldyour cmux workers.
+- Do not claim success when the report was not written and validated.
