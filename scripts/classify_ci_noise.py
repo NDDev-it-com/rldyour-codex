@@ -82,6 +82,14 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         "Chrome DevTools MCP warns about optional local storage in ephemeral CI.",
     ),
     NoiseRule(
+        "chrome-devtools-update-advisory",
+        re.compile(
+            r"Update available: \d+(?:\.\d+){1,3} -> \d+(?:\.\d+){1,3}|"
+            r"Run `npm install chrome-devtools-mcp@latest` to update\."
+        ),
+        "Chrome DevTools MCP prints a non-blocking package update advisory to stderr.",
+    ),
+    NoiseRule(
         "serena-lsp-configuration",
         re.compile(
             r"workspace/configuration|"
