@@ -27,6 +27,8 @@ def test_known_noise_is_classified_as_benign() -> None:
             "chrome-devtools-mcp exposes content of the browser instance to the MCP clients allowing them to inspect,",
             "debug, and modify any data in the browser or DevTools.",
             "Avoid sharing sensitive or personal information that you do not want to share with MCP clients.",
+            "Update available: 1.2.0 -> 1.3.0",
+            "Run `npm install chrome-devtools-mcp@latest` to update.",
             "Context7 Documentation MCP Server v3.1.0 running on stdio",
             "Tracing initialized",
             "Sequential Thinking MCP Server running on stdio",
@@ -48,7 +50,7 @@ def test_known_noise_is_classified_as_benign() -> None:
         ]
     )
 
-    assert len(benign) == 32
+    assert len(benign) == 34
     assert unknown == []
 
 

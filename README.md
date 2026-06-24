@@ -18,10 +18,10 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 | Field | Value |
 |---|---|
 | Adapter version | `1.6.0` |
-| Runtime baseline | Codex CLI 0.139.0 (`@openai/codex`) |
+| Runtime baseline | Codex CLI 0.142.0 (`@openai/codex`) |
 | GitHub release tag | `1.6.0` |
 
-The runtime baseline reference is `references/codex-baseline.json`, verified 2026-06-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.139.0`.
+The runtime baseline reference is `references/codex-baseline.json`, verified 2026-06-25. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.142.0`.
 
 ## What This Repository Provides
 
@@ -47,7 +47,7 @@ MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runt
 
 ```bash
 curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
-npm install -g @openai/codex@0.139.0
+npm install -g @openai/codex@0.142.0
 codex --version
 codex doctor
 ```
