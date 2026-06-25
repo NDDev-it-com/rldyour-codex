@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.0] - 2026-06-25
+
+### Changed
+
+- Retire the `fullrepo` branch model: agent context (`.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, `.claude/`) is now tracked normally on `main` as ordinary source.
+- Remove fullrepo sync machinery: deleted `fullrepo_sync.py`, `sync_fullrepo_branch.sh`, the session-start worktree bootstrap hook, the fullrepo smoke scripts, and the `fullrepo` branch-protection desired-state file; drop the fullrepo policy section, blockers, and env surfaces from flow state, project policy, and the policy schema.
+- Remove the fullrepo bootstrap/restore/publish steps from the validate, release, and cross-platform CI workflows and from doctor/diagnostics/worktree helpers; tooling and CI now read the checked-out tree directly.
+- Simplify `.gitignore`: track agent context on `main` and ignore only runtime-local cache/state (`.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`, `.serena/project.local.yml`, and `.serena/.*` markers).
+
 ## [1.6.2] - 2026-06-25
 
 ### Fixed
