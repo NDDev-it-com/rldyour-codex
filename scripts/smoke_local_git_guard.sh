@@ -25,12 +25,11 @@ run_guard_expect() {
   local expected_exit=$2
   local stdin_payload=$3
   local expected_text=${4:-}
-  local fullrepo_branch=${5:-fullrepo}
   local output
   local status
 
   set +e
-  output=$(cd "$TMP_ROOT/repo" && printf '%s\n' "$stdin_payload" | RLDYOUR_FULLREPO_BRANCH="$fullrepo_branch" bash "$GUARD" 2>&1)
+  output=$(cd "$TMP_ROOT/repo" && printf '%s\n' "$stdin_payload" | bash "$GUARD" 2>&1)
   status=$?
   set -e
 
@@ -59,55 +58,42 @@ git -C "$TMP_ROOT/repo" add AGENTS.md
 git -C "$TMP_ROOT/repo" commit -q -m "docs: add agent context"
 agent_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
 
+# Default policy tracks agent context normally on main: agent docs are allowed,
+# and AI markers are allowed (advisory only).
 run_guard_expect \
-  "product branch blocks agent-only path" \
-  1 \
+  "default policy allows agent docs on main" \
+  0 \
   "refs/heads/main ${agent_commit} refs/heads/main ${base}" \
-  "blocked agent-only path"
+  "AI-context markers allowed"
 
+# A project that opts into strict agent-file protection still blocks agent-only
+# paths on the product branch.
 mkdir -p "$TMP_ROOT/repo/.rldyour"
 cat > "$TMP_ROOT/repo/.rldyour/project-policy.json" <<'JSON'
 {
   "schema_version": 1,
-  "fullrepo": { "mode": "disabled" },
   "normal_branch_policy": {
-    "agent_files": "allowed",
-    "ai_marker_additions": "allowed",
-    "instruction_docs": "tracked-normal-branch",
+    "agent_files": "strict",
+    "ai_marker_additions": "strict",
+    "instruction_docs": "tracked-main",
     "runtime_markers": "forbidden",
     "secrets": "forbidden"
   },
-  "instruction_docs": { "mode": "tracked-normal-branch" }
+  "instruction_docs": { "mode": "tracked-main" }
 }
 JSON
 git -C "$TMP_ROOT/repo" add .rldyour/project-policy.json
-git -C "$TMP_ROOT/repo" commit -q -m "chore: allow tracked ai docs"
-policy_agent_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
+git -C "$TMP_ROOT/repo" commit -q -m "chore: opt into strict agent-file policy"
 
 run_guard_expect \
-  "project policy allows agent docs on product branch" \
-  0 \
-  "refs/heads/main ${policy_agent_commit} refs/heads/main ${base}"
-
-mkdir -p "$TMP_ROOT/repo/.serena"
-printf 'runtime marker\n' > "$TMP_ROOT/repo/.serena/.flow_blocker_ack.json"
-git -C "$TMP_ROOT/repo" add -f .serena/.flow_blocker_ack.json
-git -C "$TMP_ROOT/repo" commit -q -m "test: add blocked runtime ack"
-policy_runtime_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
-
-run_guard_expect \
-  "project policy still blocks runtime markers on product branch" \
+  "strict policy blocks agent-only path" \
   1 \
-  "refs/heads/main ${policy_runtime_commit} refs/heads/main ${policy_agent_commit}" \
-  "blocked runtime/local-only path"
+  "refs/heads/main ${agent_commit} refs/heads/main ${base}" \
+  "blocked agent-only path"
 
-git -C "$TMP_ROOT/repo" reset -q --hard "$policy_agent_commit"
-
-run_guard_expect \
-  "fullrepo allows agent docs with advisory marker warning" \
-  0 \
-  "refs/heads/fullrepo ${agent_commit} refs/heads/fullrepo ${base}" \
-  "AI-context markers allowed"
+git -C "$TMP_ROOT/repo" rm -q .rldyour/project-policy.json
+git -C "$TMP_ROOT/repo" commit -q -m "chore: restore default tracked-main policy"
+git -C "$TMP_ROOT/repo" reset -q --hard "$agent_commit"
 
 mkdir -p "$TMP_ROOT/repo/.serena/memories"
 printf 'Bearer token placeholder only\n' > "$TMP_ROOT/repo/.serena/memories/WORDING.md"
@@ -116,9 +102,9 @@ git -C "$TMP_ROOT/repo" commit -q -m "docs: add safe security wording"
 wording_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
 
 run_guard_expect \
-  "fullrepo warns on suspicious wording without blocking" \
+  "warns on suspicious wording without blocking" \
   0 \
-  "refs/heads/fullrepo ${wording_commit} refs/heads/fullrepo ${agent_commit}" \
+  "refs/heads/main ${wording_commit} refs/heads/main ${agent_commit}" \
   "warning: suspicious security wording"
 
 printf '%s%s\n' 'Bearer ' 'abcdefghijklmnopqrstuvwxyz123456' > "$TMP_ROOT/repo/.serena/memories/SECRET.md"
@@ -127,9 +113,9 @@ git -C "$TMP_ROOT/repo" commit -q -m "docs: add unsafe token fixture"
 secret_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
 
 run_guard_expect \
-  "fullrepo blocks definite secret" \
+  "blocks definite secret regardless of policy" \
   1 \
-  "refs/heads/fullrepo ${secret_commit} refs/heads/fullrepo ${wording_commit}" \
+  "refs/heads/main ${secret_commit} refs/heads/main ${wording_commit}" \
   "blocked secret-looking content"
 
 git -C "$TMP_ROOT/repo" reset -q --hard "$wording_commit"
@@ -140,30 +126,10 @@ git -C "$TMP_ROOT/repo" commit -q -m "test: add runtime marker"
 runtime_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
 
 run_guard_expect \
-  "fullrepo blocks runtime marker" \
+  "blocks runtime marker regardless of policy" \
   1 \
-  "refs/heads/fullrepo ${runtime_commit} refs/heads/fullrepo ${wording_commit}" \
+  "refs/heads/main ${runtime_commit} refs/heads/main ${wording_commit}" \
   "blocked runtime/local-only path"
-
-git -C "$TMP_ROOT/repo" reset -q --hard "$base"
-printf 'Product change\n' >> "$TMP_ROOT/repo/README.md"
-git -C "$TMP_ROOT/repo" add README.md
-git -C "$TMP_ROOT/repo" commit -q -m "docs: update product readme"
-product_commit=$(git -C "$TMP_ROOT/repo" rev-parse HEAD)
-
-run_guard_expect \
-  "mixed push checks product and fullrepo refs separately" \
-  0 \
-  "refs/heads/main ${product_commit} refs/heads/main ${base}
-refs/heads/fullrepo ${agent_commit} refs/heads/fullrepo ${base}" \
-  "AI-context markers allowed"
-
-run_guard_expect \
-  "custom fullrepo branch env is honored" \
-  0 \
-  "refs/heads/ai-context ${agent_commit} refs/heads/ai-context ${base}" \
-  "AI-context markers allowed" \
-  "ai-context"
 
 zeros=0000000000000000000000000000000000000000
 

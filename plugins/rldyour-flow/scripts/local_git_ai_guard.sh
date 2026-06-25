@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FULLREPO_BRANCH=${RLDYOUR_FULLREPO_BRANCH:-fullrepo}
 ZERO_SHA_RE='^0{40}$'
 SCRIPT_DIR=$(CDPATH="" cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 POLICY_SCRIPT=${RLDYOUR_PROJECT_POLICY_SCRIPT:-"${SCRIPT_DIR}/project_flow_policy.py"}
-RLDYOUR_AGENT_FILES_POLICY=${RLDYOUR_AGENT_FILES_POLICY:-strict-fullrepo-default}
-RLDYOUR_AI_MARKER_ADDITIONS_POLICY=${RLDYOUR_AI_MARKER_ADDITIONS_POLICY:-strict-fullrepo-default}
+RLDYOUR_AGENT_FILES_POLICY=${RLDYOUR_AGENT_FILES_POLICY:-allowed}
+RLDYOUR_AI_MARKER_ADDITIONS_POLICY=${RLDYOUR_AI_MARKER_ADDITIONS_POLICY:-allowed}
 
 AGENT_ONLY_RE='^(AGENTS\.md|CLAUDE\.md|REVIEW\.md|GEMINI\.md|QWEN\.md|\.cursorrules|\.windsurfrules|\.aider.*|\.claude(/|$)|\.codex(/|$)|\.cursor/rules(/|$)|\.gemini(/|$)|\.roo(/|$)|\.windsurf(/|$)|\.openhands(/|$)|\.github/copilot-instructions\.md|\.github/instructions(/|$)|\.github/prompts(/|$)|\.agents/(skills|commands|hooks)(/|$)|\.serena/project\.yml|\.serena/(memories|plans|research|newproj|deploy)(/|$))'
 RUNTIME_RE='^(\.serena/cache(/|$)|\.serena/\.gitignore$|\.serena/project\.local\.yml$|\.serena/\.(sync_marker|serena_sync_state\.json|auto_sync_head|active_workflow_intent\.json|dirty_stop_ack|flow_sync_marker|flow_post_task_state\.json|flow_blocker_ack\.json)$|browser(/|$)|\.env$|\.env\.[^/]+$)'
@@ -90,7 +89,7 @@ block_strict_ai_markers() {
   fi
 }
 
-guard_product_ref() {
+guard_ref() {
   local local_sha=$1
   local remote_sha=$2
   local remote_ref=$3
@@ -116,45 +115,18 @@ guard_product_ref() {
   done
 
   scan_paths_for_definite_secrets "$local_sha" "${paths[@]}"
+  warn_suspicious_wording "$local_sha" "${paths[@]}"
   if [ "$RLDYOUR_AI_MARKER_ADDITIONS_POLICY" != "allowed" ]; then
     block_strict_ai_markers "$range"
-  fi
-}
-
-guard_fullrepo_ref() {
-  local local_sha=$1
-  local remote_sha=$2
-  local remote_ref=$3
-  local range
-  local paths=()
-  local path
-
-  while IFS= read -r path; do
-    [ -n "$path" ] || continue
-    paths+=("$path")
-  done < <(changed_paths "$local_sha" "$remote_sha")
-  range=$(range_for_push "$local_sha" "$remote_sha")
-
-  for path in "${paths[@]}"; do
-    if [[ $path =~ $RUNTIME_RE ]]; then
-      note "[RLDYOUR-AI-GUARD] blocked runtime/local-only path on ${remote_ref}: ${path}"
-      failures=1
-    fi
-  done
-
-  scan_paths_for_definite_secrets "$local_sha" "${paths[@]}"
-  warn_suspicious_wording "$local_sha" "${paths[@]}"
-
-  if git diff --no-ext-diff --unified=0 "$range" -- 2>/dev/null \
+  elif git diff --no-ext-diff --unified=0 "$range" -- 2>/dev/null \
     | LC_ALL=C grep -E '^\+[^+]' \
     | LC_ALL=C grep -Eq "$AI_MARKER_RE"; then
-    note "[RLDYOUR-AI-GUARD] warning: AI-context markers allowed on ${remote_ref}"
+    note "[RLDYOUR-AI-GUARD] AI-context markers allowed on ${remote_ref}"
   fi
 }
 
 main() {
   local local_ref local_sha remote_ref remote_sha
-  local fullrepo_ref="refs/heads/${FULLREPO_BRANCH}"
   load_project_policy
 
   while read -r local_ref local_sha remote_ref remote_sha; do
@@ -164,11 +136,7 @@ main() {
       continue
     fi
 
-    if [ "$remote_ref" = "$fullrepo_ref" ]; then
-      guard_fullrepo_ref "$local_sha" "$remote_sha" "$remote_ref"
-    else
-      guard_product_ref "$local_sha" "$remote_sha" "$remote_ref"
-    fi
+    guard_ref "$local_sha" "$remote_sha" "$remote_ref"
   done
 
   if [ "$failures" -ne 0 ]; then

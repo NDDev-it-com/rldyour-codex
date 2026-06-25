@@ -27,7 +27,7 @@ if [ ! -f "$STATE_SCRIPT" ]; then
 fi
 
 FLOW_STATE_TIMEOUT="${RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS:-25}"
-STATE_JSON=$(RLDYOUR_FLOW_STATE_LOCAL_ONLY=1 RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1 RLDYOUR_STATE_SCRIPT="$STATE_SCRIPT" RLDYOUR_STATE_PYTHON="${PYTHON_BIN:-python3}" RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS="$FLOW_STATE_TIMEOUT" "${PYTHON_BIN:-python3}" <<'PY' 2>/dev/null || true
+STATE_JSON=$(RLDYOUR_FLOW_STATE_LOCAL_ONLY=1 RLDYOUR_STATE_SCRIPT="$STATE_SCRIPT" RLDYOUR_STATE_PYTHON="${PYTHON_BIN:-python3}" RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS="$FLOW_STATE_TIMEOUT" "${PYTHON_BIN:-python3}" <<'PY' 2>/dev/null || true
 import os
 import subprocess
 import sys
@@ -134,15 +134,9 @@ import json
 import sys
 
 payload = json.load(sys.stdin)
-fullrepo_state = payload.get("fullrepo_state", {})
-if not isinstance(fullrepo_state, dict):
-    fullrepo_state = {}
 instruction_docs_state = payload.get("instruction_docs_state", {})
 if not isinstance(instruction_docs_state, dict):
     instruction_docs_state = {}
-tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
-if not isinstance(tracked_agent_paths, list):
-    tracked_agent_paths = []
 branch_cleanup_state = payload.get("branch_cleanup_state", {})
 if not isinstance(branch_cleanup_state, dict):
     branch_cleanup_state = {}
@@ -172,13 +166,6 @@ print(json.dumps({
         "review_needed": bool(instruction_docs_state.get("needs_instruction_docs_review")),
         "review_reasons": instruction_docs_state.get("review_reasons", []),
     },
-    "fullrepo": {
-        "mode": fullrepo_state.get("mode", "auto"),
-        "branch": fullrepo_state.get("fullrepo_branch", "fullrepo"),
-        "remote_exists": bool(fullrepo_state.get("remote_fullrepo_exists")),
-        "exclude_installed": bool(fullrepo_state.get("exclude_installed", False)),
-        "tracked_agent_paths": len(tracked_agent_paths),
-    },
     "branch_cleanup": {
         "mode": branch_cleanup_state.get("mode", "advisory"),
         "base": branch_cleanup_state.get("base"),
@@ -199,8 +186,6 @@ import sys
 payload = json.load(sys.stdin)
 policy = payload.get("project_policy", {})
 effective = policy.get("effective", {}) if isinstance(policy, dict) else {}
-fullrepo = effective.get("fullrepo", {}) if isinstance(effective.get("fullrepo"), dict) else {}
-normal = effective.get("normal_branch_policy", {}) if isinstance(effective.get("normal_branch_policy"), dict) else {}
 branch_cleanup = effective.get("branch_cleanup", {}) if isinstance(effective.get("branch_cleanup"), dict) else {}
 instruction_docs = effective.get("instruction_docs", {}) if isinstance(effective.get("instruction_docs"), dict) else {}
 
@@ -208,23 +193,14 @@ policy_source = policy.get("source", "built-in defaults")
 policy_source_kind = policy.get("source_kind", "default")
 lines = [
     f"Project policy source: {policy_source} ({policy_source_kind}).",
+    "Agent context (.serena/, AGENTS.md, .claude/) is tracked normally on main; commit it as ordinary source.",
 ]
-fullrepo_mode = fullrepo.get("mode", "auto")
-if fullrepo_mode == "disabled":
-    lines.append("Fullrepo is disabled by project policy; do not restore, migrate, publish, create, or install fullrepo excludes.")
-elif fullrepo_mode == "advisory":
-    lines.append("Fullrepo is advisory; report drift but do not block Stop or publish without explicit user instruction.")
-else:
-    lines.append("Use fullrepo only when the effective project policy requires or allows it; do not create a missing fullrepo branch unless policy or current user instruction explicitly allows creation.")
 
-if normal.get("agent_files") == "allowed":
-    lines.append("Configured AI instruction files may be tracked in normal branches; do not migrate them to fullrepo.")
-
-doc_mode = instruction_docs.get("mode", "auto")
-if doc_mode == "tracked-normal-branch":
-    lines.append("Instruction docs are tracked normal-branch files for this project.")
-elif doc_mode == "disabled":
+doc_mode = instruction_docs.get("mode", "tracked-main")
+if doc_mode == "disabled":
     lines.append("Instruction docs sync is disabled unless the user explicitly requests it.")
+else:
+    lines.append("Instruction docs are tracked on main; keep AGENTS.md and .claude/CLAUDE.md current.")
 
 cleanup_mode = branch_cleanup.get("mode", "advisory")
 if cleanup_mode == "disabled":
@@ -249,11 +225,10 @@ Effective policy:
 ${POLICY_GUIDANCE}
 
 Worker rules:
-1. Do not run fullrepo publish/migrate/install-exclude.
-2. Do not push, force-push, delete branches, install system configs, or mutate project policy.
-3. Do not run \$flow-post-task-sync unless the orchestrator explicitly delegates final sync.
-4. If dirty files are outside assigned scope, stop and report the exact paths.
-5. Return a structured worker report to the orchestrator:
+1. Do not push, force-push, delete branches, install system configs, or mutate project policy.
+2. Do not run \$flow-post-task-sync unless the orchestrator explicitly delegates final sync.
+3. If dirty files are outside assigned scope, stop and report the exact paths.
+4. Return a structured worker report to the orchestrator:
 {
   \"status\": \"pass|fail|blocked|not_proven\",
   \"files_changed\": [],
@@ -262,7 +237,7 @@ Worker rules:
   \"risks\": [],
   \"needs_orchestrator_action\": []
 }
-6. Stop again after reporting or after the orchestrator delegates a specific cleanup."
+5. Stop again after reporting or after the orchestrator delegates a specific cleanup."
 else
   MESSAGE="[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD ${HEAD_SHA:-unknown}; now synchronize project docs and git state.
 
@@ -276,7 +251,6 @@ Continue this turn and run the \$flow-post-task-sync workflow now.
 
 Installed rldyour-flow script paths for repositories that do not vendor this plugin:
 - Flow state: ${STATE_SCRIPT}
-- Fullrepo sync: ${PLUGIN_DIR}/scripts/fullrepo_sync.py
 - Git sync audit: ${PLUGIN_DIR}/scripts/git_sync_audit.sh
 - Instruction docs state: ${PLUGIN_DIR}/scripts/instruction_docs_state.py
 
@@ -285,13 +259,12 @@ Use repo-local scripts only when they exist; otherwise use the installed paths a
 Required order:
 1. Verify Serena memories are current. Do not duplicate Serena memory sync.
 2. Run \$instruction-docs-sync when instruction docs review is needed. Keep AGENTS.md Codex-native and .claude/CLAUDE.md Claude Code-native, using only verified project rules, commands, deploy contracts, quality gates, or workflow facts.
-3. Review all uncommitted changes. Do not commit secrets, runtime markers, browser artifacts, or accidental junk.
+3. Review all uncommitted changes. Agent context (.serena/, AGENTS.md, .claude/) is tracked normally on main; commit it as ordinary source. Do not commit secrets, runtime markers, browser artifacts, or accidental junk.
 4. Run applicable quality checks or document why a check is unavailable.
 5. Commit atomically with Conventional Commits. Keep Serena knowledge/docs sync commits separate when useful.
 6. Push/synchronize with GitHub using git/gh when an upstream exists.
-7. Follow the effective fullrepo policy above; publish or migrate fullrepo only when policy and current user instruction allow it.
-8. Treat branch cleanup according to policy; never delete protected branches or remote branches without explicit confirmation.
-9. Stop again after sync or report the exact blocker."
+7. Treat branch cleanup according to policy; never delete protected branches or remote branches without explicit confirmation.
+8. Stop again after sync or report the exact blocker."
 fi
 
 echo "$MESSAGE" >&2

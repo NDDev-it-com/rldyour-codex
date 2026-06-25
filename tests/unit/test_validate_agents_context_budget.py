@@ -14,7 +14,6 @@ rldyour-flow
 rldyour-serena-mcp
 sandbox_mode
 default_permissions
-fullrepo
 """
 
 PROJECT_TEXT = """# Project
@@ -22,7 +21,6 @@ PROJECT_TEXT = """# Project
 scripts/validate_marketplace.sh
 scripts/codex_openai_metadata_policy.py
 plugins/rldyour-mcps/.mcp.json
-fullrepo
 AGPL-3.0-or-later
 """
 
@@ -56,7 +54,7 @@ def test_budget_rejects_combined_context_bloat(tmp_path: Path) -> None:
 
 
 def test_budget_rejects_missing_required_terms(tmp_path: Path) -> None:
-    write_docs(tmp_path, system_text="# System\nfullrepo\n", project_text=PROJECT_TEXT)
+    write_docs(tmp_path, system_text="# System\nplaceholder\n", project_text=PROJECT_TEXT)
 
     errors, _ = mod.validate_budget(tmp_path, require_project_agents=True)
 

@@ -19,13 +19,11 @@ REQUIRED_TERMS = {
         "rldyour-serena-mcp",
         "sandbox_mode",
         "default_permissions",
-        "fullrepo",
     ),
     PROJECT_DOC: (
         "scripts/validate_marketplace.sh",
         "scripts/codex_openai_metadata_policy.py",
         "plugins/rldyour-mcps/.mcp.json",
-        "fullrepo",
         "AGPL-3.0-or-later",
     ),
 }

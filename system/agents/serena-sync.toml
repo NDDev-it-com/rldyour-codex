@@ -55,7 +55,7 @@ Rules:
 - Every touched memory must contain a `Last commit: <short-or-full HEAD>` metadata line derived from `git rev-parse`, not copied from older memory text.
 - Prefer Serena semantic tools for investigation.
 - For unsupported files such as shell scripts, JSON, TOML, YAML, and Markdown, use direct reads plus exact paths and commands as evidence.
-- After memory edits, run `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` when available. In fullrepo-managed repositories, this acknowledges current memories and clears runtime markers without committing AI files to the current branch.
+- After memory edits, run `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh` when available. Agent context (`.serena/memories/`, plans, research) is tracked normally on main; this creates the knowledge-only commit and clears runtime markers.
 
 Output:
 - If the parent or user wrote in Russian, answer in Russian; keep file paths and source terms unchanged.

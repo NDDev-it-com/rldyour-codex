@@ -2,9 +2,9 @@
 # worktree_add.sh — one-step git worktree creation for the rldyour-codex
 # marketplace.
 #
-# Wraps `git worktree add` + `fullrepo_sync.py --restore` so a fresh worktree
-# starts with agent-only context (AGENTS.md, .claude/CLAUDE.md,
-# .serena/project.yml, .serena/memories/**) already restored from origin/fullrepo.
+# Wraps `git worktree add`. Agent context (AGENTS.md, .claude/CLAUDE.md,
+# .serena/project.yml, .serena/memories/**) is tracked normally on the branch,
+# so a fresh worktree already carries it from the checked-out tree.
 #
 # Usage:
 #   scripts/worktree_add.sh <branch> [path]
@@ -30,8 +30,8 @@ if [[ -z "${BRANCH}" ]]; then
   cat >&2 <<'EOF'
 usage: scripts/worktree_add.sh <branch> [path]
 
-Creates a git worktree and runs fullrepo_sync.py --restore so the worktree is
-immediately usable for a parallel Codex session with full agent-only context.
+Creates a git worktree that is immediately usable for a parallel Codex session.
+Agent context is tracked on the branch, so it is present in the new worktree.
 EOF
   exit 2
 fi
@@ -85,41 +85,10 @@ if [[ "${DRY_RUN}" = "1" ]]; then
   printf '    [dry-run] would run: git'
   printf ' %q' "${GIT_ARGS[@]}"
   printf '\n'
-  echo "    [dry-run] would run: python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore (cwd: ${WT_PATH})"
   exit 0
 fi
 
-STATUS_JSON=$(python3 "${ROOT}/plugins/rldyour-flow/scripts/fullrepo_sync.py" --status-json 2>/dev/null || true)
-REMOTE_PRESENT=$(printf '%s' "${STATUS_JSON}" | python3 -c '
-import json
-import sys
-
-try:
-    state = json.load(sys.stdin)
-except Exception:
-    print("false")
-    raise SystemExit(0)
-print("true" if state.get("remote_fullrepo_exists") else "false")
-' 2>/dev/null || echo "false")
-
-if [[ "${REMOTE_PRESENT}" != "true" ]]; then
-  cat >&2 <<EOF
-FAIL origin/fullrepo does not exist yet; refusing to auto-publish from a helper script.
-
-Seed it once from the main worktree:
-    python3 ${ROOT}/plugins/rldyour-flow/scripts/fullrepo_sync.py --publish
-
-Then re-run scripts/worktree_add.sh.
-EOF
-  exit 1
-fi
-
 git "${GIT_ARGS[@]}"
-
-(
-  cd "${WT_PATH}"
-  python3 "${ROOT}/plugins/rldyour-flow/scripts/fullrepo_sync.py" --restore
-)
 
 cat <<EOF
 
@@ -127,8 +96,8 @@ cat <<EOF
     cd "${WT_PATH}"
     codex
 
-The new worktree has its own working tree, .git/info/exclude block, and restored
-.serena/memories/ from origin/fullrepo.
+The new worktree has its own working tree and carries agent context
+(AGENTS.md, .claude/CLAUDE.md, .serena/) as tracked branch files.
 
 To remove later:
     git worktree remove "${WT_PATH}"

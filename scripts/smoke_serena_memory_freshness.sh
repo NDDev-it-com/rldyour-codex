@@ -22,23 +22,14 @@ stale_err="$TMP_ROOT/stale.err"
 printf '{"head_sha":"abc1234","is_current":true}\n' > "$current_state"
 printf '{"head_sha":"def5678","is_current":false}\n' > "$stale_state"
 
+# Memories are ordinary tracked files on main; freshness is checked against the
+# checked-out HEAD with no branch-specific skip.
 python3 "$ROOT/scripts/check_serena_memory_freshness.py" \
   --root "$ROOT" \
-  --branch fullrepo \
-  --state-file "$stale_state" >/dev/null
-
-GITHUB_REF_NAME=fullrepo python3 "$ROOT/scripts/check_serena_memory_freshness.py" \
-  --root "$ROOT" \
-  --state-file "$TMP_ROOT/missing.json" >/dev/null
-
-python3 "$ROOT/scripts/check_serena_memory_freshness.py" \
-  --root "$ROOT" \
-  --branch main \
   --state-file "$current_state" >/dev/null
 
 if python3 "$ROOT/scripts/check_serena_memory_freshness.py" \
   --root "$ROOT" \
-  --branch main \
   --state-file "$stale_state" 2>"$stale_err"; then
   printf 'stale Serena memory payload unexpectedly passed\n' >&2
   exit 1

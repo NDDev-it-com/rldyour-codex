@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -143,36 +142,6 @@ def is_durable_candidate(path: str) -> bool:
     return False
 
 
-def fullrepo_state(root: Path) -> dict[str, Any]:
-    codex_home = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
-    candidates = [
-        Path(__file__).resolve().parent / "fullrepo_sync.py",
-        root / "plugins/rldyour-flow/scripts/fullrepo_sync.py",
-        codex_home / "plugins/cache/rldyour-codex/rldyour-flow/local/scripts/fullrepo_sync.py",
-    ]
-    for candidate in candidates:
-        if not candidate.is_file():
-            continue
-        args = ["python3", str(candidate), "--status-json"]
-        if os.environ.get("RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY") == "1":
-            args.append("--local-only")
-        proc = subprocess.run(
-            args,
-            cwd=root,
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        if proc.returncode != 0 or not proc.stdout.strip():
-            continue
-        try:
-            payload = json.loads(proc.stdout)
-        except json.JSONDecodeError:
-            continue
-        return payload if isinstance(payload, dict) else {}
-    return {}
-
-
 def file_line_count(path: Path) -> int:
     if not path.is_file():
         return 0
@@ -190,42 +159,28 @@ def instruction_state(root: Path) -> dict[str, Any]:
             "is_git_repo": False,
             "root": str(root),
             "needs_instruction_docs_review": False,
-            "fullrepo_managed": False,
+            "instruction_docs_managed": False,
         }
 
     project_policy = load_policy(root)
     effective_policy = dict_section(project_policy.get("effective"))
-    fullrepo_policy = dict_section(effective_policy.get("fullrepo"))
     normal_policy = dict_section(effective_policy.get("normal_branch_policy"))
     instruction_policy = dict_section(effective_policy.get("instruction_docs"))
-    instruction_docs_mode = str(instruction_policy.get("mode", "auto"))
-    normal_instruction_mode = str(normal_policy.get("instruction_docs", "auto"))
-    if instruction_docs_mode == "auto" and normal_instruction_mode != "auto":
+    instruction_docs_mode = str(instruction_policy.get("mode", "tracked-main"))
+    normal_instruction_mode = str(normal_policy.get("instruction_docs", "tracked-main"))
+    if instruction_docs_mode == "tracked-main" and normal_instruction_mode == "disabled":
         instruction_docs_mode = normal_instruction_mode
-    fullrepo_mode = str(fullrepo_policy.get("mode", "auto"))
-
-    fullrepo = fullrepo_state(root)
 
     current_branch = stdout(root, "branch", "--show-current") or "detached"
-    if instruction_docs_mode == "disabled" or fullrepo_mode == "disabled":
-        fullrepo_managed = False
-    elif instruction_docs_mode == "tracked-normal-branch":
-        fullrepo_managed = False
-    elif instruction_docs_mode == "fullrepo-managed" or fullrepo_mode == "required":
-        fullrepo_managed = True
-    else:
-        fullrepo_managed = bool(fullrepo) and (
-            current_branch == str(fullrepo.get("fullrepo_branch", "fullrepo"))
-            or bool(fullrepo.get("exclude_installed"))
-            or bool(fullrepo.get("remote_fullrepo_exists"))
-            or bool(fullrepo.get("local_fullrepo_sha"))
-        )
+    # Agent instruction docs are ordinary tracked source on the main branch.
+    # They are "managed" (subject to freshness review) unless explicitly disabled.
+    instruction_docs_managed = instruction_docs_mode != "disabled"
 
     present_docs = [path for path in REQUIRED_AGENT_DOCS if (root / path).is_file()]
     missing_docs = [
         path
         for path in REQUIRED_AGENT_DOCS
-        if fullrepo_managed and instruction_docs_mode != "disabled" and not (root / path).is_file()
+        if instruction_docs_managed and not (root / path).is_file()
     ]
     legacy_root_claude_present = (root / LEGACY_CLAUDE_DOC).is_file()
 
@@ -245,7 +200,7 @@ def instruction_state(root: Path) -> dict[str, Any]:
         review_reasons.append("instruction docs have uncommitted changes")
     if durable_change_candidates:
         review_reasons.append("durable project facts changed")
-    needs_review = bool(fullrepo_managed and review_reasons)
+    needs_review = bool(instruction_docs_managed and review_reasons)
     if instruction_docs_mode == "disabled":
         review_reasons = []
         needs_review = False
@@ -256,7 +211,7 @@ def instruction_state(root: Path) -> dict[str, Any]:
         "branch": current_branch,
         "head": stdout(root, "rev-parse", "--short=12", "HEAD"),
         "upstream": upstream_ref,
-        "fullrepo_managed": fullrepo_managed,
+        "instruction_docs_managed": instruction_docs_managed,
         "instruction_docs_mode": instruction_docs_mode,
         "policy_source": project_policy.get("source"),
         "policy_source_kind": project_policy.get("source_kind"),

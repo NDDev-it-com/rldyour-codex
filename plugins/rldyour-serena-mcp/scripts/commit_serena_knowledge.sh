@@ -82,28 +82,6 @@ if [ "${#KNOWLEDGE_PATHS[@]}" -eq 0 ]; then
   exit 0
 fi
 
-TRACKED_KNOWLEDGE=$(git ls-files -- .serena/memories .serena/plans .serena/research 2>/dev/null || true)
-if [ -z "$TRACKED_KNOWLEDGE" ]; then
-  if [ ! -f "$STATE_SCRIPT" ]; then
-    echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memory state script is unavailable" >&2
-    exit 1
-  fi
-  STATE_JSON=$(python3 "$STATE_SCRIPT" 2>/dev/null || true)
-  if [ -z "$STATE_JSON" ]; then
-    echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memory state script is unavailable" >&2
-    exit 1
-  fi
-  MEMORY_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; data=json.load(sys.stdin); print("true" if (data.get("memory_matches_head") or data.get("memory_semantically_current")) else "false")' 2>/dev/null || echo "false")
-  if [ "$MEMORY_CURRENT" != "true" ]; then
-    echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memories are not semantically current" >&2
-    exit 1
-  fi
-  rm -f .serena/.sync_marker .serena/.serena_sync_state.json
-  write_sync_ack
-  echo "Serena knowledge is fullrepo-managed; removed runtime sync markers without committing to the current branch"
-  exit 0
-fi
-
 git add -- "${KNOWLEDGE_PATHS[@]}"
 if git diff --cached --quiet -- "${KNOWLEDGE_PATHS[@]}"; then
   echo "No staged Serena knowledge changes to commit"

@@ -35,7 +35,7 @@ UNTRACKED_BOOTSTRAP_IGNORED = {
 }
 
 DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md")
-PROTECTED_BRANCHES = {"main", "master", "dev", "develop", "development", "staging", "production", "prod", "fullrepo"}
+PROTECTED_BRANCHES = {"main", "master", "dev", "develop", "development", "staging", "production", "prod"}
 WORKFLOW_BRANCH_PREFIXES = ("ai/", "codex/", "ry-", "rldyour/")
 
 
@@ -379,38 +379,6 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
     return True, {}
 
 
-def _fullrepo_state() -> dict[str, Any]:
-    candidates = [
-        _flow_plugin_root() / "scripts/fullrepo_sync.py",
-        Path("plugins/rldyour-flow/scripts/fullrepo_sync.py"),
-        _installed_script("rldyour-flow", "scripts/fullrepo_sync.py"),
-    ]
-    for candidate in candidates:
-        if not candidate.is_file():
-            continue
-        args = ["python3", str(candidate), "--status-json"]
-        if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
-            args.append("--local-only")
-        try:
-            proc = subprocess.run(
-                args,
-                check=False,
-                capture_output=True,
-                text=True,
-                timeout=_subprocess_timeout(),
-            )
-        except subprocess.TimeoutExpired:
-            continue
-        if proc.returncode != 0 or not proc.stdout.strip():
-            continue
-        try:
-            payload = json.loads(proc.stdout)
-        except json.JSONDecodeError:
-            continue
-        return payload if isinstance(payload, dict) else {}
-    return {}
-
-
 def _instruction_docs_state() -> dict[str, Any]:
     candidates = [
         _flow_plugin_root() / "scripts/instruction_docs_state.py",
@@ -420,16 +388,12 @@ def _instruction_docs_state() -> dict[str, Any]:
     for candidate in candidates:
         if not candidate.is_file():
             continue
-        env = os.environ.copy()
-        if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
-            env["RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY"] = "1"
         try:
             proc = subprocess.run(
                 ["python3", str(candidate), "--json"],
                 check=False,
                 capture_output=True,
                 text=True,
-                env=env,
                 timeout=_subprocess_timeout(),
             )
         except subprocess.TimeoutExpired:
@@ -450,10 +414,8 @@ def state() -> dict[str, Any]:
 
     project_policy = load_policy(Path.cwd())
     effective_policy = _effective_policy(project_policy)
-    fullrepo_policy = _dict_section(effective_policy.get("fullrepo"))
     stop_policy = _dict_section(effective_policy.get("stop_hook"))
     serena_policy = _dict_section(effective_policy.get("serena"))
-    fullrepo_mode = str(fullrepo_policy.get("mode", "auto"))
     runtime_execution = _runtime_execution(effective_policy)
     execution_mode = str(runtime_execution["execution_mode"])
     agent_role = str(runtime_execution["agent_role"])
@@ -468,53 +430,8 @@ def state() -> dict[str, Any]:
     doc_files_present = [path for path in DOC_FILES if Path(path).is_file()]
     doc_files_changed = [path for path in dirty_files if path in DOC_FILES]
     worktree_count = _worktree_count()
-    fullrepo_state = _fullrepo_state()
     instruction_docs_state = _instruction_docs_state()
     branch_cleanup_state = _branch_cleanup_state(branch, project_policy)
-
-    worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
-    if not isinstance(worktree_agent_paths, list):
-        worktree_agent_paths = []
-    tracked_agent_paths = fullrepo_state.get("tracked_agent_paths")
-    if not isinstance(tracked_agent_paths, list):
-        tracked_agent_paths = []
-    has_existing_fullrepo_context = bool(
-        tracked_agent_paths
-        or fullrepo_state.get("remote_fullrepo_exists")
-        or fullrepo_state.get("local_fullrepo_sha")
-        or fullrepo_state.get("exclude_installed")
-    )
-    has_agent_paths = bool(worktree_agent_paths or tracked_agent_paths)
-    network_checked = bool(fullrepo_state.get("network_checked", True))
-    remote_configured = bool(fullrepo_state.get("remote_configured", True))
-    remote_missing_attention = bool(
-        fullrepo_mode == "required"
-        and worktree_agent_paths
-        and network_checked
-        and remote_configured
-        and not bool(fullrepo_state.get("remote_fullrepo_exists", False))
-    )
-    fullrepo_mismatch = bool(
-        fullrepo_state
-        and has_agent_paths
-        and not bool(fullrepo_state.get("fullrepo_matches_worktree", True))
-    )
-    exclude_missing = bool(
-        fullrepo_state
-        and has_existing_fullrepo_context
-        and not bool(fullrepo_state.get("exclude_installed", True))
-    )
-    fullrepo_attention_candidate = bool(exclude_missing or remote_missing_attention or fullrepo_mismatch)
-    fullrepo_blocks_stop = bool(stop_policy.get("block_on_fullrepo", True)) and bool(
-        fullrepo_policy.get("block_stop", True)
-    )
-    fullrepo_needs_attention = False
-    if fullrepo_mode == "required":
-        fullrepo_needs_attention = fullrepo_attention_candidate and fullrepo_blocks_stop
-    elif fullrepo_mode == "auto":
-        fullrepo_needs_attention = bool(has_existing_fullrepo_context and fullrepo_attention_candidate and fullrepo_blocks_stop)
-    elif fullrepo_mode in {"advisory", "disabled"}:
-        fullrepo_needs_attention = False
 
     blocking_reasons: list[str] = []
     advisory_reasons: list[str] = []
@@ -530,8 +447,6 @@ def state() -> dict[str, Any]:
             advisory_reasons.append("worker-serena-stale-report")
         if ahead or behind:
             advisory_reasons.append("worker-branch-drift-report")
-        if fullrepo_attention_candidate:
-            advisory_reasons.append("worker-fullrepo-report")
         if bool(branch_cleanup_state.get("needs_cleanup")):
             advisory_reasons.append("worker-branch-cleanup-report")
         if bool(instruction_docs_state.get("needs_instruction_docs_review")):
@@ -543,10 +458,6 @@ def state() -> dict[str, Any]:
             blocking_reasons.append("dirty-worktree")
         if (ahead or behind) and bool(stop_policy.get("block_on_ahead_behind", True)):
             blocking_reasons.append("branch-ahead-behind")
-        if fullrepo_needs_attention:
-            blocking_reasons.append("fullrepo-sync-required")
-        elif fullrepo_attention_candidate and fullrepo_mode in {"auto", "advisory"}:
-            advisory_reasons.append("fullrepo-sync-advisory")
         branch_cleanup_blocks_stop = bool(stop_policy.get("block_on_branch_cleanup", False)) or bool(
             branch_cleanup_state.get("block_stop")
         )
@@ -566,7 +477,6 @@ def state() -> dict[str, Any]:
         "ahead": ahead,
         "behind": behind,
         "branch_cleanup": branch_cleanup_state,
-        "fullrepo_needs_attention": fullrepo_needs_attention,
         "instruction_docs_review": instruction_docs_state.get("needs_instruction_docs_review"),
         "serena_current": serena_current,
         "blocking_reasons": blocking_reasons,
@@ -602,10 +512,8 @@ def state() -> dict[str, Any]:
             "warnings": project_policy.get("warnings", []),
             "effective": effective_policy,
         },
-        "fullrepo_state": fullrepo_state,
         "instruction_docs_state": instruction_docs_state,
         "branch_cleanup_state": branch_cleanup_state,
-        "fullrepo_needs_attention": fullrepo_needs_attention,
         "blocking_reasons": blocking_reasons,
         "advisory_reasons": advisory_reasons,
         "needs_flow_sync": needs_flow_sync,
