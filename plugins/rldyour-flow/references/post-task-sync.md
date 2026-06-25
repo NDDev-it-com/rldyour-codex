@@ -37,7 +37,7 @@ Use `plugins/rldyour-flow/scripts/instruction_docs_state.py --json` to decide wh
 
 ## Agent Context
 
-Agent context — `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, `.claude/` — is tracked normally on the `main` branch as ordinary source. There is no separate agent-context branch and no agent-only overlay; a new machine gets the full context simply by checking out `main`. Commit agent-context changes like any other source change. Runtime-local state stays gitignored: `.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`, `.serena/project.local.yml`, and `.serena/.*` markers.
+Agent context -- `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, `.claude/` -- is tracked normally on the `main` branch as ordinary source. There is no separate agent-context branch and no agent-only overlay; a new machine gets the full context simply by checking out `main`. Commit agent-context changes like any other source change. Runtime-local state stays gitignored: `.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`, `.serena/project.local.yml`, and `.serena/.*` markers.
 
 ## Loop Prevention
 

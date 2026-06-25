@@ -65,7 +65,7 @@ The Stop lifecycle dispatcher drains stdin before any early exit, runs Serena an
 
 ## Agent Context Standard
 
-Agent context — `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, and `.claude/` — is tracked normally on `main` as ordinary source. There is no separate agent-context branch and no agent-only overlay; tooling reads the checked-out tree directly. A repository may opt into stricter handling with `.rldyour/project-policy.json`: `normal_branch_policy.agent_files=strict` keeps configured AI files out of pushes.
+Agent context -- `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, and `.claude/` -- is tracked normally on `main` as ordinary source. There is no separate agent-context branch and no agent-only overlay; tooling reads the checked-out tree directly. A repository may opt into stricter handling with `.rldyour/project-policy.json`: `normal_branch_policy.agent_files=strict` keeps configured AI files out of pushes.
 
 Tracked agent-context examples:
 

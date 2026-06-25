@@ -15,7 +15,7 @@ It provides Russian-first command skills:
 
 ## Agent Context
 
-Agent context — `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, and `.claude/` — is tracked normally on `main` as ordinary source. There is no separate agent-context branch and no agent-only overlay. Runtime-local state stays gitignored: `.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`, `.serena/project.local.yml`, and the `.serena/.*` markers/state/locks. Tooling and hooks read the checked-out tree directly; there is no bootstrap, restore, publish, or migrate step for agent context.
+Agent context -- `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, and `.claude/` -- is tracked normally on `main` as ordinary source. There is no separate agent-context branch and no agent-only overlay. Runtime-local state stays gitignored: `.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`, `.serena/project.local.yml`, and the `.serena/.*` markers/state/locks. Tooling and hooks read the checked-out tree directly; there is no bootstrap, restore, publish, or migrate step for agent context.
 
 `plugins/rldyour-flow/scripts/local_git_ai_guard.sh` is the canonical local Git pre-push guard for rldyour-managed repositories. Install it with `scripts/install_local_git_hooks.sh --apply`. By default it allows agent files and AI markers (they are tracked on `main`) while still blocking definite secrets, runtime markers, browser artifacts, and local env files on every push. A repository may opt into stricter agent-file protection with `normal_branch_policy.agent_files=strict` in `.rldyour/project-policy.json`.
 

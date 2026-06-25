@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.5] - 2026-06-26
+
+### Fixed
+
+- Replace non-ASCII punctuation in Flow tracked-context documentation so root ASCII hygiene passes.
+
 ## [1.7.4] - 2026-06-26
 
 ### Fixed

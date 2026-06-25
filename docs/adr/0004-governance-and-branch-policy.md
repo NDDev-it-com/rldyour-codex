@@ -12,7 +12,7 @@ Superseded in part (1.7.0): the `fullrepo` agent-only context branch is retired.
 
 ## Context
 
-The owner is currently the only developer and must keep `main` available without extra approval friction. At the same time, audits recommended documenting branch protection, CODEOWNERS, issue templates, PR validation, and security reporting before the repository grows. (At the time of this ADR a separate `fullrepo` agent-context branch also existed; it was retired in 1.7.0 — see the supersession note above.)
+The owner is currently the only developer and must keep `main` available without extra approval friction. At the same time, audits recommended documenting branch protection, CODEOWNERS, issue templates, PR validation, and security reporting before the repository grows. (At the time of this ADR a separate `fullrepo` agent-context branch also existed; it was retired in 1.7.0 -- see the supersession note above.)
 
 ## Decision
 
