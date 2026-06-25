@@ -31,15 +31,12 @@ scripts/validate_marketplace.sh
 scripts/doctor_system_codex.sh
 scripts/smoke_local_git_guard.sh
 scripts/smoke_flow_branch_cleanup.sh
-scripts/smoke_clean_bootstrap.sh
-scripts/smoke_fullrepo_sync.sh
-scripts/sync_fullrepo_branch.sh --status
 python3 scripts/release_manifest.py > diagnostics/release-manifest.json
 python3 scripts/release_sbom.py > diagnostics/sbom.spdx.json
 ```
 
 6. Commit with a Conventional Commit message.
-7. Push to `main`, publish `fullrepo` when agent-only files changed, then manually run the `validate` workflow with `scope=full` on the Ubuntu standard runner.
+7. Push to `main` (agent context is tracked normally on `main`, so there is no separate publish step), then manually run the `validate` workflow with `scope=full` on the Ubuntu standard runner.
 8. Create the release from `.github/workflows/release.yml` after the requested manual CI scope is green. The workflow validates `VERSION` and `CHANGELOG.md`, builds a deterministic `tar.gz`, writes `release-manifest.json`, writes generated SPDX SBOM evidence, exports the GitHub dependency graph SPDX SBOM from the dependency graph SBOM endpoint when available, creates artifact attestations, and publishes the GitHub Release.
 
 Release tags use the exact SemVer value from `VERSION` without a `v` prefix, for example `0.2.0`.
@@ -70,7 +67,6 @@ python3 scripts/check_mcp_runtime_versions.py
 scripts/install_system_codex.sh --apply
 scripts/validate_marketplace.sh
 scripts/doctor_system_codex.sh
-scripts/smoke_clean_bootstrap.sh
 ```
 
 Manual CI runs `scripts/check_mcp_runtime_versions.py --fail-on-outdated` through the `dependency-check` workflow or the `validate` workflow's `mcp`/`full` scopes when the owner or agent explicitly requests pin freshness validation.

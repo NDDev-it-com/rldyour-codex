@@ -58,8 +58,8 @@ memory-brain workflow into Codex-native surfaces in `rldyour-codex`.
   this repository.
 - Codex has a built-in memories feature in config, but this repository keeps
   project knowledge in Serena `.serena/memories/` because Serena memories are
-  already the cross-agent project knowledge source and can be published through
-  `fullrepo`.
+  already the cross-agent project knowledge source and are tracked normally on
+  the main branch as ordinary source.
 
 ## Implementation Impact
 

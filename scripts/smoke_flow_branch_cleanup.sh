@@ -53,7 +53,7 @@ cat > "$TMP_ROOT/work/.rldyour/project-policy.json" <<'JSON'
   "branch_cleanup": {
     "mode": "strict",
     "block_stop": true,
-    "protected_branches": ["main", "dev", "fullrepo"]
+    "protected_branches": ["main", "dev"]
   }
 }
 JSON

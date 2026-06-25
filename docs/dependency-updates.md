@@ -32,7 +32,7 @@ python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated
 3. Update both `config/mcp-runtime-versions.env` and `plugins/rldyour-mcps/.mcp.json`.
 4. For GitHub Actions, resolve the new tag to a full commit SHA, pin `uses:` to that SHA, and keep the tag as an inline comment for review.
 5. Reinstall into system Codex with `scripts/install_system_codex.sh --apply --strict-runtime`.
-6. Run `scripts/validate_fast.sh`, `scripts/validate_runtime.sh --strict-runtime`, `scripts/validate_release.sh`, and `scripts/smoke_clean_bootstrap.sh`.
+6. Run `scripts/validate_fast.sh`, `scripts/validate_runtime.sh --strict-runtime`, and `scripts/validate_release.sh`.
 7. Commit the runtime pin update separately from unrelated workflow changes.
 
 ## CI

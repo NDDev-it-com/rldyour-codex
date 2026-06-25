@@ -18,9 +18,9 @@ Read-only init, context discovery, report-only review, exploratory debugging, lo
 - Keep `.serena/memories` fact-only, high-signal, and synchronized with verified code state.
 - Store durable non-trivial plans in `.serena/plans`.
 - Store long source-backed research summaries in `.serena/research`.
-- In normal product repositories, keep Serena knowledge out of normal branches and publish it through `fullrepo` via `rldyour-flow`.
-- Keep generated local Serena runtime markers and cache files out of commits and out of `fullrepo`. `rldyour-flow` owns scoped project initialization.
-- Treat agent-only instruction and workflow files as project knowledge for freshness checks, so moving `AGENTS.md`, `.serena/*`, `.claude/*`, `.codex/*`, `.cursor/rules/*`, or `.agents/*` from `main` to `fullrepo` does not make code memories appear stale.
+- Track Serena knowledge normally on `main` as ordinary source; `rldyour-flow` owns scoped project initialization.
+- Keep generated local Serena runtime markers and cache files out of commits; they stay gitignored.
+- Treat agent instruction and workflow files as project knowledge for freshness checks, so `AGENTS.md`, `.serena/*`, `.claude/*`, `.codex/*`, `.cursor/rules/*`, or `.agents/*` are read directly from the tracked `main` tree.
 
 ## Skills
 

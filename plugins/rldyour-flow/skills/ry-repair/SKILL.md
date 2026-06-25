@@ -9,7 +9,7 @@ description: "Ремонт ry-repair: почини систему, semantic entr
 
 Normalize a repository so Codex, Claude Code, OpenCode, Antigravity CLI, and MiMoCode can work from the same verified facts with minimal semantic entropy. This is a technical repair workflow; it is not permission to change business logic, product semantics, deployment targets, data contracts, security posture, or ADR meaning silently.
 
-For rldyour AI CLI configuration repositories, `/ry-repair` also owns deterministic install/update/sync convergence: local repository state, system Claude/Codex/OpenCode/Gemini/MiMoCode configs, Serena memories, and GitHub/fullrepo state must be checked through the root `config/ry-repair-sync-contract.json` and `scripts/ry_repair_sync.py` contract before being reported as synchronized.
+For rldyour AI CLI configuration repositories, `/ry-repair` also owns deterministic install/update/sync convergence: local repository state, system Claude/Codex/OpenCode/Gemini/MiMoCode configs, Serena memories, and GitHub state must be checked through the root `config/ry-repair-sync-contract.json` and `scripts/ry_repair_sync.py` contract before being reported as synchronized.
 
 ## Mode Selection
 
@@ -19,7 +19,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also owns determinis
   (`git pull --ff-only`, `git submodule update --init --recursive`), then
   `python3 scripts/ry_repair_sync.py --check` and `--apply-system`.
   In consumer mode do NOT author changes into the repository: no commits, no
-  doc/contract/memory edits, no fullrepo publication. If fast-forward fails or
+  doc/contract/memory edits, no pushes. If fast-forward fails or
   validators reveal repository drift, report it and switch to authoring repair
   only on explicit owner instruction.
 
@@ -44,7 +44,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also owns determinis
 - Current code, config, runtime checks, and verified GitHub state are the source of truth. Memories and docs are derived evidence.
 - Hooks stay bounded and deterministic. They may mark state; `ry-repair` does the heavy repair work.
 - Do not hide unresolved drift behind green summaries. Every blocked check names the blocker and next proof command.
-- Do not report local repo, system config, Serena memory, or GitHub parity without evidence from `ry_repair_sync.py`, installed-config validators, current git state, and fullrepo/GitHub checks where applicable.
+- Do not report local repo, system config, Serena memory, or GitHub parity without evidence from `ry_repair_sync.py`, installed-config validators, current git state, and GitHub checks where applicable.
 
 ## Output
 

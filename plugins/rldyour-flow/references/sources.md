@@ -32,5 +32,5 @@ Engineering conclusions:
 - Multiple Stop hooks run independently, so post-task sync must coordinate with Serena using state checks and loop markers.
 - Subagents are useful for parallel reviews, but prompts must be self-contained and bounded.
 - `AGENTS.md` is Codex-native and `.claude/CLAUDE.md` is Claude Code-native in rldyour projects. Keep both optimized for their own CLI instead of reducing one to a thin import of the other.
-- `.git/info/exclude` is local exclude state, so it is appropriate for per-repository agent-only files that should exist locally but not in normal branch history.
-- Use `--force-with-lease` for generated `fullrepo` snapshots so unexpected remote updates are not overwritten silently.
+- Agent context (`.serena/`, `AGENTS.md`, `.claude/`) is tracked normally on `main` as ordinary source; only runtime-local cache/state/markers stay gitignored.
+- Use `--force-with-lease` instead of a blind `--force` for any rare force update so unexpected remote changes are not overwritten silently. Never force-push `main`.

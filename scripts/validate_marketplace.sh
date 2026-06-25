@@ -290,13 +290,10 @@ step "Serena memory taxonomy smoke"
 scripts/smoke_serena_memory_taxonomy.sh
 
 step "Serena memory state"
-if [ "${GITHUB_ACTIONS:-}" = "true" ] \
-  && ! git ls-files --error-unmatch ".serena/memories/CORE-01-INDEX.md" >/dev/null 2>&1; then
-  printf 'skip    fullrepo-managed Serena memories are not tracked in this GitHub normal-branch checkout\n'
-elif [ -f ".serena/memories/CORE-01-INDEX.md" ]; then
+if [ -f ".serena/memories/CORE-01-INDEX.md" ]; then
   python3 scripts/check_serena_memory_freshness.py
 else
-  printf 'skip    fullrepo-managed Serena memories absent from this normal-branch checkout\n'
+  printf 'skip    Serena memories absent from this checkout\n'
 fi
 
 step "Flow post-task state"

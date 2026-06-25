@@ -149,21 +149,17 @@ The `rldyour-design` plugin provides Figma → code workflows, FSD frontend arch
 
 Managed subagents (`browser-tester`) handle browser-tester review tracks. Specialist MCP servers (`figma`, `chrome-devtools`, `dart-flutter`, `shadcn`) are disabled inside managed subagents and remain parent-session tools for explicit design, browser, Flutter, or shadcn work.
 
-## Memory / Fullrepo Model
+## Memory / Agent Context Model
 
-**Normal `main` branch** carries product history: plugins, scripts, config, CI, docs, and generated skill bridges. Agent-only files (`AGENTS.md`, `.serena/`) are excluded from normal branch history via `.git/info/exclude`.
+**Agent context is tracked normally on `main`.** `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, and `.claude/` are ordinary source files committed to `main` alongside plugins, scripts, config, CI, docs, and generated skill bridges. There is no separate agent-context branch and no agent-only overlay; tooling and CI read the checked-out tree directly.
 
-**`fullrepo` branch** is the portable complete-state branch for agent-only files. It is built from current `HEAD` plus local agent-only files and pushed with `--force-with-lease`.
+Only runtime-local state stays gitignored: `.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`, `.serena/project.local.yml`, and the `.serena/.*` markers/state/locks.
 
 ```bash
 scripts/worktree_add.sh <branch> [path]
-scripts/sync_fullrepo_branch.sh --restore
-scripts/sync_fullrepo_branch.sh --migrate-main
-scripts/sync_fullrepo_branch.sh --publish
-scripts/sync_fullrepo_branch.sh --status
 ```
 
-`--restore` initializes local agent context from `origin/fullrepo`. `--migrate-main` removes tracked agent-only files from the current branch index while keeping them locally. `--publish` builds and pushes the snapshot.
+A new worktree of a branch already carries that branch's tracked agent context; no restore or bootstrap step is required.
 
 **Serena memory** is managed by `rldyour-serena-mcp`. Memory is fact-only: verified code, git diffs, and test results - no speculation, plans, chat history, or secrets. The `serena-sync` managed subagent handles memory synchronization on the `Stop` hook advisory.
 
@@ -174,9 +170,9 @@ scripts/install_local_git_hooks.sh --dry-run
 scripts/install_local_git_hooks.sh --apply
 ```
 
-The guard is branch-aware: product branches enforce strict protection against agent-only paths and AI-marker additions; the `fullrepo` branch allows durable AI context while blocking credentials, runtime markers, browser artifacts, and local env files.
+By default the guard allows agent context and AI markers (they are tracked source) while always blocking credentials, runtime markers, browser artifacts, and local env files. A project may opt into strict agent-file protection through `.rldyour/project-policy.json`.
 
-In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may disable fullrepo, allow instruction docs on normal branches, and disable branch-cleanup blockers.
+In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may set strict agent-file protection, disable instruction-docs sync, and disable branch-cleanup blockers.
 
 ## Security Boundary
 
@@ -232,8 +228,6 @@ scripts/doctor_system_codex.sh --quick --strict-runtime
 scripts/smoke_hooks.sh
 scripts/smoke_local_git_guard.sh
 scripts/smoke_flow_branch_cleanup.sh
-scripts/smoke_clean_bootstrap.sh
-scripts/smoke_fullrepo_sync.sh
 scripts/smoke_serena_memory_freshness.sh
 scripts/smoke_serena_memory_taxonomy.sh
 ```

@@ -66,7 +66,7 @@ Use current official docs and source-backed research for:
 
 Use Conventional Commits and one logical concern per commit. Split unrelated
 implementation, tests, validators, docs/instructions, license/metadata,
-generated artifacts, and Serena/fullrepo sync when they are independently
+generated artifacts, and Serena knowledge sync when they are independently
 reviewable. Adapter implementation changes live in the adapter repository; the
 control plane should only advance submodule gitlinks after those commits are
 pushed. Do not rewrite already-pushed history without explicit owner approval;

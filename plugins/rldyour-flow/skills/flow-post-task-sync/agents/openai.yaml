@@ -1,7 +1,7 @@
 interface:
   display_name: Flow Post-Task Sync
   short_description: 'Финальный sync. EN: post-task sync'
-  default_prompt: 'Используй $flow-post-task-sync: memory, docs, git, fullrepo. EN: final sync.'
+  default_prompt: 'Используй $flow-post-task-sync: memory, docs, git, branches. EN: final sync.'
 dependencies:
   tools:
   - type: mcp
