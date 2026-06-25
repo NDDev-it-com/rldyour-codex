@@ -7,12 +7,12 @@ Security reporting covers this repository's Codex marketplace, plugin manifests,
 ## Supported Versions
 
 Only the current exact numeric product release tag receives security fixes.
-The `1.6.x` line label tracks only the latest released patch, not every
+The `1.7.x` line label tracks only the latest released patch, not every
 historical patch in the line.
 
 | Version | Supported |
 |---|---|
-| Current exact tag `1.6.2` | yes |
+| Current exact tag `1.7.0` | yes |
 | Older `1.1.*` tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 

@@ -238,6 +238,6 @@ def test_orchestrator_worker_dirty_outside_assigned_scope_blocks_report(monkeypa
 def json_policy(**sections: object) -> str:
     import json
 
-    payload = {"schema_version": 1}
+    payload: dict[str, object] = {"schema_version": 1}
     payload.update(sections)
     return json.dumps(payload)
