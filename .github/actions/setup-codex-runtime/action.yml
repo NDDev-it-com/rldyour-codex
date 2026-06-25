@@ -40,7 +40,7 @@ runs:
 
     - name: Set up Dart
       if: inputs.install-dart == 'true'
-      uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.4
+      uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.5
       with:
         sdk: ${{ env.RLDYOUR_DART_SDK_VERSION }}
 

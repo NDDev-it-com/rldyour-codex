@@ -35,4 +35,4 @@ Bootstrap-only `.serena` runtime files created by tool startup, such as cache en
 
 ## Agent Context
 
-Agent context — `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, `.claude/` — is tracked normally on the `main` branch as ordinary source. There is no separate agent-context branch and no agent-only overlay. Runtime markers, caches (`.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`), local env files, browser artifacts, and secrets remain gitignored and forbidden from commits.
+Agent context -- `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, `.claude/` -- is tracked normally on the `main` branch as ordinary source. There is no separate agent-context branch and no agent-only overlay. Runtime markers, caches (`.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`), local env files, browser artifacts, and secrets remain gitignored and forbidden from commits.
