@@ -149,8 +149,6 @@ else
   printf 'skip    execpolicy rules validation: codex command not found\n'
 fi
 scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
-scripts/smoke_fullrepo_sync.sh
-scripts/smoke_fullrepo_bootstrap_init.sh
 
 if [ "$MODE" = "live" ]; then
   python3 scripts/check_mcp_runtime_versions.py

@@ -24,7 +24,6 @@ from pathlib import Path
 OUTPUT_LIMIT = 8192
 FAILURE_PREVIEW_LINES = 12
 CHILDREN = (
-    ("bootstrap", "session_start_worktree_bootstrap.sh", 6),
     ("context", "session_start_context.sh", 10),
 )
 

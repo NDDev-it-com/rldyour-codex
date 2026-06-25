@@ -59,8 +59,6 @@ if [ "$APPLY" -ne 1 ]; then
   step "Repository-local checks"
   jq empty .agents/plugins/marketplace.json plugins/*/.codex-plugin/plugin.json plugins/rldyour-mcps/.mcp.json plugins/rldyour-serena-mcp/hooks.json plugins/rldyour-flow/hooks.json pyrightconfig.json
   shellcheck scripts/*.sh plugins/rldyour-serena-mcp/hooks/*.sh plugins/rldyour-serena-mcp/scripts/*.sh plugins/rldyour-flow/hooks/*.sh plugins/rldyour-flow/scripts/*.sh plugins/rldyour-lsps/scripts/*.sh
-  scripts/smoke_fullrepo_sync.sh
-  scripts/smoke_fullrepo_bootstrap_init.sh
   scripts/smoke_hooks.sh --repo-only --codex-home "$CODEX_HOME_DIR"
   printf '\nBootstrap dry-run passed. Run scripts/bootstrap_check.sh --apply to install and verify system Codex on this machine.\n'
   exit 0

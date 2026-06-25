@@ -681,7 +681,6 @@ smoke_stop_offline() {
   local real_git
 
   tmp=$(make_session_start_repo)
-  (cd "$tmp" && python3 "$flow_dir/scripts/fullrepo_sync.py" --install-exclude >/dev/null)
   fake_dir=$(mktemp -d "${TMPDIR:-/tmp}/rldyour-fake-git.XXXXXX")
   network_log=$(mktemp "${TMPDIR:-/tmp}/rldyour-stop-network.XXXXXX")
   real_git=$(command -v git)
