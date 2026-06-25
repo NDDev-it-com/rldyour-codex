@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.1] - 2026-06-25
+
+### Fixed
+
+- Treat missing top-level instruction docs (`AGENTS.md`, `.claude/CLAUDE.md`) as advisory rather than a Stop blocker, so repos that use a different doc layout (Codex uses `system/AGENTS.md`) and bare/new repos are not falsely blocked at session end. `validate_instruction_docs.py` remains the authoritative presence gate.
+
 ## [1.7.0] - 2026-06-25
 
 ### Changed
