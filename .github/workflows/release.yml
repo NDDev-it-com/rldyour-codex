@@ -136,6 +136,10 @@ jobs:
             flag && /^## \[/ { exit }
             flag { print }
           ' CHANGELOG.md > dist/release-notes.md
+          # dist/gates holds CI bootstrap receipts, not release artifacts. Drop the
+          # directory so the dist/* asset operations (checksums, release upload) only
+          # ever see regular files and never fail on a subdirectory.
+          rm -rf dist/gates
           sha256sum dist/* > dist/SHA256SUMS
 
       - name: Export GitHub dependency graph SBOM when available
