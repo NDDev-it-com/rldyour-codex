@@ -232,7 +232,6 @@ paths = [
     Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
     Path("plugins/rldyour-flow/scripts/flow_post_task_state.py"),
     Path("plugins/rldyour-flow/scripts/instruction_docs_state.py"),
-    Path("plugins/rldyour-flow/scripts/fullrepo_sync.py"),
     Path("scripts/smoke_mcp_capabilities.py"),
     Path("scripts/validate_instruction_docs.py"),
     Path("scripts/validate_plugin_versions.py"),
@@ -506,12 +505,6 @@ python3 scripts/plugin_cache_contract.py --cache-root "$CACHE_ROOT" --include-lo
 
 step "Hook smoke"
 scripts/smoke_hooks.sh --codex-home "$CODEX_HOME_DIR"
-
-step "Fullrepo sync smoke"
-scripts/smoke_fullrepo_sync.sh
-
-step "Fullrepo bootstrap init smoke"
-scripts/smoke_fullrepo_bootstrap_init.sh
 
 step "Local Git guard smoke"
 scripts/smoke_local_git_guard.sh
