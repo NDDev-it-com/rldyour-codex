@@ -17,9 +17,9 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.7.3` |
+| Adapter version | `1.7.4` |
 | Runtime baseline | Codex CLI 0.142.0 (`@openai/codex`) |
-| GitHub release tag | `1.7.3` |
+| GitHub release tag | `1.7.4` |
 
 The runtime baseline reference is `references/codex-baseline.json`, verified 2026-06-25. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.142.0`.
 
@@ -149,7 +149,7 @@ The `rldyour-design` plugin provides Figma → code workflows, FSD frontend arch
 
 Managed subagents (`browser-tester`) handle browser-tester review tracks. Specialist MCP servers (`figma`, `chrome-devtools`, `dart-flutter`, `shadcn`) are disabled inside managed subagents and remain parent-session tools for explicit design, browser, Flutter, or shadcn work.
 
-## Memory / Agent Context Model
+## Repository Context / Serena Memory
 
 **Agent context is tracked normally on `main`.** `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, and `.claude/` are ordinary source files committed to `main` alongside plugins, scripts, config, CI, docs, and generated skill bridges. There is no separate agent-context branch and no agent-only overlay; tooling and CI read the checked-out tree directly.
 
