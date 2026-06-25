@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.6.2] - 2026-06-25
+
+### Fixed
+
+- codex 1.6.2: merge PR #4 race-tolerant fullrepo bootstrap CI fix
+
 ## [1.6.1] - 2026-06-25
 
 ### Changed
