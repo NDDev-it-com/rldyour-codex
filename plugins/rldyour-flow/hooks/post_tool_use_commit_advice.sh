@@ -98,21 +98,6 @@ for path in files:
         )
         break
 
-agent_only_patterns = [
-    re.compile(r"^(AGENTS|CLAUDE|REVIEW|GEMINI|QWEN)\.md$"),
-    re.compile(r"^\.(claude|codex|gemini|roo|windsurf|openhands)/"),
-    re.compile(r"^\.cursor/rules/"),
-    re.compile(r"^\.agents/(skills|commands|hooks)/"),
-    re.compile(r"^\.github/(copilot-instructions\.md|instructions/|prompts/)"),
-    re.compile(r"^\.serena/(project\.yml|memories/|plans/|research/|newproj/|deploy/)"),
-]
-for path in files:
-    if any(pattern.search(path) for pattern in agent_only_patterns):
-        warnings.append(
-            f"commit includes agent-only path `{path}`; verify this repository intentionally tracks AI files in the current branch or move them to fullrepo"
-        )
-        break
-
 if not warnings:
     raise SystemExit(0)
 

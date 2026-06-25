@@ -345,7 +345,7 @@
     },
     {
       "id": "ru-flow-post-task-sync",
-      "prompt": "заверши задачу синхронизируй git fullrepo worktrees",
+      "prompt": "заверши задачу синхронизируй git worktrees",
       "prompt_terms": [
         "заверши",
         "задачу"
@@ -356,7 +356,7 @@
           "description_terms": [
             "заверши задачу",
             "синхронизируй",
-            "fullrepo"
+            "git"
           ]
         }
       ]

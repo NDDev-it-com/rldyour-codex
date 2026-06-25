@@ -6,8 +6,7 @@
 #   2. agent-instruction-only commits require memory sync.
 #   3. serena_memory_state.py counts nested .serena/memories/**/*.md files.
 #   4. stop_memory_sync.sh stale advisory includes taxonomy guidance and loop guard works.
-#   5. commit_serena_knowledge.sh acknowledges fullrepo-managed current memories and
-#      refuses stale memories.
+#   5. commit_serena_knowledge.sh commits tracked memory changes and refuses stale memories.
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -94,9 +93,9 @@ if index_path.exists() and (os.environ.get("GITHUB_ACTIONS") != "true" or is_tra
         "index_areas": sorted(index_areas),
     }
 elif index_path.exists():
-    print("skip    repository CORE-01-INDEX.md is untracked fullrepo context in GitHub Actions")
+    print("skip    repository CORE-01-INDEX.md is not tracked in this checkout")
 else:
-    print("skip    repository CORE-01-INDEX.md absent; normal branch may exclude fullrepo-managed memories")
+    print("skip    repository CORE-01-INDEX.md absent")
 
 cases = [
     (
@@ -242,7 +241,7 @@ if [ "$LOOP_RC" -ne 0 ]; then
 fi
 echo "OK stop hook advisory"
 
-step "fullrepo-managed commit acknowledgement"
+step "tracked-main commit acknowledgement"
 ACK_REPO="$TMP_ROOT/ack"
 mkdir "$ACK_REPO"
 cd "$ACK_REPO"
@@ -251,10 +250,7 @@ printf 'ack\n' > file.txt
 git add file.txt
 git_commit "init"
 BASE_SHORT=$(git rev-parse --short=7 HEAD)
-mkdir -p .serena/memories .git/info
-cat >> .git/info/exclude <<'EOF'
-.serena/memories/**
-EOF
+mkdir -p .serena/memories
 cat > .serena/memories/CORE-01-INDEX.md <<EOF
 <!-- Memory Metadata
 Last updated: 2026-05-15
@@ -265,24 +261,23 @@ Area: CORE
 
 # CORE-01-INDEX
 EOF
-printf 'source-only\n' > file.txt
-git add file.txt
-git_commit "source-only"
-touch .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+git add .serena/memories/CORE-01-INDEX.md
+git_commit "track memories"
+# Memories are ordinary tracked files on main; a knowledge change must produce a
+# dedicated knowledge commit and clear runtime sync markers.
+printf '\nupdated knowledge\n' >> .serena/memories/CORE-01-INDEX.md
+touch .serena/.sync_marker .serena/.serena_sync_state.json
 BEFORE=$(git rev-parse HEAD)
 bash "$COMMIT_SCRIPT" >/dev/null
 AFTER=$(git rev-parse HEAD)
-test "$BEFORE" = "$AFTER" || fail "commit_serena_knowledge created a commit in fullrepo-managed ack path"
+test "$BEFORE" != "$AFTER" || fail "commit_serena_knowledge did not commit tracked memory changes on main"
+git diff-tree --no-commit-id --name-only -r HEAD | grep -qx ".serena/memories/CORE-01-INDEX.md" \
+  || fail "knowledge commit did not include the changed memory file"
 test ! -e .serena/.sync_marker || fail "sync marker was not cleared"
 test ! -e .serena/.serena_sync_state.json || fail "sync state was not cleared"
 test -e .serena/.auto_sync_head || fail "auto sync acknowledgement was not written"
 GIT_COMMON_DIR=$(git rev-parse --git-common-dir)
 test -e "$GIT_COMMON_DIR/rldyour/serena_auto_sync_head" || fail "git-local auto sync acknowledgement was not written"
-ACK_CURRENT=$(python3 "$STATE_SCRIPT" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")')
-test "$ACK_CURRENT" = "true" || fail "semantic ancestor acknowledgement did not leave Serena state current"
-rm -f .serena/.auto_sync_head
-ACKLESS_CURRENT=$(python3 "$STATE_SCRIPT" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")')
-test "$ACKLESS_CURRENT" = "true" || fail "semantic ancestor state depended on worktree runtime acknowledgement marker"
 
 STALE_REPO="$TMP_ROOT/stale"
 mkdir "$STALE_REPO"
@@ -292,13 +287,7 @@ printf 'old\n' > file.txt
 git add file.txt
 git_commit "old"
 UNKNOWN_COMMIT=ffffffffffffffffffffffffffffffffffffffff
-printf 'new\n' > file.txt
-git add file.txt
-git_commit "new"
-mkdir -p .serena/memories .git/info
-cat >> .git/info/exclude <<'EOF'
-.serena/memories/**
-EOF
+mkdir -p .serena/memories
 cat > .serena/memories/CORE-01-INDEX.md <<EOF
 <!-- Memory Metadata
 Last updated: 2026-05-15
@@ -309,6 +298,11 @@ Area: CORE
 
 # CORE-01-INDEX
 EOF
+git add .serena/memories/CORE-01-INDEX.md
+git_commit "track stale memories"
+printf 'new\n' > file.txt
+git add file.txt
+git_commit "new source after stale memory"
 touch .serena/.sync_marker
 set +e
 STALE_ERR="$TMP_ROOT/stale.err"
@@ -316,13 +310,13 @@ bash "$COMMIT_SCRIPT" >/dev/null 2>"$STALE_ERR"
 STALE_RC=$?
 set -e
 if [ "$STALE_RC" -eq 0 ]; then
-  fail "commit_serena_knowledge acknowledged stale fullrepo-managed memory"
+  fail "commit_serena_knowledge acknowledged stale memory"
 fi
 if ! grep -Eq "not semantically current|do not match HEAD|memories do not match" "$STALE_ERR"; then
   cat "$STALE_ERR" >&2
   fail "stale ack error message missing"
 fi
-echo "OK fullrepo-managed acknowledgement"
+echo "OK tracked-main acknowledgement"
 
 cd "$ROOT"
 printf '\n\033[1;32m✔ smoke_serena_memory_taxonomy passed\033[0m\n'

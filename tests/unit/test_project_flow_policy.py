@@ -41,16 +41,22 @@ def test_default_policy_is_non_destructive(tmp_path: Path, monkeypatch) -> None:
     assert payload["source_kind"] == "default"
     assert payload["valid"] is True
     effective = payload["effective"]
-    assert effective["fullrepo"]["mode"] == "auto"
-    assert effective["fullrepo"]["create_if_missing"] is False
+    # Agent context is tracked normally on main; there is no fullrepo section.
+    assert "fullrepo" not in effective
+    assert effective["normal_branch_policy"]["agent_files"] == "allowed"
+    assert effective["instruction_docs"]["mode"] == "tracked-main"
+    assert effective["serena"]["memory_storage"] == "tracked-main"
     assert effective["execution"]["mode"] == "standard"
     assert effective["execution"]["agent_role"] == "auto"
     assert effective["execution"]["task_delegation"] == "direct"
     assert effective["cmux"]["enabled"] is False
     assert effective["cmux"]["version_policy"] == "latest-compatible"
     assert effective["orchestrator"]["concurrency"]["default_strategy"] == "single-writer"
+    assert "fullrepo" not in effective["orchestrator"]["worker_permissions"]
+    assert "block_on_fullrepo" not in effective["stop_hook"]
     assert effective["branch_cleanup"]["mode"] == "advisory"
     assert "dev" in effective["branch_cleanup"]["protected_branches"]
+    assert "fullrepo" not in effective["branches"]["protected_branches"]
 
 
 def test_tracked_local_and_env_policy_precedence(tmp_path: Path, monkeypatch) -> None:
@@ -58,17 +64,17 @@ def test_tracked_local_and_env_policy_precedence(tmp_path: Path, monkeypatch) ->
     tracked = write_policy(
         tmp_path,
         ".rldyour/project-policy.json",
-        {"schema_version": 1, "fullrepo": {"mode": "required"}},
+        {"schema_version": 1, "branch_cleanup": {"mode": "strict"}},
     )
     local = write_policy(
         tmp_path,
         ".rldyour/project-policy.local.json",
-        {"schema_version": 1, "fullrepo": {"mode": "disabled"}},
+        {"schema_version": 1, "branch_cleanup": {"mode": "disabled"}},
     )
     env_policy = write_policy(
         tmp_path,
         "env-policy.json",
-        {"schema_version": 1, "fullrepo": {"mode": "advisory"}},
+        {"schema_version": 1, "branch_cleanup": {"mode": "advisory"}},
     )
     monkeypatch.setenv("RLDYOUR_PROJECT_POLICY", str(env_policy))
     monkeypatch.chdir(tmp_path)
@@ -81,7 +87,7 @@ def test_tracked_local_and_env_policy_precedence(tmp_path: Path, monkeypatch) ->
         {"kind": "env", "path": str(env_policy.relative_to(tmp_path))},
     ]
     assert payload["source_kind"] == "env"
-    assert payload["effective"]["fullrepo"]["mode"] == "advisory"
+    assert payload["effective"]["branch_cleanup"]["mode"] == "advisory"
 
 
 def test_policy_unknown_fields_are_warnings_unless_strict(tmp_path: Path, monkeypatch) -> None:
@@ -89,7 +95,7 @@ def test_policy_unknown_fields_are_warnings_unless_strict(tmp_path: Path, monkey
     write_policy(
         tmp_path,
         ".rldyour/project-policy.json",
-        {"schema_version": 1, "fullrepo": {"mode": "disabled", "surprise": True}},
+        {"schema_version": 1, "serena": {"mode": "enabled", "surprise": True}},
     )
     monkeypatch.chdir(tmp_path)
 
@@ -97,9 +103,9 @@ def test_policy_unknown_fields_are_warnings_unless_strict(tmp_path: Path, monkey
     strict = mod.load_policy(tmp_path, strict=True)
 
     assert loose["valid"] is True
-    assert "unknown policy field: fullrepo.surprise" in loose["warnings"]
+    assert "unknown policy field: serena.surprise" in loose["warnings"]
     assert strict["valid"] is False
-    assert "unknown policy field: fullrepo.surprise" in strict["errors"]
+    assert "unknown policy field: serena.surprise" in strict["errors"]
 
 
 def test_invalid_policy_fails_closed_for_runtime_markers_and_secrets(tmp_path: Path, monkeypatch) -> None:
@@ -110,7 +116,6 @@ def test_invalid_policy_fails_closed_for_runtime_markers_and_secrets(tmp_path: P
         {
             "schema_version": 1,
             "normal_branch_policy": {"runtime_markers": "allowed", "secrets": "allowed"},
-            "fullrepo": {"mode": "nonsense"},
             "branch_cleanup": {"mode": "nonsense"},
         },
     )
@@ -122,7 +127,7 @@ def test_invalid_policy_fails_closed_for_runtime_markers_and_secrets(tmp_path: P
     assert payload["valid"] is False
     assert normal["runtime_markers"] == "forbidden"
     assert normal["secrets"] == "forbidden"
-    assert payload["effective"]["fullrepo"]["mode"] == "auto"
+    assert "fullrepo" not in payload["effective"]
     assert payload["effective"]["branch_cleanup"]["mode"] == "advisory"
 
 

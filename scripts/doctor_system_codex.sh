@@ -520,51 +520,6 @@ else
   fail "repository marketplace validation"
 fi
 
-section "Fullrepo"
-if python3 "$ROOT/plugins/rldyour-flow/scripts/fullrepo_sync.py" --status-json >/tmp/rldyour-codex-fullrepo-state.json 2>/tmp/rldyour-codex-fullrepo-state.err; then
-  pass "fullrepo state script"
-  if python3 -m json.tool /tmp/rldyour-codex-fullrepo-state.json >/dev/null 2>&1; then
-    pass "fullrepo state JSON"
-    if python3 - /tmp/rldyour-codex-fullrepo-state.json <<'PY'
-from __future__ import annotations
-
-import json
-import os
-import sys
-from pathlib import Path
-
-payload = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-dirty = payload.get("dirty_non_agent_paths") or []
-if dirty:
-    raise SystemExit(f"non-agent files are dirty: {dirty}")
-if payload.get("branch") == "main" and payload.get("worktree_agent_paths") and payload.get("fullrepo_matches_worktree") is not True:
-    if os.environ.get("GITHUB_ACTIONS") == "true":
-        print(
-            "fullrepo current-state gate is advisory on GitHub Actions main runs; "
-            "the fullrepo branch workflow validates published agent-only snapshots",
-            file=sys.stderr,
-        )
-        raise SystemExit(2)
-    raise SystemExit("fullrepo does not match current HEAD plus agent-only files")
-PY
-    then
-      pass "fullrepo current-state gate"
-    else
-      gate_status=$?
-      if [ "$gate_status" -eq 2 ]; then
-        warn "fullrepo current-state gate advisory on GitHub Actions main run"
-      else
-        fail "fullrepo current-state gate"
-      fi
-    fi
-  else
-    fail "fullrepo state JSON invalid"
-  fi
-else
-  fail "fullrepo state script failed"
-  sed -n '1,40p' /tmp/rldyour-codex-fullrepo-state.err >&2 || true
-fi
-
 section "MCP runtime"
 if [ -n "$CODEX_CMD" ]; then
   if env CODEX_HOME="$CODEX_HOME_DIR" "$CODEX_CMD" mcp list >/tmp/rldyour-codex-mcp-list.txt 2>/tmp/rldyour-codex-mcp-list.err; then

@@ -34,10 +34,7 @@ ROOT = Path(sys.argv[1])
 HOOK_INPUT = Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
 POLICY_SCRIPT = Path(sys.argv[3])
 GIT_TIMEOUT = 0.8
-FULLREPO_REMOTE = "origin"
-FULLREPO_BRANCH = "fullrepo"
 DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md", "REVIEW.md")
-EXCLUDE_BEGIN = "# >>> rldyour fullrepo agent-only files >>>"
 
 
 def parse_source(raw: str) -> str:
@@ -67,11 +64,6 @@ def git(args: list[str], timeout: float = GIT_TIMEOUT) -> tuple[int, str]:
 def git_stdout(args: list[str], default: str = "") -> str:
     status, output = git(args)
     return output if status == 0 and output else default
-
-
-def git_bool(args: list[str]) -> bool:
-    status, _ = git(args)
-    return status == 0
 
 
 def split_porcelain_path(line: str) -> str:
@@ -114,19 +106,6 @@ def worktree_count() -> tuple[int, bool]:
     if status != 0 or not output:
         return 1, False
     return max(1, sum(1 for line in output.splitlines() if line.startswith("worktree "))), False
-
-
-def exclude_installed() -> bool:
-    exclude_path = git_stdout(["rev-parse", "--git-path", "info/exclude"])
-    if not exclude_path:
-        return False
-    path = Path(exclude_path)
-    if not path.is_absolute():
-        path = ROOT / path
-    try:
-        return EXCLUDE_BEGIN in path.read_text(encoding="utf-8", errors="ignore")
-    except OSError:
-        return False
 
 
 def tracked_agent_count() -> tuple[int, bool]:
@@ -187,9 +166,6 @@ def main() -> int:
     tracked_agents, tracked_timeout = tracked_agent_count()
     policy = project_policy()
     effective_policy = policy.get("effective", {}) if isinstance(policy.get("effective"), dict) else {}
-    fullrepo_policy = (
-        effective_policy.get("fullrepo", {}) if isinstance(effective_policy.get("fullrepo"), dict) else {}
-    )
     normal_policy = (
         effective_policy.get("normal_branch_policy", {})
         if isinstance(effective_policy.get("normal_branch_policy"), dict)
@@ -215,8 +191,6 @@ def main() -> int:
         if isinstance(effective_policy.get("instruction_docs"), dict)
         else {}
     )
-    fullrepo_ref = f"refs/remotes/{FULLREPO_REMOTE}/{FULLREPO_BRANCH}"
-    fullrepo_local_ref = git_bool(["show-ref", "--verify", "--quiet", fullrepo_ref])
     docs_present = [path for path in DOC_FILES if (ROOT / path).is_file()]
     mem_count = memory_count()
     serena_sync_marker = (ROOT / ".serena" / ".serena_sync_state.json").is_file()
@@ -241,17 +215,14 @@ def main() -> int:
             f"memory_count {mem_count if mem_count is not None else 'unknown'}."
         ),
         (
-            "- Fullrepo local state: "
-            f"local {FULLREPO_REMOTE}/{FULLREPO_BRANCH} ref {fullrepo_local_ref}, "
-            f"exclude installed {exclude_installed()}, "
-            f"tracked agent-only paths {'unknown' if tracked_timeout else tracked_agents}."
+            "- Agent context: tracked normally on main "
+            f"(tracked agent-context paths {'unknown' if tracked_timeout else tracked_agents})."
         ),
         (
             "- Project policy: "
             f"source {policy.get('source', 'built-in defaults')}, "
-            f"fullrepo.mode {fullrepo_policy.get('mode', 'auto')}, "
-            f"agent_files {normal_policy.get('agent_files', 'strict-fullrepo-default')}, "
-            f"instruction_docs.mode {instruction_docs_policy.get('mode', 'auto')}, "
+            f"agent_files {normal_policy.get('agent_files', 'allowed')}, "
+            f"instruction_docs.mode {instruction_docs_policy.get('mode', 'tracked-main')}, "
             f"branch_cleanup.mode {branch_cleanup_policy.get('mode', 'advisory')}."
         ),
         (
@@ -262,7 +233,6 @@ def main() -> int:
             f"workspace {os.environ.get('CMUX_WORKSPACE_ID') or 'none'}, "
             f"surface {os.environ.get('CMUX_SURFACE_ID') or 'none'}."
         ),
-        "- Fullrepo network state: not checked during SessionStart; run ry-init or flow-post-task-sync for full sync status.",
         "- Branch cleanup: not evaluated during SessionStart; run flow-post-task-sync before final delivery.",
     ]
 
@@ -289,7 +259,7 @@ def main() -> int:
     lines.extend(
         [
             "- If a task starts with insufficient context, trigger scoped ry-init before editing.",
-            "- At init, restore agent-only context from fullrepo only when effective project policy allows it.",
+            "- Agent context (.serena/, AGENTS.md, .claude/) is tracked normally on main; read it directly from the checked-out tree.",
             "- Before edits, pass the context sufficiency gate: code paths, symbols, data contracts, integration points, existing patterns, checks, and research evidence must be known or explicitly marked as unknown.",
             "- This context is advisory only. Do not block execution only because this hook emitted warnings.",
         ]
