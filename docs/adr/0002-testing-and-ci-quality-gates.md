@@ -4,13 +4,15 @@
 
 Accepted.
 
+Superseded in part (1.7.0): the `fullrepo` branch model and its sync helper are retired; agent context is tracked normally on `main`. CI no longer bootstraps, restores, or publishes agent context. The unit-test/coverage gate decision below still stands.
+
 ## Date
 
 2026-05-17.
 
 ## Context
 
-The repository had a strong smoke/static validation gate but no conventional unit-test harness or coverage artifact. Audits identified this as a scalability risk because Python helpers such as routing validation, release evidence generation, fullrepo sync, MCP pin checks, and text/action scanners contain reusable state logic.
+The repository had a strong smoke/static validation gate but no conventional unit-test harness or coverage artifact. Audits identified this as a scalability risk because Python helpers such as routing validation, release evidence generation, flow post-task state, MCP pin checks, and text/action scanners contain reusable state logic.
 
 ## Decision
 

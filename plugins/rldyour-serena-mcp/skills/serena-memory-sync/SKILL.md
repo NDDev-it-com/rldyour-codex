@@ -31,7 +31,7 @@ Do not create memory noise for trivial formatting, purely mechanical edits, curr
 - `.serena/plans/`: non-trivial implementation plans that are worth preserving across sessions.
 - `.serena/research/`: complex or long research results with source links and implementation impact.
 
-In normal product repositories, these knowledge files are agent-only context. They are restored from and published to `fullrepo`, then ignored through `.git/info/exclude` instead of being committed to `main`. Repositories that are themselves agent tooling may intentionally track selected `.serena` knowledge files when they are part of the product source of truth.
+These knowledge files are tracked normally on `main` as ordinary source, with no separate agent-only branch or overlay; the knowledge-only commit lands on `main` like any other source change.
 
 Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`.
 
@@ -163,7 +163,7 @@ Do not write:
 6. Save non-trivial plans to `.serena/plans/` only when they will help future sessions continue work.
 7. Save long research summaries to `.serena/research/` only when the research was complex, source-backed, and likely reusable.
 8. Keep exact paths, symbol names, commands, contracts, invariants, verification checks, and behavior. Avoid generic advice.
-9. Run the plugin's `commit_serena_knowledge.sh` script (path provided by the Stop hook message, or `${CLAUDE_PLUGIN_ROOT}/scripts/commit_serena_knowledge.sh` when the plugin is enabled). In repositories where `.serena` knowledge is still tracked, this creates the knowledge-only commit. In fullrepo-managed repositories, it acknowledges current memories and clears runtime sync markers without committing AI files to the current branch; `flow-post-task-sync` publishes the final `fullrepo` snapshot.
+9. Run the plugin's `commit_serena_knowledge.sh` script (path provided by the Stop hook message, or `${CLAUDE_PLUGIN_ROOT}/scripts/commit_serena_knowledge.sh` when the plugin is enabled). `.serena` knowledge is tracked normally on `main`, so this creates the knowledge-only commit and clears runtime sync markers.
 
 ## Quality Rules
 
@@ -184,4 +184,4 @@ Report:
 - `New memories`: new files, if any.
 - `Plans/research archived`: files written, if any.
 - `Unresolved gaps`: anything that could not be verified from code.
-- `Commit`: whether the Serena knowledge-only auto-commit was created or fullrepo-managed knowledge was acknowledged for later `fullrepo` publish.
+- `Commit`: whether the Serena knowledge-only commit on `main` was created.

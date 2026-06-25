@@ -15,7 +15,7 @@ Describe the repository, plugin, workflow, or documentation surface changed.
 - [ ] `VERSION` and `CHANGELOG.md` updated when release behavior changes
 - [ ] ADR added or updated for durable architecture decisions
 - [ ] Serena memories and instruction docs synchronized when behavior changed
-- [ ] `fullrepo` published when agent-only context changed
+- [ ] Agent context (`.serena/`, `AGENTS.md`, `.claude/`) committed on `main` when it changed
 
 ## Risk
 

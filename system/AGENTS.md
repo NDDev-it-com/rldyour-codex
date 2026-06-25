@@ -29,7 +29,7 @@ verification, documentation, git synchronization, and release follow-through.
 
 Use installed rldyour plugins automatically when the task matches their scope:
 
-- `rldyour-flow`: `ry-init`, `ry-start`, `ry-review`, `ry-repair`, `ry-deploy`, instruction docs sync, post-task sync, fullrepo publish, and lifecycle hooks.
+- `rldyour-flow`: `ry-init`, `ry-start`, `ry-review`, `ry-repair`, `ry-deploy`, instruction docs sync, post-task sync, and lifecycle hooks.
 - `rldyour-serena-mcp`: code understanding, semantic inspection/refactor, and Serena memory sync.
 - `rldyour-explore`: official docs, upstream research, web evidence, and current-version checks.
 - `rldyour-rules`: quality, architecture, dependency policy, verification gates, ADR and instruction policy.
@@ -92,12 +92,12 @@ OpenAI Docs MCP before general web search when it is available.
 ## Git And Delivery
 
 - Prefer atomic Conventional Commits.
-- Split unrelated implementation, validators/tests, docs/instructions, metadata/generated artifacts, and Serena/fullrepo sync when independently reviewable.
+- Split unrelated implementation, validators/tests, docs/instructions, metadata/generated artifacts, and Serena knowledge sync when independently reviewable.
 - Do not force-push `main`. Do not rewrite pushed history without explicit owner approval.
 - Run checks matching the touched scope and report exact commands.
 - If changes are committed, push when synchronization or release workflow requires it.
-- In fullrepo-managed repositories, keep agent-only files out of normal branches; restore/publish them through `fullrepo`.
-- Standard finish order: Serena memories and instruction docs, checks, atomic normal-branch commits, push, publish `fullrepo` with safe force-with-lease, cleanup merged workflow branches/worktrees when safe.
+- Agent context (`.serena/`, `AGENTS.md`, `.claude/`) is tracked normally on `main` as ordinary source; only runtime-local cache/state/markers stay gitignored.
+- Standard finish order: Serena memories and instruction docs, checks, atomic commits, push, cleanup merged workflow branches/worktrees when safe.
 
 ## Key Commands
 
@@ -119,9 +119,8 @@ python3 scripts/validate_plugin_versions.py
 python3 scripts/validate_instruction_docs.py --require-agent-docs
 python3 scripts/check_serena_memory_freshness.py
 uv run --with pytest --with pytest-cov --with pyyaml python -m pytest
-scripts/sync_fullrepo_branch.sh --status
-scripts/sync_fullrepo_branch.sh --bootstrap-init
-scripts/sync_fullrepo_branch.sh --publish
 ```
+
+Agent context (`.serena/`, `AGENTS.md`, `.claude/`) is tracked normally on `main` as ordinary source; commit it like any other source change.
 
 Restart Codex after changing global `AGENTS.md`, `~/.codex/config.toml`, installed plugins, hooks, skills, managed agents, rules, or MCP runtime definitions.

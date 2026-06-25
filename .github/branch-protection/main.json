@@ -30,6 +30,6 @@
     "MCP safe call smoke (ubuntu) runs only on push (not on pull_request) and therefore is not included as a required pull-request status check.",
     "CodeQL Analyze (python) and Analyze (actions) are required because .github/workflows/codeql.yml runs on every push to main and every pull request, in addition to its weekly schedule.",
     "validate.yml exports the 'MCP runtime pin freshness' job (required on PR); dependency-check.yml exports 'MCP runtime pin freshness (scheduled)' which runs on schedule and on push to MCP pin sources and is intentionally not a pull-request required check.",
-    "Maintainer keeps administrative access for hotfixes and fullrepo synchronization; admin pushes do not trigger release.yml because that workflow listens on push:tags, not push:branches."
+    "Maintainer keeps administrative access for hotfixes; admin pushes do not trigger release.yml because that workflow listens on push:tags, not push:branches."
   ]
 }

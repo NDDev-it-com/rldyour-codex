@@ -35,7 +35,7 @@ Fix quality issues inside the touched scope and affected integration path. If se
 
 Use Conventional Commits. Keep history logical and inspectable: split unrelated
 implementation, tests, validators, docs/instructions, license/metadata,
-generated artifacts, and Serena/fullrepo sync into separate commits when they
+generated artifacts, and Serena knowledge sync into separate commits when they
 are independently reviewable. Do not rewrite already-pushed history without
 explicit owner approval; use a follow-up commit for published branches.
 

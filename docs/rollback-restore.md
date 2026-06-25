@@ -10,7 +10,7 @@ Rollback is a first-class workflow because this repository writes global Codex c
 - The script restores only files that the installer backs up: `AGENTS.md`, `config.toml`, managed `agents/*.toml`, and managed `rules/*.rules`.
 - File restore writes through a temporary file in the target directory and then renames it into place, so a copy failure should not leave a partially written target file.
 - Plugin cache rollback is handled by checking out an older Git revision and rerunning the installer.
-- Agent-only context rollback is handled by restoring or republishing the `fullrepo` branch after the normal branch state is selected.
+- Agent context (`.serena/`, `AGENTS.md`, `.claude/`) is tracked normally on `main`, so it rolls back with the rest of the tree via a normal `git checkout`/`git restore`.
 
 ## List Backups
 
@@ -55,8 +55,9 @@ Return to active development after validation:
 
 ```bash
 git checkout main
-scripts/sync_fullrepo_branch.sh --restore
 ```
+
+Agent context is tracked on `main`, so checking out `main` restores it with the rest of the tree.
 
 ## Failure Diagnosis Before Rollback
 
@@ -68,11 +69,11 @@ scripts/collect_diagnostics.sh --include-doctor
 
 This keeps the failed state available for later analysis without storing secrets.
 
-## Restore Fullrepo Agent Context
+## Restore Agent Context
 
-Use this when `AGENTS.md`, `.serena` knowledge, or other agent-only files are missing on a new or restored machine:
+Agent context (`AGENTS.md`, `.serena/` knowledge, `.claude/`) is tracked normally on `main` as ordinary source. On a new or restored machine it arrives with the clone, and a missing or modified file is recovered with a normal Git restore:
 
 ```bash
-scripts/sync_fullrepo_branch.sh --restore
-scripts/sync_fullrepo_branch.sh --status
+git restore --source=main -- AGENTS.md .claude .serena
+git status -sb
 ```

@@ -27,7 +27,6 @@
     "code-review",
     "post-task-sync",
     "instruction-docs",
-    "fullrepo",
     "automatic-invocation",
     "russian",
     "rldyour"
@@ -37,7 +36,7 @@
   "interface": {
     "displayName": "rldyour Flow",
     "shortDescription": "Жизненный цикл. EN: SDLC flow",
-    "longDescription": "Автономный SDLC workflow Codex для ry-init, ry-start, review, repair, deploy и sync. EN: This plugin defines the rldyour autonomous SDLC workflow for Codex. It provides Russian-first command skills for ry-init, ry-start, ry-newp, ry-review, ry-repair, and ry-deploy, plus reviewer skills for architecture, implementation quality, consistency, integration synchronization, verification/manual tests, and security. The workflow uses Serena-first code understanding, scoped context packs, context sufficiency gates, technical and web research, LSP quality gates, browser validation, security review, GitHub and worktree workflows, instruction docs synchronization for Codex AGENTS.md and Claude Code .claude/CLAUDE.md, fullrepo branch synchronization for agent-only files, server deployment verification, and post-task synchronization. RU: этот плагин маршрутизирует русскоязычные задачи владельца через единый жизненный цикл Codex; ry-repair чинит противоречия инструкций, memory, hooks, MCP/LSP, CI и контрактов без изменения бизнес/ADR-решений без владельца. Its bounded SessionStart dispatcher stays fast and offline: it may restore missing agent-only context only from an existing local origin/fullrepo ref, then provides read-only local repository context with child timeouts, output caps, and process-group cleanup for timed-out children. Deep fullrepo, Serena, and branch-cleanup checks run in ry-init, Stop, doctor, or explicit validation instead of the startup hook. Its PreToolUse cwd guard blocks Bash commands that would rename or remove the active Codex session directory or repository root, because Codex runs hook commands with the session cwd. Its ordered Stop lifecycle dispatcher drains hook stdin, bounds Serena and Flow child checks, invokes Serena memory synchronization first, and then runs Flow post-task synchronization with local-only fullrepo status so cross-plugin Stop hooks cannot race while Codex still sees one blocking lifecycle gate.",
+    "longDescription": "Автономный SDLC workflow Codex для ry-init, ry-start, review, repair, deploy и sync. EN: This plugin defines the rldyour autonomous SDLC workflow for Codex. It provides Russian-first command skills for ry-init, ry-start, ry-newp, ry-review, ry-repair, and ry-deploy, plus reviewer skills for architecture, implementation quality, consistency, integration synchronization, verification/manual tests, and security. The workflow uses Serena-first code understanding, scoped context packs, context sufficiency gates, technical and web research, LSP quality gates, browser validation, security review, GitHub and worktree workflows, instruction docs synchronization for Codex AGENTS.md and Claude Code .claude/CLAUDE.md tracked normally on main, server deployment verification, and post-task synchronization. RU: этот плагин маршрутизирует русскоязычные задачи владельца через единый жизненный цикл Codex; ry-repair чинит противоречия инструкций, memory, hooks, MCP/LSP, CI и контрактов без изменения бизнес/ADR-решений без владельца. Its bounded SessionStart dispatcher stays fast and offline: it provides read-only local repository context with child timeouts, output caps, and process-group cleanup for timed-out children. Deep Serena and branch-cleanup checks run in ry-init, Stop, doctor, or explicit validation instead of the startup hook. Its PreToolUse cwd guard blocks Bash commands that would rename or remove the active Codex session directory or repository root, because Codex runs hook commands with the session cwd. Its ordered Stop lifecycle dispatcher drains hook stdin, bounds Serena and Flow child checks, invokes Serena memory synchronization first, and then runs Flow post-task synchronization so cross-plugin Stop hooks cannot race while Codex still sees one blocking lifecycle gate.",
     "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [
@@ -52,11 +51,9 @@
       "Multi-reviewer workflow",
       "Deployment workflow",
       "Session start context",
-      "Session start worktree bootstrap",
       "Non-blocking commit advice",
       "Post-task sync",
       "Instruction docs sync",
-      "Fullrepo agent-only file sync",
       "Russian user-facing workflow"
     ],
     "websiteURL": "https://github.com/NDDev-it-com/rldyour-codex",

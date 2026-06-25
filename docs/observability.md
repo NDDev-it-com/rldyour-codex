@@ -13,8 +13,6 @@ This repository uses lightweight operational observability: deterministic logs, 
 - `scripts/validate_release.sh`: release manifest and SBOM dry-run validation.
 - `scripts/validate_execpolicy_rules.sh`: Codex execpolicy rules validation with representative blocked, prompt, and allow commands.
 - `scripts/validate_marketplace.sh`: complete local plugin, skill, MCP, hook, and policy validation.
-- `scripts/smoke_clean_bootstrap.sh`: new-machine bootstrap behavior.
-- `scripts/sync_fullrepo_branch.sh --status`: agent-only file and `fullrepo` branch state.
 - `gh run list --repo rldyourmnd/rldyour-codex --limit 10`: latest CI state.
 
 ## Diagnostic Bundle
@@ -39,7 +37,7 @@ GitHub Actions writes:
 
 - job summaries through `GITHUB_STEP_SUMMARY`;
 - failure diagnostic artifacts under `diagnostics/ci`;
-- standard workflow logs for validation, doctor, bootstrap, and dependency checks.
+- standard workflow logs for validation, doctor, and dependency checks.
 
 The `cross-platform` workflow runs a lightweight public/free smoke on standard
 Ubuntu, Windows, and macOS GitHub-hosted runners. The heavier `validate`
@@ -53,7 +51,7 @@ The manual `dependency-check` workflow and the `validate` workflow's `mcp`/`full
 
 1. Read the failing GitHub Actions job summary.
 2. Download the diagnostics artifact if present.
-3. Inspect `doctor.txt`, `validate.log`, `codex-mcp-list.txt`, `serena-memory-state.json`, `flow-post-task-state.json`, and `scripts/sync_fullrepo_branch.sh --status` output.
+3. Inspect `doctor.txt`, `validate.log`, `codex-mcp-list.txt`, `serena-memory-state.json`, and `flow-post-task-state.json` output.
 4. Reproduce locally with the exact script that failed.
 5. If runtime config is corrupted, use `scripts/rollback_system_codex.sh --list` and dry-run restore before applying.
 
@@ -63,4 +61,4 @@ The manual `dependency-check` workflow and the `validate` workflow's `mcp`/`full
 - Do not store secrets, tokens, cookies, OAuth data, or private keys.
 - Prefer command outputs that already mask secrets, such as `codex mcp get` and `codex mcp list`.
 - Store screenshots and browser artifacts under `browser/`; store diagnostic bundles under `diagnostics/`.
-- Do not put diagnostics, screenshots, or secrets into `fullrepo`; it is only for durable agent-only workflow context.
+- Do not commit diagnostics, screenshots, or secrets; `.serena/cache/`, `.serena/diagnostics/`, `diagnostics/`, and `browser/` runtime artifacts stay gitignored.
