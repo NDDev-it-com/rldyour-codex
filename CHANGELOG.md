@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.3] - 2026-06-26
+
+### Fixed
+
+- Pin the security-static workflow actionlint install to existing upstream `v1.7.12` instead of the invalid `v1.7.22` tag.
+
 ## [1.7.2] - 2026-06-26
 
 ### Fixed
