@@ -192,8 +192,10 @@ def instruction_state(root: Path) -> dict[str, Any]:
     dirty_instruction_docs = sorted(path for path in dirty_paths if is_instruction_doc(path))
 
     review_reasons: list[str] = []
-    if missing_docs:
-        review_reasons.append("required agent instruction docs are missing")
+    # Missing instruction docs are advisory only (surfaced via `missing_docs`),
+    # never a Stop blocker: repos legitimately differ in layout (Codex uses
+    # system/AGENTS.md; OpenCode uses .opencode/) and a bare/new repo must not be
+    # blocked for absent docs. validate_instruction_docs.py is the presence gate.
     if legacy_root_claude_present:
         review_reasons.append("legacy root CLAUDE.md exists; preferred project memory path is .claude/CLAUDE.md")
     if dirty_instruction_docs:
