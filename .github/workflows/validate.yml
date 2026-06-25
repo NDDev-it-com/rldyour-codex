@@ -46,13 +46,6 @@ jobs:
           install-codex: "false"
           install-dart: "false"
 
-      - name: Bootstrap fullrepo agent context
-        shell: bash
-        run: |
-          set -o pipefail
-          mkdir -p dist/gates
-          scripts/sync_fullrepo_branch.sh --bootstrap-ci 2>&1 | tee dist/gates/fullrepo-bootstrap.log
-
       - name: Run fast validation
         shell: bash
         run: |
@@ -69,8 +62,6 @@ jobs:
             pytest.xml
             coverage.xml
             pytest.stderr.log
-            dist/gates/fullrepo-bootstrap.log
-            dist/gates/fullrepo-bootstrap-ci.json
           retention-days: 14
 
   runtime-ubuntu:
@@ -103,7 +94,7 @@ jobs:
             echo "- OS: ${RUNNER_OS}"
             echo "- Ref: ${GITHUB_REF}"
             echo "- SHA: ${GITHUB_SHA}"
-            echo "- Checks: installer, quick strict doctor, Codex hooks/list trust smoke, hook smoke, fullrepo sync smoke"
+            echo "- Checks: installer, quick strict doctor, Codex hooks/list trust smoke, hook smoke"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Collect diagnostics
@@ -217,13 +208,6 @@ jobs:
       - name: Set up validation runtime
         uses: ./.github/actions/setup-codex-runtime
 
-      - name: Bootstrap fullrepo agent context
-        shell: bash
-        run: |
-          set -o pipefail
-          mkdir -p dist/gates
-          scripts/sync_fullrepo_branch.sh --bootstrap-ci 2>&1 | tee dist/gates/fullrepo-bootstrap.log
-
       - name: Install rldyour Codex into temporary CODEX_HOME
         run: scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME"
 
@@ -248,6 +232,4 @@ jobs:
           name: mcp-safe-calls-stderr
           path: |
             mcp-safe-calls.stderr.log
-            dist/gates/fullrepo-bootstrap.log
-            dist/gates/fullrepo-bootstrap-ci.json
           retention-days: 14
