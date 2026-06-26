@@ -1,6 +1,6 @@
 {
   "name": "rldyour-security",
-  "version": "1.7.10",
+  "version": "1.7.11",
   "description": "Безопасная реализация и defensive review. EN: OWASP and security review skills.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",

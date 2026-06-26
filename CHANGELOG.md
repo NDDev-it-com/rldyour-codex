@@ -1,6 +1,8 @@
 # Changelog
 
-## 1.7.10 - 2026-06-27
+## [1.7.11] - 2026-06-27
+
+### Changed
 
 - Refresh Codex CLI runtime baseline to 0.142.3.
 
