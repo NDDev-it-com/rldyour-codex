@@ -1,6 +1,6 @@
 {
   "name": "rldyour-browser",
-  "version": "1.7.10",
+  "version": "1.7.11",
   "description": "Браузерная проверка и debug для Playwright/DevTools. EN: Browser validation and debugging workflows.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
