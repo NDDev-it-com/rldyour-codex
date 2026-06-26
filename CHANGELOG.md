@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.9] - 2026-06-27
+
+### Changed
+
+- Refresh shadcn MCP runtime pin to the latest published 4.12.0 release.
+
 ## [1.7.8] - 2026-06-26
 
 ### Changed
