@@ -1,6 +1,6 @@
 {
   "name": "rldyour-rules",
-  "version": "1.7.7",
+  "version": "1.7.8",
   "description": "Инженерные правила качества, architecture, deps, gates и ADR. EN: Quality-first engineering rules.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.8] - 2026-06-26
+
+### Changed
+
+- Sync Serena release memories after runtime and MCP refresh.
+
 ## [1.7.7] - 2026-06-26
 
 ### Changed
