@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-25
-Last verified: 2026-06-25
-Last commit: d451cc060cc197537e9be6339c0085636a886cc0 fix(ci): exclude dist/gates CI receipts from release bundle assets
+Last updated: 2026-06-28
+Last verified: 2026-06-28
+Last commit: 9adbc0788922b9555a1ca7d5a5ddc57a2e5c1453 chore(release): rldyour-codex 1.7.12
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,11 +23,11 @@ release readiness, versioning, and artifact hygiene
 - checked by: Codex ry-start memory taxonomy sync
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.7.11`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.7.12`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:1519dc15c250c8155862c56960ba06b708c5ddf7`
+- `commit:9adbc0788922b9555a1ca7d5a5ddc57a2e5c1453`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
