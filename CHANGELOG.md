@@ -61,6 +61,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.12] - 2026-06-28
+
+### Fixed
+
+- Fix Codex CodeQL regex anchor alerts.
+
 ## [1.7.1] - 2026-06-25
 
 ### Fixed
