@@ -21,6 +21,7 @@ release readiness, versioning, and artifact hygiene
 - date: 2026-06-28
 - commit: `9adbc0788922b9555a1ca7d5a5ddc57a2e5c1453`
 - checked by: Codex 1.7.12 release sync after CodeQL regex-anchor remediation
+- checked by: Codex 1.7.12 release sync after CodeQL regex-anchor remediation
 
 ## Facts
 - Current rldyour-codex adapter VERSION is `1.7.12`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
