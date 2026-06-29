@@ -20,10 +20,10 @@ release readiness, versioning, and artifact hygiene
 ## Last verified
 - date: 2026-06-29
 - commit: `769bce145adf9d6aadabdf485410f271c46995fa`
-- checked by: Codex 1.7.14 release sync after Codex CLI runtime baseline refresh
+- checked by: Codex 1.7.15 release sync after Ruff/Pyright baseline hardening
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.7.14`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.7.15`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
