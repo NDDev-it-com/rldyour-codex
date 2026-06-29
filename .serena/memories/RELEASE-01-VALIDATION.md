@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-28
-Last verified: 2026-06-28
-Last commit: 9adbc0788922b9555a1ca7d5a5ddc57a2e5c1453 chore(release): rldyour-codex 1.7.12
+Last updated: 2026-06-29
+Last verified: 2026-06-29
+Last commit: e1e1b6e7ed7b164ec57400720f989f9579448f0d chore(release): codex 1.7.13 (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,16 +18,16 @@ release readiness, versioning, and artifact hygiene
 - `path:scripts/smoke_mcp_capabilities.py` (two-layer external-MCP smoke resilience: per-server handler graceful skip + `--skip-server` CI policy)
 
 ## Last verified
-- date: 2026-06-28
-- commit: `9adbc0788922b9555a1ca7d5a5ddc57a2e5c1453`
-- checked by: Codex 1.7.12 release sync after CodeQL regex-anchor remediation
+- date: 2026-06-29
+- commit: `e1e1b6e7ed7b164ec57400720f989f9579448f0d`
+- checked by: Codex 1.7.13 release sync after GitHub MCP server pin refresh
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.7.12`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.7.13`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:9adbc0788922b9555a1ca7d5a5ddc57a2e5c1453`
+- `commit:e1e1b6e7ed7b164ec57400720f989f9579448f0d`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
