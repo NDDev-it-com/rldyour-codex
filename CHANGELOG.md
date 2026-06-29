@@ -4,7 +4,7 @@
 
 ### Changed
 
-- Refresh Codex CLI runtime baseline to 0.142.3.
+- Refresh Codex CLI runtime baseline to 0.142.4.
 
 ## [1.7.9] - 2026-06-27
 
@@ -60,6 +60,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+
+## [1.7.14] - 2026-06-29
+
+### Fixed
+
+- Refresh Codex CLI runtime baseline to 0.142.4.
 
 ## [1.7.13] - 2026-06-29
 
