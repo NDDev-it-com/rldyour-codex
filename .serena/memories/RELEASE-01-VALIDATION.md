@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-29
 Last verified: 2026-06-29
-Last commit: e1e1b6e7ed7b164ec57400720f989f9579448f0d chore(release): codex 1.7.13 (other)
+Last commit: 769bce145adf9d6aadabdf485410f271c46995fa chore(release): codex 1.7.14 (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -19,15 +19,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-06-29
-- commit: `e1e1b6e7ed7b164ec57400720f989f9579448f0d`
-- checked by: Codex 1.7.13 release sync after GitHub MCP server pin refresh
+- commit: `769bce145adf9d6aadabdf485410f271c46995fa`
+- checked by: Codex 1.7.14 release sync after Codex CLI runtime baseline refresh
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.7.13`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.7.14`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:e1e1b6e7ed7b164ec57400720f989f9579448f0d`
+- `commit:769bce145adf9d6aadabdf485410f271c46995fa`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
