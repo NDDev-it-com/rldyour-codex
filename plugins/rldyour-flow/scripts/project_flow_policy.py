@@ -10,7 +10,6 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-
 SCHEMA_VERSION = 1
 TRACKED_POLICY = ".rldyour/project-policy.json"
 LOCAL_POLICY = ".rldyour/project-policy.local.json"

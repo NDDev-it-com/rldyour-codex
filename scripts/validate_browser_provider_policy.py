@@ -5,7 +5,6 @@ import argparse
 import json
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 FORBIDDEN = (
     "@playwright/" + "mcp",
@@ -75,7 +74,7 @@ def validate() -> None:
     require("playwright" not in mcp, "playwright must not be an active MCP server")
     chrome = mcp.get("chrome-devtools") or {}
     require(bool(chrome), "chrome-devtools MCP server is required")
-    require(SAFE_CHROME_ARGS <= set(map(str, chrome.get("args") or [])), "chrome-devtools MCP args must keep safe defaults")
+    require(set(map(str, chrome.get("args") or [])) >= SAFE_CHROME_ARGS, "chrome-devtools MCP args must keep safe defaults")
 
     skills_root = ROOT / "plugins/rldyour-browser/skills"
     for skill in REQUIRED_SKILLS:

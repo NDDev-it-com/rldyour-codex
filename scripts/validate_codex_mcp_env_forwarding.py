@@ -17,7 +17,6 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 PLACEHOLDER_RE = re.compile(r"\$\{[A-Z0-9_]+\}")
 GITHUB_TOKEN_ENV = "GITHUB_PERSONAL_ACCESS_TOKEN"

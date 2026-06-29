@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import io
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pytest
-
 from tests.support.importing import import_script
-
 
 mod = import_script("scripts/check_mcp_runtime_versions.py")
 

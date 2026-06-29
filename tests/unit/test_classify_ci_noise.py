@@ -6,7 +6,6 @@ from pathlib import Path
 
 from tests.support.importing import import_script
 
-
 mod = import_script("scripts/classify_ci_noise.py")
 
 

@@ -15,7 +15,6 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from project_flow_policy import load_policy  # noqa: E402
 
-
 CODEX_DOC = "AGENTS.md"
 CLAUDE_DOC = ".claude/CLAUDE.md"
 LEGACY_CLAUDE_DOC = "CLAUDE.md"

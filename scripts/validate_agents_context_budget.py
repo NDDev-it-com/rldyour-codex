@@ -5,7 +5,6 @@ import argparse
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MAX_SINGLE_BYTES = 10 * 1024
 DEFAULT_MAX_COMBINED_BYTES = 24 * 1024

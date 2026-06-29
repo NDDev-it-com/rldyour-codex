@@ -10,7 +10,6 @@ import sys
 from collections import defaultdict
 from typing import Any, Iterable
 
-
 MEMORY_TAXONOMY = {
     "version": 2,
     "filename_pattern": "AREA-01-SLUG.md",

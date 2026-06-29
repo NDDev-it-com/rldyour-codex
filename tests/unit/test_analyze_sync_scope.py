@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from tests.support.importing import import_script
 
-
 mod = import_script("plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py")
 
 
