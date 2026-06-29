@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-25
-Last verified: 2026-06-25
-Last commit: 698a800c48294a799de24f1f444044bb1bfbd6db chore(release): codex 1.6.1
+Last updated: 2026-06-29
+Last verified: 2026-06-29
+Last commit: 8e503c6c3674e9628e0ce4d537871e2d68a533b0 chore(mcp): bump GitHub MCP server pin to 1.5.0
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -13,18 +13,21 @@ MCP runtime transport and pin policy
 
 ## Current source of truth
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
 - `path:README.md`
 
 ## Last verified
-- date: 2026-06-25
-- commit: `698a800c48294a799de24f1f444044bb1bfbd6db`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-06-29
+- commit: `8e503c6c3674e9628e0ce4d537871e2d68a533b0`
+- checked by: Codex release sync MCP freshness gate
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
+- Current Codex MCP runtime pins include `GITHUB_MCP_SERVER_VERSION=1.5.0` in `config/mcp-runtime-versions.env`; this fixed the stale `1.4.0` GitHub MCP server pin detected by MCP runtime freshness validation.
 
 ## Evidence
-- `commit:698a800c48294a799de24f1f444044bb1bfbd6db`
+- `commit:8e503c6c3674e9628e0ce4d537871e2d68a533b0`
+- `path:config/mcp-runtime-versions.env`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:README.md`
 
