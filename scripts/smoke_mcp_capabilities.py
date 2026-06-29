@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import importlib
 import json
 import os
 import shutil
@@ -11,11 +12,7 @@ import tomllib
 from collections.abc import Awaitable, Callable
 from contextlib import AsyncExitStack, suppress
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from mcp import ClientSession
-
+from typing import Any
 
 EXPECTED_TOOLS: dict[str, set[str]] = {
     "serena": {"initial_instructions", "onboarding", "list_memories", "get_symbols_overview", "find_symbol", "read_memory"},
@@ -56,6 +53,18 @@ TRANSIENT_EXTERNAL_FAILURE_MARKERS = (
 
 class ProbeFailure(Exception):
     pass
+
+
+def _require_mcp_imports() -> tuple[Any, Any, Any]:
+    try:
+        mcp_module = importlib.import_module("mcp")
+        stdio_module = importlib.import_module("mcp.client.stdio")
+        stream_http_module = importlib.import_module("mcp.client.streamable_http")
+    except ModuleNotFoundError as exc:
+        raise ProbeFailure(
+            "missing optional MCP runtime dependency; install it to run MCP probes in runtime mode"
+        ) from exc
+    return mcp_module, stdio_module, stream_http_module
 
 
 def _exception_chain_text(exc: BaseException) -> str:
@@ -220,7 +229,7 @@ def _content_len(result: Any) -> int:
     return len(content) if isinstance(content, list) else 0
 
 
-async def _safe_call(name: str, session: "ClientSession", missing_env: list[str]) -> str | None:
+async def _safe_call(name: str, session: Any, missing_env: list[str]) -> str | None:
     if name == "serena":
         result = await session.call_tool("list_memories", {})
         if result.isError:
@@ -299,10 +308,9 @@ async def _safe_call(name: str, session: "ClientSession", missing_env: list[str]
 
 async def _stdio_session(
     spec: dict[str, Any],
-    body: Callable[["ClientSession", list[str]], Awaitable[None]],
+    body: Callable[[Any, list[str]], Awaitable[None]],
 ) -> None:
-    from mcp import ClientSession, StdioServerParameters
-    from mcp.client.stdio import stdio_client
+    mcp_module, stdio_module, _ = _require_mcp_imports()
 
     command = str(spec.get("command") or "")
     if not command:
@@ -314,11 +322,13 @@ async def _stdio_session(
         raise ProbeFailure(f"command not found: {command}")
 
     env, missing_env = _merged_env(spec)
-    params = StdioServerParameters(command=command, args=[str(arg) for arg in spec.get("args") or []], env=env)
+    params = stdio_module.StdioServerParameters(
+        command=command, args=[str(arg) for arg in spec.get("args") or []], env=env
+    )
     stack = AsyncExitStack()
     try:
-        read, write = await stack.enter_async_context(stdio_client(params))
-        session = await stack.enter_async_context(ClientSession(read, write))
+        read, write = await stack.enter_async_context(stdio_module.stdio_client(params))
+        session = await stack.enter_async_context(mcp_module.ClientSession(read, write))
         await session.initialize()
         await body(session, missing_env)
     except Exception:
@@ -331,18 +341,17 @@ async def _stdio_session(
 
 async def _http_session(
     spec: dict[str, Any],
-    body: Callable[["ClientSession", list[str]], Awaitable[None]],
+    body: Callable[[Any, list[str]], Awaitable[None]],
 ) -> None:
-    from mcp import ClientSession
-    from mcp.client.streamable_http import streamablehttp_client
+    mcp_module, _, stream_http_module = _require_mcp_imports()
 
     url = str(spec.get("url") or "")
     if not url:
         raise ProbeFailure("missing url")
     stack = AsyncExitStack()
     try:
-        read, write, _ = await stack.enter_async_context(streamablehttp_client(url))
-        session = await stack.enter_async_context(ClientSession(read, write))
+        read, write, _ = await stack.enter_async_context(stream_http_module.streamablehttp_client(url))
+        session = await stack.enter_async_context(mcp_module.ClientSession(read, write))
         await session.initialize()
         await body(session, [])
     except Exception:
@@ -371,7 +380,7 @@ async def _probe_server(
             return "skip", message
         raise ProbeFailure(message)
 
-    async def body(session: ClientSession, missing_env: list[str]) -> None:
+    async def body(session: Any, missing_env: list[str]) -> None:
         if missing_env and not allow_missing_env:
             raise ProbeFailure(f"missing required environment variables: {', '.join(missing_env)}")
         tools_result = await session.list_tools()

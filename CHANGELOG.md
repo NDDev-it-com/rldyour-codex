@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.15] - 2026-06-29
+
+### Fixed
+
+- Harden Ruff and Pyright baseline across adapter configs.
+
 ## [1.7.11] - 2026-06-27
 
 ### Changed
@@ -59,7 +65,6 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and marketplace/plugin versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 
 ## [1.7.14] - 2026-06-29
 

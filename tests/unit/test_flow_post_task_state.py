@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 from tests.support.importing import import_script
-
 
 mod = import_script("plugins/rldyour-flow/scripts/flow_post_task_state.py")
 

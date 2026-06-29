@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 from tests.support.importing import import_script
-
 
 mod = import_script("plugins/rldyour-flow/scripts/project_flow_policy.py")
 

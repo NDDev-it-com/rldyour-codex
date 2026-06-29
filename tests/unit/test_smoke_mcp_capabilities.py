@@ -10,7 +10,6 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
-
 from tests.support.importing import REPO_ROOT
 
 

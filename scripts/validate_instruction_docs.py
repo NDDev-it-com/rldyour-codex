@@ -8,7 +8,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 SECRET_RE = re.compile(
     r"ctx7sk-[A-Za-z0-9-]+|"
     r"ghp_[A-Za-z0-9_]+|"

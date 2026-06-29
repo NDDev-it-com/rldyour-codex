@@ -8,8 +8,11 @@
     "**/__pycache__",
     ".serena/cache",
     ".venv",
-    "node_modules"
+    "node_modules",
+    "**/tests/**"
   ],
   "pythonVersion": "3.13",
-  "typeCheckingMode": "basic"
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": "none"
 }

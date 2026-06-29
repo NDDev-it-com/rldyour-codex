@@ -5,7 +5,6 @@ from pathlib import Path
 
 from tests.support.importing import import_script
 
-
 mod = import_script("scripts/validate_codex_managed_agents_bilingual.py")
 
 

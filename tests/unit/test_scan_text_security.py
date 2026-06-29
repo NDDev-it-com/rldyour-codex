@@ -4,7 +4,6 @@ from pathlib import Path
 
 from tests.support.importing import import_script
 
-
 mod = import_script("scripts/scan_text_security.py")
 
 

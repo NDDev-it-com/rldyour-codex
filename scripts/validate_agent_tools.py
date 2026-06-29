@@ -28,8 +28,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from codex_openai_metadata_policy import validate_metadata_file
-
+from codex_openai_metadata_policy import validate_metadata_file  # noqa: E402
 
 EXPECTED_AGENT_MODEL = "gpt-5.5"
 EXPECTED_AGENT_REASONING = "medium"

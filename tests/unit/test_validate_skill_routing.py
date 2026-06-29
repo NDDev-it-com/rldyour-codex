@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from tests.support.importing import import_script
 
-
 mod = import_script("scripts/validate_skill_routing.py")
 
 
