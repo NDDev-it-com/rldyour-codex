@@ -61,6 +61,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.13] - 2026-06-29
+
+### Fixed
+
+- Sync Codex GitHub MCP runtime pin and release evidence.
+
 ## [1.7.12] - 2026-06-28
 
 ### Fixed
