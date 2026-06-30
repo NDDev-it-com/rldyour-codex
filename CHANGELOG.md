@@ -66,6 +66,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+
+## [1.7.16] - 2026-06-30
+
+### Fixed
+
+- Fix Codex published SBOM checksum and attestation proof.
+
 ## [1.7.14] - 2026-06-29
 
 ### Fixed
