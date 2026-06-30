@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-29
 Last verified: 2026-06-29
-Last commit: 64f4dea90a7951e228c4ec33ab7958351a7eb8b0 chore(serena): sync release memory after 1.7.15
+Last commit: c5e798825250d7b7fba8b9fcdbd2dcef0183db64 chore(release): codex 1.7.16 (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -19,15 +19,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-06-29
-- commit: `64f4dea90a7951e228c4ec33ab7958351a7eb8b0`
-- checked by: Codex 1.7.15 release memory sync after Ruff/Pyright baseline hardening
+- commit: `c5e798825250d7b7fba8b9fcdbd2dcef0183db64`
+- checked by: Codex 1.7.16 release sync after published SBOM checksum and attestation proof hardening
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.7.15`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.7.16`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:64f4dea90a7951e228c4ec33ab7958351a7eb8b0`
+- `commit:c5e798825250d7b7fba8b9fcdbd2dcef0183db64`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
