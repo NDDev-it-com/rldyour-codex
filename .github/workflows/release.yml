@@ -133,7 +133,6 @@ jobs:
           # directory so the dist/* asset operations (checksums, release upload) only
           # ever see regular files and never fail on a subdirectory.
           rm -rf dist/gates
-          sha256sum dist/* > dist/SHA256SUMS
 
       - name: Export GitHub dependency graph SBOM when available
         shell: bash
@@ -153,6 +152,12 @@ jobs:
             rm -f dist/github-dependency-graph-sbom.spdx.json
           fi
 
+      - name: Generate release checksums
+        run: |
+          set -euo pipefail
+          rm -f dist/SHA256SUMS
+          sha256sum dist/* > dist/SHA256SUMS
+
       - name: Attest release bundle
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
@@ -162,6 +167,12 @@ jobs:
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
           subject-path: dist/sbom.spdx.json
+
+      - name: Attest GitHub dependency graph SBOM
+        if: hashFiles('dist/github-dependency-graph-sbom.spdx.json') != ''
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        with:
+          subject-path: dist/github-dependency-graph-sbom.spdx.json
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
