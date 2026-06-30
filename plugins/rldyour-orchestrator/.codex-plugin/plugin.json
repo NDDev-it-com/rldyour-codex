@@ -1,6 +1,6 @@
 {
   "name": "rldyour-orchestrator",
-  "version": "1.7.15",
+  "version": "1.7.16",
   "description": "Оркестратор cmux на macOS: терминал-оркестратор делегирует worker-терминалам. EN: cmux orchestrator.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
