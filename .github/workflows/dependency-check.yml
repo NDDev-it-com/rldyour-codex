@@ -35,6 +35,8 @@ jobs:
           install-dart: "false"
 
       - name: Check pinned MCP runtime versions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 scripts/check_mcp_runtime_versions.py --fail-on-outdated --json > dependency-check.json
 
