@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -70,10 +71,22 @@ def pypi_latest(package: str) -> str:
     return version
 
 
+def github_api_request(url: str) -> urllib.request.Request:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "rldyour-codex-mcp-runtime-version-check",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return urllib.request.Request(url, headers=headers)
+
+
 def github_release_latest(repository: str) -> str:
     url = f"https://api.github.com/repos/{repository}/releases/latest"
     # PINS is a repository allowlist, so repository cannot be user-controlled.
-    with urllib.request.urlopen(url, timeout=45) as response:
+    with urllib.request.urlopen(github_api_request(url), timeout=45) as response:
         data = json.load(response)
     tag = data.get("tag_name")
     if not isinstance(tag, str) or not tag:

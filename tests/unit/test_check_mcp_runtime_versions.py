@@ -75,6 +75,28 @@ def test_github_release_latest_reads_tag(monkeypatch) -> None:
     assert mod.github_release_latest("github/github-mcp-server") == "1.1.0"
 
 
+def test_github_release_latest_uses_actions_token(monkeypatch) -> None:
+    class Response(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            self.close()
+
+    captured = {}
+    data = json.dumps({"tag_name": "v1.5.0"}).encode()
+    monkeypatch.setenv("GITHUB_TOKEN", "opaque-test-token")
+
+    def urlopen(request, *args, **kwargs):
+        captured["request"] = request
+        return Response(data)
+
+    monkeypatch.setattr(mod.urllib.request, "urlopen", urlopen)
+    assert mod.github_release_latest("github/github-mcp-server") == "1.5.0"
+    assert captured["request"].headers["Authorization"] == "Bearer opaque-test-token"
+    assert captured["request"].headers["Accept"] == "application/vnd.github+json"
+
+
 def test_pins_include_host_bun_runtime() -> None:
     assert any(pin.key == "BUN_VERSION" and pin.package == "bun" for pin in mod.PINS)
 
