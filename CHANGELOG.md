@@ -67,6 +67,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.17] - 2026-07-01
+
+### Fixed
+
+- Use authenticated GitHub release checks for MCP pin freshness.
+
 ## [1.7.16] - 2026-06-30
 
 ### Fixed
