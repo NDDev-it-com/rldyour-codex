@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-30
 Last verified: 2026-06-30
-Last commit: d5460fc740483610097136b8b53deef83c9cf1e2 chore(release): codex 1.7.17 (other)
+Last commit: 8c9c3f378935939b3954c8b165de05413fc87a41 chore(release): codex 1.7.18 (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -20,10 +20,10 @@ release readiness, versioning, and artifact hygiene
 ## Last verified
 - date: 2026-06-30
 - commit: `d5460fc740483610097136b8b53deef83c9cf1e2`
-- checked by: Codex 1.7.17 release sync after authenticated MCP runtime pin freshness hardening
+- checked by: Codex 1.7.18 release sync after Codex CLI 0.142.5 runtime baseline refresh and authenticated MCP runtime pin freshness hardening
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.7.17`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.7.18`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
