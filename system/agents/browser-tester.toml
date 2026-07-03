@@ -12,13 +12,13 @@ nickname_candidates = ["Viewport", "Pulse", "Canvas"]
 
 mcp_servers.chrome-devtools.enabled = false
 mcp_servers.chrome-devtools.command = "bunx"
-mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.4.0", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
+mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.5.0", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
 mcp_servers.chrome-devtools.startup_timeout_sec = 90
 mcp_servers.chrome-devtools.tool_timeout_sec = 180
 
 mcp_servers.shadcn.enabled = false
 mcp_servers.shadcn.command = "bunx"
-mcp_servers.shadcn.args = ["shadcn@4.12.0", "mcp"]
+mcp_servers.shadcn.args = ["shadcn@4.13.0", "mcp"]
 mcp_servers.shadcn.startup_timeout_sec = 90
 mcp_servers.shadcn.tool_timeout_sec = 120
 
