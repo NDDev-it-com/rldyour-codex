@@ -1,6 +1,7 @@
 # AGENTS.md - rldyour-codex
 
 This repository is the Codex adapter package for the rldyour AI CLI control plane.
+rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory.
 It owns Codex plugin manifests, managed subagents, MCP transport descriptors,
 install/rollback scripts, and static validators. It does not vendor Codex runtime
 binaries.
