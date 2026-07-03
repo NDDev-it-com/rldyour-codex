@@ -29,7 +29,7 @@ jobs:
       attestations: write
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
@@ -159,18 +159,18 @@ jobs:
           sha256sum dist/* > dist/SHA256SUMS
 
       - name: Attest release bundle
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           subject-path: dist/rldyour-codex-${{ env.RELEASE_VERSION }}.tar.gz
 
       - name: Attest generated SBOM
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           subject-path: dist/sbom.spdx.json
 
       - name: Attest GitHub dependency graph SBOM
         if: hashFiles('dist/github-dependency-graph-sbom.spdx.json') != ''
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           subject-path: dist/github-dependency-graph-sbom.spdx.json
 
