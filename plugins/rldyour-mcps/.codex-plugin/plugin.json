@@ -1,6 +1,6 @@
 {
   "name": "rldyour-mcps",
-  "version": "1.7.19",
+  "version": "1.7.20",
   "description": "Управляемые MCP-серверы Codex без hidden transports. EN: Controlled MCP runtime set.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
