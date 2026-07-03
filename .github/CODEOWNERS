@@ -1,10 +1,18 @@
-* @rldyour
+* @rldyourmnd
 
-.github/** @rldyour
-config/** @rldyour
-docs/** @rldyour
-plugins/rldyour-flow/** @rldyour
-plugins/rldyour-mcps/** @rldyour
-plugins/rldyour-serena-mcp/** @rldyour
-scripts/** @rldyour
-system/** @rldyour
+# Security and governance paths.
+.github/** @rldyourmnd
+.github/workflows/** @rldyourmnd
+.github/dependabot.yml @rldyourmnd
+.github/CODEOWNERS @rldyourmnd
+
+# Core runtime and control surfaces.
+config/** @rldyourmnd
+docs/** @rldyourmnd
+plugins/rldyour-flow/** @rldyourmnd
+plugins/rldyour-mcps/** @rldyourmnd
+plugins/rldyour-serena-mcp/** @rldyourmnd
+scripts/** @rldyourmnd
+system/** @rldyourmnd
+AGENTS.md @rldyourmnd
+.codex-plugin/** @rldyourmnd
