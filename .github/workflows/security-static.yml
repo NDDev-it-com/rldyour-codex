@@ -22,8 +22,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Set up validation runtime
         uses: ./.github/actions/setup-codex-runtime
@@ -31,12 +38,20 @@ jobs:
           install-codex: "false"
           install-dart: "false"
 
-      - name: Install actionlint
+      - name: Install actionlint (pinned + checksum-verified)
         shell: bash
         run: |
           set -euo pipefail
-          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          # actionlint v1.7.12 - Linux amd64 tarball SHA256 from upstream
+          # https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_checksums.txt
+          ACTIONLINT_VERSION='1.7.12'
+          ACTIONLINT_SHA256='8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8'
+          curl -fsSL -o /tmp/actionlint.tar.gz \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  /tmp/actionlint.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/actionlint.tar.gz -C /tmp actionlint
+          install -m 0755 /tmp/actionlint /usr/local/bin/actionlint
+          actionlint --version
 
       - name: Validate GitHub Action SHA pins
         run: python3 scripts/validate_action_pins.py
