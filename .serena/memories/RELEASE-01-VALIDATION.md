@@ -22,7 +22,7 @@ release readiness, versioning, and artifact hygiene
 - checked by: Codex ry-start memory taxonomy sync
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.7.21`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.7.23`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
