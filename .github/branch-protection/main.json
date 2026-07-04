@@ -7,11 +7,11 @@
     "Release dry-run",
     "MCP runtime pin freshness",
     "No-paid static security",
-    "Analyze (python)",
-    "Analyze (actions)",
-    "cross-platform smoke (ubuntu-latest)",
-    "cross-platform smoke (windows-latest)",
-    "cross-platform smoke (macos-latest)"
+    "Analyze (python) / CodeQL (python)",
+    "Analyze (actions) / CodeQL (actions)",
+    "cross-platform smoke (ubuntu-latest) / smoke (ubuntu-latest)",
+    "cross-platform smoke (windows-latest) / smoke (windows-latest)",
+    "cross-platform smoke (macos-latest) / smoke (macos-latest)"
   ],
   "strict_required_status_checks": true,
   "allow_force_pushes": false,
