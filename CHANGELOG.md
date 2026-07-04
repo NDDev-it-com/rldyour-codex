@@ -67,6 +67,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.21] - 2026-07-04
+
+### Changed
+
+- CI/CD audit remediation for Codex: checksum-verified actionlint (was go install) and harden-runner egress audit + persist-credentials on security-static, codeql, secret-scan, dependency-review, and release jobs.
+
 ## [1.7.20] - 2026-07-04
 
 ### Security
