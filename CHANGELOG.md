@@ -67,6 +67,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.23] - 2026-07-04
+
+### Fixed
+
+- Migrate CI workflows to nddev-ci-workflows reusable contracts.
+
+## [1.7.22] - 2026-07-04
+
+### Fixed
+
+- Migrate CI workflows to nddev-ci-workflows reusable contracts.
+
 ## [1.7.21] - 2026-07-04
 
 ### Changed
