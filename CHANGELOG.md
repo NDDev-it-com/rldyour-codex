@@ -67,6 +67,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.24] - 2026-07-04
+
+### Fixed
+
+- Adopt nddev-ci-workflows 0.2.3 and fix reusable CI edge cases.
+
 ## [1.7.23] - 2026-07-04
 
 ### Fixed
