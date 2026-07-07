@@ -636,6 +636,24 @@
           ]
         }
       ]
+    },
+    {
+      "id": "ru-token-economy",
+      "prompt": "экономь токены запусти команды через rtk token economy",
+      "prompt_terms": [
+        "экономь токены",
+        "rtk"
+      ],
+      "expected": [
+        {
+          "skill": "rldyour-rtk:token-economy",
+          "description_terms": [
+            "token economy",
+            "rtk",
+            "compress command output"
+          ]
+        }
+      ]
     }
   ],
   "routing_classes": {
@@ -676,6 +694,7 @@
     "rldyour-rules:quality-first-engineering": "implicit",
     "rldyour-rules:ry-rules-review": "implicit",
     "rldyour-rules:verification-quality-gates": "implicit",
+    "rldyour-rtk:token-economy": "implicit",
     "rldyour-security:owasp-top-10-implementation": "implicit",
     "rldyour-security:ry-sec-review": "implicit",
     "rldyour-serena-mcp:serena-code-workflow": "implicit",

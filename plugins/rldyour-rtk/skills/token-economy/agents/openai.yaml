@@ -1,0 +1,6 @@
+interface:
+  display_name: Token Economy
+  short_description: 'Экономия токенов через rtk. EN: token economy'
+  default_prompt: 'Используй $token-economy: экономь контекст через rtk и Serena. EN: token economy.'
+policy:
+  allow_implicit_invocation: true

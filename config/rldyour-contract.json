@@ -11,12 +11,13 @@
     "rldyour-lsps",
     "rldyour-mcps",
     "rldyour-orchestrator",
+    "rldyour-rtk",
     "rldyour-rules",
     "rldyour-security",
     "rldyour-serena-mcp"
   ],
   "skills": {
-    "count": 44,
+    "count": 45,
     "names": [
       "architecture-boundaries",
       "browser-debug",
@@ -58,6 +59,7 @@
       "serena-lsp-integration",
       "serena-memory-sync",
       "tech-research",
+      "token-economy",
       "verification-quality-gates",
       "visual-diff-review",
       "web-research",
@@ -136,6 +138,11 @@
         "plugin": "rldyour-serena-mcp",
         "event": "PreToolUse",
         "command_contains": "hooks/prepare_auto_sync.sh"
+      },
+      "tool.pre.rtk-rewrite": {
+        "plugin": "rldyour-rtk",
+        "event": "PreToolUse",
+        "command_contains": "hooks/rtk_rewrite.sh"
       }
     }
   },

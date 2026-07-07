@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/env bash -lc 'exec bash \"${PLUGIN_ROOT:?PLUGIN_ROOT is required}/hooks/rtk_rewrite.sh\"'",
+            "timeout": 10,
+            "statusMessage": "rtk token economy (opt-in)"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -123,6 +123,18 @@
         "authentication": "ON_USE"
       },
       "category": "Developer Tools"
+    },
+    {
+      "name": "rldyour-rtk",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rldyour-rtk"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Developer Tools"
     }
   ]
 }
