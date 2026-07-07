@@ -38,6 +38,7 @@ Use installed rldyour plugins automatically when the task matches their scope:
 - `rldyour-design`: Figma-to-code, design systems, tokens, i18n, FSD, shadcn/ui, ReactBits.
 - `rldyour-security`: OWASP-oriented implementation guidance and defensive `$ry-sec-review`.
 - `rldyour-mcps`: MCP runtime only; never treat it as a behavior policy plugin.
+- `rldyour-rtk`: token economy - prefix supported shell commands with `rtk`; ships an opt-in deterministic hook (`RTK_CODEX_HOOK=1`). See the Token Economy rule and `RTK.md`.
 
 Curated `github@openai-curated` and `gmail@openai-curated` are intentionally enabled.
 For OpenAI, Codex, API, model, plugin, skill, MCP, hook, or config facts, use the official
@@ -51,6 +52,13 @@ OpenAI Docs MCP before general web search when it is available.
 - Planning: Sequential Thinking when available for non-trivial decisions.
 - Browser-visible changes: Playwright CLI validation and Chrome DevTools MCP diagnosis when relevant.
 - Security-sensitive changes: project security scripts, CI security artifacts, and manual review where applicable.
+
+## Token Economy (rtk)
+
+- Prefix supported shell commands with `rtk` so their output is compressed before it reaches context: `rtk git status`, `rtk pytest`, `rtk cargo test`, `rtk ls`, `rtk grep`, `rtk find`, `rtk read <file>`. See `RTK.md`.
+- Do NOT prefix interactive commands, already-`rtk` commands, or output that must be parsed byte-for-byte: control-plane validators (`python3 scripts/validate_*`), `git commit`/`merge`/`rebase`, `gh api`, `jq`.
+- rtk (Rust Token Killer, Apache-2.0) is an external binary (`brew install rtk`), not an MCP server; if absent, prefixing is a harmless no-op.
+- rtk compresses command output; Serena/LSP handle symbol-level code reads. Do not duplicate the two.
 
 ## Codex System Contract
 

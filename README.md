@@ -25,7 +25,7 @@ The runtime baseline reference is `references/codex-baseline.json`, verified 202
 
 ## What This Repository Provides
 
-`rldyour-codex` is a configuration package for the Codex CLI - it is not a fork of the upstream Codex runtime and does not modify Codex internals. It owns the plugin marketplace definition, system installer and rollback tooling, managed subagent role configs, execpolicy rules, MCP server runtime definitions, lifecycle hooks, skills, runtime validation lanes, CI workflows, and Serena project memory for the Codex adapter. The active catalog currently includes 10 plugins and 44 skills. Slash commands are intentionally absent; Codex uses skills and managed subagents as the public invocation surface.
+`rldyour-codex` is a configuration package for the Codex CLI - it is not a fork of the upstream Codex runtime and does not modify Codex internals. It owns the plugin marketplace definition, system installer and rollback tooling, managed subagent role configs, execpolicy rules, MCP server runtime definitions, lifecycle hooks, skills, runtime validation lanes, CI workflows, and Serena project memory for the Codex adapter. The active catalog currently includes 11 plugins and 45 skills. Slash commands are intentionally absent; Codex uses skills and managed subagents as the public invocation surface.
 
 ## Native Boundaries
 
@@ -106,7 +106,7 @@ The installer writes `~/.codex/AGENTS.md`, managed subagent role configs, execpo
 
 ## Active Catalog
 
-The active marketplace contains 10 plugins and 44 skills:
+The active marketplace contains 11 plugins and 45 skills:
 
 **Plugins:**
 
