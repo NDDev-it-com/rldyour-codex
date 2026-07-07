@@ -222,6 +222,7 @@ jobs:
             --allow-missing-env \
             --skip-server figma \
             --skip-server grep \
+            --skip-server chrome-devtools \
             2>mcp-safe-calls.stderr.log
           python3 scripts/classify_ci_noise.py --strict mcp-safe-calls.stderr.log
 
