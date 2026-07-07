@@ -22,7 +22,7 @@ def test_load_skills_finds_current_catalog() -> None:
     skills = mod.load_skills()
     assert "rldyour-flow:ry-start" in skills
     assert "rldyour-browser:browser-validation" in skills
-    assert len(skills) == 44
+    assert len(skills) == 45
 
 
 def test_main_validates_current_policy() -> None:
