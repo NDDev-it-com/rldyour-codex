@@ -67,6 +67,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.7.27] - 2026-07-08
+
+### Fixed
+
+- CloakBrowser default privacy-first browser backend across all adapters (ADR 0003).
+
+## [1.7.26] - 2026-07-08
+
+### Fixed
+
+- CloakBrowser default privacy-first browser backend across all adapters (ADR 0003).
+
+## [1.7.25] - 2026-07-08
+
+### Fixed
+
+- CloakBrowser default privacy-first browser backend across all adapters (ADR 0003).
+
 ## [1.7.24] - 2026-07-04
 
 ### Fixed
