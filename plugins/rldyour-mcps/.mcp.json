@@ -39,7 +39,9 @@
         "--headless",
         "--isolated",
         "--no-usage-statistics",
-        "--no-performance-crux"
+        "--no-performance-crux",
+        "--browserUrl",
+        "http://127.0.0.1:9222"
       ],
       "startup_timeout_sec": 90,
       "tool_timeout_sec": 180
