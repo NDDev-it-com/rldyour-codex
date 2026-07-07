@@ -12,7 +12,7 @@ nickname_candidates = ["Ledger", "Mosaic", "Grain"]
 
 mcp_servers.chrome-devtools.enabled = false
 mcp_servers.chrome-devtools.command = "bunx"
-mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.5.0", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
+mcp_servers.chrome-devtools.args = ["chrome-devtools-mcp@1.5.0", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux", "--browserUrl", "http://127.0.0.1:9222"]
 mcp_servers.chrome-devtools.startup_timeout_sec = 90
 mcp_servers.chrome-devtools.tool_timeout_sec = 180
 
