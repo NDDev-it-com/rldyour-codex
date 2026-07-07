@@ -59,6 +59,10 @@ Separate found facts from your own conclusions. If you infer something from sour
 
 If research leads to a code task, proceed to implementation and verification. Research should improve the solution, not replace the work.
 
+## Browser-backed retrieval (CloakBrowser standard)
+
+WebSearch/WebFetch and MCP research are the non-browser paths. When research needs a real browser (JS-rendered pages, search-engine navigation, login-gated or anti-bot sources), route it through the browser providers, which run on the CloakBrowser privacy-first backend (control-plane ADR 0003): Webwright, Playwright CLI, Chrome DevTools MCP. Never launch a raw stock-Chromium browser for internet research; the CloakBrowser CDP daemon (127.0.0.1:9222) is the mandated engine.
+
 ## Output
 
 For a standalone research answer, respond in Russian with:
