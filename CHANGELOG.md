@@ -67,6 +67,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.1] - 2026-07-08
+
+### Changed
+
+- Adopt nddev-ci-workflows 0.3.0 reusable CI pin
+
 ## [1.8.0] - 2026-07-08
 
 ### Added
