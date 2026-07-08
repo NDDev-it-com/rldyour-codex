@@ -67,6 +67,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.0] - 2026-07-08
+
+### Added
+
+- rtk token-economy core (guaranteed Claude hook, Codex rules-file plus opt-in hook) and the CloakBrowser internet-search standard
+
 ## [1.7.27] - 2026-07-08
 
 ### Fixed
