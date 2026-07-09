@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# CI-only executable fixture. Static policy validators separately prove that
+# production MCP config invokes the bootstrap-managed CloakBrowser wrapper.
+set -eu
+
+exit 0

@@ -83,6 +83,13 @@ jobs:
       - name: Set up validation runtime
         uses: ./.github/actions/setup-codex-runtime
 
+      - name: Install managed browser wrapper fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -d "$HOME/.local/bin"
+          install -m 0755 tests/fixtures/chrome-devtools-mcp "$HOME/.local/bin/chrome-devtools-mcp"
+
       - name: Run runtime validation
         run: scripts/validate_runtime.sh --codex-home "$CODEX_HOME" --strict-runtime
 
