@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: d6aaeea3d3ff5a732bc5bc18434247f86de75183 chore(release): codex 1.7.19 (other)
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: d81051e315663ea5ac6fabc0001aec35da223f46 feat(browser): enforce managed CloakBrowser transport (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -17,16 +17,16 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `d6aaeea3d3ff5a732bc5bc18434247f86de75183`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `d81051e315663ea5ac6fabc0001aec35da223f46`
+- checked by: Codex adapter release finalization
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.8.2`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.8.3`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:d6aaeea3d3ff5a732bc5bc18434247f86de75183`
+- `commit:d81051e315663ea5ac6fabc0001aec35da223f46`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
