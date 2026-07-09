@@ -5,6 +5,13 @@ repository is public, so standard GitHub-hosted runners do not consume the
 owner's private-repository Actions minutes. Keep every workflow on standard
 runner labels and keep third-party actions pinned to full commit SHAs.
 
+## Shared Workflow Pin
+
+Every reusable `NDDev-it-com/nddev-ci-workflows` caller is pinned to signed
+release `0.5.1` at commit
+`ac4d1f469f5974741c7449305ffcbd5f05a5a47f`. The repository test
+`tests/unit/test_shared_workflow_pin.py` rejects a mixed SHA or version comment.
+
 ## Required PR Gates
 
 | Workflow | Purpose |
