@@ -13,15 +13,17 @@ def test_missing_launchers_groups_affected_servers(monkeypatch) -> None:
     servers = {
         "serena": {"command": "uvx"},
         "context7": {"command": "bunx"},
-        "chrome-devtools": {"command": "bunx"},
+        "chrome-devtools": {"command": "/bin/sh"},
         "deepwiki": {"url": "https://example.invalid/mcp"},
         "disabled": {"command": "dart", "enabled": False},
     }
     monkeypatch.setattr(mod, "executable_exists", lambda command: command == "uvx")
+    monkeypatch.setattr(mod.os.path, "isfile", lambda path: False)
 
     assert mod.missing_launchers(servers, require_codex=True) == {
-        "bunx": ["chrome-devtools", "context7"],
+        "bunx": ["context7"],
         "codex": ["installer/doctor"],
+        "~/.local/bin/chrome-devtools-mcp": ["chrome-devtools"],
     }
 
 

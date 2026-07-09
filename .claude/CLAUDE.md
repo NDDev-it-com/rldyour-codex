@@ -14,7 +14,7 @@ Codex adapter project memory for `rldyour-codex`.
 
 ## Runtime Baseline
 
-- Codex CLI runtime pin: `@openai/codex@0.142.5` (verified in baseline metadata).
+- Codex CLI runtime pin: `@openai/codex@0.144.0` (verified in baseline metadata).
 - MCP pins are pinned in `config/mcp-runtime-versions.env` and validated by checks.
 
 ## Installer and Checks

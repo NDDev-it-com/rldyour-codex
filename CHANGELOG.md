@@ -67,6 +67,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.3] - 2026-07-10
+
+### Changed
+
+- Route every Codex Chrome DevTools MCP surface through the managed,
+  health-gated CloakBrowser wrapper and align Playwright CLI to `0.1.17`.
+- Adopt the published Codex CLI `0.144.0` stable runtime baseline.
+
+
 ## [1.8.2] - 2026-07-08
 
 ### Changed

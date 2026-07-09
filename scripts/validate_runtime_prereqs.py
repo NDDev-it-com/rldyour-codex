@@ -27,6 +27,7 @@ REMEDIATION = {
     "codex": "Install the pinned @openai/codex CLI or set CODEX_BIN to its executable path.",
     "shellcheck": "Install ShellCheck with brew install shellcheck or apt-get install shellcheck.",
 }
+MANAGED_CHROME_WRAPPER = "~/.local/bin/chrome-devtools-mcp"
 
 
 def load_mcp_servers(path: Path) -> dict[str, dict[str, object]]:
@@ -67,6 +68,11 @@ def missing_launchers(
             continue
         command = spec.get("command")
         if not isinstance(command, str) or not command:
+            continue
+        if name == "chrome-devtools":
+            wrapper = os.path.expanduser(MANAGED_CHROME_WRAPPER)
+            if not (os.path.isfile(wrapper) and os.access(wrapper, os.X_OK)):
+                affected.setdefault(MANAGED_CHROME_WRAPPER, []).append(name)
             continue
         if not executable_exists(command):
             affected.setdefault(command, []).append(name)
@@ -116,7 +122,12 @@ def main() -> int:
             {
                 "launcher": launcher,
                 "affected": affected,
-                "fix": REMEDIATION.get(launcher, f"Install {launcher} or disable affected servers."),
+                "fix": REMEDIATION.get(
+                    launcher,
+                    "Run rldyour-new-mac-or-ubuntu bootstrap to install the managed CloakBrowser wrapper."
+                    if launcher == MANAGED_CHROME_WRAPPER
+                    else f"Install {launcher} or disable affected servers.",
+                ),
             }
             for launcher, affected in sorted(missing.items())
         ],
