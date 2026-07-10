@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+
+## [1.8.9] - 2026-07-10
+
+### Fixed
+
+- Eliminate CodeQL implicit string concatenation findings.
+
 ## [1.8.8] - 2026-07-10
 
 ### Security

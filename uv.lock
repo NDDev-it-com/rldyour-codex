@@ -4,5 +4,5 @@ requires-python = "==3.13.*"
 
 [[package]]
 name = "rldyour-codex"
-version = "1.8.8"
+version = "1.8.9"
 source = { virtual = "." }
