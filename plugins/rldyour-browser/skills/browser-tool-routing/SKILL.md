@@ -1,27 +1,39 @@
 ---
 name: browser-tool-routing
-description: "Маршрутизирует browser tasks: Webwright, Playwright CLI, Chrome DevTools MCP. Используй для: UI, визуально, скриншот, Figma, консоль, сеть, перфоманс. EN triggers: browser routing, UI validation, screenshots, visual QA, console, network."
+description: "Маршрутизирует browser tasks только через managed Playwright CLI и Chrome DevTools MCP. Используй для: UI, визуально, скриншот, Figma, консоль, сеть, перфоманс. EN triggers: browser routing, UI validation, screenshots, visual QA, console, network."
 ---
 
 # Browser Tool Routing
 
-Choose the provider before browser work:
+Choose the allowed provider before browser work:
 
-- Webwright: high-level long-horizon web tasks, reusable scripts, RPA, extraction, comparison, and evidence-first workflows.
 - Playwright CLI: low-level browser flow validation, deterministic screenshots, snapshots, headed sessions, traces, console/request checks, and final UI proof.
 - Chrome DevTools MCP: console/network/runtime/performance/memory/Lighthouse debugging and live Chrome inspection.
 
-Mandatory execution boundary:
+## Mandatory CloakBrowser Boundary
 
-- Webwright must run through `$HOME/.local/bin/webwright`.
-- Playwright CLI must run through `$HOME/.local/bin/playwright-cli`.
-- Chrome DevTools MCP must run through `$HOME/.local/bin/chrome-devtools-mcp`
-  using the exact managed `/bin/sh -c` transport.
-- All three bootstrap-owned wrappers must use CloakBrowser as their browser
-  engine. There is no stock Chromium, Codex in-app browser, raw browser, direct
-  provider-package executable, or alternate browser-engine fallback.
-- If a managed wrapper or CloakBrowser health gate is unavailable, fail closed
-  and report `NOT_PROVEN`; do not bypass the managed runtime.
+Before every browser action, execute exactly
+`$HOME/.local/bin/cloakbrowser-cdp-health`. If the command is missing or exits
+nonzero, stop immediately and report `NOT_PROVEN`.
+
+After a successful preflight, use only:
+
+- Exact `$HOME/.local/bin/playwright-cli`; never use `run-code` or `--filename`.
+- Chrome DevTools MCP only when its managed-wrapper transport is exactly
+  `/bin/sh -c 'exec "$HOME/.local/bin/chrome-devtools-mcp" --headless --isolated --no-usage-statistics --no-performance-crux'`.
+
+Never use a Webwright runtime (including Python Webwright), stock Browser, raw
+Browser, in-app Browser, `browser_agent`, `node_repl`, `computer-use`,
+Playwright MCP, raw Playwright, `bunx`, `npx`, direct provider packages,
+alternate CDP endpoints, alternate executables, alternate configs, or any
+fallback. Repeat the exact health preflight before each Playwright CLI command
+and before each Chrome DevTools MCP tool call.
+
+This boundary must fail closed: stock Chromium, the in-app browser, and every
+raw browser path are forbidden.
+
+- The compatibility skill `webwright-task` routes old prompts into these two
+  managed providers and never runs Webwright.
 - The Codex system config must keep `browser@openai-bundled`, `node_repl`, and
   `computer-use` on `enabled = false`. If one becomes active, stop browser work,
   rerun the system installer, restart Codex, and revalidate with doctor.
@@ -29,17 +41,26 @@ Mandatory execution boundary:
 RU triggers: проверь UI, проверь в браузере, визуально, pixel-perfect, сравни с Figma, сравни с фото, скриншот, консоль, сеть, перфоманс, Lighthouse.
 EN triggers: validate UI, browser check, visual QA, pixel-perfect, compare with Figma, compare with reference image, screenshot, console, network, performance, Lighthouse.
 
-Use Webwright for long-horizon web task execution and reusable `final_script.py` workflows. Use Playwright CLI for low-level browser flow validation, screenshot capture under `browser/`, snapshots, responsive matrices, and post-fix proof. Use Chrome DevTools MCP for console, network, runtime, layout, performance, memory, Lighthouse, and live Chrome debugging.
+Use managed Playwright CLI for browser flow validation, screenshot capture
+under `browser/`, snapshots, responsive matrices, long-horizon workflows, and
+post-fix proof. Use approved Chrome DevTools MCP for console, network, runtime,
+layout, performance, memory, Lighthouse, and live Chrome debugging.
 
 Decision tree:
 
-1. If the user asks for a long-horizon web task, extraction, comparison, booking/search flow, export, or reusable script, use Webwright.
-2. If the user asks to validate UI, reproduce clicks/forms, capture screenshots, compare Figma/photo/screenshot, or prove final UI state, use Playwright CLI.
-3. If the user asks for console, network, runtime exception, computed style, layout debug, Lighthouse, performance, memory, or live Chrome inspection, use Chrome DevTools MCP.
-4. If the browser issue is unknown, reproduce with Playwright CLI first, then diagnose with Chrome DevTools MCP when runtime evidence is relevant.
-5. Never use Webwright as a DevTools replacement.
-6. Never use a browser-control MCP surface for Playwright; the approved provider is Playwright CLI.
-7. Never route browser work to an in-app browser, raw browser process, stock
-   Chromium, or a direct provider package.
+1. If the user asks for a long-horizon web task, extraction, comparison,
+   booking/search flow, export, or reusable procedure, use managed Playwright
+   CLI actions.
+2. If the user asks to validate UI, reproduce clicks/forms, capture screenshots,
+   compare Figma/photo/screenshot, or prove final UI state, use managed
+   Playwright CLI.
+3. If the user asks for console, network, runtime exception, computed style,
+   layout debug, Lighthouse, performance, memory, or live Chrome inspection,
+   use approved Chrome DevTools MCP.
+4. If the browser issue is unknown, reproduce with managed Playwright CLI first,
+   then diagnose with approved Chrome DevTools MCP when runtime evidence is
+   relevant.
+5. Never use a browser-control MCP surface for Playwright; the approved provider
+   is the exact managed Playwright CLI executable.
 
 For unknown browser defects, reproduce with Playwright CLI first and then diagnose with Chrome DevTools MCP when runtime evidence is relevant.

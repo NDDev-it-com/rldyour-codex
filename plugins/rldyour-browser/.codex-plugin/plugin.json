@@ -1,6 +1,6 @@
 {
   "name": "rldyour-browser",
-  "version": "1.8.7",
+  "version": "1.8.8",
   "description": "Браузерная проверка и debug для Playwright/DevTools. EN: Browser validation and debugging workflows.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
@@ -24,21 +24,20 @@
     "debugging",
     "automatic-invocation",
     "rldyour",
-    "webwright",
     "playwright-cli"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "rldyour Browser",
     "shortDescription": "Браузерная проверка. EN: Browser validation",
-    "longDescription": "Браузерные workflows Codex для browser validation, screenshots, long-horizon web tasks и runtime-debug. EN: This skills-only plugin defines automatic browser workflows for Codex. Its skills should be selected automatically when the owner asks to check in the browser, verify visually, validate a UI, inspect screenshots, test a user flow, prove business logic, compare pixel-perfect output, run a long-horizon reusable web task, debug console/network/runtime/layout failures, or analyze performance. Webwright is the high-level provider for reusable web tasks and final_script.py workflows. Playwright CLI is the low-level provider for user-flow reproduction, functional validation, business-logic verification, screenshots, snapshots, responsive matrices, traces, and final UI checks. Chrome DevTools MCP is the specialist provider for console, network, DOM/runtime, layout, Lighthouse, performance trace, memory, and deeper browser debugging. Browser artifacts such as screenshots, videos, traces, PDFs, and temporary evidence must be written under browser/ and treated as ignored local artifacts unless the owner explicitly asks to preserve them.",
+    "longDescription": "Браузерные workflows Codex с обязательным CloakBrowser preflight. EN: This skills-only plugin routes every browser action through exact managed Playwright CLI or the approved Chrome DevTools MCP wrapper after a fail-closed CloakBrowser health check. Historical Webwright prompts use a compatibility skill that never starts Webwright. Browser artifacts such as screenshots, videos, traces, PDFs, and temporary evidence must be written under browser/ and treated as ignored local artifacts unless the owner explicitly asks to preserve them.",
     "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [
       "Automatic browser skill routing",
       "Skills",
       "Playwright CLI workflow",
-      "Webwright workflow",
+      "Mandatory CloakBrowser preflight",
       "Chrome DevTools MCP workflow",
       "Pixel-perfect browser validation",
       "Functional and business-logic verification",
@@ -50,13 +49,13 @@
     "defaultPrompt": [
       "Используй $browser-validation: проверь UI в браузере через Playwright CLI evidence. EN: browser validation.",
       "Используй $browser-debug: консоль, сеть, runtime через Chrome DevTools MCP. EN: browser debug.",
-      "Используй $browser-tool-routing: выбери Webwright, Playwright CLI или DevTools. EN: route browser providers."
+      "Используй $browser-tool-routing: выбери managed Playwright CLI или DevTools. EN: route browser providers."
     ],
     "brandColor": "#0EA5E9",
     "screenshots": []
   },
   "tags": [
-    "Webwright workflow",
+    "CloakBrowser fail-closed workflow",
     "Playwright CLI workflow",
     "Chrome DevTools MCP workflow"
   ]

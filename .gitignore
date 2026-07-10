@@ -15,7 +15,7 @@ node_modules/
 diagnostics/
 dist/
 
-# Browser / Webwright / Playwright CLI runtime artifacts
+# Browser / Playwright CLI runtime artifacts, including retired Webwright residue
 browser/**
 !browser/
 !browser/.gitkeep

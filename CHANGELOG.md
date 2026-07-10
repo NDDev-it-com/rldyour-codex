@@ -1,71 +1,32 @@
 # Changelog
 
-## [1.7.15] - 2026-06-29
-
-### Fixed
-
-- Harden Ruff and Pyright baseline across adapter configs.
-
-## [1.7.11] - 2026-06-27
-
-### Changed
-
-- Refresh Codex CLI runtime baseline to 0.142.4.
-
-## [1.7.9] - 2026-06-27
-
-### Changed
-
-- Refresh shadcn MCP runtime pin to the latest published 4.12.0 release.
-
-## [1.7.8] - 2026-06-26
-
-### Changed
-
-- Sync Serena release memories after runtime and MCP refresh.
-
-## [1.7.7] - 2026-06-26
-
-### Changed
-
-- Refresh CLI runtime and MCP pins to latest stable versions.
-
-## [1.7.6] - 2026-06-26
-
-### Fixed
-
-- Publish a clean follow-up release with a valid Conventional Commit head subject after the 1.7.5 release commit subject included literal quotes.
-
-## [1.7.5] - 2026-06-26
-
-### Fixed
-
-- Replace non-ASCII punctuation in Flow tracked-context documentation so root ASCII hygiene passes.
-
-## [1.7.4] - 2026-06-26
-
-### Fixed
-
-- Align README memory heading with the shared tracked-context adapter template.
-
-## [1.7.3] - 2026-06-26
-
-### Fixed
-
-- Pin the security-static workflow actionlint install to existing upstream `v1.7.12` instead of the invalid `v1.7.22` tag.
-
-## [1.7.2] - 2026-06-26
-
-### Fixed
-
-- Sync generated cmux worker/orchestrator skill projections with the tracked-context branch model.
-
 All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and marketplace/plugin versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.8.8] - 2026-07-10
+
+### Security
+
+- Require every browser-capable skill to run the exact
+  `$HOME/.local/bin/cloakbrowser-cdp-health` preflight before every browser
+  action and fail closed as `NOT_PROVEN` when it is missing or unhealthy.
+- Restrict browser execution to exact managed Playwright CLI and the approved
+  Chrome DevTools MCP wrapper transport; forbid Playwright executable escape
+  flags, raw/in-app/computer-use providers, direct packages, alternate CDP or
+  config paths, and all fallbacks while preserving the 1.8.7 app-managed
+  surface disabling.
+- Convert `webwright-task` into a compatibility-only route that decomposes old
+  prompts across managed Playwright CLI and Chrome DevTools MCP without a
+  Webwright or Python runtime, and enforce the boundary in policy validation
+  plus mutation tests for every browser skill.
+
+### Fixed
+
+- Keep runtime validation portable to macOS Bash 3.2 by passing a non-empty
+  installer argument array under `set -u`, including non-strict static mode.
 
 ## [1.8.7] - 2026-07-10
 
@@ -86,7 +47,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   remove every workflow path that creates or pushes a tag and keep publication
   centralized behind `gh release --verify-tag`.
 
-
 ## [1.8.6] - 2026-07-10
 
 ### Fixed
@@ -101,7 +61,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   `0.144.1`, CloakBrowser `0.4.10`, MCP package pins, managed transport, or
   reusable CI `0.5.1`.
 
-
 ## [1.8.5] - 2026-07-10
 
 ### Fixed
@@ -111,7 +70,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   dependency freshness check after package-level compatibility validation.
 - Preserve Codex CLI `0.144.1`, bootstrap-owned CloakBrowser `0.4.10`, the exact
   managed Chrome DevTools transport, and reusable CI `0.5.1` unchanged.
-
 
 ## [1.8.4] - 2026-07-10
 
@@ -124,7 +82,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Repin every reusable `nddev-ci-workflows` caller to the signed `0.5.1`
   release and add an exact pin regression test.
 
-
 ## [1.8.3] - 2026-07-10
 
 ### Changed
@@ -132,7 +89,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Route every Codex Chrome DevTools MCP surface through the managed,
   health-gated CloakBrowser wrapper and align Playwright CLI to `0.1.17`.
 - Adopt the published Codex CLI `0.144.0` stable runtime baseline.
-
 
 ## [1.8.2] - 2026-07-08
 
@@ -225,6 +181,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Fix Codex published SBOM checksum and attestation proof.
 
+## [1.7.15] - 2026-06-29
+
+### Fixed
+
+- Harden Ruff and Pyright baseline across adapter configs.
+
 ## [1.7.14] - 2026-06-29
 
 ### Fixed
@@ -242,6 +204,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fix Codex CodeQL regex anchor alerts.
+
+## [1.7.11] - 2026-06-27
+
+### Changed
+
+- Refresh Codex CLI runtime baseline to 0.142.4.
+
+## [1.7.9] - 2026-06-27
+
+### Changed
+
+- Refresh shadcn MCP runtime pin to the latest published 4.12.0 release.
+
+## [1.7.8] - 2026-06-26
+
+### Changed
+
+- Sync Serena release memories after runtime and MCP refresh.
+
+## [1.7.7] - 2026-06-26
+
+### Changed
+
+- Refresh CLI runtime and MCP pins to latest stable versions.
+
+## [1.7.6] - 2026-06-26
+
+### Fixed
+
+- Publish a clean follow-up release with a valid Conventional Commit head subject after the 1.7.5 release commit subject included literal quotes.
+
+## [1.7.5] - 2026-06-26
+
+### Fixed
+
+- Replace non-ASCII punctuation in Flow tracked-context documentation so root ASCII hygiene passes.
+
+## [1.7.4] - 2026-06-26
+
+### Fixed
+
+- Align README memory heading with the shared tracked-context adapter template.
+
+## [1.7.3] - 2026-06-26
+
+### Fixed
+
+- Pin the security-static workflow actionlint install to existing upstream `v1.7.12` instead of the invalid `v1.7.22` tag.
+
+## [1.7.2] - 2026-06-26
+
+### Fixed
+
+- Sync generated cmux worker/orchestrator skill projections with the tracked-context branch model.
 
 ## [1.7.1] - 2026-06-25
 
@@ -517,7 +533,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Make `/ry-repair` and launcher planning OS/mode aware for standard and macOS cmux orchestrator installs.
-
 
 ## [1.1.25] - 2026-06-06
 

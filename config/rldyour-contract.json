@@ -202,7 +202,6 @@
       "stock_chromium_fallback": false
     },
     "required_common_providers": [
-      "webwright",
       "playwright-cli",
       "chrome-devtools-mcp"
     ],
@@ -212,9 +211,58 @@
     "cli_providers": [
       "playwright-cli"
     ],
-    "task_harness_providers": [
-      "webwright"
-    ],
-    "webwright_support": "adapter-owned-cli-wrapper; upstream-native NOT_PROVEN"
+    "compatibility_skill_routes": {
+      "webwright-task": [
+        "playwright-cli",
+        "chrome-devtools-mcp"
+      ]
+    },
+    "skill_boundary": {
+      "required_skills": [
+        "browser-debug",
+        "browser-tool-routing",
+        "browser-validation",
+        "playwright-cli-validation",
+        "visual-diff-review",
+        "webwright-task"
+      ],
+      "preflight": {
+        "command": "$HOME/.local/bin/cloakbrowser-cdp-health",
+        "before_every_browser_action": true,
+        "failure_result": "NOT_PROVEN"
+      },
+      "playwright_cli": {
+        "executable": "$HOME/.local/bin/playwright-cli",
+        "forbidden_arguments": [
+          "run-code",
+          "--filename"
+        ]
+      },
+      "chrome_devtools_mcp_transport": {
+        "command": "/bin/sh",
+        "args": [
+          "-c",
+          "exec \"$HOME/.local/bin/chrome-devtools-mcp\" --headless --isolated --no-usage-statistics --no-performance-crux"
+        ]
+      },
+      "forbidden_surfaces": [
+        "webwright-runtime",
+        "stock-browser",
+        "raw-browser",
+        "in-app-browser",
+        "browser_agent",
+        "node_repl",
+        "computer-use",
+        "playwright-mcp",
+        "raw-playwright",
+        "bunx",
+        "npx",
+        "direct-provider-package",
+        "alternate-cdp",
+        "alternate-executable",
+        "alternate-config",
+        "fallback"
+      ]
+    }
   }
 }

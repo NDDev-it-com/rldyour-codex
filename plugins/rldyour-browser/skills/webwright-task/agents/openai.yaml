@@ -1,7 +1,7 @@
 interface:
-  display_name: Webwright Task
-  short_description: 'Длинный Webwright web workflow. EN: reusable browser task'
-  default_prompt: 'Используй $webwright-task: reusable browser workflow.'
+  display_name: "Compatibility Browser Task"
+  short_description: "Старый trigger в managed browser route"
+  default_prompt: "Используй $webwright-task для managed CloakBrowser workflow."
 dependencies:
   tools: []
 policy:

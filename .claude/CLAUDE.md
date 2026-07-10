@@ -58,10 +58,13 @@ Do not treat OpenCode or Gemini command formats as native Codex runtime.
 ## MCP and Security Notes
 
 - MCP server definitions are portable in `plugins/rldyour-mcps/.mcp.json`.
-- Browser work must use the bootstrap-owned `$HOME/.local/bin/webwright`,
-  `$HOME/.local/bin/playwright-cli`, and
-  `$HOME/.local/bin/chrome-devtools-mcp` wrappers backed by CloakBrowser; no
-  stock Chromium, in-app browser, or raw-browser fallback is allowed.
+- Before every browser action, run exactly
+  `$HOME/.local/bin/cloakbrowser-cdp-health`; missing or nonzero health means
+  stop with `NOT_PROVEN`. Browser work may then use only exact
+  `$HOME/.local/bin/playwright-cli` (without `run-code` or `--filename`) or the
+  approved exact Chrome DevTools MCP managed-wrapper transport. Webwright,
+  stock/raw/in-app browser paths, browser/computer-use helpers, raw Playwright,
+  direct packages, alternate CDP/config/executables, and fallbacks are banned.
 - System install keeps `browser@openai-bundled`, `node_repl`, and
   `computer-use` explicitly disabled; doctor rejects reinjected active copies
   and requires reinstall plus Codex restart.

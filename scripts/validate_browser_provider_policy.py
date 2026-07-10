@@ -32,12 +32,64 @@ CHROME_ARGS = [
 ]
 MCP_README = Path("plugins/rldyour-mcps/README.md")
 BROWSER_README = Path("plugins/rldyour-browser/README.md")
-BROWSER_ROUTING_SKILL = Path("plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md")
-MANAGED_BROWSER_WRAPPERS = (
-    "$HOME/.local/bin/webwright",
-    "$HOME/.local/bin/playwright-cli",
-    "$HOME/.local/bin/chrome-devtools-mcp",
+BROWSER_ROUTING_SKILL = Path(
+    "plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md"
 )
+HEALTH_PREFLIGHT = "$HOME/.local/bin/cloakbrowser-cdp-health"
+PLAYWRIGHT_CLI = "$HOME/.local/bin/playwright-cli"
+CHROME_WRAPPER = "$HOME/.local/bin/chrome-devtools-mcp"
+MANAGED_BROWSER_WRAPPERS = (PLAYWRIGHT_CLI, CHROME_WRAPPER)
+EXACT_CHROME_TRANSPORT = (
+    '/bin/sh -c \'exec "$HOME/.local/bin/chrome-devtools-mcp" --headless --isolated '
+    "--no-usage-statistics --no-performance-crux'"
+)
+REQUIRED_SKILL_BOUNDARY_TERMS = (
+    "Mandatory CloakBrowser Boundary",
+    "Before every browser action",
+    HEALTH_PREFLIGHT,
+    "missing or exits nonzero",
+    "NOT_PROVEN",
+    PLAYWRIGHT_CLI,
+    "run-code",
+    "--filename",
+    EXACT_CHROME_TRANSPORT,
+    "Webwright runtime",
+    "Python Webwright",
+    "stock Browser",
+    "raw Browser",
+    "in-app Browser",
+    "browser_agent",
+    "node_repl",
+    "computer-use",
+    "Playwright MCP",
+    "raw Playwright",
+    "bunx",
+    "npx",
+    "direct provider packages",
+    "alternate CDP",
+    "alternate executables",
+    "alternate configs",
+    "fallback",
+    "Repeat the exact health preflight",
+)
+FORBIDDEN_POLICY_SURFACES = [
+    "webwright-runtime",
+    "stock-browser",
+    "raw-browser",
+    "in-app-browser",
+    "browser_agent",
+    "node_repl",
+    "computer-use",
+    "playwright-mcp",
+    "raw-playwright",
+    "bunx",
+    "npx",
+    "direct-provider-package",
+    "alternate-cdp",
+    "alternate-executable",
+    "alternate-config",
+    "fallback",
+]
 DISABLED_CODEX_PLUGINS = {"browser@openai-bundled"}
 DISABLED_CODEX_MCP_SERVERS = {"computer-use", "node_repl"}
 DISABLED_CODEX_SURFACE_TERMS = (
@@ -75,20 +127,47 @@ def require(condition: bool, message: str) -> None:
 
 
 def require_terms(text: str, terms: tuple[str, ...], label: str) -> None:
-    missing = [term for term in terms if term not in text]
-    require(not missing, f"{label} missing managed browser contract terms: {', '.join(missing)}")
+    normalized_text = " ".join(text.split())
+    missing = [term for term in terms if " ".join(term.split()) not in normalized_text]
+    require(
+        not missing,
+        f"{label} missing managed browser contract terms: {', '.join(missing)}",
+    )
+
+
+def require_exact_provider_mentions(text: str, label: str) -> None:
+    for token, exact in (
+        ("playwright-cli", PLAYWRIGHT_CLI),
+        ("chrome-devtools-mcp", CHROME_WRAPPER),
+    ):
+        pattern = re.compile(rf"(?<![\w-]){re.escape(token)}(?![\w-])")
+        prefix = exact[: -len(token)]
+        for match in pattern.finditer(text):
+            actual_prefix = text[max(0, match.start() - len(prefix)) : match.start()]
+            require(
+                actual_prefix == prefix,
+                f"{label}: {token} must use exact {exact}",
+            )
 
 
 def validate_browser_docs(root: Path = ROOT) -> None:
     docs = {
         MCP_README: (root / MCP_README).read_text(encoding="utf-8"),
         BROWSER_README: (root / BROWSER_README).read_text(encoding="utf-8"),
-        BROWSER_ROUTING_SKILL: (root / BROWSER_ROUTING_SKILL).read_text(encoding="utf-8"),
+        BROWSER_ROUTING_SKILL: (root / BROWSER_ROUTING_SKILL).read_text(
+            encoding="utf-8"
+        ),
     }
     mcp_readme = docs[MCP_README]
-    require(STALE_CHROME_TABLE not in mcp_readme, "MCP README contains the stale direct-bunx Chrome table row")
+    require(
+        STALE_CHROME_TABLE not in mcp_readme,
+        "MCP README contains the stale direct-bunx Chrome table row",
+    )
     for stale_rule in STALE_LOCAL_RUNTIME_RULES:
-        require(stale_rule not in mcp_readme, "MCP README contains a stale blanket local-runtime rule")
+        require(
+            stale_rule not in mcp_readme,
+            "MCP README contains a stale blanket local-runtime rule",
+        )
     require_terms(
         mcp_readme,
         (
@@ -107,7 +186,13 @@ def validate_browser_docs(root: Path = ROOT) -> None:
             docs[path],
             MANAGED_BROWSER_WRAPPERS
             + DISABLED_CODEX_SURFACE_TERMS
-            + ("CloakBrowser", "stock Chromium", "in-app browser", "raw browser", "fail closed"),
+            + (
+                "CloakBrowser",
+                "stock Chromium",
+                "in-app browser",
+                "raw browser",
+                "fail closed",
+            ),
             str(path),
         )
 
@@ -125,8 +210,12 @@ def validate_browser_docs(root: Path = ROOT) -> None:
 
 
 def validate_disabled_codex_surfaces(root: Path = ROOT) -> None:
-    contract = json.loads((root / "config/rldyour-contract.json").read_text(encoding="utf-8"))
-    surfaces = ((contract.get("browser_providers") or {}).get("disabled_codex_surfaces") or {})
+    contract = json.loads(
+        (root / "config/rldyour-contract.json").read_text(encoding="utf-8")
+    )
+    surfaces = (contract.get("browser_providers") or {}).get(
+        "disabled_codex_surfaces"
+    ) or {}
     require(
         surfaces.get("plugins") == sorted(DISABLED_CODEX_PLUGINS),
         "Codex disabled browser plugin contract drift",
@@ -162,13 +251,93 @@ def validate_disabled_codex_surfaces(root: Path = ROOT) -> None:
     )
 
 
+def validate_skill_boundaries(root: Path = ROOT) -> None:
+    contract = json.loads(
+        (root / "config/rldyour-contract.json").read_text(encoding="utf-8")
+    )
+    browser = contract.get("browser_providers") or {}
+    boundary = browser.get("skill_boundary") or {}
+    require(
+        boundary.get("required_skills") == sorted(REQUIRED_SKILLS),
+        "browser skill boundary inventory drift",
+    )
+    require(
+        boundary.get("preflight")
+        == {
+            "command": HEALTH_PREFLIGHT,
+            "before_every_browser_action": True,
+            "failure_result": "NOT_PROVEN",
+        },
+        "browser skill preflight policy drift",
+    )
+    require(
+        boundary.get("playwright_cli")
+        == {
+            "executable": PLAYWRIGHT_CLI,
+            "forbidden_arguments": ["run-code", "--filename"],
+        },
+        "managed Playwright CLI policy drift",
+    )
+    require(
+        boundary.get("chrome_devtools_mcp_transport")
+        == {"command": CHROME_COMMAND, "args": CHROME_ARGS},
+        "managed Chrome DevTools MCP skill transport drift",
+    )
+    require(
+        boundary.get("forbidden_surfaces") == FORBIDDEN_POLICY_SURFACES,
+        "forbidden browser skill surface policy drift",
+    )
+    require(
+        browser.get("required_common_providers")
+        == ["playwright-cli", "chrome-devtools-mcp"],
+        "browser provider inventory must contain only managed Playwright CLI and Chrome DevTools MCP",
+    )
+    require(
+        browser.get("compatibility_skill_routes")
+        == {"webwright-task": ["playwright-cli", "chrome-devtools-mcp"]},
+        "webwright-task compatibility route drift",
+    )
+    require(
+        "task_harness_providers" not in browser,
+        "Webwright runtime provider inventory must be absent",
+    )
+    require(
+        "webwright_support" not in browser,
+        "legacy Webwright runtime support declaration must be absent",
+    )
+
+    skills_root = root / "plugins/rldyour-browser/skills"
+    for skill in sorted(REQUIRED_SKILLS):
+        path = skills_root / skill / "SKILL.md"
+        require(path.is_file(), f"missing browser skill: {skill}")
+        text = path.read_text(encoding="utf-8")
+        require_terms(text, REQUIRED_SKILL_BOUNDARY_TERMS, str(path.relative_to(root)))
+        require_exact_provider_mentions(text, str(path.relative_to(root)))
+        require(
+            "$HOME/.local/bin/webwright" not in text,
+            f"{path.relative_to(root)} enables Webwright runtime",
+        )
+        if skill == "webwright-task":
+            require(
+                "retained only as a compatibility route" in text,
+                "webwright-task must declare compatibility-only routing",
+            )
+            require(
+                "final_script.py" not in text,
+                "webwright-task must not request Python Webwright artifacts",
+            )
+
+
 def text_files() -> list[Path]:
     paths: list[Path] = []
     ignored_report_names = {"coverage.xml", "pytest.xml", "junit.xml"}
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
-        if any(part in {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache"} for part in path.parts):
+        if any(
+            part in {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache"}
+            for part in path.parts
+        ):
             continue
         if path.name in ignored_report_names or "htmlcov" in path.parts:
             continue
@@ -176,7 +345,15 @@ def text_files() -> list[Path]:
             continue
         if path.name == "CHANGELOG.md" or "decisions" in path.parts:
             continue
-        if path.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp", ".gif", ".zip", ".pyc"}:
+        if path.suffix.lower() in {
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp",
+            ".gif",
+            ".zip",
+            ".pyc",
+        }:
             continue
         paths.append(path)
     return paths
@@ -185,10 +362,15 @@ def text_files() -> list[Path]:
 def validate() -> None:
     validate_browser_docs()
     validate_disabled_codex_surfaces()
+    validate_skill_boundaries()
     hits: list[str] = []
     allowed_negative_surfaces = (
         "scripts/validate_browser_provider_policy.py",
         "tests/",
+        "plugins/rldyour-browser/skills/",
+        "plugins/rldyour-browser/README.md",
+        ".serena/memories/BROWSER-01-WORKFLOW.md",
+        "README.md",
     )
     for path in text_files():
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -200,33 +382,50 @@ def validate() -> None:
                         hits.append(hit)
     require(not hits, "retired browser MCP references remain:\n" + "\n".join(hits[:40]))
 
-    mcp = json.loads((ROOT / "plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8"))["mcpServers"]
+    mcp = json.loads(
+        (ROOT / "plugins/rldyour-mcps/.mcp.json").read_text(encoding="utf-8")
+    )["mcpServers"]
     require("playwright" not in mcp, "playwright must not be an active MCP server")
     chrome = mcp.get("chrome-devtools") or {}
     require(bool(chrome), "chrome-devtools MCP server is required")
-    require(chrome.get("command") == CHROME_COMMAND, "chrome-devtools must use the managed wrapper shell transport")
-    require(chrome.get("args") == CHROME_ARGS, "chrome-devtools must use the exact managed wrapper invocation")
+    require(
+        chrome.get("command") == CHROME_COMMAND,
+        "chrome-devtools must use the managed wrapper shell transport",
+    )
+    require(
+        chrome.get("args") == CHROME_ARGS,
+        "chrome-devtools must use the exact managed wrapper invocation",
+    )
     for agent_path in sorted((ROOT / "system/agents").glob("*.toml")):
         agent = tomllib.loads(agent_path.read_text(encoding="utf-8"))
-        agent_chrome = ((agent.get("mcp_servers") or {}).get("chrome-devtools") or {})
+        agent_chrome = (agent.get("mcp_servers") or {}).get("chrome-devtools") or {}
         require(
-            agent_chrome.get("command") == CHROME_COMMAND and agent_chrome.get("args") == CHROME_ARGS,
+            agent_chrome.get("command") == CHROME_COMMAND
+            and agent_chrome.get("args") == CHROME_ARGS,
             f"{agent_path.relative_to(ROOT)} must copy the exact managed Chrome DevTools transport",
         )
 
-    skills_root = ROOT / "plugins/rldyour-browser/skills"
-    for skill in REQUIRED_SKILLS:
-        path = skills_root / skill / "SKILL.md"
-        require(path.is_file(), f"missing browser skill: {skill}")
     env = (ROOT / "config/mcp-runtime-versions.env").read_text(encoding="utf-8")
-    require("CLOAKBROWSER_VERSION=0.4.10" in env, "CloakBrowser wrapper version pin missing")
-    require("PLAYWRIGHT_CLI_VERSION=0.1.17" in env, "Playwright CLI version pin missing")
-    require("WEBWRIGHT_PIN=4a46f282ec37f27d6003cc498a977939d62d9015" in env, "Webwright pin missing")
+    require(
+        "CLOAKBROWSER_VERSION=0.4.10" in env, "CloakBrowser wrapper version pin missing"
+    )
+    require(
+        "PLAYWRIGHT_CLI_VERSION=0.1.17" in env, "Playwright CLI version pin missing"
+    )
+    require("WEBWRIGHT_" not in env, "Webwright runtime pins must be absent")
 
-    contract = json.loads((ROOT / "config/rldyour-contract.json").read_text(encoding="utf-8"))
-    engine = ((contract.get("browser_providers") or {}).get("required_engine") or {})
-    require(engine.get("name") == "cloakbrowser", "CloakBrowser must be the required browser engine")
-    require(engine.get("version_pin") == "CLOAKBROWSER_VERSION", "CloakBrowser contract version pin drift")
+    contract = json.loads(
+        (ROOT / "config/rldyour-contract.json").read_text(encoding="utf-8")
+    )
+    engine = (contract.get("browser_providers") or {}).get("required_engine") or {}
+    require(
+        engine.get("name") == "cloakbrowser",
+        "CloakBrowser must be the required browser engine",
+    )
+    require(
+        engine.get("version_pin") == "CLOAKBROWSER_VERSION",
+        "CloakBrowser contract version pin drift",
+    )
     require(
         engine.get("installer_owner") == "rldyour-new-mac-or-ubuntu",
         "CloakBrowser installer ownership must remain with bootstrap",
@@ -235,11 +434,16 @@ def validate() -> None:
         engine.get("managed_wrapper") == "~/.local/bin/chrome-devtools-mcp",
         "CloakBrowser managed wrapper contract drift",
     )
-    require(engine.get("stock_chromium_fallback") is False, "stock Chromium fallback must remain disabled")
+    require(
+        engine.get("stock_chromium_fallback") is False,
+        "stock Chromium fallback must remain disabled",
+    )
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate Codex browser provider policy.")
+    parser = argparse.ArgumentParser(
+        description="Validate Codex browser provider policy."
+    )
     parser.add_argument("--strict", action="store_true")
     parser.parse_args()
     try:

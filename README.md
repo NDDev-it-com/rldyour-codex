@@ -17,10 +17,10 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.7` |
+| Adapter version | `1.8.8` |
 | Runtime baseline | Codex CLI 0.144.1 (`@openai/codex`) |
 | Browser wrapper baseline | CloakBrowser 0.4.10 (`cloakbrowser`; bootstrap-owned) |
-| GitHub release tag | `1.8.7` |
+| GitHub release tag | `1.8.8` |
 
 The runtime baseline reference is `references/codex-baseline.json`, verified 2026-07-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.144.1`.
 
@@ -47,11 +47,13 @@ MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runt
 **Runtime install or update** - on machines that need a Codex CLI install or update:
 
 ```bash
-curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
 bun add -g @openai/codex@0.144.1
 codex --version
 codex doctor
 ```
+
+The repository bootstrap owns verified system installation. This adapter does
+not recommend piping a mutable network response into a shell.
 
 **System config install** - dry-run first, then apply:
 
@@ -121,7 +123,7 @@ The active marketplace contains 11 plugins and 45 skills:
 - `rldyour-explore`: research skills for technical MCP research and authoritative web research.
 - `rldyour-serena-mcp`: Serena-first semantic code workflow, fact-only `.serena` memory sync, plans, research archive, and lifecycle hooks.
 - `rldyour-security`: non-blocking OWASP Top 10 2025 secure-implementation guidance and `ry-sec-review` security review skill.
-- `rldyour-browser`: provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
+- `rldyour-browser`: fail-closed CloakBrowser workflows through managed Playwright CLI and Chrome DevTools MCP.
 - `rldyour-design`: Figma → code, centralized i18n, dynamic/static content classification, token-based design system, reusable UI kit, strict FSD frontend architecture, shadcn/ui, ReactBits, and browser validation workflows.
 - `rldyour-lsps`: language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - `rldyour-flow`: autonomous SDLC workflows for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-repair`, `ry-deploy`, scoped context packs, context sufficiency gates, instruction docs sync, fast offline SessionStart worktree bootstrap/context dispatcher hooks, cwd-safe PreToolUse guardrails, advisory commit hooks, reviewer tracks, and post-task synchronization.
@@ -146,13 +148,19 @@ Architecture decisions:
 
 ## Browser / Design / DevTools Routing
 
-Browser automation uses three active providers, routed by task type per `config/browser-automation-policy.json`:
+Browser automation uses two active providers, routed by task type per the root
+control-plane `config/browser-automation-policy.json`:
 
-- **Webwright** (`rldyour-browser`): task-harness provider for full autonomous browser workflows. Adapter-owned CLI wrapper; upstream-native availability is NOT_PROVEN in this adapter.
-- **Playwright CLI** (`rldyour-browser`): CLI provider for Playwright test execution and browser-driven validation.
+- **Playwright CLI** (`rldyour-browser`): exact
+  `$HOME/.local/bin/playwright-cli` for browser-driven validation and
+  decomposed long-horizon workflows; `run-code` and `--filename` are forbidden.
 - **Chrome DevTools MCP** (`plugins/rldyour-mcps`): MCP provider for DevTools protocol access - screenshots, network inspection, console, performance traces, and heap snapshots - via the `chrome-devtools` MCP server.
 
-The required browser engine is the bootstrap-managed CloakBrowser wrapper. Its
+Before every browser action, the skill contract executes exactly
+`$HOME/.local/bin/cloakbrowser-cdp-health`; missing or nonzero health fails
+closed as `NOT_PROVEN`. Chrome DevTools MCP is allowed only through the exact
+managed `/bin/sh -c` wrapper transport. The required browser engine is the
+bootstrap-managed CloakBrowser wrapper. Its
 adapter policy pin is `CLOAKBROWSER_VERSION=0.4.10`; the adapter rejects a
 stock-Chromium fallback and keeps Chrome DevTools MCP on the exact
 `~/.local/bin/chrome-devtools-mcp` transport. Installation and browser-binary
@@ -161,6 +169,12 @@ wrapper-only release that fixes iframe humanization and the JavaScript CLI
 entry point without changing the browser binaries; see the
 [`v0.4.10` tag](https://github.com/CloakHQ/CloakBrowser/tree/v0.4.10)
 and [PyPI package](https://pypi.org/project/cloakbrowser/0.4.10/).
+
+The historical `webwright-task` skill name is compatibility-only and routes to
+managed Playwright CLI/Chrome DevTools MCP; Webwright runtime, Python
+Webwright, stock/raw/in-app Browser, `browser_agent`, `node_repl`,
+`computer-use`, Playwright MCP/raw Playwright, direct `bunx`/`npx` packages,
+alternate CDP/config/executables, and all browser fallbacks are forbidden.
 
 The `rldyour-design` plugin provides Figma → code workflows, FSD frontend architecture, token-based design system implementation, shadcn/ui integration, ReactBits, and browser validation workflows layered on top of these browser providers.
 

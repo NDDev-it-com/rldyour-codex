@@ -1,6 +1,6 @@
 {
   "name": "rldyour-mcps",
-  "version": "1.8.7",
+  "version": "1.8.8",
   "description": "Управляемые MCP-серверы Codex без hidden transports. EN: Controlled MCP runtime set.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
@@ -30,7 +30,7 @@
   "interface": {
     "displayName": "rldyour MCP Servers",
     "shortDescription": "Управляемые MCP. EN: controlled servers",
-    "longDescription": "Управляемый MCP runtime Codex для approved servers, pinned launchers и safe tool routing. EN: This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, shadcn, Dart/Flutter, Figma, and OpenAI Developer Docs. Chrome DevTools MCP remains the specialist browser DevTools provider for console, network, runtime, performance, memory, Lighthouse, and live Chrome inspection. Webwright and Playwright CLI live in the browser provider policy outside MCP. OpenAI Developer Docs MCP is the authoritative source for current OpenAI and Codex product documentation. Local launcher packages and host runtime prerequisites are pinned through config/mcp-runtime-versions.env and strict runtime validation. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
+    "longDescription": "Управляемый MCP runtime Codex для approved servers, pinned launchers и safe tool routing. EN: This plugin connects the owner's approved MCP server set for Codex: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep by Vercel, shadcn, Dart/Flutter, Figma, and OpenAI Developer Docs. Chrome DevTools MCP remains the specialist browser DevTools provider through its exact CloakBrowser-backed managed wrapper. Managed Playwright CLI lives in the browser provider policy outside MCP; Webwright runtime is forbidden. OpenAI Developer Docs MCP is the authoritative source for current OpenAI and Codex product documentation. Local launcher packages and host runtime prerequisites are pinned through config/mcp-runtime-versions.env and strict runtime validation. The plugin does not define global agent behavior and does not store secrets. It is responsible only for MCP transport configuration; specialized skills, memory policies, security rules, and workflow commands belong in separate plugins. User-facing conversation remains Russian unless the owner asks otherwise, while repository documentation is written in English.",
     "developerName": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "category": "Developer Tools",
     "capabilities": [

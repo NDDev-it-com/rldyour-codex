@@ -12,8 +12,8 @@ historical patch in the line.
 
 | Version | Supported |
 |---|---|
-| Current exact tag `1.8.7` | yes |
-| Older `1.1.*` tags | no; upgrade to current exact tag |
+| Current exact tag `1.8.8` | yes |
+| Older patch tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 
 ## Reporting a Vulnerability

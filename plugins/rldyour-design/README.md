@@ -2,7 +2,10 @@
 
 `rldyour-design` is a skills-only design implementation plugin for Codex.
 
-It does not configure MCP servers directly. Figma and shadcn MCP plus Chrome DevTools MCP are provided by `rldyour-mcps`; Playwright is used through Playwright CLI + Skills, not MCP; Webwright is available for high-level long-horizon browser tasks.
+It does not configure MCP servers directly. Figma and shadcn MCP plus Chrome
+DevTools MCP are provided by `rldyour-mcps`; browser work delegates to
+`rldyour-browser`, which permits only managed Playwright CLI and the approved
+Chrome DevTools MCP wrapper after the mandatory CloakBrowser health preflight.
 
 User-facing conversation stays in Russian unless the owner asks otherwise. Repository documentation is written in English.
 
