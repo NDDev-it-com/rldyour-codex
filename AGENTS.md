@@ -57,6 +57,8 @@ python3 scripts/validate_execpolicy_rules.py
   `config/mcp-runtime-versions.env` (runtime pins).
 - Runtimes and launchers are validated through local smoke checks before commit.
 - `install_system_codex.sh` writes portable paths into `~/.codex/config.toml`.
+- The installer owns `check_for_update_on_startup = false` in every managed
+  config because bootstrap owns exact, transactional Codex runtime upgrades.
 - The installer must explicitly disable `browser@openai-bundled` and preserve
   app-managed `node_repl` / `computer-use` transport metadata only with
   `enabled = false`; doctor must fail on reinjection and require a restart.

@@ -67,6 +67,7 @@ OpenAI Docs MCP before general web search when it is available.
 - Do not mix Codex permission profiles (`default_permissions` or `[permissions]`) with legacy `sandbox_mode` in the same active config layer.
 - Current profile files are `$CODEX_HOME/<name>.config.toml`; do not restore legacy `profile = "..."` or `[profiles.*]`.
 - Required features: `[features].hooks = true` and `[features].multi_agent = true`.
+- Centrally managed Codex configs require `check_for_update_on_startup = false`; runtime upgrades are bootstrap-owned transactions against the exact pin.
 - Parent model default is `gpt-5.5` with `model_reasoning_effort = "xhigh"`.
 - Managed subagents use `gpt-5.5` with `model_reasoning_effort = "medium"` unless explicitly changed by the owner.
 - Deprecated aliases such as `codex_hooks`, `plugin_hooks`, legacy web-search flags, `experimental_instructions_file`, `background_terminal_timeout`, `experimental_use_unified_exec_tool`, `use_legacy_landlock`, legacy profile selectors, and active `default_permissions` with `sandbox_mode` must not be present.

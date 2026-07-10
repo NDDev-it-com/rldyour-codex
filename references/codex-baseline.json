@@ -24,6 +24,7 @@
       "permission_profiles_active": false,
       "approval_policy": "never",
       "sandbox_mode": "danger-full-access",
+      "check_for_update_on_startup": false,
       "safe_override_flag": "--safe-mode"
     }
   }

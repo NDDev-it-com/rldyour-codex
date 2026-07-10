@@ -19,6 +19,8 @@ Codex adapter project memory for `rldyour-codex`.
   owned by the `rldyour-new-mac-or-ubuntu` bootstrap.
 - Sequential Thinking MCP `2026.7.4` and Context7 MCP `3.2.3` are mirrored
   between `config/mcp-runtime-versions.env` and the portable `.mcp.json` specs.
+- All managed Codex configs set `check_for_update_on_startup = false`; the
+  bootstrap owns exact, transactional runtime upgrades.
 
 ## Installer and Checks
 

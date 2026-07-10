@@ -17,10 +17,10 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.9` |
+| Adapter version | `1.8.10` |
 | Runtime baseline | Codex CLI 0.144.1 (`@openai/codex`) |
 | Browser wrapper baseline | CloakBrowser 0.4.10 (`cloakbrowser`; bootstrap-owned) |
-| GitHub release tag | `1.8.9` |
+| GitHub release tag | `1.8.10` |
 
 The runtime baseline reference is `references/codex-baseline.json`, verified 2026-07-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.144.1`.
 
@@ -32,11 +32,16 @@ The runtime baseline reference is `references/codex-baseline.json`, verified 202
 
 Codex reads configuration from TOML files rooted at `$CODEX_HOME` (default `~/.codex`):
 
-- `~/.codex/config.toml`: main config - model defaults, `[tui]` status line, global permissions posture, and `[mcp_servers.*]` runtime MCP server entries.
+- `~/.codex/config.toml`: main config - model defaults, `[tui]` status line, global permissions posture, centrally managed update policy, and `[mcp_servers.*]` runtime MCP server entries.
 - `~/.codex/rldyour-yolo.config.toml`: `--profile rldyour-yolo` overlay - `approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, owner-standard full-auto defaults.
 - `~/.codex/rldyour-safe.config.toml`: `--profile rldyour-safe` overlay - `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`.
 - `~/.codex/agents/*.toml`: managed subagent role configs, installed from `system/agents/*.toml`.
 - `~/.codex/rules/`: managed execpolicy rules, installed from `system/rules/*.rules`.
+
+The installer sets `check_for_update_on_startup = false` in all three managed
+config files. Codex upgrades are transactional bootstrap operations against the
+exact runtime pin, rather than self-updates into whichever global npm prefix is
+visible to a session.
 
 The repository's `plugins/rldyour-mcps/.mcp.json` is the portable source of truth for MCP server definitions. The installer resolves portable commands (`uvx`, `bunx`, `dart`) to local executable paths and writes the resolved entries to `[mcp_servers.*]` in `~/.codex/config.toml`; `.mcp.json` is plugin metadata, not a Codex-native runtime format. The Codex plugin format is `plugins/<plugin>/.codex-plugin/plugin.json` with manifest-linked skills, hooks, and assets. The marketplace catalog is `.agents/plugins/marketplace.json`.
 
