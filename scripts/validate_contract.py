@@ -228,6 +228,8 @@ def main() -> int:
             errors.append("security.default_sandbox_mode must be danger-full-access")
         if security.get("default_approval_policy") != "never":
             errors.append("security.default_approval_policy must be never")
+        if security.get("check_for_update_on_startup") is not False:
+            errors.append("security.check_for_update_on_startup must be false for the managed runtime")
         if "default_permissions" in security:
             errors.append("security.default_permissions must be absent while legacy_sandbox is active")
         if security.get("full_auto_standard") is not True:
@@ -248,6 +250,11 @@ def main() -> int:
             errors.append("scripts/doctor_system_codex.sh must validate full-auto mode by default")
         if "owner mode yolo profile selected" in doctor_text:
             errors.append("scripts/doctor_system_codex.sh must not validate the legacy profile selector")
+
+        baseline = load_json(ROOT / "references/codex-baseline.json")
+        owner_runtime_policy = ((baseline.get("baseline") or {}).get("owner_runtime_policy") or {})
+        if owner_runtime_policy.get("check_for_update_on_startup") is not False:
+            errors.append("references/codex-baseline.json must disable the managed startup update check")
 
     if errors:
         print("\n".join(errors), file=sys.stderr)
