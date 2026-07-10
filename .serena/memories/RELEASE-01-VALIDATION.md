@@ -22,8 +22,8 @@ release readiness, versioning, and artifact hygiene
 - checked by: Codex adapter 1.8.8 browser skill-boundary release preparation
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.8.8`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
-- Release `1.8.8` makes the exact CloakBrowser health preflight and two-provider
+- Current rldyour-codex adapter VERSION is `1.8.9`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Release `1.8.9` makes the exact CloakBrowser health preflight and two-provider
   managed execution boundary mandatory in every browser skill while preserving
   Codex CLI `0.144.1`, CloakBrowser `0.4.10`, the 1.8.7 app-managed surface
   disabling, approved MCP pins/transports, curated GitHub/Gmail plugins, and
