@@ -14,13 +14,18 @@ This plugin is the runtime dependency layer those automatic skills use when they
 
 ## Runtime Rule
 
-All local MCP servers must run only through owner-approved runtimes:
+Package-launched local MCP servers must run only through owner-approved runtimes:
 
 - `uv` / `uvx`;
 - `bun` / `bunx`;
 - `dart`.
 
-This plugin does not use `npx`, `npm`, or direct `node` commands for MCP servers. Remote MCP servers with `url` remain URL connections and do not start local processes.
+Chrome DevTools MCP is the explicit managed-wrapper exception: it runs through
+`/bin/sh -c` into the bootstrap-owned managed wrapper at
+`$HOME/.local/bin/chrome-devtools-mcp`, backed by CloakBrowser. The adapter must
+never invoke that package directly through `bunx`, `npx`, `npm`, or `node`.
+Remote MCP servers with `url` remain URL connections and do not start local
+processes.
 
 Local MCP launcher packages are pinned for reproducibility. Do not use `@latest` or unpinned `uvx --from` package specs in `.mcp.json`. Update versions intentionally in both `.mcp.json` and `config/mcp-runtime-versions.env`, then run MCP capability smoke.
 
@@ -43,7 +48,11 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 - MCP write tools are used only when the task explicitly requires state changes.
 - Destructive actions require separate owner confirmation.
 - Remote MCP servers are used only through explicitly configured URLs.
-- Local MCP servers run only through `uv`, `uvx`, `bun`, `bunx`, or `dart`.
+- Package-launched local MCP servers run only through `uv`, `uvx`, `bun`,
+  `bunx`, or `dart`.
+- `chrome-devtools` uses only the bootstrap-owned managed wrapper through
+  `/bin/sh -c`; the wrapper is CloakBrowser-backed and is not a direct package
+  launcher.
 
 ## Connected MCP Servers
 
@@ -51,7 +60,7 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 | --- | --- | --- |
 | `serena` | Semantic navigation, analysis, and precise code editing | `uvx`, headless |
 | `sequential-thinking` | Structured reasoning and planning | `bunx` |
-| `chrome-devtools` | Page diagnostics through Chrome DevTools | `bunx`, headless, isolated |
+| `chrome-devtools` | Page diagnostics through Chrome DevTools | bootstrap-owned managed wrapper (`/bin/sh` -> `$HOME/.local/bin/chrome-devtools-mcp`), CloakBrowser-backed |
 | `context7` | Current library documentation | `bunx`, `CONTEXT7_API_KEY` |
 | `deepwiki` | Repository documentation and explanations | remote URL |
 | `grep` | Search across public GitHub repositories | remote URL |
@@ -106,9 +115,12 @@ Expected state:
 - `serena` starts through `uvx` with the web dashboard disabled.
 - `figma` uses OAuth.
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
+- `chrome-devtools` uses the exact bootstrap-owned managed wrapper and never a
+  direct package or stock-Chromium launch.
 - `openaiDeveloperDocs` uses the official OpenAI Docs MCP endpoint for OpenAI and Codex product documentation.
 - Runtime smoke checks remote URL servers with a Streamable HTTP `initialize` POST preflight. Auth-gated endpoints may return `401`/`403`; `405` is treated as a GET/SSE compatibility signal, not a passing POST result.
-- Local MCP servers do not use `npx`, `npm`, or direct `node` commands.
+- Package-launched MCP servers do not use `npx`, `npm`, or direct `node`
+  commands; Chrome DevTools uses its managed-wrapper exception.
 
 ## Local Dependencies
 
@@ -149,7 +161,6 @@ If the dashboard is needed manually, change this runtime policy intentionally an
 - Serena dashboard: https://oraios.github.io/serena/02-usage/060_dashboard.html
 - Context7: https://www.mintlify.com/upstash/context7/mcp/configuration
 - Codex MCP configuration: https://developers.openai.com/codex/mcp
-- Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - DeepWiki MCP: https://mcp.deepwiki.com/
 - Grep by Vercel: https://vercel.com/blog/grep-a-million-github-repositories-via-mcp-1H5Bmvo4XKswf0TpZIOmEI

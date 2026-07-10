@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import tomllib
 from pathlib import Path
 
@@ -29,6 +30,31 @@ CHROME_ARGS = [
     'exec "$HOME/.local/bin/chrome-devtools-mcp" --headless --isolated '
     "--no-usage-statistics --no-performance-crux",
 ]
+MCP_README = Path("plugins/rldyour-mcps/README.md")
+BROWSER_README = Path("plugins/rldyour-browser/README.md")
+BROWSER_ROUTING_SKILL = Path("plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md")
+MANAGED_BROWSER_WRAPPERS = (
+    "$HOME/.local/bin/webwright",
+    "$HOME/.local/bin/playwright-cli",
+    "$HOME/.local/bin/chrome-devtools-mcp",
+)
+STALE_CHROME_TABLE = (
+    "| `chrome-devtools` | Page diagnostics through Chrome DevTools | "
+    "`bunx`, headless, isolated |"
+)
+STALE_LOCAL_RUNTIME_RULES = (
+    "All local MCP servers must run only through owner-approved runtimes:",
+    "Local MCP servers run only through `uv`, `uvx`, `bun`, `bunx`, or `dart`.",
+)
+DIRECT_CHROME_PACKAGE = re.compile(
+    r"\b(?:bunx|npx|npm\s+exec|node)\b[^\n]{0,120}\bchrome-devtools-mcp(?:@[^\s`]*)?\b",
+    re.IGNORECASE,
+)
+UNSAFE_BROWSER_FALLBACK = re.compile(
+    r"\b(?:fallback|fall\s+back)\s+(?:to\s+)?(?:the\s+|an?\s+)?"
+    r"(?:stock\s+chromium|in-app\s+browser|raw\s+browser)\b",
+    re.IGNORECASE,
+)
 
 
 class Failure(RuntimeError):
@@ -38,6 +64,55 @@ class Failure(RuntimeError):
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise Failure(message)
+
+
+def require_terms(text: str, terms: tuple[str, ...], label: str) -> None:
+    missing = [term for term in terms if term not in text]
+    require(not missing, f"{label} missing managed browser contract terms: {', '.join(missing)}")
+
+
+def validate_browser_docs(root: Path = ROOT) -> None:
+    docs = {
+        MCP_README: (root / MCP_README).read_text(encoding="utf-8"),
+        BROWSER_README: (root / BROWSER_README).read_text(encoding="utf-8"),
+        BROWSER_ROUTING_SKILL: (root / BROWSER_ROUTING_SKILL).read_text(encoding="utf-8"),
+    }
+    mcp_readme = docs[MCP_README]
+    require(STALE_CHROME_TABLE not in mcp_readme, "MCP README contains the stale direct-bunx Chrome table row")
+    for stale_rule in STALE_LOCAL_RUNTIME_RULES:
+        require(stale_rule not in mcp_readme, "MCP README contains a stale blanket local-runtime rule")
+    require_terms(
+        mcp_readme,
+        (
+            "Package-launched local MCP servers",
+            "explicit managed-wrapper exception",
+            "bootstrap-owned managed wrapper",
+            "CloakBrowser-backed",
+            "/bin/sh",
+            "$HOME/.local/bin/chrome-devtools-mcp",
+        ),
+        str(MCP_README),
+    )
+
+    for path in (BROWSER_README, BROWSER_ROUTING_SKILL):
+        require_terms(
+            docs[path],
+            MANAGED_BROWSER_WRAPPERS
+            + ("CloakBrowser", "stock Chromium", "in-app browser", "raw browser", "fail closed"),
+            str(path),
+        )
+
+    combined = "\n".join(docs.values())
+    direct_match = DIRECT_CHROME_PACKAGE.search(combined)
+    require(
+        direct_match is None,
+        f"browser docs contain a direct Chrome DevTools package launch: {direct_match.group(0) if direct_match else ''}",
+    )
+    fallback_match = UNSAFE_BROWSER_FALLBACK.search(combined)
+    require(
+        fallback_match is None,
+        f"browser docs allow an unmanaged browser fallback: {fallback_match.group(0) if fallback_match else ''}",
+    )
 
 
 def text_files() -> list[Path]:
@@ -61,6 +136,7 @@ def text_files() -> list[Path]:
 
 
 def validate() -> None:
+    validate_browser_docs()
     hits: list[str] = []
     allowed_negative_surfaces = (
         "scripts/validate_browser_provider_policy.py",

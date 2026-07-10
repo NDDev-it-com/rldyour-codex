@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: 698a800c48294a799de24f1f444044bb1bfbd6db chore(release): codex 1.6.1
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 8be83a228e75b152cd3b7612bf834906310219a4 chore(release): codex adapter 1.8.5
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -13,20 +13,26 @@ validation gates and test suites
 
 ## Current source of truth
 - `path:scripts`
+- `path:tests/unit/test_validate_browser_provider_policy.py`
 - `path:.github/workflows`
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `698a800c48294a799de24f1f444044bb1bfbd6db`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `8be83a228e75b152cd3b7612bf834906310219a4`
+- checked by: Codex managed browser policy regression refresh
 
 ## Facts
 - Test memories record which suites and smoke tests prove the touched behavior.
+- `scripts/validate_browser_provider_policy.py --strict` and
+  `tests/unit/test_validate_browser_provider_policy.py` reject stale direct
+  Chrome package launch docs, missing managed wrapper paths, and unmanaged
+  browser fallback language.
 
 ## Evidence
-- `commit:698a800c48294a799de24f1f444044bb1bfbd6db`
+- `commit:8be83a228e75b152cd3b7612bf834906310219a4`
 - `path:scripts`
+- `path:tests/unit/test_validate_browser_provider_policy.py`
 - `path:.github/workflows`
 - `path:README.md`
 

@@ -58,6 +58,10 @@ Do not treat OpenCode or Gemini command formats as native Codex runtime.
 ## MCP and Security Notes
 
 - MCP server definitions are portable in `plugins/rldyour-mcps/.mcp.json`.
+- Browser work must use the bootstrap-owned `$HOME/.local/bin/webwright`,
+  `$HOME/.local/bin/playwright-cli`, and
+  `$HOME/.local/bin/chrome-devtools-mcp` wrappers backed by CloakBrowser; no
+  stock Chromium, in-app browser, or raw-browser fallback is allowed.
 - Security checks (CodeQL, secret scanning, dependency checks) are required checks in
   this adapter.
 

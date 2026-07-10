@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: b15ae75129911a81c6c8e562cee31a1473ab25e9 ci(deps): repin reusable workflows to 0.5.1
+Last commit: 8be83a228e75b152cd3b7612bf834906310219a4 chore(release): codex adapter 1.8.5
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -14,6 +14,7 @@ browser-visible validation and debugging workflows
 ## Current source of truth
 - `path:README.md`
 - `path:plugins/rldyour-browser`
+- `path:plugins/rldyour-mcps/README.md`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:config/rldyour-contract.json`
@@ -21,19 +22,25 @@ browser-visible validation and debugging workflows
 
 ## Last verified
 - date: 2026-07-10
-- commit: `b15ae75129911a81c6c8e562cee31a1473ab25e9`
-- checked by: Codex browser-provider baseline refresh
+- commit: `8be83a228e75b152cd3b7612bf834906310219a4`
+- checked by: Codex managed browser documentation contract refresh
 
 ## Facts
 - Browser memories route UI and runtime validation through Webwright, Playwright CLI, and Chrome DevTools MCP when relevant.
 - CloakBrowser is the required browser engine; `CLOAKBROWSER_VERSION=0.4.10` is the adapter policy pin, while installation remains owned by `rldyour-new-mac-or-ubuntu`.
 - Chrome DevTools MCP must use `/bin/sh -c` with the exact bootstrap-managed `~/.local/bin/chrome-devtools-mcp` wrapper invocation. Stock-Chromium fallback is forbidden.
+- Webwright, Playwright CLI, and Chrome DevTools MCP must use their
+  bootstrap-owned wrappers under `$HOME/.local/bin`; every provider is backed
+  by CloakBrowser and missing runtime health fails closed as `NOT_PROVEN`.
+- Stock Chromium, the Codex in-app browser, raw browser processes, direct
+  provider-package launchers, and alternate browser engines are not fallbacks.
 - CloakBrowser `v0.4.10` changes wrapper behavior only (iframe humanization and JavaScript CLI entry-point fixes); the managed browser-binary pins do not change.
 
 ## Evidence
-- `commit:b15ae75129911a81c6c8e562cee31a1473ab25e9`
+- `commit:8be83a228e75b152cd3b7612bf834906310219a4`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
+- `path:plugins/rldyour-mcps/README.md`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `https://github.com/CloakHQ/CloakBrowser/tree/v0.4.10`

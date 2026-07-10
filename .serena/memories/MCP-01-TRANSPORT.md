@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 7f39e8f3704126d9808604168a5c9061da228684 chore(release): codex adapter 1.8.4
+Last commit: 8be83a228e75b152cd3b7612bf834906310219a4 chore(release): codex adapter 1.8.5
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -13,6 +13,7 @@ MCP runtime transport and pin policy
 
 ## Current source of truth
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:plugins/rldyour-mcps/README.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`
 - `https://registry.npmjs.org/@modelcontextprotocol/server-sequential-thinking/2026.7.4`
@@ -20,7 +21,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-07-10
-- commit: `7f39e8f3704126d9808604168a5c9061da228684`
+- commit: `8be83a228e75b152cd3b7612bf834906310219a4`
 - checked by: Codex MCP runtime pin refresh
 
 ## Facts
@@ -30,10 +31,13 @@ MCP runtime transport and pin policy
   `plugins/rldyour-mcps/.mcp.json`.
 - Chrome DevTools MCP remains on the exact bootstrap-managed CloakBrowser
   transport; this dependency refresh does not change browser routing.
+- MCP operator documentation treats Chrome DevTools as the explicit
+  bootstrap-owned managed-wrapper exception to package-launched local runtimes.
 
 ## Evidence
-- `commit:7f39e8f3704126d9808604168a5c9061da228684`
+- `commit:8be83a228e75b152cd3b7612bf834906310219a4`
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:plugins/rldyour-mcps/README.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`
 

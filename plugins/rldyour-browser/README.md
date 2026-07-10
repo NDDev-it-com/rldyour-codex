@@ -17,6 +17,22 @@ User-facing conversation stays in Russian unless the owner asks otherwise. Repos
 - Use Chrome DevTools MCP when the task requires DevTools diagnosis or live Chrome inspection.
 - Store all browser artifacts under `browser/` and do not commit them.
 
+## Mandatory Engine And Wrapper Boundary
+
+All three providers must execute through bootstrap-owned managed wrappers, and
+every wrapper must route browser work to CloakBrowser:
+
+- Webwright: `$HOME/.local/bin/webwright`.
+- Playwright CLI: `$HOME/.local/bin/playwright-cli`.
+- Chrome DevTools MCP: `$HOME/.local/bin/chrome-devtools-mcp` through the exact
+  `/bin/sh -c` transport.
+
+This plugin routes tasks; it does not install provider packages or choose a
+browser engine. There is no stock Chromium, Codex in-app browser, raw browser,
+direct provider-package executable, or alternate browser-engine fallback. A
+missing or unhealthy managed runtime must fail closed and be reported as
+`NOT_PROVEN` instead of being bypassed.
+
 ## Skills
 
 - `browser-tool-routing`: chooses Webwright, Playwright CLI, Chrome DevTools MCP, or a staged combination.

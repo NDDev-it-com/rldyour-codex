@@ -11,6 +11,18 @@ Choose the provider before browser work:
 - Playwright CLI: low-level browser flow validation, deterministic screenshots, snapshots, headed sessions, traces, console/request checks, and final UI proof.
 - Chrome DevTools MCP: console/network/runtime/performance/memory/Lighthouse debugging and live Chrome inspection.
 
+Mandatory execution boundary:
+
+- Webwright must run through `$HOME/.local/bin/webwright`.
+- Playwright CLI must run through `$HOME/.local/bin/playwright-cli`.
+- Chrome DevTools MCP must run through `$HOME/.local/bin/chrome-devtools-mcp`
+  using the exact managed `/bin/sh -c` transport.
+- All three bootstrap-owned wrappers must use CloakBrowser as their browser
+  engine. There is no stock Chromium, Codex in-app browser, raw browser, direct
+  provider-package executable, or alternate browser-engine fallback.
+- If a managed wrapper or CloakBrowser health gate is unavailable, fail closed
+  and report `NOT_PROVEN`; do not bypass the managed runtime.
+
 RU triggers: проверь UI, проверь в браузере, визуально, pixel-perfect, сравни с Figma, сравни с фото, скриншот, консоль, сеть, перфоманс, Lighthouse.
 EN triggers: validate UI, browser check, visual QA, pixel-perfect, compare with Figma, compare with reference image, screenshot, console, network, performance, Lighthouse.
 
@@ -24,5 +36,7 @@ Decision tree:
 4. If the browser issue is unknown, reproduce with Playwright CLI first, then diagnose with Chrome DevTools MCP when runtime evidence is relevant.
 5. Never use Webwright as a DevTools replacement.
 6. Never use a browser-control MCP surface for Playwright; the approved provider is Playwright CLI.
+7. Never route browser work to an in-app browser, raw browser process, stock
+   Chromium, or a direct provider package.
 
 For unknown browser defects, reproduce with Playwright CLI first and then diagnose with Chrome DevTools MCP when runtime evidence is relevant.

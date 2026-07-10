@@ -67,6 +67,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.6] - 2026-07-10
+
+### Fixed
+
+- Correct the MCP and browser plugin documentation so Chrome DevTools and all
+  browser providers use only bootstrap-owned managed wrappers backed by
+  CloakBrowser, with no stock, in-app, raw-browser, or direct-package fallback.
+- Extend the browser policy validator and unit suite to reject the stale direct
+  `bunx` table, direct `chrome-devtools-mcp` package launches, missing wrapper
+  paths, and unmanaged raw-browser fallback language.
+- Supersede `1.8.5` for control-plane pinning without changing Codex CLI
+  `0.144.1`, CloakBrowser `0.4.10`, MCP package pins, managed transport, or
+  reusable CI `0.5.1`.
+
+
 ## [1.8.5] - 2026-07-10
 
 ### Fixed
