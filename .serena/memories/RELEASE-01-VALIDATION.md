@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 4bd04d1837100ecc64530665cdd0fd8c3118697b feat(browser): enforce managed CloakBrowser skill boundary
+Last commit: b8f326c53ba27dfda4173fb59b7de03191a7b5f6 chore(release): codex 1.8.9 (release_metadata)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,18 +18,18 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-07-10
-- commit: `4bd04d1837100ecc64530665cdd0fd8c3118697b`
-- checked by: Codex adapter 1.8.8 browser skill-boundary release preparation
+- commit: `b8f326c53ba27dfda4173fb59b7de03191a7b5f6`
+- checked by: Codex adapter 1.8.10 managed update-policy preparation
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.8.9`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
-- Release `1.8.9` makes the exact CloakBrowser health preflight and two-provider
-  managed execution boundary mandatory in every browser skill while preserving
-  Codex CLI `0.144.1`, CloakBrowser `0.4.10`, the 1.8.7 app-managed surface
-  disabling, approved MCP pins/transports, curated GitHub/Gmail plugins, and
-  reusable CI `0.5.1`.
+- Current rldyour-codex adapter VERSION is `1.8.10`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Release `1.8.10` disables Codex startup update checks in every managed config
+  so exact, transactional bootstrap upgrades cannot drift into an unrelated
+  global npm prefix. It preserves Codex CLI `0.144.1`, CloakBrowser `0.4.10`,
+  the mandatory managed browser boundary, approved MCP pins/transports,
+  curated GitHub/Gmail plugins, and reusable CI `0.5.1`.
 - Non-strict static runtime materialization is portable to macOS Bash 3.2 and
-  covered by the 150-test fast gate; strict installed-runtime proof remains a
+  covered by the 151-test fast gate; strict installed-runtime proof remains a
   separate target-machine check.
 - Release automation consumes only a pre-existing signed numeric tag created
   after stable-green branch CI. Tag-push and manual retry paths verify exact
@@ -40,6 +40,7 @@ release readiness, versioning, and artifact hygiene
 ## Evidence
 - `commit:13e997a1f839a753404ac161f69a749276dee18b`
 - `commit:4bd04d1837100ecc64530665cdd0fd8c3118697b`
+- `commit:b8f326c53ba27dfda4173fb59b7de03191a7b5f6`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`

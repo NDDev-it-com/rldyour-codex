@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 4bd04d1837100ecc64530665cdd0fd8c3118697b feat(browser): enforce managed CloakBrowser skill boundary
+Last commit: b8f326c53ba27dfda4173fb59b7de03191a7b5f6 chore(release): codex 1.8.9 (release_metadata)
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -25,8 +25,8 @@ browser-visible validation and debugging workflows
 
 ## Last verified
 - date: 2026-07-10
-- commit: `4bd04d1837100ecc64530665cdd0fd8c3118697b`
-- checked by: Codex 1.8.8 browser skill-boundary implementation
+- commit: `b8f326c53ba27dfda4173fb59b7de03191a7b5f6`
+- checked by: Codex 1.8.9 browser skill-boundary release
 
 ## Facts
 - Every browser-capable `rldyour-browser` skill runs exact
@@ -49,6 +49,7 @@ browser-visible validation and debugging workflows
 
 ## Evidence
 - `commit:4bd04d1837100ecc64530665cdd0fd8c3118697b`
+- `commit:b8f326c53ba27dfda4173fb59b7de03191a7b5f6`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
 - `path:plugins/rldyour-mcps/README.md`

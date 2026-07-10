@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
+Last commit: b8f326c53ba27dfda4173fb59b7de03191a7b5f6 chore(release): codex 1.8.9 (release_metadata)
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -19,8 +19,8 @@ Codex adapter implementation surface
 
 ## Last verified
 - date: 2026-07-10
-- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
-- checked by: Codex app-managed browser surface hardening
+- commit: `b8f326c53ba27dfda4173fb59b7de03191a7b5f6`
+- checked by: Codex 1.8.10 managed update-policy preparation
 
 ## Facts
 - Codex memories describe the Codex plugin marketplace, system install, hooks, MCP, apps, and managed agents.
@@ -28,9 +28,13 @@ Codex adapter implementation surface
   any present app-managed `node_repl` / `computer-use` MCP tables. Doctor is the
   enforcement boundary for active or reinjected copies and requires reinstall
   plus process restart before browser work resumes.
+- Installer owns `check_for_update_on_startup = false` in the base, owner, and
+  safe configs. Exact Codex runtime upgrades remain bootstrap-owned
+  transactions and never target an unrelated global npm prefix.
 
 ## Evidence
 - `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
+- `commit:b8f326c53ba27dfda4173fb59b7de03191a7b5f6`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
 - `path:scripts/install_system_codex.sh`
