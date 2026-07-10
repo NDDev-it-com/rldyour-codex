@@ -67,13 +67,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-strict_args=()
+runtime_args=(--codex-home "$CODEX_HOME_DIR")
 if [ "$STRICT_RUNTIME" -eq 1 ]; then
-  strict_args+=(--strict-runtime)
+  runtime_args+=(--strict-runtime)
 fi
 
-scripts/install_system_codex.sh --dry-run --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
-scripts/install_system_codex.sh --apply --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
+scripts/install_system_codex.sh --dry-run "${runtime_args[@]}"
+scripts/install_system_codex.sh --apply "${runtime_args[@]}"
 python3 scripts/validate_codex_mcp_env_forwarding.py --codex-home "$CODEX_HOME_DIR"
 
 python3 - "$CODEX_HOME_DIR" <<'PY'
@@ -138,7 +138,7 @@ if [ "$MODE" = "static" ]; then
   exit 0
 fi
 
-scripts/doctor_system_codex.sh --quick --codex-home "$CODEX_HOME_DIR" "${strict_args[@]}"
+scripts/doctor_system_codex.sh --quick "${runtime_args[@]}"
 if command -v codex >/dev/null 2>&1; then
   CODEX_HOME="$CODEX_HOME_DIR" scripts/validate_execpolicy_rules.sh "$CODEX_HOME_DIR/rules"
   CODEX_HOME="$CODEX_HOME_DIR" python3 scripts/smoke_codex_hook_listing.py --codex-home "$CODEX_HOME_DIR"
