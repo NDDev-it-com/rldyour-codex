@@ -481,6 +481,7 @@ managed_plugin_names = set(curated_plugins) | set(disabled_codex_plugins) | {
 managed_root_keys = {
     "profile",
     "approval_policy",
+    "check_for_update_on_startup",
     "suppress_unstable_features_warning",
     "sandbox_mode",
     "default_permissions",
@@ -494,6 +495,7 @@ out: list[str] = [
     'sandbox_mode = "danger-full-access"' if owner_mode else 'sandbox_mode = "workspace-write"',
     f"model = {json.dumps(managed_model)}",
     f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
+    "check_for_update_on_startup = false",
     "suppress_unstable_features_warning = true",
 ]
 skip_managed = False
@@ -997,6 +999,7 @@ def profile_config_text(*, yolo: bool) -> str:
     lines.extend([
         f"model = {json.dumps(managed_model)}",
         f"model_reasoning_effort = {json.dumps(managed_reasoning_effort)}",
+        "check_for_update_on_startup = false",
         "suppress_unstable_features_warning = true",
         "",
         "[tui]",

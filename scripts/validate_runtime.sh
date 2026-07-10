@@ -113,6 +113,9 @@ def load(path: Path) -> dict:
 
 
 base, yolo_cfg, safe_cfg = [load(path) for path in required]
+for name, cfg in (("config.toml", base), ("rldyour-yolo.config.toml", yolo_cfg), ("rldyour-safe.config.toml", safe_cfg)):
+    if cfg.get("check_for_update_on_startup") is not False:
+        fail(f"{name} must disable startup update checks for the centrally managed runtime")
 features = base.get("features") or {}
 if features.get("hooks") is not True:
     fail("config.toml must enable features.hooks")
