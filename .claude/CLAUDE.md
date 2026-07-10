@@ -14,7 +14,9 @@ Codex adapter project memory for `rldyour-codex`.
 
 ## Runtime Baseline
 
-- Codex CLI runtime pin: `@openai/codex@0.144.0` (verified in baseline metadata).
+- Codex CLI runtime pin: `@openai/codex@0.144.1` (verified in baseline metadata).
+- CloakBrowser wrapper policy pin: `cloakbrowser==0.4.10`; installation is
+  owned by the `rldyour-new-mac-or-ubuntu` bootstrap.
 - MCP pins are pinned in `config/mcp-runtime-versions.env` and validated by checks.
 
 ## Installer and Checks

@@ -4,9 +4,11 @@
   "verified_on": "2026-07-10",
   "baseline": {
     "codex_cli": {
-      "version": "0.144.0",
+      "version": "0.144.1",
       "npm_package": "@openai/codex",
-      "ref": "https://github.com/openai/codex/releases/tag/rust-v0.144.0"
+      "ref": "https://github.com/openai/codex/releases/tag/rust-v0.144.1",
+      "release_published_at": "2026-07-09T23:02:40Z",
+      "prerelease": false
     },
     "runtime_contract": {
       "hooks": "command-only",

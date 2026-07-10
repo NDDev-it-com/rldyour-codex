@@ -17,11 +17,12 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.3` |
-| Runtime baseline | Codex CLI 0.144.0 (`@openai/codex`) |
-| GitHub release tag | `1.8.3` |
+| Adapter version | `1.8.4` |
+| Runtime baseline | Codex CLI 0.144.1 (`@openai/codex`) |
+| Browser wrapper baseline | CloakBrowser 0.4.10 (`cloakbrowser`; bootstrap-owned) |
+| GitHub release tag | `1.8.4` |
 
-The runtime baseline reference is `references/codex-baseline.json`, verified 2026-07-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.144.0`.
+The runtime baseline reference is `references/codex-baseline.json`, verified 2026-07-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.144.1`.
 
 ## What This Repository Provides
 
@@ -47,7 +48,7 @@ MCP launcher packages are pinned in `.mcp.json` and mirrored in `config/mcp-runt
 
 ```bash
 curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
-bun add -g @openai/codex@0.144.0
+bun add -g @openai/codex@0.144.1
 codex --version
 codex doctor
 ```
@@ -144,6 +145,16 @@ Browser automation uses three active providers, routed by task type per `config/
 - **Webwright** (`rldyour-browser`): task-harness provider for full autonomous browser workflows. Adapter-owned CLI wrapper; upstream-native availability is NOT_PROVEN in this adapter.
 - **Playwright CLI** (`rldyour-browser`): CLI provider for Playwright test execution and browser-driven validation.
 - **Chrome DevTools MCP** (`plugins/rldyour-mcps`): MCP provider for DevTools protocol access - screenshots, network inspection, console, performance traces, and heap snapshots - via the `chrome-devtools` MCP server.
+
+The required browser engine is the bootstrap-managed CloakBrowser wrapper. Its
+adapter policy pin is `CLOAKBROWSER_VERSION=0.4.10`; the adapter rejects a
+stock-Chromium fallback and keeps Chrome DevTools MCP on the exact
+`~/.local/bin/chrome-devtools-mcp` transport. Installation and browser-binary
+ownership remain with `rldyour-new-mac-or-ubuntu`. Upstream `v0.4.10` is a
+wrapper-only release that fixes iframe humanization and the JavaScript CLI
+entry point without changing the browser binaries; see the
+[`v0.4.10` tag](https://github.com/CloakHQ/CloakBrowser/tree/v0.4.10)
+and [PyPI package](https://pypi.org/project/cloakbrowser/0.4.10/).
 
 The `rldyour-design` plugin provides Figma → code workflows, FSD frontend architecture, token-based design system implementation, shadcn/ui integration, ReactBits, and browser validation workflows layered on top of these browser providers.
 

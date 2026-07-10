@@ -95,8 +95,23 @@ def validate() -> None:
         path = skills_root / skill / "SKILL.md"
         require(path.is_file(), f"missing browser skill: {skill}")
     env = (ROOT / "config/mcp-runtime-versions.env").read_text(encoding="utf-8")
+    require("CLOAKBROWSER_VERSION=0.4.10" in env, "CloakBrowser wrapper version pin missing")
     require("PLAYWRIGHT_CLI_VERSION=0.1.17" in env, "Playwright CLI version pin missing")
     require("WEBWRIGHT_PIN=4a46f282ec37f27d6003cc498a977939d62d9015" in env, "Webwright pin missing")
+
+    contract = json.loads((ROOT / "config/rldyour-contract.json").read_text(encoding="utf-8"))
+    engine = ((contract.get("browser_providers") or {}).get("required_engine") or {})
+    require(engine.get("name") == "cloakbrowser", "CloakBrowser must be the required browser engine")
+    require(engine.get("version_pin") == "CLOAKBROWSER_VERSION", "CloakBrowser contract version pin drift")
+    require(
+        engine.get("installer_owner") == "rldyour-new-mac-or-ubuntu",
+        "CloakBrowser installer ownership must remain with bootstrap",
+    )
+    require(
+        engine.get("managed_wrapper") == "~/.local/bin/chrome-devtools-mcp",
+        "CloakBrowser managed wrapper contract drift",
+    )
+    require(engine.get("stock_chromium_fallback") is False, "stock Chromium fallback must remain disabled")
 
 
 def main() -> int:

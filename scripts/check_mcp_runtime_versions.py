@@ -31,6 +31,7 @@ PINS: tuple[Pin, ...] = (
     Pin("CHROME_DEVTOOLS_MCP_VERSION", "npm", "chrome-devtools-mcp"),
     Pin("CONTEXT7_MCP_VERSION", "npm", "@upstash/context7-mcp"),
     Pin("SHADCN_VERSION", "npm", "shadcn"),
+    Pin("CLOAKBROWSER_VERSION", "pypi", "cloakbrowser"),
 )
 
 

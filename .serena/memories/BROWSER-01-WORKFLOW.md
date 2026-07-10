@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: 698a800c48294a799de24f1f444044bb1bfbd6db chore(release): codex 1.6.1
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: b15ae75129911a81c6c8e562cee31a1473ab25e9 ci(deps): repin reusable workflows to 0.5.1
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -14,19 +14,30 @@ browser-visible validation and debugging workflows
 ## Current source of truth
 - `path:README.md`
 - `path:plugins/rldyour-browser`
+- `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
+- `path:config/rldyour-contract.json`
+- `path:scripts/validate_browser_provider_policy.py`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `698a800c48294a799de24f1f444044bb1bfbd6db`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `b15ae75129911a81c6c8e562cee31a1473ab25e9`
+- checked by: Codex browser-provider baseline refresh
 
 ## Facts
-- Browser memories route UI and runtime validation through Playwright and Chrome DevTools when relevant.
+- Browser memories route UI and runtime validation through Webwright, Playwright CLI, and Chrome DevTools MCP when relevant.
+- CloakBrowser is the required browser engine; `CLOAKBROWSER_VERSION=0.4.10` is the adapter policy pin, while installation remains owned by `rldyour-new-mac-or-ubuntu`.
+- Chrome DevTools MCP must use `/bin/sh -c` with the exact bootstrap-managed `~/.local/bin/chrome-devtools-mcp` wrapper invocation. Stock-Chromium fallback is forbidden.
+- CloakBrowser `v0.4.10` changes wrapper behavior only (iframe humanization and JavaScript CLI entry-point fixes); the managed browser-binary pins do not change.
 
 ## Evidence
-- `commit:698a800c48294a799de24f1f444044bb1bfbd6db`
+- `commit:b15ae75129911a81c6c8e562cee31a1473ab25e9`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
+- `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
+- `https://github.com/CloakHQ/CloakBrowser/tree/v0.4.10`
+- `https://pypi.org/project/cloakbrowser/0.4.10/`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
@@ -63,6 +74,11 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Validation Commands
 
+- Run `python3 scripts/validate_browser_provider_policy.py --strict` to verify
+  the exact managed transport, CloakBrowser policy pin, ownership, and
+  fail-closed stock-browser rule.
+- Run `bash scripts/validate_fast.sh` to exercise the browser policy in the
+  repository's default CI gate.
 - Run the rldyour control-plane Serena memory validators in strict mode: `validate_serena_memory_schema` (`--strict-mode strict-all`) and `validate_serena_memory_semantics` (`--strict-current-facts --strict-metadata-dates --strict-evidence-commits`).
 
 ## Repair Procedure

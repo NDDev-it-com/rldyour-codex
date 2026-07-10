@@ -101,6 +101,15 @@ def test_pins_include_host_bun_runtime() -> None:
     assert any(pin.key == "BUN_VERSION" and pin.package == "bun" for pin in mod.PINS)
 
 
+def test_pins_include_cloakbrowser_wrapper_release() -> None:
+    assert any(
+        pin.key == "CLOAKBROWSER_VERSION"
+        and pin.ecosystem == "pypi"
+        and pin.package == "cloakbrowser"
+        for pin in mod.PINS
+    )
+
+
 def test_pins_include_github_mcp_server_release() -> None:
     assert any(
         pin.key == "GITHUB_MCP_SERVER_VERSION"

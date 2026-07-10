@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from tests.support.importing import import_script
 
 mod = import_script("scripts/release_sbom.py")
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_spdx_id_sanitizes_names() -> None:
@@ -18,6 +22,24 @@ def test_generate_sbom_contains_root_plugins_and_runtime_pins() -> None:
     assert "rldyour-flow" in package_names
     assert "codex-cli" in package_names
     assert sbom["relationships"]
+
+
+def test_generate_sbom_uses_verified_codex_runtime_baseline() -> None:
+    baseline = json.loads((ROOT / "references/codex-baseline.json").read_text(encoding="utf-8"))
+    codex = baseline["baseline"]["codex_cli"]
+    expected = codex["version"]
+    packages = {package["name"]: package for package in mod.generate_sbom()["packages"]}
+
+    assert expected == "0.144.1"
+    assert codex["release_published_at"] == "2026-07-09T23:02:40Z"
+    assert codex["prerelease"] is False
+    assert packages["codex-cli"]["versionInfo"] == expected
+
+
+def test_generate_sbom_contains_pinned_cloakbrowser_wrapper() -> None:
+    packages = {package["name"]: package for package in mod.generate_sbom()["packages"]}
+
+    assert packages["cloakbrowser"]["versionInfo"] == "0.4.10"
 
 
 def test_generate_sbom_declares_agpl_license_for_owned_packages() -> None:

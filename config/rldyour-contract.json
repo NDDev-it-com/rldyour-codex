@@ -185,6 +185,13 @@
   },
   "browser_providers": {
     "policy": "root config/browser-automation-policy.json",
+    "required_engine": {
+      "name": "cloakbrowser",
+      "version_pin": "CLOAKBROWSER_VERSION",
+      "installer_owner": "rldyour-new-mac-or-ubuntu",
+      "managed_wrapper": "~/.local/bin/chrome-devtools-mcp",
+      "stock_chromium_fallback": false
+    },
     "required_common_providers": [
       "webwright",
       "playwright-cli",

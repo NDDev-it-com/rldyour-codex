@@ -66,8 +66,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+
+## [1.8.4] - 2026-07-10
+
 ### Changed
 
+- Refresh the stable Codex CLI runtime baseline to `0.144.1`, the published
+  patch release for standalone installer and code-mode host reliability.
+- Refresh the bootstrap-owned CloakBrowser wrapper policy pin to `0.4.10` for
+  iframe humanization and JavaScript CLI fixes without changing browser binaries.
 - Repin every reusable `nddev-ci-workflows` caller to the signed `0.5.1`
   release and add an exact pin regression test.
 
