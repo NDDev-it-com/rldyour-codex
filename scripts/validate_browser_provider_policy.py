@@ -28,6 +28,7 @@ CHROME_COMMAND = "/bin/sh"
 CHROME_ARGS = [
     "-c",
     'exec "$HOME/.local/bin/chrome-devtools-mcp" --headless --isolated '
+    +
     "--no-usage-statistics --no-performance-crux",
 ]
 MCP_README = Path("plugins/rldyour-mcps/README.md")
