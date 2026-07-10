@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.10] - 2026-07-10
+
+### Fixed
+
+- Disable Codex startup update checks for the centrally managed frozen runtime.
+
 ## [1.8.9] - 2026-07-10
 
 ### Fixed

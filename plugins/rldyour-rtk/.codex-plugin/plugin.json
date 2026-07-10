@@ -1,6 +1,6 @@
 {
   "name": "rldyour-rtk",
-  "version": "1.8.9",
+  "version": "1.8.10",
   "description": "Экономия токенов через rtk (Rust Token Killer, Apache-2.0): rules-first (AGENTS.md/RTK.md) + опциональный mutating PreToolUse Bash hook сжимают вывод команд до попадания в контекст. EN: token-economy core (rules + opt-in hook + skill).",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
