@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
+Last commit: 4bd04d1837100ecc64530665cdd0fd8c3118697b feat(browser): enforce managed CloakBrowser skill boundary
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,14 +18,19 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-07-10
-- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
-- checked by: Codex adapter 1.8.7 security release preparation
+- commit: `4bd04d1837100ecc64530665cdd0fd8c3118697b`
+- checked by: Codex adapter 1.8.8 browser skill-boundary release preparation
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.8.7`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
-- Release `1.8.7` closes app-managed raw/in-app/computer-use browser bypasses
-  without changing Codex CLI `0.144.1`, CloakBrowser `0.4.10`, approved MCP
-  pins/transports, curated GitHub/Gmail plugins, or reusable CI `0.5.1`.
+- Current rldyour-codex adapter VERSION is `1.8.8`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Release `1.8.8` makes the exact CloakBrowser health preflight and two-provider
+  managed execution boundary mandatory in every browser skill while preserving
+  Codex CLI `0.144.1`, CloakBrowser `0.4.10`, the 1.8.7 app-managed surface
+  disabling, approved MCP pins/transports, curated GitHub/Gmail plugins, and
+  reusable CI `0.5.1`.
+- Non-strict static runtime materialization is portable to macOS Bash 3.2 and
+  covered by the 150-test fast gate; strict installed-runtime proof remains a
+  separate target-machine check.
 - Release automation consumes only a pre-existing signed numeric tag created
   after stable-green branch CI. Tag-push and manual retry paths verify exact
   remote tag peel/ancestry from `origin/main`; workflow dispatch cannot create
@@ -33,7 +38,8 @@ release readiness, versioning, and artifact hygiene
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
+- `commit:13e997a1f839a753404ac161f69a749276dee18b`
+- `commit:4bd04d1837100ecc64530665cdd0fd8c3118697b`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
+Last commit: 4bd04d1837100ecc64530665cdd0fd8c3118697b feat(browser): enforce managed CloakBrowser skill boundary
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -25,18 +25,22 @@ browser-visible validation and debugging workflows
 
 ## Last verified
 - date: 2026-07-10
-- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
-- checked by: Codex app-managed browser fail-closed hardening
+- commit: `4bd04d1837100ecc64530665cdd0fd8c3118697b`
+- checked by: Codex 1.8.8 browser skill-boundary implementation
 
 ## Facts
-- Browser memories route UI and runtime validation through Webwright, Playwright CLI, and Chrome DevTools MCP when relevant.
+- Every browser-capable `rldyour-browser` skill runs exact
+  `$HOME/.local/bin/cloakbrowser-cdp-health` before every browser action and
+  stops as `NOT_PROVEN` when the preflight is missing or nonzero.
 - CloakBrowser is the required browser engine; `CLOAKBROWSER_VERSION=0.4.10` is the adapter policy pin, while installation remains owned by `rldyour-new-mac-or-ubuntu`.
 - Chrome DevTools MCP must use `/bin/sh -c` with the exact bootstrap-managed `~/.local/bin/chrome-devtools-mcp` wrapper invocation. Stock-Chromium fallback is forbidden.
-- Webwright, Playwright CLI, and Chrome DevTools MCP must use their
-  bootstrap-owned wrappers under `$HOME/.local/bin`; every provider is backed
-  by CloakBrowser and missing runtime health fails closed as `NOT_PROVEN`.
-- Stock Chromium, the Codex in-app browser, raw browser processes, direct
-  provider-package launchers, and alternate browser engines are not fallbacks.
+- Browser actions may use only exact `$HOME/.local/bin/playwright-cli` without
+  `run-code`/`--filename`, or Chrome DevTools MCP through its exact managed
+  wrapper transport. The `webwright-task` name is compatibility-only and never
+  starts a Webwright or Python runtime.
+- Webwright runtime, stock/raw/in-app Browser, browser/computer-use helpers,
+  Playwright MCP/raw Playwright, direct packages, alternate CDP/config or
+  executable paths, and all fallbacks are forbidden.
 - System install explicitly disables `browser@openai-bundled`; app-managed
   `node_repl` and `computer-use` MCP metadata is preserved only with
   `enabled = false`. Doctor rejects an active or reinjected surface and directs
@@ -44,7 +48,7 @@ browser-visible validation and debugging workflows
 - CloakBrowser `v0.4.10` changes wrapper behavior only (iframe humanization and JavaScript CLI entry-point fixes); the managed browser-binary pins do not change.
 
 ## Evidence
-- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
+- `commit:4bd04d1837100ecc64530665cdd0fd8c3118697b`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
 - `path:plugins/rldyour-mcps/README.md`
@@ -92,8 +96,8 @@ Update after verified changes to the referenced source-of-truth files.
 ## Validation Commands
 
 - Run `python3 scripts/validate_browser_provider_policy.py --strict` to verify
-  the exact managed transport, CloakBrowser policy pin, ownership, and
-  fail-closed stock-browser rule.
+  every browser skill's preflight, exact provider transports, forbidden
+  surfaces, CloakBrowser policy pin, and fail-closed behavior.
 - Run `bash scripts/validate_fast.sh` to exercise the browser policy in the
   repository's default CI gate.
 - Run the rldyour control-plane Serena memory validators in strict mode: `validate_serena_memory_schema` (`--strict-mode strict-all`) and `validate_serena_memory_semantics` (`--strict-current-facts --strict-metadata-dates --strict-evidence-commits`).
