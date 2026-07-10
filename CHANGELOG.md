@@ -67,6 +67,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.5] - 2026-07-10
+
+### Fixed
+
+- Refresh the exact Sequential Thinking MCP runtime pin from `2025.12.18` to
+  `2026.7.4` and Context7 MCP from `3.2.2` to `3.2.3`, restoring the scheduled
+  dependency freshness check after package-level compatibility validation.
+- Preserve Codex CLI `0.144.1`, bootstrap-owned CloakBrowser `0.4.10`, the exact
+  managed Chrome DevTools transport, and reusable CI `0.5.1` unchanged.
+
+
 ## [1.8.4] - 2026-07-10
 
 ### Changed

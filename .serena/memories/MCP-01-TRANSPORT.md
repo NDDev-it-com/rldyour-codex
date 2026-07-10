@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: 8e503c6c3674e9628e0ce4d537871e2d68a533b0 chore(mcp): bump GitHub MCP server pin to 1.5.0
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 7f39e8f3704126d9808604168a5c9061da228684 chore(release): codex adapter 1.8.4
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -13,20 +13,28 @@ MCP runtime transport and pin policy
 
 ## Current source of truth
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
 - `path:README.md`
+- `https://registry.npmjs.org/@modelcontextprotocol/server-sequential-thinking/2026.7.4`
+- `https://registry.npmjs.org/@upstash/context7-mcp/3.2.3`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `8e503c6c3674e9628e0ce4d537871e2d68a533b0`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `7f39e8f3704126d9808604168a5c9061da228684`
+- checked by: Codex MCP runtime pin refresh
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
-- Current Codex MCP runtime pins include `GITHUB_MCP_SERVER_VERSION=1.5.0` in `config/mcp-runtime-versions.env`; this fixed the stale `1.4.0` GitHub MCP server pin detected by MCP runtime freshness validation.
+- Sequential Thinking MCP is pinned to `2026.7.4` and Context7 MCP is pinned to
+  `3.2.3` identically in `config/mcp-runtime-versions.env` and
+  `plugins/rldyour-mcps/.mcp.json`.
+- Chrome DevTools MCP remains on the exact bootstrap-managed CloakBrowser
+  transport; this dependency refresh does not change browser routing.
 
 ## Evidence
-- `commit:8e503c6c3674e9628e0ce4d537871e2d68a533b0`
+- `commit:7f39e8f3704126d9808604168a5c9061da228684`
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
 - `path:README.md`
 
 ## Known pitfalls

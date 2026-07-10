@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: b15ae75129911a81c6c8e562cee31a1473ab25e9 ci(deps): repin reusable workflows to 0.5.1
+Last commit: 7f39e8f3704126d9808604168a5c9061da228684 chore(release): codex adapter 1.8.4
 Scope: CLI runtime and package baselines
 Area: RUNTIME
 -->
@@ -18,17 +18,19 @@ CLI runtime and package baselines
 
 ## Last verified
 - date: 2026-07-10
-- commit: `b15ae75129911a81c6c8e562cee31a1473ab25e9`
-- checked by: Codex CLI stable-baseline refresh
+- commit: `7f39e8f3704126d9808604168a5c9061da228684`
+- checked by: Codex runtime and MCP pin refresh
 
 ## Facts
 - The stable Codex CLI baseline is `@openai/codex@0.144.1`, pinned identically in `references/codex-baseline.json` and `config/mcp-runtime-versions.env`.
 - Upstream `rust-v0.144.1` is a non-prerelease patch for standalone installer and code-mode host reliability; no adapter schema migration is required.
 - The bootstrap-owned browser wrapper policy pin is `CLOAKBROWSER_VERSION=0.4.10`; its wrapper-only fixes do not change managed Chromium binary pins.
+- Sequential Thinking MCP `2026.7.4` and Context7 MCP `3.2.3` are the current
+  exact runtime pins; both preserve the existing `bunx` stdio launch contract.
 - Runtime memories record pinned CLI/package baselines and freshness checks.
 
 ## Evidence
-- `commit:b15ae75129911a81c6c8e562cee31a1473ab25e9`
+- `commit:7f39e8f3704126d9808604168a5c9061da228684`
 - `path:references/codex-baseline.json`
 - `path:config/mcp-runtime-versions.env`
 - `https://github.com/openai/codex/releases/tag/rust-v0.144.1`

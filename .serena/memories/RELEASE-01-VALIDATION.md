@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: b15ae75129911a81c6c8e562cee31a1473ab25e9 ci(deps): repin reusable workflows to 0.5.1
+Last commit: 7f39e8f3704126d9808604168a5c9061da228684 chore(release): codex adapter 1.8.4
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,15 +18,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-07-10
-- commit: `b15ae75129911a81c6c8e562cee31a1473ab25e9`
+- commit: `7f39e8f3704126d9808604168a5c9061da228684`
 - checked by: Codex adapter release finalization
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.8.4`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.8.5`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:b15ae75129911a81c6c8e562cee31a1473ab25e9`
+- `commit:7f39e8f3704126d9808604168a5c9061da228684`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
