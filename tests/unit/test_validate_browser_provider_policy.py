@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -24,12 +25,14 @@ CloakBrowser with no stock Chromium, in-app browser, or raw browser alternative;
 $HOME/.local/bin/webwright
 $HOME/.local/bin/playwright-cli
 $HOME/.local/bin/chrome-devtools-mcp
+browser@openai-bundled node_repl computer-use enabled = false
 """,
         mod.BROWSER_ROUTING_SKILL: """
 CloakBrowser with no stock Chromium, in-app browser, or raw browser alternative; fail closed.
 $HOME/.local/bin/webwright
 $HOME/.local/bin/playwright-cli
 $HOME/.local/bin/chrome-devtools-mcp
+browser@openai-bundled node_repl computer-use enabled = false
 """,
     }
     for relative_path, content in docs.items():
@@ -40,6 +43,59 @@ $HOME/.local/bin/chrome-devtools-mcp
 
 def test_current_browser_docs_contract() -> None:
     mod.validate_browser_docs(ROOT)
+
+
+def test_current_disabled_codex_surface_contract() -> None:
+    mod.validate_disabled_codex_surfaces(ROOT)
+
+
+def write_disabled_codex_surface_contract(root: Path, *, plugins: list[str], servers: list[str]) -> None:
+    contract = root / "config/rldyour-contract.json"
+    contract.parent.mkdir(parents=True, exist_ok=True)
+    contract.write_text(
+        json.dumps(
+            {
+                "browser_providers": {
+                    "disabled_codex_surfaces": {
+                        "plugins": plugins,
+                        "mcp_servers": servers,
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    scripts = root / "scripts"
+    scripts.mkdir(parents=True, exist_ok=True)
+    (scripts / "install_system_codex.sh").write_text(
+        "disabled_codex_plugins disabled_codex_mcp_servers preserved_disabled_mcp_servers "
+        'spec["enabled"] = False "enabled = false"',
+        encoding="utf-8",
+    )
+    (scripts / "doctor_system_codex.sh").write_text(
+        "disabled_codex_plugins disabled_codex_mcp_servers "
+        "forbidden raw/in-app/computer-use Codex surface rerun restart Codex",
+        encoding="utf-8",
+    )
+
+
+@pytest.mark.parametrize(
+    ("plugins", "servers", "message"),
+    [
+        ([], ["computer-use", "node_repl"], "disabled browser plugin contract drift"),
+        (["browser@openai-bundled"], ["node_repl"], "disabled app-managed MCP contract drift"),
+    ],
+)
+def test_rejects_disabled_codex_surface_contract_drift(
+    tmp_path: Path,
+    plugins: list[str],
+    servers: list[str],
+    message: str,
+) -> None:
+    write_disabled_codex_surface_contract(tmp_path, plugins=plugins, servers=servers)
+
+    with pytest.raises(mod.Failure, match=message):
+        mod.validate_disabled_codex_surfaces(tmp_path)
 
 
 def test_rejects_stale_direct_bunx_table(tmp_path: Path) -> None:

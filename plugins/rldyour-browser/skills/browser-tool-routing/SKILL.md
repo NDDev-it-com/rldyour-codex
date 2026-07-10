@@ -22,6 +22,9 @@ Mandatory execution boundary:
   provider-package executable, or alternate browser-engine fallback.
 - If a managed wrapper or CloakBrowser health gate is unavailable, fail closed
   and report `NOT_PROVEN`; do not bypass the managed runtime.
+- The Codex system config must keep `browser@openai-bundled`, `node_repl`, and
+  `computer-use` on `enabled = false`. If one becomes active, stop browser work,
+  rerun the system installer, restart Codex, and revalidate with doctor.
 
 RU triggers: проверь UI, проверь в браузере, визуально, pixel-perfect, сравни с Figma, сравни с фото, скриншот, консоль, сеть, перфоманс, Lighthouse.
 EN triggers: validate UI, browser check, visual QA, pixel-perfect, compare with Figma, compare with reference image, screenshot, console, network, performance, Lighthouse.

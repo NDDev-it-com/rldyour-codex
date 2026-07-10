@@ -17,10 +17,10 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.6` |
+| Adapter version | `1.8.7` |
 | Runtime baseline | Codex CLI 0.144.1 (`@openai/codex`) |
 | Browser wrapper baseline | CloakBrowser 0.4.10 (`cloakbrowser`; bootstrap-owned) |
-| GitHub release tag | `1.8.6` |
+| GitHub release tag | `1.8.7` |
 
 The runtime baseline reference is `references/codex-baseline.json`, verified 2026-07-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.144.1`.
 
@@ -104,6 +104,12 @@ codex plugin list --json
 ```
 
 The installer writes `~/.codex/AGENTS.md`, managed subagent role configs, execpolicy rules, registered marketplace, enabled plugins, approved MCP servers, Codex lifecycle hooks, the official Codex config schema hint, owner-standard full-auto permission defaults (unless `--safe-mode`), both profile layers, maintainer-selected model defaults, approved MCP tool overrides, the owner `[tui]` status line, and the versioned local plugin cache at `~/.codex/plugins/cache/rldyour-codex/<plugin>/<version>`. Existing managed files are backed up before write operations. Credentials and OAuth tokens are never written.
+
+The same install pass explicitly disables `browser@openai-bundled`. Existing
+app-managed `node_repl` and `computer-use` MCP tables keep their transport
+metadata but are forced to `enabled = false`. Doctor rejects an active or
+reinjected raw/in-app/computer-use surface and instructs the operator to rerun
+the installer and restart Codex.
 
 ## Active Catalog
 
@@ -258,7 +264,14 @@ scripts/smoke_mcp_capabilities.sh
 
 Adapter version is stored in `VERSION`. Plugin behavior versions stay in `plugins/<plugin>/.codex-plugin/plugin.json`. Release notes live in `CHANGELOG.md`. A numeric GitHub Release is required for every public adapter product version; a `VERSION` file alone is not sufficient.
 
-The `release.yml` GitHub Actions workflow triggers on a SemVer tag matching `X.Y.Z[-pre]`. It validates `VERSION` and `CHANGELOG.md`, builds a deterministic bundle, generates a release manifest and SPDX 2.3 SBOM, exports the GitHub dependency-graph SBOM when available, attaches artifact attestations, and publishes the GitHub Release. `workflow_dispatch` is available as a fallback.
+The `release.yml` GitHub Actions workflow triggers on a numeric SemVer tag
+matching `X.Y.Z`. It fetches `origin/main`, verifies the exact remote tag object
+and peeled commit, and rejects any tag outside `origin/main` before validating
+`VERSION` and `CHANGELOG.md`, building the deterministic bundle, generating the
+release manifest and SPDX 2.3 SBOM, exporting the GitHub dependency-graph SBOM
+when available, attaching artifact attestations, and publishing through
+`gh release --verify-tag`. Manual dispatch only verifies an existing numeric
+tag; the workflow never creates or pushes tags.
 
 Operational commands:
 

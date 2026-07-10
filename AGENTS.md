@@ -57,13 +57,18 @@ python3 scripts/validate_execpolicy_rules.py
   `config/mcp-runtime-versions.env` (runtime pins).
 - Runtimes and launchers are validated through local smoke checks before commit.
 - `install_system_codex.sh` writes portable paths into `~/.codex/config.toml`.
+- The installer must explicitly disable `browser@openai-bundled` and preserve
+  app-managed `node_repl` / `computer-use` transport metadata only with
+  `enabled = false`; doctor must fail on reinjection and require a restart.
 
 ## Release and Control
 
 1. Commit adapter changes in module.
-2. Push `main` and release tags when `VERSION`/public contract changes.
-3. Update super-repo tuple only after release and contract freshness checks pass.
-4. Keep `.serena/` durable state current; runtime-local artifacts are gitignored.
+2. Push `main` and wait for exact-SHA branch CI to become stably green.
+3. Create and push signed numeric release tags manually; release automation may
+   verify an existing tag but must never create or push one.
+4. Update super-repo tuple only after release and contract freshness checks pass.
+5. Keep `.serena/` durable state current; runtime-local artifacts are gitignored.
 
 ## Security Policy
 

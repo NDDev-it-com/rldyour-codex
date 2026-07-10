@@ -185,6 +185,15 @@
   },
   "browser_providers": {
     "policy": "root config/browser-automation-policy.json",
+    "disabled_codex_surfaces": {
+      "plugins": [
+        "browser@openai-bundled"
+      ],
+      "mcp_servers": [
+        "computer-use",
+        "node_repl"
+      ]
+    },
     "required_engine": {
       "name": "cloakbrowser",
       "version_pin": "CLOAKBROWSER_VERSION",

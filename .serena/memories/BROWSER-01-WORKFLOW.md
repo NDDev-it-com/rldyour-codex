@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 8be83a228e75b152cd3b7612bf834906310219a4 chore(release): codex adapter 1.8.5
+Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -19,11 +19,14 @@ browser-visible validation and debugging workflows
 - `path:config/mcp-runtime-versions.env`
 - `path:config/rldyour-contract.json`
 - `path:scripts/validate_browser_provider_policy.py`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/doctor_system_codex.sh`
+- `path:tests/fixtures/codex_app_managed_browser_config.toml`
 
 ## Last verified
 - date: 2026-07-10
-- commit: `8be83a228e75b152cd3b7612bf834906310219a4`
-- checked by: Codex managed browser documentation contract refresh
+- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
+- checked by: Codex app-managed browser fail-closed hardening
 
 ## Facts
 - Browser memories route UI and runtime validation through Webwright, Playwright CLI, and Chrome DevTools MCP when relevant.
@@ -34,15 +37,22 @@ browser-visible validation and debugging workflows
   by CloakBrowser and missing runtime health fails closed as `NOT_PROVEN`.
 - Stock Chromium, the Codex in-app browser, raw browser processes, direct
   provider-package launchers, and alternate browser engines are not fallbacks.
+- System install explicitly disables `browser@openai-bundled`; app-managed
+  `node_repl` and `computer-use` MCP metadata is preserved only with
+  `enabled = false`. Doctor rejects an active or reinjected surface and directs
+  the operator to rerun the installer and restart Codex.
 - CloakBrowser `v0.4.10` changes wrapper behavior only (iframe humanization and JavaScript CLI entry-point fixes); the managed browser-binary pins do not change.
 
 ## Evidence
-- `commit:8be83a228e75b152cd3b7612bf834906310219a4`
+- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
 - `path:plugins/rldyour-mcps/README.md`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/doctor_system_codex.sh`
+- `path:tests/fixtures/codex_app_managed_browser_config.toml`
 - `https://github.com/CloakHQ/CloakBrowser/tree/v0.4.10`
 - `https://pypi.org/project/cloakbrowser/0.4.10/`
 

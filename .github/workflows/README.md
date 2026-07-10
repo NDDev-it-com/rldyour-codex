@@ -35,7 +35,7 @@ release `0.5.1` at commit
 
 | Workflow | Trigger | Purpose |
 | --- | --- | --- |
-| `release.yml` | numeric product tag or manual dispatch | Release validation, deterministic bundle, SBOM, attestations, GitHub Release. |
+| `release.yml` | numeric product tag or existing-tag manual dispatch | Verifies the exact remote tag and its ancestry from `origin/main`, then runs release validation, deterministic bundle, SBOM, attestations, and `gh release --verify-tag`; it never creates or pushes tags. |
 
 ## Cost Policy
 

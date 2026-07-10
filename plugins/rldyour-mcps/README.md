@@ -53,6 +53,9 @@ Local MCP servers use `startup_timeout_sec = 90`. Remote MCP servers use `startu
 - `chrome-devtools` uses only the bootstrap-owned managed wrapper through
   `/bin/sh -c`; the wrapper is CloakBrowser-backed and is not a direct package
   launcher.
+- App-managed `node_repl` and `computer-use` MCP metadata may remain in Codex
+  config only with `enabled = false`; installer preserves their transport
+  metadata while doctor rejects active or reinjected copies.
 
 ## Connected MCP Servers
 
@@ -117,6 +120,8 @@ Expected state:
 - `context7` reads its key only from `CONTEXT7_API_KEY`.
 - `chrome-devtools` uses the exact bootstrap-owned managed wrapper and never a
   direct package or stock-Chromium launch.
+- `browser@openai-bundled`, `node_repl`, and `computer-use` remain explicitly
+  disabled; they are not in-app, raw-browser, or computer-use fallbacks.
 - `openaiDeveloperDocs` uses the official OpenAI Docs MCP endpoint for OpenAI and Codex product documentation.
 - Runtime smoke checks remote URL servers with a Streamable HTTP `initialize` POST preflight. Auth-gated endpoints may return `401`/`403`; `405` is treated as a GET/SSE compatibility signal, not a passing POST result.
 - Package-launched MCP servers do not use `npx`, `npm`, or direct `node`

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Release version from VERSION (must match the file content).
+        description: Existing numeric release tag X.Y.Z; manual dispatch only verifies an existing tag.
         required: true
         type: string
 
@@ -38,13 +38,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up validation runtime
-        uses: ./.github/actions/setup-codex-runtime
-        with:
-          install-codex: "false"
-          install-dart: "false"
-
-      - name: Validate release version
+      - name: Resolve and verify existing release tag
         shell: bash
         env:
           RELEASE_INPUT_VERSION: ${{ inputs.version }}
@@ -52,11 +46,19 @@ jobs:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
-            version="$GITHUB_REF_NAME"
-          else
-            version="$RELEASE_INPUT_VERSION"
-          fi
+          case "$GITHUB_EVENT_NAME" in
+            push)
+              version="$GITHUB_REF_NAME"
+              ;;
+            workflow_dispatch)
+              # manual dispatch only verifies an existing tag
+              version="$RELEASE_INPUT_VERSION"
+              ;;
+            *)
+              echo "unsupported release event '$GITHUB_EVENT_NAME'" >&2
+              exit 1
+              ;;
+          esac
           if [ -z "$version" ]; then
             echo "release version is empty; tag push or workflow_dispatch input required" >&2
             exit 1
@@ -65,16 +67,72 @@ jobs:
             echo "release version '$version' is not numeric SemVer X.Y.Z" >&2
             exit 1
           fi
-          file_version="$(tr -d '[:space:]' < VERSION)"
-          if [ "$version" != "$file_version" ]; then
-            echo "release version '$version' does not match VERSION '$file_version'" >&2
+
+          remote_tag_ref="refs/tags/${version}"
+          remote_tag_rows="$(git ls-remote --refs origin "$remote_tag_ref")"
+          remote_tag_count="$(printf '%s\n' "$remote_tag_rows" | awk -v ref="$remote_tag_ref" '$2 == ref { count += 1 } END { print count + 0 }')"
+          if [ "$remote_tag_count" -ne 1 ]; then
+            echo "release tag '$remote_tag_ref' must already exist exactly once on origin" >&2
             exit 1
           fi
-          if ! grep -q "^## \\[$version\\]" CHANGELOG.md; then
-            echo "CHANGELOG.md has no release entry for $version" >&2
+          remote_tag_oid="$(printf '%s\n' "$remote_tag_rows" | awk -v ref="$remote_tag_ref" '$2 == ref { print $1 }')"
+
+          git fetch --no-tags origin "+refs/heads/main:refs/remotes/origin/main"
+          git fetch --no-tags origin "+${remote_tag_ref}:${remote_tag_ref}"
+          local_tag_oid="$(git rev-parse "$remote_tag_ref")"
+          if [ "$local_tag_oid" != "$remote_tag_oid" ]; then
+            echo "local tag object '$local_tag_oid' does not match origin '$remote_tag_oid'" >&2
+            exit 1
+          fi
+          tag_commit="$(git rev-parse "${remote_tag_ref}^{commit}")"
+
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            if [ "$GITHUB_SHA" != "$remote_tag_oid" ] && [ "$GITHUB_SHA" != "$tag_commit" ]; then
+              echo "push SHA '$GITHUB_SHA' matches neither tag object '$remote_tag_oid' nor peeled commit '$tag_commit'" >&2
+              exit 1
+            fi
+            if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+              echo "tag push SHA '$GITHUB_SHA' is not contained in origin/main" >&2
+              exit 1
+            fi
+          else
+            if ! git merge-base --is-ancestor "$tag_commit" origin/main; then
+              echo "existing tag '$version' is not contained in origin/main" >&2
+              exit 1
+            fi
+            git checkout --detach "$tag_commit"
+          fi
+
+          if [ "$(git rev-parse HEAD)" != "$tag_commit" ]; then
+            echo "checked out HEAD does not match peeled release tag commit '$tag_commit'" >&2
             exit 1
           fi
           echo "RELEASE_VERSION=$version" >> "$GITHUB_ENV"
+          echo "RELEASE_COMMIT=$tag_commit" >> "$GITHUB_ENV"
+
+      - name: Set up validation runtime
+        uses: ./.github/actions/setup-codex-runtime
+        with:
+          install-codex: "false"
+          install-dart: "false"
+
+      - name: Validate release version
+        shell: bash
+        run: |
+          set -euo pipefail
+          file_version="$(tr -d '[:space:]' < VERSION)"
+          if [ "$RELEASE_VERSION" != "$file_version" ]; then
+            echo "release version '$RELEASE_VERSION' does not match VERSION '$file_version'" >&2
+            exit 1
+          fi
+          if [ "$(git rev-parse HEAD)" != "$RELEASE_COMMIT" ]; then
+            echo "release checkout drifted from verified tag commit '$RELEASE_COMMIT'" >&2
+            exit 1
+          fi
+          if ! grep -q "^## \\[$RELEASE_VERSION\\]" CHANGELOG.md; then
+            echo "CHANGELOG.md has no release entry for $RELEASE_VERSION" >&2
+            exit 1
+          fi
 
       - name: Run release validation
         run: |
@@ -186,19 +244,6 @@ jobs:
           path: dist
           retention-days: 30
 
-      - name: Create release tag
-        shell: bash
-        run: |
-          set -euo pipefail
-          # On push:tags the tag already points at this commit, so we skip creation.
-          # On workflow_dispatch we create and push the tag to match the validated VERSION.
-          if git rev-parse -q --verify "refs/tags/${RELEASE_VERSION}" >/dev/null; then
-            echo "Tag ${RELEASE_VERSION} already exists"
-          else
-            git tag "${RELEASE_VERSION}"
-            git push origin "refs/tags/${RELEASE_VERSION}"
-          fi
-
       - name: Publish GitHub Release
         shell: bash
         env:
@@ -208,8 +253,7 @@ jobs:
           if gh release view "$RELEASE_VERSION" >/dev/null 2>&1; then
             gh release upload "$RELEASE_VERSION" dist/* --clobber
           else
-            gh release create "$RELEASE_VERSION" \
-              --verify-tag \
+            gh release create "$RELEASE_VERSION" --verify-tag \
               --title "$RELEASE_VERSION" \
               --notes-file dist/release-notes.md \
               dist/*

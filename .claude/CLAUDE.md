@@ -62,6 +62,9 @@ Do not treat OpenCode or Gemini command formats as native Codex runtime.
   `$HOME/.local/bin/playwright-cli`, and
   `$HOME/.local/bin/chrome-devtools-mcp` wrappers backed by CloakBrowser; no
   stock Chromium, in-app browser, or raw-browser fallback is allowed.
+- System install keeps `browser@openai-bundled`, `node_repl`, and
+  `computer-use` explicitly disabled; doctor rejects reinjected active copies
+  and requires reinstall plus Codex restart.
 - Security checks (CodeQL, secret scanning, dependency checks) are required checks in
   this adapter.
 
@@ -70,3 +73,6 @@ Do not treat OpenCode or Gemini command formats as native Codex runtime.
 - Keep `.serena/` durable context updated on `main` updates and avoid rewriting
   existing commit history.
 - Commit adapter changes in this repo first, then update super-repo submodule pointer.
+- Push a signed numeric release tag only after exact-SHA branch CI is stably
+  green; release workflow dispatch may verify an existing tag but never create
+  or push one.

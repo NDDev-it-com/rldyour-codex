@@ -20,6 +20,7 @@ Managed state:
 - CODEX_HOME/agents/*.toml from system/agents/*.toml
 - rldyour-codex marketplace registration
 - enabled rldyour plugins plus curated GitHub and Gmail plugins
+- disabled app-managed browser, Node REPL, and computer-use surfaces
 - hooks feature flag
 - plugin hook trust state
 - multi-agent feature flag
@@ -270,6 +271,7 @@ mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
 system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
 codex_agent_dir = Path(os.environ["RLDYOUR_CODEX_AGENT_DIR"])
 marketplace_config_path = Path(os.environ["RLDYOUR_MARKETPLACE_CONFIG"])
+browser_contract_path = Path(repo_root) / "config" / "rldyour-contract.json"
 
 
 # macOS-only plugins: cmux (manaflow-ai/cmux) is a macOS application, so the
@@ -306,6 +308,29 @@ def load_rldyour_plugins(path: Path) -> list[str]:
 
 rldyour_plugins = load_rldyour_plugins(marketplace_config_path)
 curated_plugins = ["gmail@openai-curated", "github@openai-curated"]
+
+
+def load_disabled_codex_surfaces(path: Path) -> tuple[list[str], list[str]]:
+    contract = json.loads(path.read_text(encoding="utf-8"))
+    surfaces = ((contract.get("browser_providers") or {}).get("disabled_codex_surfaces") or {})
+    plugins = surfaces.get("plugins")
+    servers = surfaces.get("mcp_servers")
+    required_plugins = {"browser@openai-bundled"}
+    required_servers = {"computer-use", "node_repl"}
+    if plugins != sorted(required_plugins):
+        raise SystemExit(
+            f"{path}: browser_providers.disabled_codex_surfaces.plugins must be "
+            f"{sorted(required_plugins)!r}"
+        )
+    if servers != sorted(required_servers):
+        raise SystemExit(
+            f"{path}: browser_providers.disabled_codex_surfaces.mcp_servers must be "
+            f"{sorted(required_servers)!r}"
+        )
+    return sorted(required_plugins), sorted(required_servers)
+
+
+disabled_codex_plugins, disabled_codex_mcp_servers = load_disabled_codex_surfaces(browser_contract_path)
 managed_model = "gpt-5.5"
 managed_reasoning_effort = "xhigh"
 managed_subagent_model = "gpt-5.5"
@@ -397,6 +422,8 @@ if trust_home:
     managed_headers.add(f'projects."{home}"')
 for plugin in curated_plugins:
     managed_headers.add(f'plugins."{plugin}"')
+for plugin in disabled_codex_plugins:
+    managed_headers.add(f'plugins."{plugin}"')
 for plugin in rldyour_plugins:
     managed_headers.add(f'plugins."{plugin}@rldyour-codex"')
 for server, spec in mcp_servers.items():
@@ -432,6 +459,25 @@ except tomllib.TOMLDecodeError as exc:
     )
 existing_features = existing_data.get("features") if isinstance(existing_data.get("features"), dict) else {}
 existing_memories = existing_data.get("memories") if isinstance(existing_data.get("memories"), dict) else {}
+existing_mcp_servers = existing_data.get("mcp_servers")
+if existing_mcp_servers is not None and not isinstance(existing_mcp_servers, dict):
+    raise SystemExit(f"{config_path}: mcp_servers must be a table")
+preserved_disabled_mcp_servers: dict[str, dict[object, object]] = {}
+for server in disabled_codex_mcp_servers:
+    raw_spec = (existing_mcp_servers or {}).get(server)
+    if raw_spec is None:
+        continue
+    if not isinstance(raw_spec, dict):
+        raise SystemExit(
+            f"{config_path}: mcp_servers.{server} must be a table so its app-managed "
+            "transport metadata can be preserved safely"
+        )
+    spec = dict(raw_spec)
+    spec["enabled"] = False
+    preserved_disabled_mcp_servers[server] = spec
+managed_plugin_names = set(curated_plugins) | set(disabled_codex_plugins) | {
+    f"{plugin}@rldyour-codex" for plugin in rldyour_plugins
+}
 managed_root_keys = {
     "profile",
     "approval_policy",
@@ -458,6 +504,7 @@ features_table_seen = False
 tui_table_seen = False
 feature_dotted_lines: list[str] = []
 tui_preserved_lines: list[str] = []
+preserved_inline_plugins: dict[str, dict[object, object]] = {}
 hooks_written = False
 multi_agent_written = False
 tui_managed_written = False
@@ -630,6 +677,8 @@ def is_managed_header(header: str, header_path: list[str]) -> bool:
         return True
     if len(header_path) >= 2 and header_path[0] == "mcp_servers":
         return True
+    if len(header_path) >= 2 and header_path[0] == "plugins" and header_path[1] in managed_plugin_names:
+        return True
     return (
         len(header_path) >= 2
         and header_path[0] == "profiles"
@@ -657,6 +706,10 @@ def append_preserved_toml_table(header_path: list[str], table: dict[object, obje
 
 def should_drop_mcp_server_name(server_name: str) -> bool:
     return True
+
+
+def should_drop_plugin_name(plugin_name: str) -> bool:
+    return plugin_name in managed_plugin_names
 
 
 for raw_line in existing.splitlines():
@@ -700,6 +753,29 @@ for raw_line in existing.splitlines():
         if len(key_path) == 1 and key_path[0] in deprecated_root_keys:
             continue
         if len(key_path) >= 2 and key_path[0] == "mcp_servers" and should_drop_mcp_server_name(key_path[1]):
+            continue
+        if len(key_path) >= 2 and key_path[0] == "plugins" and should_drop_plugin_name(key_path[1]):
+            continue
+        if len(key_path) == 1 and key_path[0] == "plugins":
+            try:
+                inline_plugins = tomllib.loads(raw_line).get("plugins") or {}
+            except Exception as exc:
+                raise SystemExit(
+                    "Could not safely migrate inline plugins assignment in "
+                    f"{config_path}: {exc}. Rewrite it as [plugins.\"<name>\"] tables "
+                    "or restore an installer backup before running install_system_codex.sh."
+                )
+            if not isinstance(inline_plugins, dict):
+                raise SystemExit(f"{config_path}: plugins inline assignment must be a table")
+            for plugin, spec in inline_plugins.items():
+                plugin_name = str(plugin)
+                if should_drop_plugin_name(plugin_name):
+                    continue
+                if not isinstance(spec, dict):
+                    raise SystemExit(
+                        f"{config_path}: plugins.{plugin_name} must be a table so it can be preserved safely"
+                    )
+                preserved_inline_plugins[plugin_name] = spec
             continue
         if len(key_path) == 1 and key_path[0] == "mcp_servers":
             try:
@@ -776,6 +852,12 @@ for raw_line in existing.splitlines():
         key_info = assignment_key_path(raw_line)
         key_path = key_info[0] if key_info else []
         if key_path and should_drop_mcp_server_name(key_path[0]):
+            continue
+
+    if current_header and split_toml_key(current_header) == ["plugins"]:
+        key_info = assignment_key_path(raw_line)
+        key_path = key_info[0] if key_info else []
+        if key_path and should_drop_plugin_name(key_path[0]):
             continue
 
     if in_features:
@@ -860,9 +942,16 @@ if trust_home:
     add_blank()
     out.extend([f'[projects."{home}"]', 'trust_level = "trusted"'])
 
+for plugin, spec in preserved_inline_plugins.items():
+    append_preserved_toml_table(["plugins", plugin], spec)
+
 for plugin in curated_plugins:
     add_blank()
     out.extend([f'[plugins."{plugin}"]', "enabled = true"])
+
+for plugin in disabled_codex_plugins:
+    add_blank()
+    out.extend([f'[plugins."{plugin}"]', "enabled = false"])
 
 for plugin in rldyour_plugins:
     add_blank()
@@ -880,6 +969,9 @@ for server, spec in mcp_servers.items():
         out.append(f"[mcp_servers.{server}.env]")
         for key, value in env.items():
             out.append(f"{key} = {toml_value(value)}")
+
+for server, spec in preserved_disabled_mcp_servers.items():
+    append_preserved_toml_table(["mcp_servers", server], spec)
 
 for server, tools in mcp_tool_approvals.items():
     for tool, approval_mode in tools.items():
@@ -920,7 +1012,10 @@ if dry_run:
     print(f"dry-run: would patch {config_path}")
     print(f"dry-run: would patch {yolo_profile_path}")
     print(f"dry-run: would patch {safe_profile_path}")
-    print(f"dry-run: managed plugins: {len(rldyour_plugins) + len(curated_plugins)}")
+    print(
+        "dry-run: managed plugins: "
+        f"{len(rldyour_plugins) + len(curated_plugins) + len(disabled_codex_plugins)}"
+    )
     print(f"dry-run: managed subagents: {len(managed_agents)}")
     print(f"dry-run: managed MCP servers: {len(mcp_servers)}")
 else:

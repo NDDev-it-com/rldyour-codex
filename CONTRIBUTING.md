@@ -74,15 +74,20 @@ A pull request is mergeable only when these checks complete and pass. Maintainer
 
 ## Releases
 
-Releases use Semantic Versioning (`X.Y.Z[-pre]`). To prepare a release:
+Releases use numeric Semantic Versioning (`X.Y.Z`). To prepare a release:
 
 1. Bump `VERSION`.
 2. Add a new `## [X.Y.Z] - YYYY-MM-DD` section to `CHANGELOG.md` with `Added`, `Changed`, `Fixed`, `Security` subsections as needed.
 3. Run `scripts/validate_release.sh` locally.
 4. Open a pull request, merge to `main` after CI passes.
-5. Push a SemVer tag matching `X.Y.Z[-pre]`. The `release.yml` workflow triggers automatically, builds a deterministic bundle, generates the SPDX SBOM, attaches artifact attestations, and publishes the GitHub Release.
+5. After the exact release commit is on `main` and branch CI is stably green,
+   create and push the signed numeric tag matching `X.Y.Z`. The `release.yml`
+   workflow verifies the exact remote tag and its ancestry from `origin/main`,
+   builds the deterministic bundle, generates the SPDX SBOM, attaches artifact
+   attestations, and publishes through `gh release --verify-tag`.
 
-`workflow_dispatch` of `release.yml` is available as a fallback when manual control is required.
+`workflow_dispatch` of `release.yml` only verifies or retries an existing
+numeric tag. It never creates or pushes a tag.
 
 ## Validation Quick Reference
 

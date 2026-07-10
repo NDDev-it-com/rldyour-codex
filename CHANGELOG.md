@@ -67,6 +67,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.7] - 2026-07-10
+
+### Security
+
+- Disable the app-managed `browser@openai-bundled` plugin explicitly and keep
+  `node_repl` plus `computer-use` MCP surfaces fail-closed so raw, in-app, and
+  computer-use browser paths cannot bypass the mandatory CloakBrowser wrappers.
+- Preserve existing app-managed MCP transport metadata while forcing
+  `enabled = false`; reject active or reinjected copies in doctor with explicit
+  reinstall-and-restart remediation.
+- Add realistic table, dotted-key, inline-table, idempotency, reinjection, and
+  isolated-CODEX_HOME regression coverage without changing Codex CLI `0.144.1`,
+  CloakBrowser `0.4.10`, approved MCP pins/transports, curated GitHub/Gmail, or
+  reusable CI `0.5.1`.
+- Harden release automation so tag pushes and existing-tag-only manual retries
+  verify the exact remote tag and peeled commit ancestry from `origin/main`;
+  remove every workflow path that creates or pushes a tag and keep publication
+  centralized behind `gh release --verify-tag`.
+
+
 ## [1.8.6] - 2026-07-10
 
 ### Fixed

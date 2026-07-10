@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: 698a800c48294a799de24f1f444044bb1bfbd6db chore(release): codex 1.6.1
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -16,21 +16,31 @@ instruction docs and durable operator documentation
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
 - `path:system/AGENTS.md`
+- `path:CONTRIBUTING.md`
+- `path:docs/release-process.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `698a800c48294a799de24f1f444044bb1bfbd6db`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
+- checked by: Codex browser trust-boundary instruction sync
 
 ## Facts
 - Docs memories record which instruction and operator docs must change after durable behavior changes.
+- `AGENTS.md`, `.claude/CLAUDE.md`, README, browser skill docs, and MCP docs
+  consistently require the managed CloakBrowser wrappers and the explicit
+  disabled state for app-managed browser, Node REPL, and computer-use surfaces.
+- Release operator docs consistently require stable-green branch CI before a
+  manually created signed numeric tag and describe workflow dispatch as an
+  existing-tag-only verification/retry path.
 
 ## Evidence
-- `commit:698a800c48294a799de24f1f444044bb1bfbd6db`
+- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
 - `path:system/AGENTS.md`
+- `path:CONTRIBUTING.md`
+- `path:docs/release-process.md`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

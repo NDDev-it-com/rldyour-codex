@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 8be83a228e75b152cd3b7612bf834906310219a4 chore(release): codex adapter 1.8.5
+Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -16,13 +16,15 @@ MCP runtime transport and pin policy
 - `path:plugins/rldyour-mcps/README.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/doctor_system_codex.sh`
 - `https://registry.npmjs.org/@modelcontextprotocol/server-sequential-thinking/2026.7.4`
 - `https://registry.npmjs.org/@upstash/context7-mcp/3.2.3`
 
 ## Last verified
 - date: 2026-07-10
-- commit: `8be83a228e75b152cd3b7612bf834906310219a4`
-- checked by: Codex MCP runtime pin refresh
+- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
+- checked by: Codex app-managed MCP fail-closed hardening
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
@@ -33,13 +35,19 @@ MCP runtime transport and pin policy
   transport; this dependency refresh does not change browser routing.
 - MCP operator documentation treats Chrome DevTools as the explicit
   bootstrap-owned managed-wrapper exception to package-launched local runtimes.
+- Repository MCP inventory remains exclusive. The only additional Codex config
+  MCP tables allowed are app-managed `node_repl` and `computer-use`; installer
+  preserves their transport metadata while forcing `enabled = false`, and
+  doctor rejects either surface when active.
 
 ## Evidence
-- `commit:8be83a228e75b152cd3b7612bf834906310219a4`
+- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:plugins/rldyour-mcps/README.md`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/doctor_system_codex.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

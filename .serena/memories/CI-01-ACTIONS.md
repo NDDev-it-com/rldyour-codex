@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: 698a800c48294a799de24f1f444044bb1bfbd6db chore(release): codex 1.6.1
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -14,19 +14,27 @@ GitHub Actions and local CI policy
 ## Current source of truth
 - `path:.github/workflows`
 - `path:README.md`
+- `path:.github/workflows/release.yml`
+- `path:tests/unit/test_release_workflow_estate.py`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `698a800c48294a799de24f1f444044bb1bfbd6db`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
+- checked by: Codex release estate ancestry hardening
 
 ## Facts
 - CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
+- Release tag-push jobs fetch `origin/main` and reject a release commit that is
+  not its ancestor. Manual dispatch resolves and peels an exact existing remote
+  numeric tag; no workflow path creates or pushes tags. GitHub Release creation
+  remains centralized behind `gh release --verify-tag`.
 
 ## Evidence
-- `commit:698a800c48294a799de24f1f444044bb1bfbd6db`
+- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
 - `path:.github/workflows`
 - `path:README.md`
+- `path:.github/workflows/release.yml`
+- `path:tests/unit/test_release_workflow_estate.py`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

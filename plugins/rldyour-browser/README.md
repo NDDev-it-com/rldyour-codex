@@ -33,6 +33,14 @@ direct provider-package executable, or alternate browser-engine fallback. A
 missing or unhealthy managed runtime must fail closed and be reported as
 `NOT_PROVEN` instead of being bypassed.
 
+The system installer also writes
+`[plugins."browser@openai-bundled"] enabled = false`. If app-managed
+`mcp_servers.node_repl` or `mcp_servers.computer-use` transport metadata is
+present, the installer preserves that metadata but forces `enabled = false`.
+These raw/in-app/computer-use surfaces are never browser fallbacks. Doctor
+rejects any active or reinjected copy and requires reinstall plus a Codex
+restart.
+
 ## Skills
 
 - `browser-tool-routing`: chooses Webwright, Playwright CLI, Chrome DevTools MCP, or a staged combination.

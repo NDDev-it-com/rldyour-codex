@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 8be83a228e75b152cd3b7612bf834906310219a4 chore(release): codex adapter 1.8.5
+Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,15 +18,22 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-07-10
-- commit: `8be83a228e75b152cd3b7612bf834906310219a4`
-- checked by: Codex adapter release finalization
+- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
+- checked by: Codex adapter 1.8.7 security release preparation
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.8.6`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Current rldyour-codex adapter VERSION is `1.8.7`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Release `1.8.7` closes app-managed raw/in-app/computer-use browser bypasses
+  without changing Codex CLI `0.144.1`, CloakBrowser `0.4.10`, approved MCP
+  pins/transports, curated GitHub/Gmail plugins, or reusable CI `0.5.1`.
+- Release automation consumes only a pre-existing signed numeric tag created
+  after stable-green branch CI. Tag-push and manual retry paths verify exact
+  remote tag peel/ancestry from `origin/main`; workflow dispatch cannot create
+  or push tags.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene without copying current control-plane pins.
 
 ## Evidence
-- `commit:8be83a228e75b152cd3b7612bf834906310219a4`
+- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`

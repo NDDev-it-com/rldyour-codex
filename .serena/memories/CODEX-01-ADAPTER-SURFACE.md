@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: 698a800c48294a799de24f1f444044bb1bfbd6db chore(release): codex 1.6.1
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
 Scope: Codex adapter implementation surface
 Area: CODEX
 -->
@@ -14,19 +14,27 @@ Codex adapter implementation surface
 ## Current source of truth
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/doctor_system_codex.sh`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `698a800c48294a799de24f1f444044bb1bfbd6db`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
+- checked by: Codex app-managed browser surface hardening
 
 ## Facts
 - Codex memories describe the Codex plugin marketplace, system install, hooks, MCP, apps, and managed agents.
+- Installer owns the explicit disabled state for `browser@openai-bundled` and
+  any present app-managed `node_repl` / `computer-use` MCP tables. Doctor is the
+  enforcement boundary for active or reinjected copies and requires reinstall
+  plus process restart before browser work resumes.
 
 ## Evidence
-- `commit:698a800c48294a799de24f1f444044bb1bfbd6db`
+- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
 - `path:config/rldyour-contract.json`
 - `path:.agents/plugins/marketplace.json`
+- `path:scripts/install_system_codex.sh`
+- `path:scripts/doctor_system_codex.sh`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

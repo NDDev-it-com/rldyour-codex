@@ -1,0 +1,38 @@
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."gmail@openai-curated"]
+enabled = false
+
+[plugins."github@openai-curated"]
+enabled = false
+
+[plugins."keep-me"]
+enabled = true
+channel = "local"
+
+[mcp_servers.node_repl]
+command = "/Applications/Codex.app/Contents/Resources/node"
+args = ["node_repl.js", "--stdio"]
+enabled = true
+startup_timeout_sec = 45
+tool_timeout_sec = 180
+instructions = "Use Chrome or the in-app browser when available."
+
+[mcp_servers.node_repl.env]
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+BROWSER_USE_CHROME_PATH = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+KEEP_APP_METADATA = "yes"
+
+[mcp_servers."computer-use"]
+command = "/Applications/Codex.app/Contents/Resources/computer-use"
+args = ["--stdio"]
+enabled = false
+required = false
+
+[mcp_servers."computer-use".env]
+COMPUTER_USE_BACKEND = "iab"
+
+[mcp_servers.unapproved]
+command = "custom-mcp"
+args = ["--unsafe"]

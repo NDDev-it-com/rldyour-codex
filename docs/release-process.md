@@ -36,8 +36,10 @@ python3 scripts/release_sbom.py > diagnostics/sbom.spdx.json
 ```
 
 6. Commit with a Conventional Commit message.
-7. Push to `main` (agent context is tracked normally on `main`, so there is no separate publish step), then manually run the `validate` workflow with `scope=full` on the Ubuntu standard runner.
-8. Create the release from `.github/workflows/release.yml` after the requested manual CI scope is green. The workflow validates `VERSION` and `CHANGELOG.md`, builds a deterministic `tar.gz`, writes `release-manifest.json`, writes generated SPDX SBOM evidence, exports the GitHub dependency graph SPDX SBOM from the dependency graph SBOM endpoint when available, creates artifact attestations, and publishes the GitHub Release.
+7. Push to `main` (agent context is tracked normally on `main`, so there is no separate publish step), then wait for all exact-SHA branch CI checks to reach a stable green state.
+8. Create and push the signed numeric tag manually only after branch CI is green. The release workflow never creates or pushes tags.
+9. Let the tag-push run publish the release. It fetches `origin/main`, verifies the exact remote tag object and peeled commit ancestry, validates `VERSION` and `CHANGELOG.md`, builds a deterministic `tar.gz`, writes `release-manifest.json`, writes generated SPDX SBOM evidence, exports the GitHub dependency graph SPDX SBOM when available, creates artifact attestations, and publishes through `gh release --verify-tag`.
+10. Use `workflow_dispatch` only to retry or verify an existing numeric tag. Manual dispatch resolves that exact tag with `git ls-remote --refs origin`, checks its peeled commit ancestry from `origin/main`, and never creates or pushes a tag.
 
 Release tags use the exact SemVer value from `VERSION` without a `v` prefix, for example `0.2.0`.
 

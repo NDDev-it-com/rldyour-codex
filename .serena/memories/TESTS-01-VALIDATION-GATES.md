@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 8be83a228e75b152cd3b7612bf834906310219a4 chore(release): codex adapter 1.8.5
+Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -14,13 +14,16 @@ validation gates and test suites
 ## Current source of truth
 - `path:scripts`
 - `path:tests/unit/test_validate_browser_provider_policy.py`
+- `path:tests/unit/test_install_system_codex_mcp_inventory.py`
+- `path:tests/fixtures/codex_app_managed_browser_config.toml`
+- `path:tests/unit/test_release_workflow_estate.py`
 - `path:.github/workflows`
 - `path:README.md`
 
 ## Last verified
 - date: 2026-07-10
-- commit: `8be83a228e75b152cd3b7612bf834906310219a4`
-- checked by: Codex managed browser policy regression refresh
+- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
+- checked by: Codex app-managed browser bypass regression suite
 
 ## Facts
 - Test memories record which suites and smoke tests prove the touched behavior.
@@ -28,11 +31,21 @@ validation gates and test suites
   `tests/unit/test_validate_browser_provider_policy.py` reject stale direct
   Chrome package launch docs, missing managed wrapper paths, and unmanaged
   browser fallback language.
+- Installer/doctor tests cover table, dotted-key, inline-table, and parent-table
+  parsing; realistic app metadata preservation; semantic reinstall idempotency;
+  explicit plugin disablement; active-surface reinjection; remediation text;
+  curated plugin retention; and exact Chrome transport parity.
+- Release workflow regression rejects tag-creation/push commands and requires
+  numeric input, exact remote-tag lookup, peeled commit ancestry for tag-push
+  and manual paths, and centralized `gh release --verify-tag` publication.
 
 ## Evidence
-- `commit:8be83a228e75b152cd3b7612bf834906310219a4`
+- `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
 - `path:scripts`
 - `path:tests/unit/test_validate_browser_provider_policy.py`
+- `path:tests/unit/test_install_system_codex_mcp_inventory.py`
+- `path:tests/fixtures/codex_app_managed_browser_config.toml`
+- `path:tests/unit/test_release_workflow_estate.py`
 - `path:.github/workflows`
 - `path:README.md`
 

@@ -149,6 +149,7 @@ codex_home = path.parent
 system_agent_dir = Path(os.environ["RLDYOUR_SYSTEM_AGENT_DIR"])
 marketplace_config_path = Path(os.environ["RLDYOUR_MARKETPLACE_CONFIG"])
 mcp_config_path = Path(os.environ["RLDYOUR_MCP_CONFIG"])
+browser_contract_path = Path(repo_root) / "config" / "rldyour-contract.json"
 owner_mode = os.environ.get("RLDYOUR_OWNER_MODE") == "1"
 text = path.read_text(encoding="utf-8")
 config_data = tomllib.loads(text)
@@ -196,7 +197,39 @@ def load_rldyour_plugins(path: Path) -> list[str]:
         raise SystemExit(f"{path}: no rldyour plugins found")
     return result
 
+
+def load_disabled_codex_surfaces(path: Path) -> tuple[list[str], list[str]]:
+    contract = json.loads(path.read_text(encoding="utf-8"))
+    surfaces = ((contract.get("browser_providers") or {}).get("disabled_codex_surfaces") or {})
+    plugins = surfaces.get("plugins")
+    servers = surfaces.get("mcp_servers")
+    required_plugins = {"browser@openai-bundled"}
+    required_servers = {"computer-use", "node_repl"}
+    if plugins != sorted(required_plugins):
+        raise SystemExit(
+            f"{path}: browser_providers.disabled_codex_surfaces.plugins must be "
+            f"{sorted(required_plugins)!r}"
+        )
+    if servers != sorted(required_servers):
+        raise SystemExit(
+            f"{path}: browser_providers.disabled_codex_surfaces.mcp_servers must be "
+            f"{sorted(required_servers)!r}"
+        )
+    return sorted(required_plugins), sorted(required_servers)
+
+
+disabled_codex_plugins, disabled_codex_mcp_servers = load_disabled_codex_surfaces(browser_contract_path)
+
 checks = []
+browser_surface_failures: list[str] = []
+
+
+def add_browser_surface_check(label: str, ok: bool) -> None:
+    checks.append((label, ok))
+    if not ok:
+        browser_surface_failures.append(label)
+
+
 checks.append(("config schema comment", text.startswith(f"{schema_comment}\n")))
 marketplace = (config_data.get("marketplaces") or {}).get("rldyour-codex") or {}
 checks.append(("marketplace source", marketplace.get("source") == repo_root and marketplace.get("source_type") == "local"))
@@ -297,6 +330,12 @@ configured_plugins = config_data.get("plugins") or {}
 for plugin in plugins:
     plugin_config = configured_plugins.get(plugin) or {}
     checks.append((f"plugin enabled {plugin}", plugin_config.get("enabled") is True))
+for plugin in disabled_codex_plugins:
+    plugin_config = configured_plugins.get(plugin)
+    add_browser_surface_check(
+        f"app-managed browser plugin explicitly disabled {plugin}",
+        isinstance(plugin_config, dict) and plugin_config.get("enabled") is False,
+    )
 expected_rldyour_plugins = set(rldyour_plugins)
 for plugin in sorted(configured_plugins):
     if plugin.startswith("rldyour-") and plugin.endswith("@rldyour-codex") and plugin not in expected_rldyour_plugins:
@@ -304,10 +343,18 @@ for plugin in sorted(configured_plugins):
 
 mcp_servers = sorted(json.loads(mcp_config_path.read_text(encoding="utf-8"))["mcpServers"])
 configured_mcp_servers = config_data.get("mcp_servers") or {}
+approved_mcp_servers = set(mcp_servers)
+allowed_disabled_mcp_servers = set(disabled_codex_mcp_servers)
 for server in mcp_servers:
     checks.append((f"mcp configured {server}", server in configured_mcp_servers))
 for server in sorted(configured_mcp_servers):
-    checks.append((f"mcp server approved {server}", server in set(mcp_servers)))
+    checks.append((f"mcp server approved {server}", server in approved_mcp_servers | allowed_disabled_mcp_servers))
+for server in disabled_codex_mcp_servers:
+    server_config = configured_mcp_servers.get(server)
+    add_browser_surface_check(
+        f"app-managed MCP disabled when present {server}",
+        server_config is None or (isinstance(server_config, dict) and server_config.get("enabled") is False),
+    )
 
 tool_approvals = {
     "sequential-thinking": {"sequentialthinking": "approve"},
@@ -331,6 +378,14 @@ for label, ok in checks:
     else:
         print(f"fail    {label}", file=sys.stderr)
         failed = True
+
+if browser_surface_failures:
+    print(
+        "fail    forbidden raw/in-app/computer-use Codex surface is active or was reinjected; "
+        f"rerun {repo_root}/scripts/install_system_codex.sh --apply --codex-home {codex_home} "
+        "and restart Codex",
+        file=sys.stderr,
+    )
 
 raise SystemExit(1 if failed else 0)
 PY

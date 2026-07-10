@@ -38,6 +38,14 @@ MANAGED_BROWSER_WRAPPERS = (
     "$HOME/.local/bin/playwright-cli",
     "$HOME/.local/bin/chrome-devtools-mcp",
 )
+DISABLED_CODEX_PLUGINS = {"browser@openai-bundled"}
+DISABLED_CODEX_MCP_SERVERS = {"computer-use", "node_repl"}
+DISABLED_CODEX_SURFACE_TERMS = (
+    "browser@openai-bundled",
+    "node_repl",
+    "computer-use",
+    "enabled = false",
+)
 STALE_CHROME_TABLE = (
     "| `chrome-devtools` | Page diagnostics through Chrome DevTools | "
     "`bunx`, headless, isolated |"
@@ -98,6 +106,7 @@ def validate_browser_docs(root: Path = ROOT) -> None:
         require_terms(
             docs[path],
             MANAGED_BROWSER_WRAPPERS
+            + DISABLED_CODEX_SURFACE_TERMS
             + ("CloakBrowser", "stock Chromium", "in-app browser", "raw browser", "fail closed"),
             str(path),
         )
@@ -112,6 +121,44 @@ def validate_browser_docs(root: Path = ROOT) -> None:
     require(
         fallback_match is None,
         f"browser docs allow an unmanaged browser fallback: {fallback_match.group(0) if fallback_match else ''}",
+    )
+
+
+def validate_disabled_codex_surfaces(root: Path = ROOT) -> None:
+    contract = json.loads((root / "config/rldyour-contract.json").read_text(encoding="utf-8"))
+    surfaces = ((contract.get("browser_providers") or {}).get("disabled_codex_surfaces") or {})
+    require(
+        surfaces.get("plugins") == sorted(DISABLED_CODEX_PLUGINS),
+        "Codex disabled browser plugin contract drift",
+    )
+    require(
+        surfaces.get("mcp_servers") == sorted(DISABLED_CODEX_MCP_SERVERS),
+        "Codex disabled app-managed MCP contract drift",
+    )
+
+    installer = (root / "scripts/install_system_codex.sh").read_text(encoding="utf-8")
+    doctor = (root / "scripts/doctor_system_codex.sh").read_text(encoding="utf-8")
+    require_terms(
+        installer,
+        (
+            "disabled_codex_plugins",
+            "disabled_codex_mcp_servers",
+            "preserved_disabled_mcp_servers",
+            'spec["enabled"] = False',
+            '"enabled = false"',
+        ),
+        "scripts/install_system_codex.sh",
+    )
+    require_terms(
+        doctor,
+        (
+            "disabled_codex_plugins",
+            "disabled_codex_mcp_servers",
+            "forbidden raw/in-app/computer-use Codex surface",
+            "rerun",
+            "restart Codex",
+        ),
+        "scripts/doctor_system_codex.sh",
     )
 
 
@@ -137,6 +184,7 @@ def text_files() -> list[Path]:
 
 def validate() -> None:
     validate_browser_docs()
+    validate_disabled_codex_surfaces()
     hits: list[str] = []
     allowed_negative_surfaces = (
         "scripts/validate_browser_provider_policy.py",
