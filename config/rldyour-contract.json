@@ -169,6 +169,7 @@
     "permission_profiles_active": false,
     "default_sandbox_mode": "danger-full-access",
     "default_approval_policy": "never",
+    "check_for_update_on_startup": false,
     "full_auto_standard": true,
     "full_auto_aliases": [
       "yolo",
