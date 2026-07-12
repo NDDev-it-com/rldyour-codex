@@ -3,7 +3,7 @@
   "compiled_policy": {
     "repository_id": "repo_01KX8PR7RR0DAT1RY5XN4838E5",
     "bundle_version": "0.1.0-dev",
-    "digest": "sha256:751728b7e7a3628ccec1cd655a412f0cb5f8b1670c754d78576d1683db142743"
+    "digest": "sha256:043a7a6ae3ba8f7b730d15ab729c66df1249a56f22652774a7541fd46e22c58a"
   },
   "sources": [
     {
@@ -12,7 +12,7 @@
       "priority": 100,
       "distribution": "public",
       "path": "policies/base/repository-default.yaml",
-      "digest": "sha256:90d112ae49f4c44ebce3b749d543660548214061128926d3d6d11ba02827a414"
+      "digest": "sha256:5075e944793d13e6c506da09f136214872a40c5b91eabb06fae09d0993631649"
     },
     {
       "id": "organization-default",
@@ -50,26 +50,17 @@
     "github": {
       "actions": {
         "allowed_actions": {
-          "management": "managed",
-          "value": "selected"
+          "management": "observed"
         },
         "enabled": {
           "management": "managed",
           "value": true
         },
         "selected_actions": {
-          "management": "managed",
-          "value": {
-            "github_owned_allowed": true,
-            "patterns_allowed": [
-              "NDDev-it-com/nddev-ci-workflows/.github/workflows/*@*"
-            ],
-            "verified_allowed": false
-          }
+          "management": "observed"
         },
         "sha_pinning_required": {
-          "management": "managed",
-          "value": true
+          "management": "observed"
         }
       },
       "merge": {
@@ -198,13 +189,6 @@
       "file": "policies/base/repository-default.yaml",
       "operation": "set"
     },
-    "/effective/github/actions/allowed_actions/value": {
-      "source": "repository-default",
-      "tier": "base",
-      "priority": 100,
-      "file": "policies/base/repository-default.yaml",
-      "operation": "set"
-    },
     "/effective/github/actions/enabled/management": {
       "source": "repository-default",
       "tier": "base",
@@ -226,35 +210,7 @@
       "file": "policies/base/repository-default.yaml",
       "operation": "set"
     },
-    "/effective/github/actions/selected_actions/value/github_owned_allowed": {
-      "source": "repository-default",
-      "tier": "base",
-      "priority": 100,
-      "file": "policies/base/repository-default.yaml",
-      "operation": "set"
-    },
-    "/effective/github/actions/selected_actions/value/patterns_allowed/0": {
-      "source": "repository-default",
-      "tier": "base",
-      "priority": 100,
-      "file": "policies/base/repository-default.yaml",
-      "operation": "set"
-    },
-    "/effective/github/actions/selected_actions/value/verified_allowed": {
-      "source": "repository-default",
-      "tier": "base",
-      "priority": 100,
-      "file": "policies/base/repository-default.yaml",
-      "operation": "set"
-    },
     "/effective/github/actions/sha_pinning_required/management": {
-      "source": "repository-default",
-      "tier": "base",
-      "priority": 100,
-      "file": "policies/base/repository-default.yaml",
-      "operation": "set"
-    },
-    "/effective/github/actions/sha_pinning_required/value": {
       "source": "repository-default",
       "tier": "base",
       "priority": 100,
