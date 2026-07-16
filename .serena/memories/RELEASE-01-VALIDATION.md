@@ -22,8 +22,8 @@ release readiness, versioning, and artifact hygiene
 - checked by: Codex adapter 1.8.10 managed update-policy preparation
 
 ## Facts
-- Current rldyour-codex adapter VERSION is `1.8.10`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
-- Release `1.8.10` disables Codex startup update checks in every managed config
+- Current rldyour-codex adapter VERSION is `1.8.11`; the release workflow publishes the matching numeric GitHub Release tag at the released commit. Root `config/repositories.json` and the superproject gitlink own the current adapter HEAD.
+- Release `1.8.11` disables Codex startup update checks in every managed config
   so exact, transactional bootstrap upgrades cannot drift into an unrelated
   global npm prefix. It preserves Codex CLI `0.144.1`, CloakBrowser `0.4.10`,
   the mandatory managed browser boundary, approved MCP pins/transports,

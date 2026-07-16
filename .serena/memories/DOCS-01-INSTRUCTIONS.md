@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-07-10
-Last verified: 2026-07-10
-Last commit: 693a00640832d3af8355066c0fd2fda4e84ad78e chore(release): codex adapter 1.8.6
+Last updated: 2026-07-16
+Last verified: 2026-07-16
+Last commit: c34dd389b6d875533f09e60d9273359ba0044a4b chore(release): codex 1.8.10 (other)
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -18,11 +18,12 @@ instruction docs and durable operator documentation
 - `path:system/AGENTS.md`
 - `path:CONTRIBUTING.md`
 - `path:docs/release-process.md`
+- `path:scripts/validate_instruction_docs.py`
 
 ## Last verified
-- date: 2026-07-10
-- commit: `693a00640832d3af8355066c0fd2fda4e84ad78e`
-- checked by: Codex browser trust-boundary instruction sync
+- date: 2026-07-16
+- commit: `c34dd389b6d875533f09e60d9273359ba0044a4b`
+- checked by: Codex subagent runtime-boundary instruction sync
 
 ## Facts
 - Docs memories record which instruction and operator docs must change after durable behavior changes.
@@ -32,15 +33,24 @@ instruction docs and durable operator documentation
 - Release operator docs consistently require stable-green branch CI before a
   manually created signed numeric tag and describe workflow dispatch as an
   existing-tag-only verification/retry path.
+- `system/AGENTS.md` requires every subagent to inherit the effective repository
+  instructions and requires parent prompts to repeat project runtime,
+  deployment, environment, and destructive-action boundaries. Read-only or
+  research delegation never authorizes local daemon startup, image operations,
+  or runtime use when the project assigns those checks to a server or CI.
+- `scripts/validate_instruction_docs.py` fails closed if that global subagent
+  boundary or the executable `validate_execpolicy_rules.sh` instruction drifts.
 
 ## Evidence
 - `commit:693a00640832d3af8355066c0fd2fda4e84ad78e`
+- `commit:c34dd389b6d875533f09e60d9273359ba0044a4b`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
 - `path:system/AGENTS.md`
 - `path:CONTRIBUTING.md`
 - `path:docs/release-process.md`
+- `path:scripts/validate_instruction_docs.py`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
