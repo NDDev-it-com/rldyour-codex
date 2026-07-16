@@ -17,10 +17,10 @@ It is not a generic preset, not an automatic configuration takeover, and not a b
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.10` |
+| Adapter version | `1.8.11` |
 | Runtime baseline | Codex CLI 0.144.1 (`@openai/codex`) |
 | Browser wrapper baseline | CloakBrowser 0.4.10 (`cloakbrowser`; bootstrap-owned) |
-| GitHub release tag | `1.8.10` |
+| GitHub release tag | `1.8.11` |
 
 The runtime baseline reference is `references/codex-baseline.json`, verified 2026-07-10. The npm package is `@openai/codex`; the upstream release artifact is at `https://github.com/openai/codex/releases/tag/rust-v0.144.1`.
 

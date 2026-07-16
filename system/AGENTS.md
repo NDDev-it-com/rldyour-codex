@@ -86,6 +86,9 @@ OpenAI Docs MCP before general web search when it is available.
 
 - Use subagents only when explicitly allowed by the user, an active workflow, or current system instructions.
 - Subagent prompts must be self-contained: task, context, constraints, expected output, read/write scope, risks.
+- Before using tools, a subagent must read the effective repository instructions for its assigned working directory unless the parent prompt already contains those exact applicable rules.
+- The parent must repeat project runtime, deployment, environment, and destructive-action boundaries explicitly in every subagent prompt; delegating a read-only or research task does not authorize daemon startup, image pulls/builds/scans, or local runtime use.
+- When a project requires runtime work on a server or in CI, subagents must not invoke local `orb`, Docker/Compose, container engines, or commands that start their daemons. Local source, LSP, formatting, lint, type, and static checks remain allowed when the project permits them.
 - Do not spawn subagents for trivial one-file work.
 - Managed role files live in `${CODEX_HOME:-$HOME/.codex}/agents/*.toml` and are installed from `system/agents/*.toml`.
 - Temporary specialist-MCP isolation is intentional: disabled specialist servers must copy full transport metadata from `plugins/rldyour-mcps/.mcp.json`; `codex_apps` is inherited and must not be declared as a synthetic MCP server.

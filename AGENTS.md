@@ -48,7 +48,7 @@ At minimum, also run:
 
 ```bash
 bash scripts/validate_fast.sh
-python3 scripts/validate_execpolicy_rules.py
+bash scripts/validate_execpolicy_rules.sh
 ```
 
 ## MCP and Runtime Policy
