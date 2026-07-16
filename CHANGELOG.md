@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.11] - 2026-07-16
+
+### Fixed
+
+- Enforce inherited server-only runtime boundaries in subagent prompts.
+
 ## [1.8.10] - 2026-07-10
 
 ### Fixed
