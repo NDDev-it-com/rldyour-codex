@@ -28,6 +28,13 @@ ACTIVE_DOCS = (
     "docs/contract-matrix.md",
     "system/AGENTS.md",
 )
+SYSTEM_AGENTS_REQUIRED_FRAGMENTS = (
+    "assigned working directory",
+    "every subagent prompt",
+    "does not authorize daemon startup",
+    "local `orb`",
+    "server or in CI",
+)
 RESEARCH_DIR = ".serena/research"
 FORBIDDEN_ACTIVE_CLAIMS = {
     "[features].plugin_hooks = true": "Codex 0.134 treats plugin_hooks as a removed feature flag",
@@ -38,6 +45,7 @@ FORBIDDEN_ACTIVE_CLAIMS = {
     "active hooks, plugin_hooks, and multi_agent": "plugin hooks are verified through hooks/list, not an active feature flag",
     ":danger-no-sandbox": "current Codex built-ins use :danger-full-access for the danger profile",
     "currently pinned at v1.15.4": "active current-pin wording must match the current OpenCode baseline",
+    "python3 scripts/validate_execpolicy_rules.py": "the executable gate is scripts/validate_execpolicy_rules.sh",
 }
 
 
@@ -90,6 +98,12 @@ def validate_file_content(root: Path, relative: str, errors: list[str], warnings
         non_empty = [line.strip() for line in lines if line.strip()]
         if non_empty and non_empty[0] == "@AGENTS.md" and len(non_empty) < 8:
             errors.append(f"{relative}: must be first-class Claude Code memory, not only @AGENTS.md")
+    elif relative == "system/AGENTS.md":
+        for fragment in SYSTEM_AGENTS_REQUIRED_FRAGMENTS:
+            if fragment not in text:
+                errors.append(
+                    f"{relative}: subagent runtime-boundary contract omits {fragment!r}"
+                )
 
 
 def validate_research_content(root: Path, errors: list[str], warnings: list[str]) -> None:
