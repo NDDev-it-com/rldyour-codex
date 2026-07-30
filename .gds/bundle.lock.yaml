@@ -1,0 +1,16 @@
+# GENERATED FILE - DO NOT EDIT DIRECTLY
+schema_version: 1
+
+bundle:
+  version: "0.1.0-dev"
+  release_sequence: 0
+  channel: "development"
+  source_commit: "02b9382e77ac77dead3c3a8551dea5f2e3b38fb8"
+  digest: "sha256:67f233bc8fe0b5ba07e54958ff052a083316fca30bf532359b26279d95d5716b"
+
+projection:
+  input_digest: "sha256:c303ab204db1a6c05b9b4d3924c9db901288432fa46fe55de2f32d17720ac8d0"
+  output_digest: "sha256:cf54a2cdaa617599f73568108e5ad2cb3f95887eb3303a6df9b7fed24cf255a5"
+  files:
+    - path: ".gds/compiled-policy.json"
+      digest: "sha256:26539e863fdaad031b11136c8517593e325f541661848b3dcdf8c1e2cf363039"
