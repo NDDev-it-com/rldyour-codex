@@ -16,11 +16,11 @@
   "strict_required_status_checks": true,
   "allow_force_pushes": false,
   "allow_deletions": false,
-  "require_linear_history": true,
+  "require_linear_history": false,
   "required_pull_request_reviews": {
-    "required_approving_review_count": 1,
+    "required_approving_review_count": 0,
     "dismiss_stale_reviews": true,
-    "require_code_owner_review": true
+    "require_code_owner_review": false
   },
   "enforce_admins": false,
   "notes": [
@@ -30,6 +30,8 @@
     "MCP safe call smoke (ubuntu) runs only on push (not on pull_request) and therefore is not included as a required pull-request status check.",
     "CodeQL Analyze (python) and Analyze (actions) are required because .github/workflows/codeql.yml runs on every push to main and every pull request, in addition to its weekly schedule.",
     "validate.yml exports the 'MCP runtime pin freshness' job (required on PR); dependency-check.yml exports 'MCP runtime pin freshness (scheduled)' which runs on schedule and on push to MCP pin sources and is intentionally not a pull-request required check.",
-    "Maintainer keeps administrative access for hotfixes; admin pushes do not trigger release.yml because that workflow listens on push:tags, not push:branches."
+    "Maintainer keeps administrative access for hotfixes; admin pushes do not trigger release.yml because that workflow listens on push:tags, not push:branches.",
+    "Linear history is OFF on purpose: the estate policy is merge commits only (squash and rebase are disabled), and required_linear_history forbids merge commits - the two cannot both hold.",
+    "Approvals are 0 and code-owner review is off because this is a single-maintainer repository: GitHub does not allow approving your own pull request, so any non-zero requirement is satisfiable only by an admin bypass on every merge."
   ]
 }
