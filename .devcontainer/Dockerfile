@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/python:1-3.13-bookworm
+FROM mcr.microsoft.com/devcontainers/python:3.9-bookworm
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
