@@ -26,6 +26,9 @@ updates:
         patterns:
           - "*"
 
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ['*']
   - package-ecosystem: "devcontainers"
     directory: "/.devcontainer"
     schedule:
