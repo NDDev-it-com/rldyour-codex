@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Removed
+
+- **The `rldyour-rtk` plugin and the Token Economy rule, by owner decision.** rtk
+  is not needed anywhere in the estate. Gone: the plugin tree with its opt-in
+  `PreToolUse` hook (`RTK_CODEX_HOOK=1`), the `token-economy` skill, the always-on
+  `RTK.md` rules file, the `## Token Economy (rtk)` section of
+  `system/AGENTS.md`, the marketplace entry, the contract plugin and hook rows,
+  and the skill-routing entries. Inventory drops to 10 plugins and 44 skills, and
+  `validate_plugin_versions.py` now allows hooks only from `rldyour-flow` and
+  `rldyour-serena-mcp`.
+
 
 ## [1.8.11] - 2026-07-16
 
