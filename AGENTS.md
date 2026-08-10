@@ -77,3 +77,15 @@ bash scripts/validate_execpolicy_rules.sh
 - Keep command surfaces and secrets model minimal and explicit in installer scripts.
 - Never commit credentials, browser cookies/profiles, or temporary diagnostic traces.
 - Security, CodeQL, secrets scanning, and dependency checks are mandatory in CI.
+
+## CI runner selection
+
+This repository is public, so `pull_request` executes untrusted fork code.
+Every caller of a `NDDev-it-com/ci-workflows` reusable that exposes a `runner`
+input passes `runner: ubuntu-latest` explicitly, and must keep it. Several of
+those reusables default `runner` to the estate's self-hosted `amsterdam`
+label, and a default is a property of the **pinned commit**, not of this
+repository — so dropping the explicit value would let a routine pin bump route
+fork PRs onto trusted private infrastructure with no diff here to review. On
+any ci-workflows pin bump, diff `inputs.runner.default` between the old and
+new commit before merging.
