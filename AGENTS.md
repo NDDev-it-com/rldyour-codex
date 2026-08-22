@@ -81,7 +81,7 @@ bash scripts/validate_execpolicy_rules.sh
 ## CI runner selection
 
 This repository is public, so `pull_request` executes untrusted fork code.
-Every caller of a `NDDev-it-com/ci-workflows` reusable that exposes a `runner`
+Every caller of a `NDDev-OpenNetwork/ci-workflows` reusable that exposes a `runner`
 input passes `runner: ubuntu-latest` explicitly, and must keep it. Several of
 those reusables default `runner` to the estate's self-hosted `amsterdam`
 label, and a default is a property of the **pinned commit**, not of this
