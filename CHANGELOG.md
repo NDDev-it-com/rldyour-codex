@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+
+## [1.8.12] - 2026-08-22
+
 ### Removed
 
 - **The `rldyour-rtk` plugin and the Token Economy rule, by owner decision.** rtk
@@ -17,6 +20,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   `validate_plugin_versions.py` now allows hooks only from `rldyour-flow` and
   `rldyour-serena-mcp`.
 
+### Changed
+
+- Release the accumulated plugin and contract corrections already present on main.
 
 ## [1.8.11] - 2026-07-16
 
