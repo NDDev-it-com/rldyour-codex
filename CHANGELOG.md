@@ -24,6 +24,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Release the accumulated plugin and contract corrections already present on main.
 
+### Fixed
+
+- Classify the observed two-line `pydantic-settings` forward-reference advisory
+  explicitly, while keeping successful MCP startup and deterministic calls as
+  the behavioral gate.
+
 ## [1.8.11] - 2026-07-16
 
 ### Fixed

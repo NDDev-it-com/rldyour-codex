@@ -41,6 +41,14 @@ BENIGN_RULES: tuple[NoiseRule, ...] = (
         "uv may report environment setup to stderr while preparing an isolated test runtime.",
     ),
     NoiseRule(
+        "pydantic-settings-forward-reference-advisory",
+        re.compile(
+            r"pydantic_settings/sources/utils\.py:\d+: IncompleteFieldDefinitionWarning:|"
+            r"^warnings\.warn\($"
+        ),
+        "pydantic-settings reports an unresolved optional lifespan annotation; the MCP startup and deterministic call remain the behavioral gate.",
+    ),
+    NoiseRule(
         "chrome-devtools-mcp-advisory",
         re.compile(
             r"turning off usage statistics|"
