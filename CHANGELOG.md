@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 
+## [1.8.14] - 2026-08-23
+
+### Fixed
+
+- Migrate reusable CI to the public OpenNetwork engine.
+
+## [1.8.13] - 2026-08-23
+
+### Fixed
+
+- Migrate reusable CI to the public OpenNetwork engine.
+
 ## [1.8.12] - 2026-08-22
 
 ### Removed
