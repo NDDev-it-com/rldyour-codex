@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.8.17] - 2026-08-25
+
+### Fixed
+
+- Synchronize README and durable release-memory current-version claims with
+  the exact immutable adapter release identity.
+
 ## [1.8.16] - 2026-08-25
 
 ### Fixed
