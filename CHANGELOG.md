@@ -941,7 +941,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - System Codex docs now clarify that the owner-selected `sandbox_mode = "danger-full-access"` remains the active runtime policy while `plugin_hooks` stays an explicit official Codex opt-in.
 - Serena MCP capability smoke now uses the deterministic `list_memories` safe call for Serena Agent `1.5.1` to avoid classifying variable configuration output as CI noise.
 - Installer, doctor, marketplace validation, hook smoke, local Git hook fallback, fullrepo fallback, and Flow post-task state now use the Codex versioned plugin cache layout `${CODEX_HOME}/plugins/cache/rldyour-codex/<plugin>/<version>` while retaining legacy `local` fallback where needed.
-- Plugin manifests now align with the repository public license and canonical URL: `AGPL-3.0-or-later` and `https://github.com/NDDev-it-com/rldyour-codex`.
+- Plugin manifests now align with the repository public license and canonical URL: `AGPL-3.0-or-later` and `https://github.com/rldyourmnd/rldyour-codex`.
 - Marketplace validation batches skill frontmatter parsing in one Python process and release validation now includes the Codex adapter contract gate.
 - Runtime validation now includes live Codex `hooks/list` trust smoke after installing into a temporary `CODEX_HOME`.
 - System installer and doctor now default to the owner-standard full-auto

@@ -26,10 +26,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/NDDev-it-com/rldyour-codex"
-Repository = "https://github.com/NDDev-it-com/rldyour-codex"
-Issues = "https://github.com/NDDev-it-com/rldyour-codex/issues"
-Changelog = "https://github.com/NDDev-it-com/rldyour-codex/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/rldyourmnd/rldyour-codex"
+Repository = "https://github.com/rldyourmnd/rldyour-codex"
+Issues = "https://github.com/rldyourmnd/rldyour-codex/issues"
+Changelog = "https://github.com/rldyourmnd/rldyour-codex/blob/main/CHANGELOG.md"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

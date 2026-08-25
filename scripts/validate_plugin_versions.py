@@ -18,7 +18,7 @@ ASCII_ALPHA_RE = re.compile(r"[A-Za-z]")
 ALLOWED_INSTALLATION = {"AVAILABLE", "INSTALLED_BY_DEFAULT", "NOT_AVAILABLE"}
 ALLOWED_AUTHENTICATION = {"ON_USE", "ON_INSTALL"}
 EXPECTED_PLUGIN_LICENSE = "AGPL-3.0-or-later"
-EXPECTED_REPOSITORY_URL = "https://github.com/NDDev-it-com/rldyour-codex"
+EXPECTED_REPOSITORY_URL = "https://github.com/rldyourmnd/rldyour-codex"
 EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO NDDev"
 MANIFEST_PATH_FIELDS = {
     "skills": "directory",

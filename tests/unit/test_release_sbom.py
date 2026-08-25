@@ -61,4 +61,4 @@ def test_generate_sbom_namespace_uses_canonical_org() -> None:
     sbom = mod.generate_sbom()
     namespace = sbom["documentNamespace"]
     assert isinstance(namespace, str)
-    assert namespace.startswith("https://github.com/NDDev-it-com/rldyour-codex/")
+    assert namespace.startswith("https://github.com/rldyourmnd/rldyour-codex/")

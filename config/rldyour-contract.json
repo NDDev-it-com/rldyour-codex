@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "adapter": "codex",
-  "public_repository": "https://github.com/NDDev-it-com/rldyour-codex",
+  "public_repository": "https://github.com/rldyourmnd/rldyour-codex",
   "license": "AGPL-3.0-or-later",
   "plugins": [
     "rldyour-browser",

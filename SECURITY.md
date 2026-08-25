@@ -22,7 +22,7 @@ Please report vulnerabilities privately. Do not open public issues or pull reque
 
 Preferred channel: GitHub Security Advisories.
 
-- https://github.com/NDDev-it-com/rldyour-codex/security/advisories/new
+- https://github.com/rldyourmnd/rldyour-codex/security/advisories/new
 
 Alternative channel: contact the maintainer through their GitHub profile at https://github.com/rldyourmnd and request a private disclosure handle.
 

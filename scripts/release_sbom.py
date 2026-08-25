@@ -54,7 +54,7 @@ def generate_sbom() -> dict[str, object]:
     created = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     # Repository URL must match the project.urls.Repository entry in pyproject.toml
     # and any future renaming under the NDDev-it-com GitHub organization.
-    namespace = f"https://github.com/NDDev-it-com/rldyour-codex/releases/{version}/sbom-{created}"
+    namespace = f"https://github.com/rldyourmnd/rldyour-codex/releases/{version}/sbom-{created}"
 
     root_package = package(
         "rldyour-codex",

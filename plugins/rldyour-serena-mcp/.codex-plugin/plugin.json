@@ -7,8 +7,8 @@
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
-  "homepage": "https://github.com/NDDev-it-com/rldyour-codex",
-  "repository": "https://github.com/NDDev-it-com/rldyour-codex",
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
   "license": "AGPL-3.0-or-later",
   "keywords": [
     "codex",
@@ -42,9 +42,9 @@
       "Project memory sync",
       "Plans and research archive"
     ],
-    "websiteURL": "https://github.com/NDDev-it-com/rldyour-codex",
-    "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
-    "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
       "Используй $serena-code-workflow: изучи код через Serena. EN: semantic code work.",
       "Используй $serena-memory-sync: обнови memories. EN: sync project knowledge.",

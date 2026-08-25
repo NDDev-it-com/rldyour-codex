@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security issue
-    url: https://github.com/NDDev-it-com/rldyour-codex/security/advisories/new
+    url: https://github.com/rldyourmnd/rldyour-codex/security/advisories/new
     about: Report a security vulnerability privately.
   - name: Discussion / question
-    url: https://github.com/NDDev-it-com/rldyour-codex/discussions
+    url: https://github.com/rldyourmnd/rldyour-codex/discussions
     about: Open-ended discussion, workflow clarification, and usage questions.

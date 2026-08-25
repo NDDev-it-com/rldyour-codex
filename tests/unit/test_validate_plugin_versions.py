@@ -117,9 +117,9 @@ def test_manifest_metadata_rejects_license_and_url_drift(tmp_path: Path) -> None
         }
         mod.require_manifest_metadata(manifest, "rldyour-demo", manifest_path, errors)
         assert "rldyour-demo: license must be AGPL-3.0-or-later" in errors
-        assert "rldyour-demo: homepage must be https://github.com/NDDev-it-com/rldyour-codex" in errors
-        assert "rldyour-demo: repository must be https://github.com/NDDev-it-com/rldyour-codex" in errors
-        assert "rldyour-demo: interface.websiteURL must be https://github.com/NDDev-it-com/rldyour-codex" in errors
+        assert "rldyour-demo: homepage must be https://github.com/rldyourmnd/rldyour-codex" in errors
+        assert "rldyour-demo: repository must be https://github.com/rldyourmnd/rldyour-codex" in errors
+        assert "rldyour-demo: interface.websiteURL must be https://github.com/rldyourmnd/rldyour-codex" in errors
     finally:
         mod.ROOT = old_root
 

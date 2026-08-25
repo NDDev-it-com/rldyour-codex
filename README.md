@@ -2,12 +2,12 @@
 
 `rldyour-codex` is the rldyour AI CLI configuration for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory.
 
-[![validate](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/validate.yml)
-[![security-static](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/security-static.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/security-static.yml)
-[![CodeQL](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/NDDev-it-com/rldyour-codex/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/NDDev-it-com/rldyour-codex/badge)](https://scorecard.dev/viewer/?uri=github.com/NDDev-it-com/rldyour-codex)
+[![validate](https://github.com/rldyourmnd/rldyour-codex/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/rldyourmnd/rldyour-codex/actions/workflows/validate.yml)
+[![security-static](https://github.com/rldyourmnd/rldyour-codex/actions/workflows/security-static.yml/badge.svg?branch=main)](https://github.com/rldyourmnd/rldyour-codex/actions/workflows/security-static.yml)
+[![CodeQL](https://github.com/rldyourmnd/rldyour-codex/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/rldyourmnd/rldyour-codex/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/rldyourmnd/rldyour-codex/badge)](https://scorecard.dev/viewer/?uri=github.com/rldyourmnd/rldyour-codex)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Latest Release](https://img.shields.io/github/v/release/NDDev-it-com/rldyour-codex)](https://github.com/NDDev-it-com/rldyour-codex/releases/latest)
+[![Latest Release](https://img.shields.io/github/v/release/rldyourmnd/rldyour-codex)](https://github.com/rldyourmnd/rldyour-codex/releases/latest)
 
 `rldyour-codex` is a rldyour AI CLI configuration package for Codex: plugin marketplace, system install, MCP servers, hooks, managed agents, runtime validation, and Serena memory. It is authored by Danil Silantyev (github:rldyourmnd), CEO NDDev and owns rldyour plugins, MCP server runtime definitions, skills, Codex lifecycle hooks, managed subagent role configs, execpolicy rules, validation scripts, installer/rollback tooling, CI checks, and Serena project knowledge.
 
@@ -315,7 +315,7 @@ Reference docs:
 
 **Author:** Danil Silantyev (github:rldyourmnd), CEO NDDev.
 
-**Security contact:** report vulnerabilities privately through GitHub Security Advisories at `https://github.com/NDDev-it-com/rldyour-codex/security/advisories`. See [SECURITY.md](SECURITY.md) for the supported surface and private disclosure procedure.
+**Security contact:** report vulnerabilities privately through GitHub Security Advisories at `https://github.com/rldyourmnd/rldyour-codex/security/advisories`. See [SECURITY.md](SECURITY.md) for the supported surface and private disclosure procedure.
 
 **Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, validation, change rules, and pull request expectations. Participants are expected to follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 

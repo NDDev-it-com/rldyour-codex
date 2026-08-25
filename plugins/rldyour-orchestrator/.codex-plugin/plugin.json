@@ -7,8 +7,8 @@
     "email": "rldyourmnd@users.noreply.github.com",
     "url": "https://github.com/rldyourmnd"
   },
-  "homepage": "https://github.com/NDDev-it-com/rldyour-codex",
-  "repository": "https://github.com/NDDev-it-com/rldyour-codex",
+  "homepage": "https://github.com/rldyourmnd/rldyour-codex",
+  "repository": "https://github.com/rldyourmnd/rldyour-codex",
   "license": "AGPL-3.0-or-later",
   "keywords": [
     "codex",
@@ -35,9 +35,9 @@
       "Worker task delegation with per-task scope",
       "Worker JSON reports with notify completion signal"
     ],
-    "websiteURL": "https://github.com/NDDev-it-com/rldyour-codex",
-    "privacyPolicyURL": "https://github.com/NDDev-it-com/rldyour-codex",
-    "termsOfServiceURL": "https://github.com/NDDev-it-com/rldyour-codex",
+    "websiteURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "privacyPolicyURL": "https://github.com/rldyourmnd/rldyour-codex",
+    "termsOfServiceURL": "https://github.com/rldyourmnd/rldyour-codex",
     "defaultPrompt": [
       "Используй $cmux-orchestrator: делегируй worker задачи и собери отчеты. EN: orchestrate cmux workers.",
       "Используй $cmux-worker: выполни scoped task и верни JSON report. EN: run a scoped worker task."

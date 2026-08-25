@@ -8,7 +8,7 @@ the human-readable matrix for the same facts.
 
 | Area | Codex contract |
 | --- | --- |
-| Public repository | `https://github.com/NDDev-it-com/rldyour-codex` |
+| Public repository | `https://github.com/rldyourmnd/rldyour-codex` |
 | License | `AGPL-3.0-or-later` |
 | Marketplace plugins | 9 local `rldyour-*` plugins |
 | Skills | 38 `SKILL.md` files |
