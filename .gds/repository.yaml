@@ -22,7 +22,7 @@ provider:
 classification:
   portfolios:
     - "portfolio:archived-projects"
-  - portfolio:organization-projects
+    - "portfolio:organization-projects"
   visibility_contract: public
   data_classification: public
 policy:
